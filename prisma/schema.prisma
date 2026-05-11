@@ -1,0 +1,228 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  CLIENT
+  CLEANER
+  ADMIN
+}
+
+enum Plan {
+  FREE
+  BASIC
+  PREMIUM
+  PRO
+}
+
+enum LeadStatus {
+  NEW
+  WAVE1
+  WAVE2
+  WAVE3
+  IN_REVIEW
+  ACCEPTED
+  COMPLETED
+  CANCELLED
+  UNMATCHED
+}
+
+model User {
+  id              String        @id @default(cuid())
+  email           String        @unique
+  password        String
+  name            String?
+  role            Role          @default(CLIENT)
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  
+  phone           String?
+  address         String?
+  avatarUrl       String?
+  latitude        Float?
+  longitude       Float?
+  isVerified      Boolean       @default(false)
+
+  // Cleaner profile
+  serviceTypes    String[]      @default([])
+  isAvailable     Boolean       @default(true)
+  bio             String?
+  pricePerHour    Float?
+  plan            Plan          @default(FREE)
+  zipCode         String?
+
+  // Stripe
+  stripeCustomerId      String?
+  stripeSubscriptionId  String?
+
+  leadsCreated    Lead[]        @relation("ClientLeads")
+  leadsAccepted   Lead[]        @relation("CleanerLeads")
+  distributions   LeadDistribution[]
+  stats           CleanerStats?
+  clientConvos    Conversation[] @relation("ClientConversations")
+  cleanerConvos   Conversation[] @relation("CleanerConversations")
+  sentMessages    Message[]      @relation("MessageSender")
+  clientReviews   Review[]       @relation("ClientReviews")
+  cleanerReviews  Review[]       @relation("CleanerReviews")
+  workPhotos      WorkPhoto[]    @relation("CleanerPhotos")
+  notifications   Notification[]
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  type      String   // lead_received | cleaner_responded | client_accepted | message_received | job_completed | review_received
+  title     String
+  body      String?
+  link      String?
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([userId, read])
+}
+
+model WorkPhoto {
+  id          String   @id @default(cuid())
+  cleanerId   String
+  cleaner     User     @relation("CleanerPhotos", fields: [cleanerId], references: [id])
+  url         String
+  caption     String?
+  createdAt   DateTime @default(now())
+}
+
+model Lead {
+  id              String        @id @default(cuid())
+  clientId        String
+  client          User          @relation("ClientLeads", fields: [clientId], references: [id])
+  cleanerId       String?
+  cleaner         User?         @relation("CleanerLeads", fields: [cleanerId], references: [id])
+  
+  status          LeadStatus    @default(NEW)
+  address         String
+  latitude        Float
+  longitude       Float
+  serviceType     String
+  dateTime        DateTime
+  notes           String?
+  qualityScore    Float         @default(0)
+
+  // Property details
+  bedrooms        Int           @default(1)
+  bathrooms       Int           @default(1)
+  squareMeters    Float         @default(0)
+  extras          String[]      @default([])
+  frequency       String        @default("once")
+
+  // Auto-calculated estimates
+  estimatedMinPrice Float?
+  estimatedMaxPrice Float?
+  estimatedHours    Float?
+
+  isInstantBook   Boolean       @default(false)
+  leadPrice       Float?        // OP price charged to winning cleaner
+  zipCode         String?
+  photos          String[]      @default([])
+
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  distributions   LeadDistribution[]
+  conversations   Conversation[]
+  review          Review?
+}
+
+model LeadDistribution {
+  id              String        @id @default(cuid())
+  leadId          String
+  lead            Lead          @relation(fields: [leadId], references: [id])
+  cleanerId       String
+  cleaner         User          @relation(fields: [cleanerId], references: [id])
+  
+  wave            Int
+  status          String        // PENDING | RESPONDED | EXPIRED
+
+  notifiedAt      DateTime?
+  respondedAt     DateTime?
+
+  createdAt       DateTime      @default(now())
+  expiresAt       DateTime?
+}
+
+model CleanerStats {
+  id              String        @id @default(cuid())
+  cleanerId       String        @unique
+  cleaner         User          @relation(fields: [cleanerId], references: [id])
+
+  rankingScore    Float         @default(0)
+  acceptanceRate  Float         @default(0)
+  ratingAvg       Float         @default(0)
+  totalLeads      Int           @default(0)
+  noShowCount     Int           @default(0)
+}
+
+// ─── Review ────────────────────────────────────────────────────
+
+model Review {
+  id          String   @id @default(cuid())
+  leadId      String   @unique
+  lead        Lead     @relation(fields: [leadId], references: [id])
+  clientId    String
+  client      User     @relation("ClientReviews", fields: [clientId], references: [id])
+  cleanerId   String
+  cleaner     User     @relation("CleanerReviews", fields: [cleanerId], references: [id])
+  rating      Int      // 1–5
+  comment     String?
+  createdAt   DateTime @default(now())
+}
+
+// ─── Chat / Pay-per-Lead ───────────────────────────────────────
+
+model Conversation {
+  id          String    @id @default(cuid())
+  leadId      String
+  lead        Lead      @relation(fields: [leadId], references: [id])
+  clientId    String
+  client      User      @relation("ClientConversations", fields: [clientId], references: [id])
+  cleanerId   String
+  cleaner     User      @relation("CleanerConversations", fields: [cleanerId], references: [id])
+
+  status      String    @default("active")   // active | closed
+  leadFee     Float     @default(0)
+  feeStatus   String    @default("pending")  // pending | charged | waived
+
+  messages    Message[]
+
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@unique([leadId, cleanerId])
+}
+
+model Message {
+  id             String       @id @default(cuid())
+  conversationId String
+  conversation   Conversation @relation(fields: [conversationId], references: [id])
+  senderId       String
+  sender         User         @relation("MessageSender", fields: [senderId], references: [id])
+  content        String
+
+  createdAt      DateTime     @default(now())
+}
+
+model VerificationToken {
+  id        String   @id @default(cuid())
+  userId    String
+  email     String
+  code      String
+  type      String   // EMAIL_VERIFICATION | PASSWORD_RESET
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([email, type])
+}

@@ -1,0 +1,22 @@
+body {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background-color: #F9FAFB;
+  color: #111827;
+  -webkit-font-smoothing: antialiased;
+  margin: 0;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #E5E7EB;
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #D1D5DB;
+}

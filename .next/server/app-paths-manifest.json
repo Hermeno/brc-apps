@@ -1,0 +1,14 @@
+{
+  "/api/leads/route": "app/api/leads/route.js",
+  "/api/notifications/stream/route": "app/api/notifications/stream/route.js",
+  "/api/leads/available/route": "app/api/leads/available/route.js",
+  "/api/auth/[...nextauth]/route": "app/api/auth/[...nextauth]/route.js",
+  "/api/leads/[id]/complete/route": "app/api/leads/[id]/complete/route.js",
+  "/api/conversations/[id]/messages/route": "app/api/conversations/[id]/messages/route.js",
+  "/api/notifications/route": "app/api/notifications/route.js",
+  "/dashboard/plan/page": "app/dashboard/plan/page.js",
+  "/dashboard/cleaner/page": "app/dashboard/cleaner/page.js",
+  "/dashboard/client/page": "app/dashboard/client/page.js",
+  "/dashboard/client/profile/page": "app/dashboard/client/profile/page.js",
+  "/dashboard/chat/[id]/page": "app/dashboard/chat/[id]/page.js"
+}

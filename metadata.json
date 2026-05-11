@@ -1,0 +1,8 @@
+{
+  "name": "CleanSource Marketplace",
+  "description": "A high-performance lead distribution platform for professional cleaning services featuring 3-wave distribution, geolocation matching, and Stripe payments.",
+  "requestFramePermissions": [
+    "geolocation"
+  ],
+  "majorCapabilities": []
+}
