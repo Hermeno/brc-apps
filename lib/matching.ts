@@ -58,7 +58,7 @@ export async function runMatching(leadId: string) {
   if (!lead) return { type: 'error' };
 
   const cleaners = await prisma.user.findMany({
-    where: { role: 'CLEANER', isAvailable: true },
+    where: { role: 'CLEANER', isAvailable: true, isVerified: true },
     include: { stats: true },
     take: 100,
   });
@@ -160,7 +160,7 @@ export async function advanceWaves() {
 
     const usedIds = lead.distributions.map(d => d.cleanerId);
     const wave2Candidates = await prisma.user.findMany({
-      where: { role: 'CLEANER', isAvailable: true, id: { notIn: usedIds } },
+      where: { role: 'CLEANER', isAvailable: true, isVerified: true, id: { notIn: usedIds } },
       include: { stats: true },
       take: 20,
     });

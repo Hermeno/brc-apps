@@ -65,20 +65,23 @@ export default function HomePage() {
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.5 }}
             >
-              <HStack gap={4}>
+              <HStack gap={3}>
+                <NextLink href="/auth/register?role=cleaner">
+                  <Button
+                    variant="outline"
+                    borderColor="yellow.400" color="yellow.600"
+                    size="sm" px={5} borderRadius="full"
+                    fontWeight="bold"
+                    _hover={{ bg: 'yellow.50' }}
+                    transition="all 0.2s"
+                  >
+                    Sou profissional
+                  </Button>
+                </NextLink>
                 <NextLink href="/auth/login">
                   <Text fontSize="sm" fontWeight="semibold" color="slate.600" cursor="pointer" _hover={{ color: 'brand.500' }} transition="color 0.2s">
                     Entrar
                   </Text>
-                </NextLink>
-                <NextLink href="/auth/register">
-                  <Button
-                    bg="brand.500" color="white" size="sm" px={5} borderRadius="full"
-                    _hover={{ bg: 'brand.600', transform: 'translateY(-1px)', boxShadow: '0 4px 12px rgba(37,99,235,0.4)' }}
-                    transition="all 0.2s"
-                  >
-                    Criar conta grátis
-                  </Button>
                 </NextLink>
               </HStack>
             </MotionBox>
@@ -87,12 +90,20 @@ export default function HomePage() {
       </Box>
 
       {/* ── Hero ── */}
-      <Box position="relative" overflow="hidden">
-        {/* background blobs */}
-        <Box position="absolute" top="-100px" left="-100px" w="500px" h="500px"
-          bg="brand.50" borderRadius="full" filter="blur(80px)" opacity={0.7} />
-        <Box position="absolute" top="50px" right="-80px" w="400px" h="400px"
-          bg="yellow.50" borderRadius="full" filter="blur(80px)" opacity={0.8} />
+      <Box position="relative" overflow="hidden" minH="92vh" display="flex" alignItems="center">
+        {/* Full-bleed background image */}
+        <Box
+          position="absolute" top={0} left={0} right={0} bottom={0}
+          style={{
+            backgroundImage: "url('https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=1800&q=80')",
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat',
+          }}
+        />
+        {/* Dark overlay so text stays readable */}
+        <Box position="absolute" top={0} left={0} right={0} bottom={0}
+          style={{ backgroundColor: 'rgba(0,0,0,0.55)' }} />
 
         <Container maxW="7xl" pt={28} pb={36} position="relative">
           <VStack gap={8} align="center" textAlign="center" maxW="3xl" mx="auto">
@@ -103,10 +114,11 @@ export default function HomePage() {
               transition={{ duration: 0.6 }}
             >
               <Badge
-                bg="brand.50" color="brand.600"
+                bg="whiteAlpha.200" color="white"
                 px={4} py={1.5} borderRadius="full"
                 fontSize="xs" fontWeight="bold" letterSpacing="widest"
-                border="1px solid" borderColor="brand.100"
+                border="1px solid" borderColor="whiteAlpha.400"
+                backdropFilter="blur(8px)"
               >
                PLATAFORMA #1 DE LIMPEZA DO BRASIL
               </Badge>
@@ -120,13 +132,13 @@ export default function HomePage() {
               <Heading
                 size="5xl" fontWeight="black"
                 letterSpacing="tight" lineHeight="1.1"
-                color="slate.900"
+                color="white"
               >
                 Limpeza profissional{' '}
                 <Text as="span"
                   bgGradient="to-r"
-                  gradientFrom="brand.500"
-                  gradientTo="brand.700"
+                  gradientFrom="blue.300"
+                  gradientTo="cyan.200"
                   bgClip="text"
                 >
                   na sua porta
@@ -139,7 +151,7 @@ export default function HomePage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
             >
-              <Text fontSize="xl" color="slate.500" maxW="2xl" lineHeight="tall">
+              <Text fontSize="xl" color="white" opacity={0.85} maxW="2xl" lineHeight="tall">
                 Conectamos você aos melhores profissionais de limpeza verificados da sua região. Rápido, seguro e garantido.
               </Text>
             </MotionBox>
@@ -149,7 +161,7 @@ export default function HomePage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.3 }}
             >
-              <HStack gap={4} mt={2} flexWrap="wrap" justify="center">
+              <HStack gap={4} mt={2} justify="center">
                 <NextLink href="/request">
                   <Button
                     bg="brand.500" color="white" size="xl"
@@ -162,18 +174,6 @@ export default function HomePage() {
                     <Icon as={LucideArrowRight} ml={2} />
                   </Button>
                 </NextLink>
-                <NextLink href="/auth/register">
-                  <Button
-                    variant="outline"
-                    borderColor="yellow.400" color="yellow.600"
-                    size="xl" px={10} h="14" borderRadius="full"
-                    fontSize="md" fontWeight="bold"
-                    _hover={{ bg: 'yellow.50', transform: 'translateY(-2px)' }}
-                    transition="all 0.25s"
-                  >
-                    Sou profissional
-                  </Button>
-                </NextLink>
               </HStack>
             </MotionBox>
 
@@ -183,19 +183,19 @@ export default function HomePage() {
               animate={{ opacity: 1 }}
               transition={{ duration: 0.8, delay: 0.5 }}
             >
-              <HStack gap={6} color="slate.400" fontSize="sm" flexWrap="wrap" justify="center">
+              <HStack gap={6} color="whiteAlpha.700" fontSize="sm" flexWrap="wrap" justify="center">
                 <HStack gap={1.5}>
-                  <Icon as={LucideStar} w={4} h={4} color="yellow.500" />
+                  <Icon as={LucideStar} w={4} h={4} color="yellow.300" />
                   <Text>4.9/5 avaliação média</Text>
                 </HStack>
-                <Text color="slate.200">|</Text>
+                <Text color="whiteAlpha.400">|</Text>
                 <HStack gap={1.5}>
-                  <Icon as={LucideCheckCircle} w={4} h={4} color="green.500" />
+                  <Icon as={LucideCheckCircle} w={4} h={4} color="green.300" />
                   <Text>Profissionais verificados</Text>
                 </HStack>
-                <Text color="slate.200">|</Text>
+                <Text color="whiteAlpha.400">|</Text>
                 <HStack gap={1.5}>
-                  <Icon as={LucideShield} w={4} h={4} color="brand.400" />
+                  <Icon as={LucideShield} w={4} h={4} color="blue.300" />
                   <Text>100% garantido</Text>
                 </HStack>
               </HStack>

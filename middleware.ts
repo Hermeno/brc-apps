@@ -17,7 +17,12 @@ export default auth((req) => {
     return NextResponse.next();
   }
 
-  if (pathname.startsWith('/dashboard')) {
+  if (pathname.startsWith('/dashboard/admin')) {
+    const role = (req.auth as any)?.user?.role;
+    if (!isLoggedIn || role !== 'ADMIN') {
+      return NextResponse.redirect(new URL('/dashboard', req.nextUrl));
+    }
+  } else if (pathname.startsWith('/dashboard')) {
     if (!isLoggedIn) {
       return NextResponse.redirect(new URL('/auth/login', req.nextUrl));
     }

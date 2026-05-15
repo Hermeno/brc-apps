@@ -9,7 +9,7 @@ import {
 } from '@chakra-ui/react';
 import {
   LucideArrowRight, LucideMapPin, LucideCalendar, LucideBanknote,
-  LucideClock, LucideUser, LucideLock, LucideMail, LucideCheckCircle,
+  LucideClock, LucideUser, LucideLock, LucideMail, LucideCheckCircle, LucidePhone,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import NextLink from 'next/link';
@@ -30,6 +30,7 @@ export default function RequestPage() {
   const [extras, setExtras]               = useState<string[]>([]);
   const [frequency, setFrequency]         = useState('once');
   const [notes, setNotes]                 = useState('');
+  const [phone, setPhone]                 = useState('+1 ');
 
   // Guest register step
   const [showRegister, setShowRegister]   = useState(false);
@@ -52,7 +53,7 @@ export default function RequestPage() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         serviceType, address, dateTime, bedrooms, bathrooms,
-        squareMeters, extras, frequency, notes,
+        squareMeters, extras, frequency, notes, clientPhone: phone,
         estimatedMinPrice: estimate.minPrice,
         estimatedMaxPrice: estimate.maxPrice,
         estimatedHours: estimate.hours,
@@ -67,6 +68,10 @@ export default function RequestPage() {
   const handleSubmit = async () => {
     if (!address.trim() || !dateTime) {
       toaster.create({ title: 'Preencha endereço e data', type: 'error' });
+      return;
+    }
+    if (phone.trim().length < 16) {
+      toaster.create({ title: 'Preencha o telefone de contato', type: 'error' });
       return;
     }
     if (status === 'authenticated') {
@@ -185,6 +190,31 @@ export default function RequestPage() {
                       placeholder="Rua, número, bairro, cidade"
                       bg="slate.50" border="1px solid" borderColor="slate.200" h="11" borderRadius="xl"
                       _focus={{ bg: 'white', borderColor: 'brand.300' }} />
+                  </HStack>
+                </Box>
+
+                {/* Phone */}
+                <Box>
+                  <Text fontSize="xs" fontWeight="bold" color="slate.500" textTransform="uppercase"
+                    letterSpacing="wider" mb={2}>Telefone de contato</Text>
+                  <HStack>
+                    <Icon as={LucidePhone} color="brand.400" w={4} h={4} />
+                    <Input
+                      value={phone}
+                      onChange={e => {
+                        let v = e.target.value;
+                        if (!v.startsWith('+1 ')) v = '+1 ';
+                        // only digits after +1
+                        const digits = v.slice(3).replace(/\D/g, '').slice(0, 10);
+                        const fmt = digits.replace(/(\d{3})(\d{3})(\d{1,4})/, '($1) $2-$3')
+                                          .replace(/(\d{3})(\d{1,3})$/, '($1) $2')
+                                          .replace(/^(\d{1,3})$/, '($1');
+                        setPhone('+1 ' + fmt);
+                      }}
+                      placeholder="+1 (555) 000-0000"
+                      bg="slate.50" border="1px solid" borderColor="slate.200" h="11" borderRadius="xl"
+                      _focus={{ bg: 'white', borderColor: 'brand.300' }}
+                    />
                   </HStack>
                 </Box>
 

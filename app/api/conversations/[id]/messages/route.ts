@@ -25,8 +25,8 @@ export async function GET(_req: NextRequest, { params }: Params) {
         orderBy: { createdAt: 'asc' },
         include: { sender: { select: { name: true, role: true } } },
       },
-      lead:    { select: { serviceType: true, address: true, dateTime: true, status: true, estimatedMinPrice: true, estimatedMaxPrice: true, estimatedHours: true, isInstantBook: true } },
-      client:  { select: { id: true, name: true } },
+      lead:    { select: { serviceType: true, address: true, dateTime: true, status: true, estimatedMinPrice: true, estimatedMaxPrice: true, estimatedHours: true, isInstantBook: true, clientPhone: true } },
+      client:  { select: { id: true, name: true, phone: true } },
       cleaner: { select: { id: true, name: true } },
     },
   });

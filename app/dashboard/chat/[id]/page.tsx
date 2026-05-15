@@ -7,7 +7,7 @@ import {
 } from '@chakra-ui/react';
 import {
   LucideSend, LucideArrowLeft, LucideCheckCircle, LucideZap,
-  LucideBanknote, LucideClock, LucideMapPin, LucideCalendar,
+  LucideBanknote, LucideClock, LucideMapPin, LucideCalendar, LucidePhone,
 } from 'lucide-react';
 import { useRouter, useParams } from 'next/navigation';
 import { motion, AnimatePresence } from 'motion/react';
@@ -37,8 +37,9 @@ type ConversationData = {
     estimatedMaxPrice?: number;
     estimatedHours?: number;
     isInstantBook: boolean;
+    clientPhone?: string | null;
   };
-  client: { id: string; name: string };
+  client: { id: string; name: string; phone?: string | null };
   cleaner: { id: string; name: string };
   messages: Message[];
 };
@@ -180,6 +181,23 @@ export default function ChatPage() {
           )}
         </Flex>
       </Box>
+
+      {/* ── Client contact card (visible to cleaner when accepted) ── */}
+      {!isClient && isAccepted && (conv.client.phone || conv.lead.clientPhone) && (
+        <Box bg="green.50" borderBottom="1px solid" borderColor="green.200" px={4} py={2.5} flexShrink={0}>
+          <Container maxW="760px">
+            <HStack gap={2}>
+              <Icon as={LucidePhone} w={4} h={4} color="green.600" />
+              <Text fontSize="sm" fontWeight="bold" color="green.800">
+                Contacto do cliente:
+              </Text>
+              <Text fontSize="sm" color="green.700" fontWeight="semibold">
+                {conv.client.phone || conv.lead.clientPhone}
+              </Text>
+            </HStack>
+          </Container>
+        </Box>
+      )}
 
       {/* ── Lead info card ── */}
       <Box bg="slate.50" px={4} py={3} borderBottom="1px solid" borderColor="slate.100" flexShrink={0}>

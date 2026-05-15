@@ -11,7 +11,7 @@ import {
   LucideSparkles, LucideTag, LucideMessageCircle, LucideZap,
   LucidePencil, LucideTrash2, LucideCheckCircle, LucideStar,
   LucideThumbsDown, LucideChevronDown, LucideChevronUp, LucideExternalLink,
-  LucideSettings, LucideRotateCcw,
+  LucideSettings, LucideRotateCcw, LucideShieldCheck,
 } from 'lucide-react';
 import { useSession, signOut } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
@@ -20,7 +20,6 @@ import { motion, AnimatePresence } from 'motion/react';
 import {
   SERVICE_TYPES, FREQUENCY_OPTIONS, EXTRAS, calculateEstimate,
 } from '@/lib/estimate';
-import { MultiImageUpload } from '@/components/image-upload';
 import NotificationBell from '@/components/notification-bell';
 
 /* ─── types ──────────────────────────────────────────────────── */
@@ -36,7 +35,7 @@ const STATUS_MAP: Record<string, { label: string; bg: string; color: string; bor
   UNMATCHED: { label: 'No match found',         bg: '#FEF2F2', color: '#DC2626', border: '#FECACA' },
 };
 
-type ConvEntry = { id: string; cleanerId: string; status: string; cleaner: { id: string; name: string; avatarUrl?: string | null } };
+type ConvEntry = { id: string; cleanerId: string; status: string; cleaner: { id: string; name: string; avatarUrl?: string | null; isVerified?: boolean } };
 type Lead = {
   id: string; serviceType: string; address: string; dateTime: string;
   status: string; notes?: string; createdAt: string;
@@ -55,7 +54,6 @@ const emptyForm = {
   serviceType: 'standard', bedrooms: 1, bathrooms: 1, squareMeters: 0,
   extras: [] as string[], frequency: 'once',
   address: '', date: '', time: '', notes: '',
-  photos: [] as string[],
 };
 
 /* ─── Stepper ─────────────────────────────────────────────────── */
@@ -189,7 +187,6 @@ export default function ClientPage() {
         body: JSON.stringify({ serviceType: serviceLabel, address: form.address, notes: form.notes, dateTime,
           bedrooms: form.bedrooms, bathrooms: form.bathrooms, squareMeters: form.squareMeters,
           extras: form.extras, frequency: form.frequency,
-          photos: form.photos.filter(Boolean),
           estimatedMinPrice: estimate?.minPrice, estimatedMaxPrice: estimate?.maxPrice, estimatedHours: estimate?.hours }),
       });
       if (res.ok) {
@@ -213,7 +210,6 @@ export default function ClientPage() {
       date: dt.toISOString().split('T')[0],
       time: dt.toTimeString().slice(0, 5),
       notes: lead.notes ?? '',
-      photos: lead.photos ?? [],
     });
     setEditingId(lead.id);
   };
@@ -616,9 +612,14 @@ export default function ClientPage() {
                                                       style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                                                   ) : conv.cleaner.name[0]}
                                                 </Box>
-                                                <Text fontSize="sm" fontWeight="semibold" color="slate.700" flex={1}>
-                                                  {conv.cleaner.name}
-                                                </Text>
+                                                <HStack gap={1.5} flex={1}>
+                                                  <Text fontSize="sm" fontWeight="semibold" color="slate.700">
+                                                    {conv.cleaner.name}
+                                                  </Text>
+                                                  {conv.cleaner.isVerified && (
+                                                    <Icon as={LucideShieldCheck} w={4} h={4} color="green.500" title="Verificado" />
+                                                  )}
+                                                </HStack>
                                                 <Button size="xs" variant="outline" borderColor="slate.200" color="slate.600"
                                                   borderRadius="lg" fontWeight="semibold"
                                                   _hover={{ bg: 'brand.50', borderColor: 'brand.200', color: 'brand.600' }}
@@ -1259,14 +1260,6 @@ function OrderForm({ form, setField, toggleExtra, estimate, progress, onSubmit, 
             )}
           </AnimatePresence>
 
-          {/* Photos */}
-          <Box>
-            <HStack gap={2} mb={3}>
-              <Text fontSize="xs" fontWeight="bold" color="slate.500" textTransform="uppercase" letterSpacing="wider">Location photos</Text>
-              <Text fontSize="xs" color="slate.400">(optional — max 4)</Text>
-            </HStack>
-            <MultiImageUpload values={form.photos} onChange={photos => setField('photos', photos)} max={4} />
-          </Box>
 
           <Button type="submit" bg={progress === 100 ? 'green.500' : 'brand.500'} color="white"
             h="13" borderRadius="xl" fontWeight="bold" fontSize="md"

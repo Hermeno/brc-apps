@@ -3,21 +3,27 @@
 import {
   Box, Heading, Text, VStack, HStack, Input, Button, Container, SimpleGrid, Icon,
 } from '@chakra-ui/react';
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect, Suspense } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { signIn } from 'next-auth/react';
 import { toaster } from '@/lib/toaster';
 import NextLink from 'next/link';
 import { motion } from 'motion/react';
 import { LucideUser, LucideBrush } from 'lucide-react';
 
-export default function RegisterPage() {
+function RegisterForm() {
   const [name, setName]         = useState('');
   const [email, setEmail]       = useState('');
   const [password, setPassword] = useState('');
   const [role, setRole]         = useState<'CLIENT' | 'CLEANER'>('CLIENT');
   const [loading, setLoading]   = useState(false);
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const forcedRole = searchParams.get('role') === 'cleaner';
+
+  useEffect(() => {
+    if (forcedRole) setRole('CLEANER');
+  }, [forcedRole]);
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -81,9 +87,13 @@ export default function RegisterPage() {
                 </HStack>
               </motion.div>
               <Heading size="xl" fontWeight="black" letterSpacing="tight" color="slate.900">
-                Create free account
+                {forcedRole ? 'Cadastro de profissional' : 'Criar conta grátis'}
               </Heading>
-              <Text color="slate.500">Join the #1 Brazilian cleaning platform in the US.</Text>
+              <Text color="slate.500">
+                {forcedRole
+                  ? 'Junte-se à plataforma #1 de limpeza e receba clientes.'
+                  : 'Join the #1 Brazilian cleaning platform in the US.'}
+              </Text>
             </VStack>
 
             <Box bg="white" p={8} borderRadius="3xl"
@@ -91,37 +101,39 @@ export default function RegisterPage() {
               <form onSubmit={handleRegister}>
                 <VStack gap={5} align="stretch">
 
-                  {/* Role selector */}
-                  <Box>
-                    <Text fontSize="xs" fontWeight="bold" color="slate.500"
-                      textTransform="uppercase" mb={3} letterSpacing="wider">I am a…</Text>
-                    <SimpleGrid columns={2} gap={3}>
-                      <motion.div whileTap={{ scale: 0.97 }}>
-                        <Button onClick={() => setRole('CLIENT')}
-                          bg={role === 'CLIENT' ? 'brand.500' : 'slate.50'}
-                          color={role === 'CLIENT' ? 'white' : 'slate.600'}
-                          borderRadius="xl" h="14" fontWeight="bold" fontSize="sm"
-                          border="2px solid" borderColor={role === 'CLIENT' ? 'brand.500' : 'slate.200'}
-                          _hover={{ bg: role === 'CLIENT' ? 'brand.600' : 'slate.100' }}
-                          transition="all 0.2s" w="full" flexDirection="column" gap={1}>
-                          <Icon as={LucideUser} w={5} h={5} />
-                          <Text fontSize="xs">Customer</Text>
-                        </Button>
-                      </motion.div>
-                      <motion.div whileTap={{ scale: 0.97 }}>
-                        <Button onClick={() => setRole('CLEANER')}
-                          bg={role === 'CLEANER' ? 'green.500' : 'slate.50'}
-                          color={role === 'CLEANER' ? 'white' : 'slate.600'}
-                          borderRadius="xl" h="14" fontWeight="bold" fontSize="sm"
-                          border="2px solid" borderColor={role === 'CLEANER' ? 'green.500' : 'slate.200'}
-                          _hover={{ bg: role === 'CLEANER' ? 'green.600' : 'slate.100' }}
-                          transition="all 0.2s" w="full" flexDirection="column" gap={1}>
-                          <Icon as={LucideBrush} w={5} h={5} />
-                          <Text fontSize="xs">Profissional</Text>
-                        </Button>
-                      </motion.div>
-                    </SimpleGrid>
-                  </Box>
+                  {/* Role selector — hidden when coming from "Sou profissional" */}
+                  {!forcedRole && (
+                    <Box>
+                      <Text fontSize="xs" fontWeight="bold" color="slate.500"
+                        textTransform="uppercase" mb={3} letterSpacing="wider">I am a…</Text>
+                      <SimpleGrid columns={2} gap={3}>
+                        <motion.div whileTap={{ scale: 0.97 }}>
+                          <Button onClick={() => setRole('CLIENT')}
+                            bg={role === 'CLIENT' ? 'brand.500' : 'slate.50'}
+                            color={role === 'CLIENT' ? 'white' : 'slate.600'}
+                            borderRadius="xl" h="14" fontWeight="bold" fontSize="sm"
+                            border="2px solid" borderColor={role === 'CLIENT' ? 'brand.500' : 'slate.200'}
+                            _hover={{ bg: role === 'CLIENT' ? 'brand.600' : 'slate.100' }}
+                            transition="all 0.2s" w="full" flexDirection="column" gap={1}>
+                            <Icon as={LucideUser} w={5} h={5} />
+                            <Text fontSize="xs">Customer</Text>
+                          </Button>
+                        </motion.div>
+                        <motion.div whileTap={{ scale: 0.97 }}>
+                          <Button onClick={() => setRole('CLEANER')}
+                            bg={role === 'CLEANER' ? 'green.500' : 'slate.50'}
+                            color={role === 'CLEANER' ? 'white' : 'slate.600'}
+                            borderRadius="xl" h="14" fontWeight="bold" fontSize="sm"
+                            border="2px solid" borderColor={role === 'CLEANER' ? 'green.500' : 'slate.200'}
+                            _hover={{ bg: role === 'CLEANER' ? 'green.600' : 'slate.100' }}
+                            transition="all 0.2s" w="full" flexDirection="column" gap={1}>
+                            <Icon as={LucideBrush} w={5} h={5} />
+                            <Text fontSize="xs">Profissional</Text>
+                          </Button>
+                        </motion.div>
+                      </SimpleGrid>
+                    </Box>
+                  )}
 
                   <Box>
                     <Text fontSize="xs" fontWeight="bold" color="slate.500"
@@ -174,5 +186,13 @@ export default function RegisterPage() {
         </motion.div>
       </Container>
     </Box>
+  );
+}
+
+export default function RegisterPage() {
+  return (
+    <Suspense>
+      <RegisterForm />
+    </Suspense>
   );
 }

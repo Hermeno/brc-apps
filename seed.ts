@@ -14,7 +14,9 @@ async function main() {
   await prisma.review.deleteMany();
   await prisma.leadDistribution.deleteMany();
   await prisma.cleanerStats.deleteMany();
+  await prisma.cleanerVerification.deleteMany();
   await prisma.lead.deleteMany();
+  await prisma.verificationToken.deleteMany();
   await prisma.user.deleteMany();
 
   // Senha: "password123"
@@ -56,14 +58,26 @@ async function main() {
 
   console.log("✅ Profissional criado:", cleaner.email);
 
+  await prisma.cleanerStats.create({ data: { cleanerId: cleaner.id } });
+
+  // Conta Admin
+  const admin = await prisma.user.create({
+    data: {
+      email: "admin@brazilianclean.org",
+      password: await bcrypt.hash("BrClean@2026!", 10),
+      name: "Admin BrazilianClean",
+      role: "ADMIN",
+      isVerified: true,
+    },
+  });
+
+  console.log("✅ Admin criado:", admin.email);
+
   console.log("\n🎉 Banco de dados resetado com sucesso!");
   console.log("\n📝 Contas criadas:");
-  console.log(
-    "  Cliente: cliente@example.com / password123 (verificado ✓)"
-  );
-  console.log(
-    "  Profissional: profissional@example.com / password123 (verificado ✓)"
-  );
+  console.log("  Cliente:      cliente@example.com     / password123");
+  console.log("  Profissional: profissional@example.com / password123");
+  console.log("  Admin:        admin@brazilianclean.org / BrClean@2026!");
 }
 
 main()

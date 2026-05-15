@@ -29,6 +29,8 @@ export default function LoginPage() {
           type: 'warning',
         });
         router.push(`/auth/verify-email?email=${encodeURIComponent(email)}`);
+      } else if (result.error.includes('ACCOUNT_SUSPENDED')) {
+        toaster.create({ title: 'Conta suspensa', description: 'Sua conta está suspensa. Contacte o suporte.', type: 'error' });
       } else {
         toaster.create({ title: 'Sign in failed', description: 'Invalid email or password', type: 'error' });
       }

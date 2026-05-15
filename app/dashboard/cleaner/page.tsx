@@ -23,6 +23,8 @@ import {
   LucideBanknote,
   LucideClock,
   LucideMessageCircle,
+  LucideShield,
+  LucideAlertCircle,
 } from 'lucide-react';
 import { EXTRAS, FREQUENCY_OPTIONS } from '@/lib/estimate';
 import CleanerNav from '@/components/cleaner-nav';
@@ -58,6 +60,7 @@ export default function CleanerDashboard() {
   const router = useRouter();
   const [available, setAvailable]       = useState<Lead[]>([]);
   const [accepted, setAccepted]         = useState<Lead[]>([]);
+  const [verifyStatus, setVerifyStatus] = useState<string | null>(null);
   const [conversations, setConversations] = useState<MyConversation[]>([]);
   const [responding, setResponding]     = useState<string | null>(null);
   const [loading, setLoading]           = useState(true);
@@ -78,7 +81,10 @@ export default function CleanerDashboard() {
     }
   }, []);
 
-  useEffect(() => { fetchLeads(); }, [fetchLeads]);
+  useEffect(() => {
+    fetchLeads();
+    fetch('/api/cleaner/verification').then(r => r.json()).then(d => setVerifyStatus(d.verification?.status ?? 'NONE'));
+  }, [fetchLeads]);
 
   const handleRespond = async (leadId: string) => {
     setResponding(leadId);
@@ -111,6 +117,56 @@ export default function CleanerDashboard() {
       <CleanerNav />
 
       <Box p={6} maxW="1200px" mx="auto">
+
+        {/* Verification banner */}
+        {verifyStatus === 'NONE' && (
+          <Box mb={5} bg="yellow.50" border="1px solid" borderColor="yellow.200" borderRadius="2xl" p={4}>
+            <Flex align="center" justify="space-between" gap={3} flexWrap="wrap">
+              <HStack gap={3}>
+                <Icon as={LucideAlertCircle} w={5} h={5} color="yellow.500" />
+                <Box>
+                  <Text fontWeight="bold" color="yellow.800" fontSize="sm">Verifique sua conta para receber mais leads</Text>
+                  <Text fontSize="xs" color="yellow.600">Profissionais verificados aparecem com destaque e têm prioridade.</Text>
+                </Box>
+              </HStack>
+              <Button size="sm" bg="yellow.400" color="yellow.900" borderRadius="full" fontWeight="bold"
+                _hover={{ bg: 'yellow.500' }} onClick={() => router.push('/dashboard/cleaner/verify')}>
+                <Icon as={LucideShield} w={3.5} h={3.5} mr={1} />Verificar agora
+              </Button>
+            </Flex>
+          </Box>
+        )}
+        {verifyStatus === 'PENDING' && (
+          <Box mb={5} bg="blue.50" border="1px solid" borderColor="blue.200" borderRadius="2xl" p={4}>
+            <HStack gap={3}>
+              <Icon as={LucideClock} w={5} h={5} color="blue.400" />
+              <Text fontSize="sm" color="blue.700" fontWeight="bold">Verificação em análise — responderemos em até 48h.</Text>
+            </HStack>
+          </Box>
+        )}
+        {verifyStatus === 'APPROVED' && (
+          <Box mb={5} bg="green.50" border="1px solid" borderColor="green.200" borderRadius="2xl" p={4}>
+            <HStack gap={3}>
+              <Icon as={LucideShield} w={5} h={5} color="green.500" />
+              <Text fontSize="sm" color="green.700" fontWeight="bold">Conta verificada ✓</Text>
+            </HStack>
+          </Box>
+        )}
+        {verifyStatus === 'REJECTED' && (
+          <Box mb={5} bg="red.50" border="1px solid" borderColor="red.200" borderRadius="2xl" p={4}>
+            <Flex align="center" justify="space-between" gap={3} flexWrap="wrap">
+              <HStack gap={3}>
+                <Icon as={LucideAlertCircle} w={5} h={5} color="red.500" />
+                <Text fontSize="sm" color="red.700" fontWeight="bold">Verificação recusada — corrija e reenvie.</Text>
+              </HStack>
+              <Button size="sm" bg="red.500" color="white" borderRadius="full" fontWeight="bold"
+                _hover={{ bg: 'red.600' }} onClick={() => router.push('/dashboard/cleaner/verify')}>
+                Reenviar documentos
+              </Button>
+            </Flex>
+          </Box>
+        )}
+
         <Flex justify="space-between" align="center" mb={6}>
           <HStack gap={2.5}>
             <Box w="8px" h="8px" bg="green.400" borderRadius="full" boxShadow="0 0 0 3px rgba(34,197,94,0.2)" />

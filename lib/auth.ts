@@ -33,6 +33,10 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           throw new Error('EMAIL_NOT_VERIFIED');
         }
 
+        if (user.suspendedUntil && user.suspendedUntil > new Date()) {
+          throw new Error('ACCOUNT_SUSPENDED');
+        }
+
         return {
           id: user.id,
           email: user.email,

@@ -24,7 +24,7 @@ export async function GET() {
       cleaner: { select: { name: true, email: true } },
       conversations: {
         where: { status: { in: ['active', 'declined'] } },
-        select: { id: true, cleanerId: true, status: true, cleaner: { select: { id: true, name: true, avatarUrl: true } } },
+        select: { id: true, cleanerId: true, status: true, cleaner: { select: { id: true, name: true, avatarUrl: true, isVerified: true } } },
       },
       review: { select: { rating: true, comment: true } },
     },
@@ -45,7 +45,7 @@ export async function POST(request: NextRequest) {
     serviceType, address, notes, dateTime,
     bedrooms, bathrooms, squareMeters, extras, frequency,
     estimatedMinPrice, estimatedMaxPrice, estimatedHours,
-    photos,
+    photos, clientPhone,
   } = body;
 
   if (!serviceType || !address || !dateTime) {
@@ -84,6 +84,7 @@ export async function POST(request: NextRequest) {
         extras:           Array.isArray(extras) ? extras : [],
         frequency:        frequency   ?? 'once',
         photos:           Array.isArray(photos) ? photos.filter(Boolean).slice(0, 4) : [],
+        clientPhone:       clientPhone || null,
         estimatedMinPrice: estimatedMinPrice ?? null,
         estimatedMaxPrice: estimatedMaxPrice ?? null,
         estimatedHours:    estimatedHours    ?? null,
