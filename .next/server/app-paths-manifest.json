@@ -1,7 +1,0 @@
-{
-  "/api/leads/available/route": "app/api/leads/available/route.js",
-  "/dashboard/finances/page": "app/dashboard/finances/page.js",
-  "/dashboard/plan/page": "app/dashboard/plan/page.js",
-  "/dashboard/payment-methods/page": "app/dashboard/payment-methods/page.js",
-  "/dashboard/profile/page": "app/dashboard/profile/page.js"
-}
