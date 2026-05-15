@@ -71,16 +71,6 @@ eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpac
 
 /***/ }),
 
-/***/ "(ssr)/./node_modules/@chakra-ui/react/dist/esm/components/container/container.js":
-/*!**********************************************************************************!*\
-  !*** ./node_modules/@chakra-ui/react/dist/esm/components/container/container.js ***!
-  \**********************************************************************************/
-/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
-
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   Container: () => (/* binding */ Container),\n/* harmony export */   ContainerPropsProvider: () => (/* binding */ ContainerPropsProvider)\n/* harmony export */ });\n/* harmony import */ var _styled_system_create_recipe_context_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../styled-system/create-recipe-context.js */ \"(ssr)/./node_modules/@chakra-ui/react/dist/esm/styled-system/create-recipe-context.js\");\n/* __next_internal_client_entry_do_not_use__ Container,ContainerPropsProvider auto */ \n\nconst { withContext, PropsProvider } = (0,_styled_system_create_recipe_context_js__WEBPACK_IMPORTED_MODULE_0__.createRecipeContext)({\n    key: \"container\"\n});\nconst Container = withContext(\"div\");\nconst ContainerPropsProvider = PropsProvider;\n\n//# sourceURL=[module]\n//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiKHNzcikvLi9ub2RlX21vZHVsZXMvQGNoYWtyYS11aS9yZWFjdC9kaXN0L2VzbS9jb21wb25lbnRzL2NvbnRhaW5lci9jb250YWluZXIuanMiLCJtYXBwaW5ncyI6Ijs7Ozs7O3NGQUFhO0FBRXNFO0FBRW5GLE1BQU0sRUFBRUMsV0FBVyxFQUFFQyxhQUFhLEVBQUUsR0FBR0YsNEZBQW1CQSxDQUFDO0lBQ3pERyxLQUFLO0FBQ1A7QUFDQSxNQUFNQyxZQUFZSCxZQUFZO0FBQzlCLE1BQU1JLHlCQUF5Qkg7QUFFYyIsInNvdXJjZXMiOlsiL1VzZXJzL2Nhc2gvRGVza3RvcC9ici9ub2RlX21vZHVsZXMvQGNoYWtyYS11aS9yZWFjdC9kaXN0L2VzbS9jb21wb25lbnRzL2NvbnRhaW5lci9jb250YWluZXIuanMiXSwic291cmNlc0NvbnRlbnQiOlsiXCJ1c2Ugc3RyaWN0XCI7XG5cInVzZSBjbGllbnRcIjtcbmltcG9ydCB7IGNyZWF0ZVJlY2lwZUNvbnRleHQgfSBmcm9tICcuLi8uLi9zdHlsZWQtc3lzdGVtL2NyZWF0ZS1yZWNpcGUtY29udGV4dC5qcyc7XG5cbmNvbnN0IHsgd2l0aENvbnRleHQsIFByb3BzUHJvdmlkZXIgfSA9IGNyZWF0ZVJlY2lwZUNvbnRleHQoe1xuICBrZXk6IFwiY29udGFpbmVyXCJcbn0pO1xuY29uc3QgQ29udGFpbmVyID0gd2l0aENvbnRleHQoXCJkaXZcIik7XG5jb25zdCBDb250YWluZXJQcm9wc1Byb3ZpZGVyID0gUHJvcHNQcm92aWRlcjtcblxuZXhwb3J0IHsgQ29udGFpbmVyLCBDb250YWluZXJQcm9wc1Byb3ZpZGVyIH07XG4iXSwibmFtZXMiOlsiY3JlYXRlUmVjaXBlQ29udGV4dCIsIndpdGhDb250ZXh0IiwiUHJvcHNQcm92aWRlciIsImtleSIsIkNvbnRhaW5lciIsIkNvbnRhaW5lclByb3BzUHJvdmlkZXIiXSwiaWdub3JlTGlzdCI6WzBdLCJzb3VyY2VSb290IjoiIn0=\n//# sourceURL=webpack-internal:///(ssr)/./node_modules/@chakra-ui/react/dist/esm/components/container/container.js\n");
-
-/***/ }),
-
 /***/ "(ssr)/./node_modules/@chakra-ui/react/dist/esm/components/flex/flex.js":
 /*!************************************************************************!*\
   !*** ./node_modules/@chakra-ui/react/dist/esm/components/flex/flex.js ***!

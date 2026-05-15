@@ -46,7 +46,7 @@ async function main() {
       pricePerHour: 75,
       serviceTypes: ["residential_cleaning", "office_cleaning", "window_cleaning"],
       isAvailable: true,
-      plan: "PRO",
+      plan: "FREE",
       latitude: 40.7128,
       longitude: -74.006,
     },

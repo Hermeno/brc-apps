@@ -102,7 +102,6 @@ model Lead {
   client          User          @relation("ClientLeads", fields: [clientId], references: [id])
   cleanerId       String?
   cleaner         User?         @relation("CleanerLeads", fields: [cleanerId], references: [id])
-  
   status          LeadStatus    @default(NEW)
   address         String
   latitude        Float
@@ -135,6 +134,10 @@ model Lead {
   distributions   LeadDistribution[]
   conversations   Conversation[]
   review          Review?
+
+  @@index([status])
+  @@index([clientId])
+  @@index([cleanerId])
 }
 
 model LeadDistribution {
@@ -143,15 +146,15 @@ model LeadDistribution {
   lead            Lead          @relation(fields: [leadId], references: [id])
   cleanerId       String
   cleaner         User          @relation(fields: [cleanerId], references: [id])
-  
   wave            Int
   status          String        // PENDING | RESPONDED | EXPIRED
-
   notifiedAt      DateTime?
   respondedAt     DateTime?
-
   createdAt       DateTime      @default(now())
   expiresAt       DateTime?
+
+  @@index([cleanerId, status])
+  @@index([leadId])
 }
 
 model CleanerStats {
@@ -202,6 +205,8 @@ model Conversation {
   updatedAt   DateTime  @updatedAt
 
   @@unique([leadId, cleanerId])
+  @@index([cleanerId, status])
+  @@index([clientId])
 }
 
 model Message {
@@ -213,6 +218,8 @@ model Message {
   content        String
 
   createdAt      DateTime     @default(now())
+
+  @@index([conversationId])
 }
 
 model VerificationToken {

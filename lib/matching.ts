@@ -60,6 +60,7 @@ export async function runMatching(leadId: string) {
   const cleaners = await prisma.user.findMany({
     where: { role: 'CLEANER', isAvailable: true },
     include: { stats: true },
+    take: 100,
   });
 
   if (cleaners.length === 0) {

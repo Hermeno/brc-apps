@@ -6,7 +6,15 @@ const prisma = new PrismaClient();
 async function main() {
   console.log("🌱 Criando contas de teste...");
 
-  // Limpar dados existentes
+  // Limpar dados existentes (em cascata)
+  await prisma.notification.deleteMany();
+  await prisma.workPhoto.deleteMany();
+  await prisma.message.deleteMany();
+  await prisma.conversation.deleteMany();
+  await prisma.review.deleteMany();
+  await prisma.leadDistribution.deleteMany();
+  await prisma.cleanerStats.deleteMany();
+  await prisma.lead.deleteMany();
   await prisma.user.deleteMany();
 
   // Senha: "password123"
@@ -22,7 +30,6 @@ async function main() {
       isVerified: true,
       phone: "(11) 98765-4321",
       address: "Rua das Flores, 123, São Paulo, SP",
-      plan: "FREE",
     },
   });
 

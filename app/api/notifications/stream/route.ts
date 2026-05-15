@@ -46,7 +46,7 @@ export async function GET() {
           ]);
           send({ unreadCount, latest });
         } catch { clearInterval(interval); }
-      }, 5000);
+      }, 30000);
     },
     cancel() { closed = true; },
   });
