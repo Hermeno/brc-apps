@@ -3,13 +3,13 @@
 import {
   Box, Heading, Text, VStack, HStack, Input, Button, Container,
 } from '@chakra-ui/react';
-import { useState } from 'react';
+import { useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { toaster } from '@/lib/toaster';
 import NextLink from 'next/link';
 import { motion } from 'motion/react';
 
-export default function ResetPasswordPage() {
+function ResetPasswordForm() {
   const router   = useRouter();
   const params   = useSearchParams();
   const email    = params.get('email') ?? '';
@@ -139,5 +139,13 @@ export default function ResetPasswordPage() {
         </motion.div>
       </Container>
     </Box>
+  );
+}
+
+export default function ResetPasswordPage() {
+  return (
+    <Suspense>
+      <ResetPasswordForm />
+    </Suspense>
   );
 }

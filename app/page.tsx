@@ -150,7 +150,7 @@ export default function HomePage() {
               transition={{ duration: 0.6, delay: 0.3 }}
             >
               <HStack gap={4} mt={2} flexWrap="wrap" justify="center">
-                <NextLink href="/auth/register">
+                <NextLink href="/request">
                   <Button
                     bg="brand.500" color="white" size="xl"
                     px={10} h="14" borderRadius="full"
@@ -306,7 +306,7 @@ export default function HomePage() {
                 <Text color="brand.100" fontSize="lg">
                   Crie sua conta grátis e receba seu primeiro profissional em minutos.
                 </Text>
-                <NextLink href="/auth/register">
+                <NextLink href="/request">
                   <Button
                     bg="white" color="brand.600"
                     size="xl" px={10} h="14"

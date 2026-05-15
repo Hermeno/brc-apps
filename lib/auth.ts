@@ -27,7 +27,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
         if (!isValid) return null;
 
-        if (!user.isVerified) {
+        if (user.role === 'CLEANER' && !user.isVerified) {
           throw new Error('EMAIL_NOT_VERIFIED');
         }
 

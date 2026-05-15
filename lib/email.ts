@@ -28,7 +28,7 @@ export async function sendMail({ to, subject, html }: MailOptions) {
   const info = await transport.sendMail({ from, to, subject, html });
 
   if (process.env.MAIL_MAILER !== 'smtp') {
-    console.log('[MAIL LOG]', JSON.stringify(info.message ?? info, null, 2));
+    console.log('[MAIL LOG]', JSON.stringify(info.messageId ?? info, null, 2));
   }
 }
 

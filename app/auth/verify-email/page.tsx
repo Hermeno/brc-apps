@@ -3,12 +3,12 @@
 import {
   Box, Heading, Text, VStack, HStack, Input, Button, Container,
 } from '@chakra-ui/react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { toaster } from '@/lib/toaster';
 import { motion } from 'motion/react';
 
-export default function VerifyEmailPage() {
+function VerifyEmailForm() {
   const router       = useRouter();
   const params       = useSearchParams();
   const email        = params.get('email') ?? '';
@@ -137,5 +137,13 @@ export default function VerifyEmailPage() {
         </motion.div>
       </Container>
     </Box>
+  );
+}
+
+export default function VerifyEmailPage() {
+  return (
+    <Suspense>
+      <VerifyEmailForm />
+    </Suspense>
   );
 }

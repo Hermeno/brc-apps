@@ -5,6 +5,7 @@ import {
 } from '@chakra-ui/react';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { signIn } from 'next-auth/react';
 import { toaster } from '@/lib/toaster';
 import NextLink from 'next/link';
 import { motion } from 'motion/react';
@@ -28,8 +29,17 @@ export default function RegisterPage() {
         body: JSON.stringify({ name, email, password, role }),
       });
       if (res.ok) {
-        toaster.create({ title: 'Account created!', description: 'Check your email to activate your account.', type: 'success' });
-        router.push(`/auth/verify-email?email=${encodeURIComponent(email)}`);
+        if (role === 'CLIENT') {
+          const login = await signIn('credentials', { email, password, redirect: false });
+          if (login?.ok) {
+            router.push('/dashboard/client');
+          } else {
+            router.push('/auth/login');
+          }
+        } else {
+          toaster.create({ title: 'Conta criada!', description: 'Verifique seu email para ativar.', type: 'success' });
+          router.push(`/auth/verify-email?email=${encodeURIComponent(email)}`);
+        }
       } else {
         const data = await res.json();
         throw new Error(data.error || 'Registration failed');

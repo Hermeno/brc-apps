@@ -37,25 +37,29 @@ export async function POST(request: NextRequest) {
     const hashedPassword = await bcryptjs.hash(password, 10);
 
     const user = await prisma.user.create({
-      data: { name, email, password: hashedPassword, role: role as 'CLIENT' | 'CLEANER' },
+      data: {
+        name, email, password: hashedPassword, role: role as 'CLIENT' | 'CLEANER',
+        isVerified: role === 'CLIENT',
+      },
     });
 
     if (role === 'CLEANER') {
       await prisma.cleanerStats.create({ data: { cleanerId: user.id } });
+
+      const code = await createVerificationCode(user.id, email, 'EMAIL_VERIFICATION');
+      await sendMail({
+        to: email,
+        subject: 'Confirme seu email — BrazilianClean',
+        html: emailVerificationHtml(code, name),
+      });
+
+      return NextResponse.json(
+        { message: 'Conta criada! Verifique seu email para continuar.' },
+        { status: 201 },
+      );
     }
 
-    const code = await createVerificationCode(user.id, email, 'EMAIL_VERIFICATION');
-
-    await sendMail({
-      to: email,
-      subject: 'Confirme seu email — BrazilianClean',
-      html: emailVerificationHtml(code, name),
-    });
-
-    return NextResponse.json(
-      { message: 'Conta criada! Verifique seu email para continuar.' },
-      { status: 201 },
-    );
+    return NextResponse.json({ message: 'Conta criada com sucesso!' }, { status: 201 });
   } catch (error: any) {
     console.error('Registration error:', error);
     return NextResponse.json({ error: 'Erro interno' }, { status: 500 });

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import {
   Box, Flex, VStack, HStack, Text, Heading, Button, Badge, Icon,
 } from '@chakra-ui/react';
@@ -47,7 +47,7 @@ function CardIcon({ brand }: { brand: string }) {
   );
 }
 
-export default function PaymentMethodsPage() {
+function PaymentMethodsContent() {
   const searchParams = useSearchParams();
   const [cards, setCards]         = useState<SavedCard[]>([]);
   const [loading, setLoading]     = useState(true);
@@ -275,5 +275,13 @@ export default function PaymentMethodsPage() {
         </VStack>
       </Box>
     </Box>
+  );
+}
+
+export default function PaymentMethodsPage() {
+  return (
+    <Suspense>
+      <PaymentMethodsContent />
+    </Suspense>
   );
 }

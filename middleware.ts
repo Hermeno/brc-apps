@@ -6,7 +6,7 @@ export default auth((req) => {
   const isLoggedIn = !!req.auth;
 
   // Public routes
-  const publicRoutes = ['/auth/login', '/auth/register', '/'];
+  const publicRoutes = ['/auth/login', '/auth/register', '/', '/request'];
 
   if (publicRoutes.includes(pathname)) {
     if (isLoggedIn && pathname !== '/') {
