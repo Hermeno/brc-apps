@@ -1,11 +1,13 @@
-import { auth } from '@/lib/auth';
+import NextAuth from 'next-auth';
+import { authConfig } from '@/lib/auth.config';
 import { NextResponse } from 'next/server';
+
+const { auth } = NextAuth(authConfig);
 
 export default auth((req) => {
   const { pathname } = req.nextUrl;
   const isLoggedIn = !!req.auth;
 
-  // Public routes
   const publicRoutes = ['/auth/login', '/auth/register', '/', '/request'];
 
   if (publicRoutes.includes(pathname)) {
@@ -15,7 +17,6 @@ export default auth((req) => {
     return NextResponse.next();
   }
 
-  // Protected routes
   if (pathname.startsWith('/dashboard')) {
     if (!isLoggedIn) {
       return NextResponse.redirect(new URL('/auth/login', req.nextUrl));
