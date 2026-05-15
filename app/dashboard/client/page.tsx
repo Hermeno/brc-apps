@@ -617,7 +617,7 @@ export default function ClientPage() {
                                                     {conv.cleaner.name}
                                                   </Text>
                                                   {conv.cleaner.isVerified && (
-                                                    <Icon as={LucideShieldCheck} w={4} h={4} color="green.500" title="Verificado" />
+                                                    <Icon as={LucideShieldCheck} w={4} h={4} color="green.500" aria-label="Verificado" />
                                                   )}
                                                 </HStack>
                                                 <Button size="xs" variant="outline" borderColor="slate.200" color="slate.600"

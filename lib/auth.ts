@@ -29,10 +29,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
         if (!isValid) return null;
 
-        if (user.role === 'CLEANER' && !user.isVerified) {
-          throw new Error('EMAIL_NOT_VERIFIED');
-        }
-
         if (user.suspendedUntil && user.suspendedUntil > new Date()) {
           throw new Error('ACCOUNT_SUSPENDED');
         }
