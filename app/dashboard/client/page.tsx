@@ -3,24 +3,24 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import {
   Box, Heading, Text, VStack, HStack, Button, Input,
-  Badge, Flex, Container, Icon, SimpleGrid, Textarea,
+  Flex, Icon, SimpleGrid, Textarea,
 } from '@chakra-ui/react';
 import {
-  LucidePlus, LucideX, LucideMapPin, LucideCalendar, LucideUser,
-  LucideLogOut, LucideMinus, LucideClock, LucideBanknote,
-  LucideSparkles, LucideTag, LucideMessageCircle, LucideZap,
-  LucidePencil, LucideTrash2, LucideCheckCircle, LucideStar,
+  LucidePlus, LucideX, LucideMapPin, LucideCalendar,
+  LucideMinus, LucideClock, LucideBanknote,
+  LucideSparkles, LucideMessageCircle, LucideZap,
+  LucidePencil, LucideCheckCircle, LucideStar,
   LucideThumbsDown, LucideChevronDown, LucideChevronUp, LucideExternalLink,
   LucideSettings, LucideRotateCcw, LucideShieldCheck,
 } from 'lucide-react';
-import { useSession, signOut } from 'next-auth/react';
+import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { toaster } from '@/lib/toaster';
-import { motion, AnimatePresence } from 'motion/react';
+import { AnimatePresence, motion } from 'motion/react';
 import {
   SERVICE_TYPES, FREQUENCY_OPTIONS, EXTRAS, calculateEstimate,
 } from '@/lib/estimate';
-import NotificationBell from '@/components/notification-bell';
+import Sidebar from '@/components/sidebar';
 
 /* ─── types ──────────────────────────────────────────────────── */
 const STATUS_MAP: Record<string, { label: string; bg: string; color: string; border: string }> = {
@@ -61,7 +61,7 @@ function Stepper({ value, onChange, min = 1, max = 10 }: {
   value: number; onChange: (v: number) => void; min?: number; max?: number;
 }) {
   return (
-    <HStack gap={0} border="1px solid" borderColor="slate.200" borderRadius="xl" overflow="hidden" w="fit-content">
+    <HStack gap={0} border="1px solid" borderColor="slate.200" overflow="hidden" w="fit-content">
       <Button size="sm" variant="ghost" px={3} h="10" borderRadius="none"
         onClick={() => onChange(Math.max(min, value - 1))} _hover={{ bg: 'slate.100' }} disabled={value <= min}>
         <Icon as={LucideMinus} w={3} h={3} />
@@ -323,117 +323,83 @@ export default function ClientPage() {
   const firstName = session?.user?.name?.split(' ')[0] ?? 'there';
 
   return (
-    <Box minH="100vh" bg="slate.50">
+    <Box minH="100vh" bg="#F8FAFC">
+      <Sidebar />
 
-      {/* ── Header ── */}
-      <Box bg="white" borderBottom="1px solid" borderColor="slate.100" px={6} py={4}
-        position="sticky" top={0} zIndex={50}>
-        <Flex justify="space-between" align="center" maxW="900px" mx="auto">
-          <HStack gap={3}>
-            <Box w="34px" h="34px" bgGradient="to-br" gradientFrom="brand.500" gradientTo="brand.700"
-              borderRadius="lg" display="flex" alignItems="center" justifyContent="center"
-              boxShadow="0 3px 10px rgba(37,99,235,0.3)">
-              <Text color="white" fontWeight="black" fontSize="xs">BC</Text>
-            </Box>
-            <Text fontWeight="black" fontSize="md" letterSpacing="tight" color="slate.900">
-              Brazilian<Text as="span" color="brand.500">Clean</Text>
-            </Text>
-          </HStack>
-          <HStack gap={3}>
-            <Text fontSize="sm" color="slate.500">
-              Hello, <Text as="span" fontWeight="semibold" color="slate.800">{firstName}</Text>
-            </Text>
-            <NotificationBell />
-            <Button size="sm" variant="ghost" color="slate.400" _hover={{ color: 'red.500', bg: 'red.50' }}
-              onClick={() => signOut({ callbackUrl: '/auth/login' })} title="Sign out">
-              <Icon as={LucideLogOut} w={4} h={4} />
-            </Button>
-          </HStack>
-        </Flex>
-      </Box>
-
-      <Container maxW="900px" py={8} px={6}>
+      <Box maxW="900px" mx="auto" py={8} px={6}>
         <VStack gap={6} align="stretch">
 
           {/* ── Profile Card ── */}
-          <motion.div initial={{ opacity: 0, y: -16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.45 }}>
-            <Box bg="white" border="1px solid" borderColor="slate.200" borderRadius="2xl"
-              boxShadow="0 2px 16px rgba(37,99,235,0.06)">
-              <Box px={5} py={4}>
-                <Flex justify="space-between" align="center" mb={3}>
-                  <Box w="52px" h="52px" borderRadius="full" overflow="hidden"
-                    border="3px solid" borderColor="brand.100"
-                    bg={profile?.avatarUrl ? 'white' : 'brand.500'}
-                    display="flex" alignItems="center" justifyContent="center"
-                    boxShadow="0 4px 12px rgba(0,0,0,0.12)" flexShrink={0}>
-                    {profile?.avatarUrl ? (
-                      <img src={profile.avatarUrl} alt="Avatar"
-                        style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                    ) : (
-                      <Text color="white" fontWeight="black" fontSize="xl">
-                        {(profile?.name ?? session?.user?.name ?? 'C')[0].toUpperCase()}
-                      </Text>
-                    )}
-                  </Box>
-                  <Button size="sm" variant="outline" borderColor="slate.200" color="slate.500"
-                    borderRadius="xl" fontWeight="semibold" fontSize="xs"
-                    _hover={{ bg: 'brand.50', borderColor: 'brand.300', color: 'brand.600' }}
-                    transition="all 0.15s"
-                    onClick={() => router.push('/dashboard/client/profile')}>
-                    <Icon as={LucideSettings} w={3.5} h={3.5} mr={1.5} />
-                    Edit profile
-                  </Button>
-                </Flex>
-
-                <HStack gap={4} flexWrap="wrap" align="start">
-                  <Box flex={1} minW={0}>
-                    <Text fontWeight="black" fontSize="md" color="slate.900" lineClamp={1}>
-                      {profile?.name ?? session?.user?.name ?? 'Customer'}
+          <Box bg="white" border="1px solid #E2E8F0">
+            <Box px={5} py={4}>
+              <Flex justify="space-between" align="center" mb={3}>
+                <Box w="44px" h="44px" borderRadius="full" overflow="hidden"
+                  bg={profile?.avatarUrl ? 'white' : 'brand.500'}
+                  display="flex" alignItems="center" justifyContent="center"
+                  border="2px solid" borderColor="slate.100" flexShrink={0}>
+                  {profile?.avatarUrl ? (
+                    <img src={profile.avatarUrl} alt="Avatar"
+                      style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  ) : (
+                    <Text color="white" fontWeight="black" fontSize="lg">
+                      {(profile?.name ?? session?.user?.name ?? 'C')[0].toUpperCase()}
                     </Text>
-                    <Text fontSize="xs" color="slate.400" mt={0.5}>{profile?.email ?? session?.user?.email}</Text>
-                    {profile?.phone && (
-                      <Text fontSize="xs" color="slate.500" mt={0.5}>📱 {profile.phone}</Text>
-                    )}
+                  )}
+                </Box>
+                <Button size="sm" variant="outline" borderColor="slate.200" color="slate.500"
+                  borderRadius="4px" fontWeight="semibold" fontSize="xs"
+                  _hover={{ bg: 'brand.50', borderColor: 'brand.300', color: 'brand.600' }}
+                  transition="all 0.15s"
+                  onClick={() => router.push('/dashboard/client/profile')}>
+                  <Icon as={LucideSettings} w={3.5} h={3.5} mr={1.5} />
+                  Edit profile
+                </Button>
+              </Flex>
+
+              <Flex justify="space-between" align="center" gap={4} flexWrap="wrap">
+                <Box minW={0}>
+                  <Text fontWeight="black" fontSize="md" color="slate.900" lineClamp={1} fontFamily="heading">
+                    {profile?.name ?? session?.user?.name ?? 'Customer'}
+                  </Text>
+                  <Text fontSize="xs" color="slate.400" mt={0.5}>{profile?.email ?? session?.user?.email}</Text>
+                  {profile?.phone && (
+                    <Text fontSize="xs" color="slate.500" mt={0.5}>📱 {profile.phone}</Text>
+                  )}
+                </Box>
+                <HStack gap={0} borderLeft="1px solid #E2E8F0" flexShrink={0}>
+                  <Box textAlign="center" px={4}>
+                    <Text fontWeight="black" fontSize="lg" color="brand.600" fontFamily="heading">{leads.length}</Text>
+                    <Text fontSize="10px" color="slate.400" fontWeight="700" textTransform="uppercase" letterSpacing="wider" fontFamily="heading">bookings</Text>
                   </Box>
-                  <HStack gap={4} flexShrink={0}>
-                    <Box textAlign="center">
-                      <Text fontWeight="black" fontSize="lg" color="brand.600">{leads.length}</Text>
-                      <Text fontSize="10px" color="slate.400" fontWeight="semibold" textTransform="uppercase" letterSpacing="wider">bookings</Text>
-                    </Box>
-                    <Box textAlign="center">
-                      <Text fontWeight="black" fontSize="lg" color="green.600">
-                        {leads.filter(l => l.status === 'COMPLETED').length}
-                      </Text>
-                      <Text fontSize="10px" color="slate.400" fontWeight="semibold" textTransform="uppercase" letterSpacing="wider">completed</Text>
-                    </Box>
-                  </HStack>
+                  <Box textAlign="center" px={4} borderLeft="1px solid #E2E8F0">
+                    <Text fontWeight="black" fontSize="lg" color="green.600" fontFamily="heading">
+                      {leads.filter(l => l.status === 'COMPLETED').length}
+                    </Text>
+                    <Text fontSize="10px" color="slate.400" fontWeight="700" textTransform="uppercase" letterSpacing="wider" fontFamily="heading">completed</Text>
+                  </Box>
                 </HStack>
-              </Box>
+              </Flex>
             </Box>
-          </motion.div>
+          </Box>
 
           {/* ── Title Row ── */}
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.08 }}>
-            <Flex justify="space-between" align="center">
-              <Box>
-                <Heading size="lg" fontWeight="black" color="slate.900">My Bookings</Heading>
-                <Text color="slate.500" fontSize="sm" mt={1}>
-                  {leads.filter(l => !['COMPLETED', 'CANCELLED'].includes(l.status)).length} active booking(s)
-                </Text>
-              </Box>
-              <motion.div whileTap={{ scale: 0.96 }}>
-                <Button
-                  bg={showForm ? 'slate.100' : 'brand.500'} color={showForm ? 'slate.700' : 'white'}
-                  borderRadius="xl" fontWeight="bold" fontSize="sm" px={5}
-                  _hover={{ bg: showForm ? 'slate.200' : 'brand.600', transform: 'translateY(-1px)' }}
-                  transition="all 0.2s"
-                  onClick={() => { setShowForm(v => !v); if (showForm) setForm(emptyForm); }}>
-                  <Icon as={showForm ? LucideX : LucidePlus} w={4} h={4} mr={2} />
-                  {showForm ? 'Cancel' : 'New Booking'}
-                </Button>
-              </motion.div>
-            </Flex>
-          </motion.div>
+          <Flex justify="space-between" align="center">
+            <Box>
+              <Heading size="lg" fontWeight="black" color="slate.900" fontFamily="heading">My Bookings</Heading>
+              <Text color="slate.500" fontSize="sm" mt={1}>
+                {leads.filter(l => !['COMPLETED', 'CANCELLED'].includes(l.status)).length} active booking(s)
+              </Text>
+            </Box>
+            <Button
+              bg={showForm ? 'slate.100' : 'brand.500'} color={showForm ? 'slate.700' : 'white'}
+              borderRadius="4px" fontWeight="bold" fontSize="sm" px={5}
+              _hover={{ bg: showForm ? 'slate.200' : 'brand.600' }}
+              transition="background 0.15s"
+              onClick={() => { setShowForm(v => !v); if (showForm) setForm(emptyForm); }}>
+              <Icon as={showForm ? LucideX : LucidePlus} w={4} h={4} mr={2} />
+              {showForm ? 'Cancel' : 'New Booking'}
+            </Button>
+          </Flex>
 
           {/* ── New Order Form ── */}
           <AnimatePresence>
@@ -460,19 +426,17 @@ export default function ClientPage() {
             return (
               <>
                 {activeLeads.length === 0 ? (
-                  <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.1 }}>
-                    <Box borderColor="slate.200" borderRadius="2xl" p={16} textAlign="center">
-                      <Text fontSize="4xl" mb={3}>🧹</Text>
-                      <Text color="slate.600" fontWeight="bold" fontSize="lg">No active bookings</Text>
-                      <Text color="slate.400" fontSize="sm" mt={1}>
-                        {historyLeads.length > 0
-                          ? 'All your bookings are finalized. View your history below.'
-                          : 'Click "New Booking" to request a cleaning professional.'}
-                      </Text>
-                    </Box>
-                  </motion.div>
+                  <Box border="1px solid #E2E8F0" p={16} textAlign="center" bg="white">
+                    <Text fontSize="4xl" mb={3}>🧹</Text>
+                    <Text color="slate.600" fontWeight="bold" fontSize="lg">No active bookings</Text>
+                    <Text color="slate.400" fontSize="sm" mt={1}>
+                      {historyLeads.length > 0
+                        ? 'All your bookings are finalized. View your history below.'
+                        : 'Click "New Booking" to request a cleaning professional.'}
+                    </Text>
+                  </Box>
                 ) : (
-                  <VStack gap={4} align="stretch">
+                  <VStack gap={3} align="stretch">
                     {activeLeads.map((lead, i) => {
                       const s = STATUS_MAP[lead.status] ?? { label: lead.status, bg: '#F3F4F6', color: '#6B7280', border: '#E5E7EB' };
                       const now = new Date();
@@ -487,20 +451,17 @@ export default function ClientPage() {
                       const activeConvs = lead.status === 'IN_REVIEW'
                         ? (lead.conversations ?? []).filter(c => c.status === 'active')
                         : [];
+                      const accentColor = lead.status === 'COMPLETED' ? '#10B981' : lead.status === 'CANCELLED' ? '#EF4444' : lead.status === 'ACCEPTED' ? '#1A7FA0' : '#F59E0B';
 
                       return (
-                        <motion.div key={lead.id}
-                          initial={{ opacity: 0, y: 20 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ duration: 0.35, delay: i * 0.06 }}
-                          layout>
                           <Box
-                            bg="white" border="1px solid"
-                            borderColor={lead.status === 'COMPLETED' ? 'green.200' : lead.status === 'CANCELLED' ? 'red.200' : 'slate.200'}
-                            borderRadius="2xl" overflow="hidden"
-                            boxShadow="0 1px 8px rgba(0,0,0,0.04)"
-                            _hover={{ boxShadow: '0 4px 20px rgba(0,0,0,0.08)' }}
-                            transition="all 0.2s">
+                            key={lead.id}
+                            position="relative"
+                            bg="white" border="1px solid #E2E8F0"
+                            overflow="hidden"
+                            transition="background 0.15s">
+                            {/* Left accent strip */}
+                            <Box position="absolute" left={0} top={0} bottom={0} w="3px" bg={accentColor} />
 
                             {/* Card body */}
                             <Box p={5}>
@@ -508,16 +469,14 @@ export default function ClientPage() {
                                 <VStack align="start" gap={2.5} flex={1} minW={0}>
 
                                   <HStack gap={2} flexWrap="wrap">
-                                    <Badge bg={s.bg} color={s.color} borderRadius="full" px={3} py={0.5}
-                                      fontSize="xs" fontWeight="bold" border="1px solid" borderColor={s.border}>
+                                    <Text style={{ borderRadius: 2, background: s.bg, color: s.color, border: `1px solid ${s.border}`, padding: '2px 8px', fontSize: '10px', fontWeight: 700, display: 'inline-block' }}>
                                       {s.label}
-                                    </Badge>
-                                    <Text fontWeight="bold" fontSize="sm" color="slate.800">{lead.serviceType}</Text>
+                                    </Text>
+                                    <Text fontWeight="bold" fontSize="sm" color="slate.800" fontFamily="heading">{lead.serviceType}</Text>
                                     {lead.isInstantBook && (
-                                      <Badge bg="yellow.100" color="yellow.700" borderRadius="full" px={2} fontSize="xs"
-                                        border="1px solid" borderColor="yellow.300">
-                                        <Icon as={LucideZap} w={3} h={3} mr={1} />Instant
-                                      </Badge>
+                                      <Text style={{ borderRadius: 2, background: '#FEF9C3', color: '#854D0E', border: '1px solid #FDE68A', padding: '2px 6px', fontSize: '10px', fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                                        ⚡ Instant
+                                      </Text>
                                     )}
                                   </HStack>
 
@@ -533,11 +492,15 @@ export default function ClientPage() {
                                   </HStack>
 
                                   {(lead.bedrooms || lead.squareMeters) && (
-                                    <HStack gap={2} flexWrap="wrap">
-                                      {lead.bedrooms && <Badge bg="slate.50" color="slate.600" borderRadius="full" px={2} py={0.5} fontSize="xs" border="1px solid" borderColor="slate.200">🛏 {lead.bedrooms}bd</Badge>}
-                                      {lead.bathrooms && <Badge bg="slate.50" color="slate.600" borderRadius="full" px={2} py={0.5} fontSize="xs" border="1px solid" borderColor="slate.200">🚿 {lead.bathrooms}ba</Badge>}
-                                      {(lead.squareMeters ?? 0) > 0 && <Badge bg="slate.50" color="slate.600" borderRadius="full" px={2} py={0.5} fontSize="xs" border="1px solid" borderColor="slate.200">📐 {lead.squareMeters}m²</Badge>}
-                                      {freqLabel && freqLabel !== 'One-time' && <Badge bg="green.50" color="green.700" borderRadius="full" px={2} py={0.5} fontSize="xs" border="1px solid" borderColor="green.200"><Icon as={LucideTag} w={3} h={3} mr={1} />{freqLabel}</Badge>}
+                                    <HStack gap={3} flexWrap="wrap">
+                                      {lead.bedrooms && <Text fontSize="xs" color="slate.600">🛏 {lead.bedrooms}bd</Text>}
+                                      {lead.bathrooms && <Text fontSize="xs" color="slate.600">🚿 {lead.bathrooms}ba</Text>}
+                                      {(lead.squareMeters ?? 0) > 0 && <Text fontSize="xs" color="slate.600">📐 {lead.squareMeters}m²</Text>}
+                                      {freqLabel && freqLabel !== 'One-time' && (
+                                        <Text style={{ borderRadius: 2, background: '#F0FDF4', padding: '2px 6px', fontSize: '9.5px', fontWeight: 700, color: '#15803D' }}>
+                                          🔄 {freqLabel}
+                                        </Text>
+                                      )}
                                     </HStack>
                                   )}
 
@@ -561,20 +524,20 @@ export default function ClientPage() {
                                     const acceptedConv = (lead.conversations ?? []).find(c => c.cleanerId === lead.cleanerId && c.status === 'active');
                                     return (
                                       <HStack gap={2} flexWrap="wrap">
-                                        <HStack gap={1.5} fontSize="sm" bg="green.50" px={3} py={1}
-                                          borderRadius="full" color="green.700" border="1px solid" borderColor="green.200">
+                                        <HStack gap={1.5} fontSize="sm" bg="#F0FDF4" px={3} py={1}
+                                          border="1px solid #BBF7D0" color="green.700">
                                           <Icon as={LucideCheckCircle} w={4} h={4} />
                                           <Text fontWeight="semibold">{lead.cleaner.name}</Text>
                                         </HStack>
                                         <Button size="xs" variant="outline" borderColor="slate.200" color="slate.600"
-                                          borderRadius="full" fontWeight="semibold"
+                                          borderRadius="4px" fontWeight="semibold"
                                           _hover={{ bg: 'brand.50', borderColor: 'brand.200', color: 'brand.600' }}
                                           onClick={() => router.push(`/dashboard/profile/${lead.cleanerId}`)}>
                                           <Icon as={LucideExternalLink} w={3} h={3} mr={1} />
                                           View profile
                                         </Button>
                                         {acceptedConv && (
-                                          <Button size="xs" bg="brand.500" color="white" borderRadius="full" fontWeight="bold"
+                                          <Button size="xs" bg="brand.500" color="white" borderRadius="4px" fontWeight="bold"
                                             _hover={{ bg: 'brand.600' }}
                                             onClick={() => router.push(`/dashboard/chat/${acceptedConv.id}`)}>
                                             <Icon as={LucideMessageCircle} w={3} h={3} mr={1} />
@@ -595,58 +558,48 @@ export default function ClientPage() {
                                       </Text>
                                       <VStack align="start" gap={2}>
                                         {activeConvs.map(conv => (
-                                          <motion.div key={conv.id} initial={{ opacity: 0, x: -8 }} animate={{ opacity: 1, x: 0 }}>
-                                            <motion.div
-                                              animate={{ boxShadow: ['0 0 0 0 rgba(37,99,235,0)', '0 0 0 6px rgba(37,99,235,0.18)', '0 0 0 0 rgba(37,99,235,0)'] }}
-                                              transition={{ repeat: Infinity, duration: 1.8, ease: 'easeInOut' }}
-                                              style={{ borderRadius: '12px' }}>
-                                              <HStack gap={2} bg="blue.50" px={3} py={2} borderRadius="xl"
-                                                border="1px solid" borderColor="blue.200">
-                                                <Box w="28px" h="28px" borderRadius="full" flexShrink={0}
-                                                  overflow="hidden" border="2px solid" borderColor="brand.100"
-                                                  bg="brand.500"
-                                                  display="flex" alignItems="center" justifyContent="center"
-                                                  color="white" fontSize="xs" fontWeight="black">
-                                                  {conv.cleaner.avatarUrl ? (
-                                                    <img src={conv.cleaner.avatarUrl} alt={conv.cleaner.name}
-                                                      style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                                                  ) : conv.cleaner.name[0]}
-                                                </Box>
-                                                <HStack gap={1.5} flex={1}>
-                                                  <Text fontSize="sm" fontWeight="semibold" color="slate.700">
-                                                    {conv.cleaner.name}
-                                                  </Text>
-                                                  {conv.cleaner.isVerified && (
-                                                    <Icon as={LucideShieldCheck} w={4} h={4} color="green.500" aria-label="Verificado" />
-                                                  )}
-                                                </HStack>
-                                                <Button size="xs" variant="outline" borderColor="slate.200" color="slate.600"
-                                                  borderRadius="lg" fontWeight="semibold"
-                                                  _hover={{ bg: 'brand.50', borderColor: 'brand.200', color: 'brand.600' }}
-                                                  onClick={() => router.push(`/dashboard/profile/${conv.cleaner.id}`)}>
-                                                  <Icon as={LucideExternalLink} w={3} h={3} mr={1} />
-                                                  View profile
-                                                </Button>
-                                                <Button size="xs" bg="green.500" color="white" borderRadius="lg" fontWeight="bold"
-                                                  _hover={{ bg: 'green.600' }}
-                                                  loading={accepting === conv.id}
-                                                  onClick={() => handleAccept(conv.id)}>
-                                                  <Icon as={LucideCheckCircle} w={3} h={3} mr={1} />
-                                                  Accept
-                                                </Button>
-                                                <motion.div whileTap={{ scale: 0.9 }}>
-                                                  <Button size="xs" variant="outline" color="red.500" borderColor="red.200"
-                                                    borderRadius="lg" fontWeight="bold"
-                                                    _hover={{ bg: 'red.50' }}
-                                                    loading={declining === conv.id}
-                                                    onClick={() => handleDecline(conv.id)}>
-                                                    <Icon as={LucideThumbsDown} w={3} h={3} mr={1} />
-                                                    Decline
-                                                  </Button>
-                                                </motion.div>
-                                              </HStack>
-                                            </motion.div>
-                                          </motion.div>
+                                          <HStack key={conv.id} gap={2} bg="#EFF6FF" px={3} py={2}
+                                            border="1px solid #BFDBFE">
+                                            <Box w="28px" h="28px" borderRadius="full" flexShrink={0}
+                                              overflow="hidden" bg="brand.500"
+                                              display="flex" alignItems="center" justifyContent="center"
+                                              color="white" fontSize="xs" fontWeight="black">
+                                              {conv.cleaner.avatarUrl ? (
+                                                <img src={conv.cleaner.avatarUrl} alt={conv.cleaner.name}
+                                                  style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                              ) : conv.cleaner.name[0]}
+                                            </Box>
+                                            <HStack gap={1.5} flex={1}>
+                                              <Text fontSize="sm" fontWeight="semibold" color="slate.700">
+                                                {conv.cleaner.name}
+                                              </Text>
+                                              {conv.cleaner.isVerified && (
+                                                <Icon as={LucideShieldCheck} w={4} h={4} color="green.500" aria-label="Verificado" />
+                                              )}
+                                            </HStack>
+                                            <Button size="xs" variant="outline" borderColor="slate.200" color="slate.600"
+                                              borderRadius="4px" fontWeight="semibold"
+                                              _hover={{ bg: 'brand.50', borderColor: 'brand.200', color: 'brand.600' }}
+                                              onClick={() => router.push(`/dashboard/profile/${conv.cleaner.id}`)}>
+                                              <Icon as={LucideExternalLink} w={3} h={3} mr={1} />
+                                              View profile
+                                            </Button>
+                                            <Button size="xs" bg="green.500" color="white" borderRadius="4px" fontWeight="bold"
+                                              _hover={{ bg: 'green.600' }}
+                                              loading={accepting === conv.id}
+                                              onClick={() => handleAccept(conv.id)}>
+                                              <Icon as={LucideCheckCircle} w={3} h={3} mr={1} />
+                                              Accept
+                                            </Button>
+                                            <Button size="xs" variant="outline" color="red.500" borderColor="red.200"
+                                              borderRadius="4px" fontWeight="bold"
+                                              _hover={{ bg: 'red.50' }}
+                                              loading={declining === conv.id}
+                                              onClick={() => handleDecline(conv.id)}>
+                                              <Icon as={LucideThumbsDown} w={3} h={3} mr={1} />
+                                              Decline
+                                            </Button>
+                                          </HStack>
                                         ))}
                                       </VStack>
                                     </Box>
@@ -670,8 +623,8 @@ export default function ClientPage() {
 
                                   {/* Rating already submitted */}
                                   {lead.review && (
-                                    <HStack gap={1.5} bg="yellow.50" px={3} py={1.5} borderRadius="xl"
-                                      border="1px solid" borderColor="yellow.200">
+                                    <HStack gap={1.5} bg="#FFFBEB" px={3} py={1.5}
+                                      border="1px solid #FDE68A">
                                       {[1,2,3,4,5].map(st => (
                                         <Icon key={st} as={LucideStar} w={4} h={4}
                                           color={lead.review!.rating >= st ? '#F59E0B' : '#E5E7EB'}
@@ -690,222 +643,174 @@ export default function ClientPage() {
                             </Box>
 
                             {/* ── Action Bar ── */}
-                            <AnimatePresence>
-                              {(canCancel || canTerminate || canRate || canReactivate || (isActive && !timeHasPassed)) && (
-                                <motion.div
-                                  initial={{ opacity: 0, height: 0 }}
-                                  animate={{ opacity: 1, height: 'auto' }}
-                                  exit={{ opacity: 0, height: 0 }}
-                                  transition={{ duration: 0.25 }}>
-                                  <Box borderTop="1px solid" borderColor="slate.100" px={5} py={3}>
-                                    <Flex gap={2} align="center" flexWrap="wrap">
+                            {(canCancel || canTerminate || canRate || canReactivate || (isActive && !timeHasPassed)) && (
+                              <Box borderTop="1px solid #F1F5F9" px={5} py={3}>
+                                <Flex gap={2} align="center" flexWrap="wrap">
 
-                                      {/* Edit */}
-                                      {isActive && !timeHasPassed && ['NEW','WAVE1','WAVE2','WAVE3','UNMATCHED'].includes(lead.status) && (
-                                        <motion.div whileTap={{ scale: 0.95 }}>
-                                          <Button size="sm" variant="outline" borderColor="slate.200" color="slate.600"
-                                            borderRadius="lg" fontWeight="semibold"
-                                            _hover={{ bg: 'slate.50', borderColor: 'brand.300', color: 'brand.600' }}
-                                            transition="all 0.2s"
-                                            onClick={() => editingId === lead.id ? setEditingId(null) : openEdit(lead)}>
-                                            <Icon as={editingId === lead.id ? LucideChevronUp : LucidePencil} w={4} h={4} mr={1.5} />
-                                            {editingId === lead.id ? 'Close edit' : 'Edit'}
-                                          </Button>
-                                        </motion.div>
-                                      )}
+                                  {/* Edit */}
+                                  {isActive && !timeHasPassed && ['NEW','WAVE1','WAVE2','WAVE3','UNMATCHED'].includes(lead.status) && (
+                                    <Button size="sm" variant="outline" borderColor="slate.200" color="slate.600"
+                                      borderRadius="4px" fontWeight="semibold"
+                                      _hover={{ bg: 'slate.50', borderColor: 'brand.300', color: 'brand.600' }}
+                                      transition="background 0.15s"
+                                      onClick={() => editingId === lead.id ? setEditingId(null) : openEdit(lead)}>
+                                      <Icon as={editingId === lead.id ? LucideChevronUp : LucidePencil} w={4} h={4} mr={1.5} />
+                                      {editingId === lead.id ? 'Close edit' : 'Edit'}
+                                    </Button>
+                                  )}
 
-                                      {/* Cancel */}
-                                      {canCancel && confirmCancel !== lead.id && (
-                                        <motion.div whileTap={{ scale: 0.95 }}>
-                                          <Button size="sm" variant="outline" borderColor="red.200" color="red.500"
-                                            borderRadius="lg" fontWeight="semibold"
-                                            _hover={{ bg: 'red.50' }} transition="all 0.2s"
-                                            onClick={() => setConfirmCancel(lead.id)}>
-                                            <Icon as={LucideTrash2} w={4} h={4} mr={1.5} />
-                                            Cancel booking
-                                          </Button>
-                                        </motion.div>
-                                      )}
+                                  {/* Cancel */}
+                                  {canCancel && confirmCancel !== lead.id && (
+                                    <Button size="sm" variant="outline" borderColor="red.200" color="red.500"
+                                      borderRadius="4px" fontWeight="semibold"
+                                      _hover={{ bg: 'red.50' }} transition="background 0.15s"
+                                      onClick={() => setConfirmCancel(lead.id)}>
+                                      ✕ Cancel booking
+                                    </Button>
+                                  )}
 
-                                      {/* Cancel confirmation */}
-                                      <AnimatePresence>
-                                        {confirmCancel === lead.id && (
-                                          <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }}>
-                                            <HStack gap={2} bg="red.50" px={3} py={2} borderRadius="xl" border="1px solid" borderColor="red.200">
-                                              <Text fontSize="sm" color="red.600" fontWeight="semibold">Confirm cancellation?</Text>
-                                              <Button size="xs" bg="red.500" color="white" borderRadius="lg"
-                                                loading={cancelling === lead.id}
-                                                onClick={() => handleCancel(lead.id)}>Yes, cancel</Button>
-                                              <Button size="xs" variant="ghost" color="slate.500" borderRadius="lg"
-                                                onClick={() => setConfirmCancel(null)}>No</Button>
-                                            </HStack>
-                                          </motion.div>
-                                        )}
-                                      </AnimatePresence>
+                                  {/* Cancel confirmation */}
+                                  {confirmCancel === lead.id && (
+                                    <HStack gap={2} bg="#FEF2F2" px={3} py={2} border="1px solid #FECACA">
+                                      <Text fontSize="sm" color="red.600" fontWeight="semibold">Confirm cancellation?</Text>
+                                      <Button size="xs" bg="red.500" color="white" borderRadius="4px"
+                                        loading={cancelling === lead.id}
+                                        onClick={() => handleCancel(lead.id)}>Yes, cancel</Button>
+                                      <Button size="xs" variant="ghost" color="slate.500"
+                                        onClick={() => setConfirmCancel(null)}>No</Button>
+                                    </HStack>
+                                  )}
 
-                                      {/* Reactivate */}
-                                      {canReactivate && (
-                                        <motion.div whileTap={{ scale: 0.95 }}>
-                                          <Button size="sm" bg="orange.500" color="white" borderRadius="lg" fontWeight="bold"
-                                            _hover={{ bg: 'orange.600' }} transition="all 0.2s"
-                                            onClick={() => {
-                                              if (reactivateId === lead.id) {
-                                                setReactivateId(null);
-                                              } else {
-                                                setReactivateId(lead.id);
-                                                const dt = new Date(lead.dateTime);
-                                                setReactivateDate(dt.toISOString().split('T')[0]);
-                                                setReactivateTime(dt.toTimeString().slice(0, 5));
-                                              }
-                                            }}>
-                                            <Icon as={LucideRotateCcw} w={4} h={4} mr={1.5} />
-                                            {reactivateId === lead.id ? 'Close' : 'Reschedule & Reactivate'}
-                                          </Button>
-                                        </motion.div>
-                                      )}
+                                  {/* Reactivate */}
+                                  {canReactivate && (
+                                    <Button size="sm" bg="orange.500" color="white" borderRadius="4px" fontWeight="bold"
+                                      _hover={{ bg: 'orange.600' }} transition="background 0.15s"
+                                      onClick={() => {
+                                        if (reactivateId === lead.id) {
+                                          setReactivateId(null);
+                                        } else {
+                                          setReactivateId(lead.id);
+                                          const dt = new Date(lead.dateTime);
+                                          setReactivateDate(dt.toISOString().split('T')[0]);
+                                          setReactivateTime(dt.toTimeString().slice(0, 5));
+                                        }
+                                      }}>
+                                      <Icon as={LucideRotateCcw} w={4} h={4} mr={1.5} />
+                                      {reactivateId === lead.id ? 'Close' : 'Reschedule & Reactivate'}
+                                    </Button>
+                                  )}
 
-                                      {/* Terminate */}
-                                      {canTerminate && confirmComplete !== lead.id && (
-                                        <motion.div whileTap={{ scale: 0.97 }}
-                                          animate={{ boxShadow: ['0 0 0 0 rgba(34,197,94,0)', '0 0 0 6px rgba(34,197,94,0.15)', '0 0 0 0 rgba(34,197,94,0)'] }}
-                                          transition={{ repeat: Infinity, duration: 2.5 }}>
-                                          <Button size="sm" bg="green.500" color="white" borderRadius="lg" fontWeight="bold"
-                                            _hover={{ bg: 'green.600', transform: 'translateY(-1px)' }}
-                                            transition="all 0.2s"
-                                            onClick={() => setConfirmComplete(lead.id)}>
-                                            <Icon as={LucideCheckCircle} w={4} h={4} mr={1.5} />
-                                            Mark as complete
-                                          </Button>
-                                        </motion.div>
-                                      )}
+                                  {/* Terminate */}
+                                  {canTerminate && confirmComplete !== lead.id && (
+                                    <Button size="sm" bg="green.500" color="white" borderRadius="4px" fontWeight="bold"
+                                      _hover={{ bg: 'green.600' }}
+                                      transition="background 0.15s"
+                                      onClick={() => setConfirmComplete(lead.id)}>
+                                      <Icon as={LucideCheckCircle} w={4} h={4} mr={1.5} />
+                                      Mark as complete
+                                    </Button>
+                                  )}
 
-                                      {/* Terminate confirmation */}
-                                      <AnimatePresence>
-                                        {confirmComplete === lead.id && (
-                                          <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }}>
-                                            <HStack gap={2} bg="green.50" px={3} py={2} borderRadius="xl" border="1px solid" borderColor="green.200">
-                                              <Text fontSize="sm" color="green.700" fontWeight="semibold">Job completed?</Text>
-                                              <Button size="xs" bg="green.500" color="white" borderRadius="lg"
-                                                loading={completing === lead.id}
-                                                onClick={() => handleComplete(lead.id)}>Yes, completed</Button>
-                                              <Button size="xs" variant="ghost" color="slate.500" borderRadius="lg"
-                                                onClick={() => setConfirmComplete(null)}>No</Button>
-                                            </HStack>
-                                          </motion.div>
-                                        )}
-                                      </AnimatePresence>
+                                  {/* Terminate confirmation */}
+                                  {confirmComplete === lead.id && (
+                                    <HStack gap={2} bg="#F0FDF4" px={3} py={2} border="1px solid #BBF7D0">
+                                      <Text fontSize="sm" color="green.700" fontWeight="semibold">Job completed?</Text>
+                                      <Button size="xs" bg="green.500" color="white" borderRadius="4px"
+                                        loading={completing === lead.id}
+                                        onClick={() => handleComplete(lead.id)}>Yes, completed</Button>
+                                      <Button size="xs" variant="ghost" color="slate.500"
+                                        onClick={() => setConfirmComplete(null)}>No</Button>
+                                    </HStack>
+                                  )}
 
-                                      {/* Rate */}
-                                      {canRate && (
-                                        <motion.div whileTap={{ scale: 0.95 }}
-                                          animate={{ y: [0, -2, 0] }}
-                                          transition={{ repeat: Infinity, duration: 2 }}>
-                                          <Button size="sm" bg="yellow.400" color="white" borderRadius="lg" fontWeight="bold"
-                                            _hover={{ bg: 'yellow.500' }} transition="all 0.2s"
-                                            onClick={() => setRatingLead(lead)}>
-                                            <Icon as={LucideStar} w={4} h={4} mr={1.5} />
-                                            Rate professional
-                                          </Button>
-                                        </motion.div>
-                                      )}
+                                  {/* Rate */}
+                                  {canRate && (
+                                    <Button size="sm" bg="yellow.400" color="white" borderRadius="4px" fontWeight="bold"
+                                      _hover={{ bg: 'yellow.500' }} transition="background 0.15s"
+                                      onClick={() => setRatingLead(lead)}>
+                                      <Icon as={LucideStar} w={4} h={4} mr={1.5} />
+                                      Rate professional
+                                    </Button>
+                                  )}
 
-                                    </Flex>
-                                  </Box>
-                                </motion.div>
-                              )}
-                            </AnimatePresence>
+                                </Flex>
+                              </Box>
+                            )}
 
                             {/* ── Reactivate Form (inline) ── */}
-                            <AnimatePresence>
-                              {reactivateId === lead.id && (
-                                <motion.div
-                                  initial={{ opacity: 0, height: 0 }}
-                                  animate={{ opacity: 1, height: 'auto' }}
-                                  exit={{ opacity: 0, height: 0 }}
-                                  transition={{ duration: 0.3 }}>
-                                  <Box borderTop="1px solid" borderColor="orange.100" bg="orange.50" p={5}>
-                                    <Text fontSize="sm" fontWeight="bold" color="orange.700" mb={4}>🔄 Choose a new date & time</Text>
-                                    <VStack gap={3} align="stretch">
-                                      <HStack gap={3}>
-                                        <Input type="date" value={reactivateDate}
-                                          onChange={e => setReactivateDate(e.target.value)}
-                                          bg="white" borderRadius="xl" h="11" flex={1}
-                                          border="1px solid" borderColor="orange.200"
-                                          min={new Date().toISOString().split('T')[0]} />
-                                        <Input type="time" value={reactivateTime}
-                                          onChange={e => setReactivateTime(e.target.value)}
-                                          bg="white" borderRadius="xl" h="11" flex={1}
-                                          border="1px solid" borderColor="orange.200" />
-                                      </HStack>
-                                      <HStack gap={3} justify="flex-end">
-                                        <Button size="sm" variant="ghost" color="slate.500" onClick={() => setReactivateId(null)}>Cancel</Button>
-                                        <Button size="sm" bg="orange.500" color="white" borderRadius="xl" fontWeight="bold"
-                                          _hover={{ bg: 'orange.600' }} loading={reactivating} loadingText="Reactivating…"
-                                          onClick={() => handleReactivate(lead.id)}>
-                                          <Icon as={LucideRotateCcw} w={4} h={4} mr={1.5} />
-                                          Reactivate Booking
-                                        </Button>
-                                      </HStack>
-                                    </VStack>
-                                  </Box>
-                                </motion.div>
-                              )}
-                            </AnimatePresence>
+                            {reactivateId === lead.id && (
+                              <Box borderTop="1px solid #FED7AA" bg="#FFF7ED" p={5}>
+                                <Text fontSize="sm" fontWeight="bold" color="orange.700" mb={4}>🔄 Choose a new date & time</Text>
+                                <VStack gap={3} align="stretch">
+                                  <HStack gap={3}>
+                                    <Input type="date" value={reactivateDate}
+                                      onChange={e => setReactivateDate(e.target.value)}
+                                      bg="white" borderRadius="4px" h="11" flex={1}
+                                      border="1px solid" borderColor="orange.200"
+                                      min={new Date().toISOString().split('T')[0]} />
+                                    <Input type="time" value={reactivateTime}
+                                      onChange={e => setReactivateTime(e.target.value)}
+                                      bg="white" borderRadius="4px" h="11" flex={1}
+                                      border="1px solid" borderColor="orange.200" />
+                                  </HStack>
+                                  <HStack gap={3} justify="flex-end">
+                                    <Button size="sm" variant="ghost" color="slate.500" onClick={() => setReactivateId(null)}>Cancel</Button>
+                                    <Button size="sm" bg="orange.500" color="white" borderRadius="4px" fontWeight="bold"
+                                      _hover={{ bg: 'orange.600' }} loading={reactivating} loadingText="Reactivating…"
+                                      onClick={() => handleReactivate(lead.id)}>
+                                      <Icon as={LucideRotateCcw} w={4} h={4} mr={1.5} />
+                                      Reactivate Booking
+                                    </Button>
+                                  </HStack>
+                                </VStack>
+                              </Box>
+                            )}
 
                             {/* ── Edit Form (inline) ── */}
-                            <AnimatePresence>
-                              {editingId === lead.id && (
-                                <motion.div
-                                  initial={{ opacity: 0, height: 0 }}
-                                  animate={{ opacity: 1, height: 'auto' }}
-                                  exit={{ opacity: 0, height: 0 }}
-                                  transition={{ duration: 0.3 }}>
-                                  <Box borderTop="1px solid" borderColor="brand.100" bg="brand.50" p={5}>
-                                    <Text fontSize="sm" fontWeight="bold" color="brand.700" mb={4}>✏️ Edit booking</Text>
-                                    <VStack gap={4} align="stretch">
-                                      <SimpleGrid columns={2} gap={3}>
-                                        {SERVICE_TYPES.map(sv => (
-                                          <Box key={sv.id} as="button" p={3} borderRadius="xl"
-                                            border="2px solid"
-                                            borderColor={editForm.serviceType === sv.id ? 'brand.400' : 'slate.200'}
-                                            bg="white" cursor="pointer" textAlign="left"
-                                            onClick={() => setEditField('serviceType', sv.id)}
-                                            transition="all 0.15s">
-                                            <HStack gap={2}>
-                                              <Text>{sv.icon}</Text>
-                                              <Text fontSize="xs" fontWeight="bold"
-                                                color={editForm.serviceType === sv.id ? 'brand.700' : 'slate.700'}>{sv.labelEn}</Text>
-                                            </HStack>
-                                          </Box>
-                                        ))}
-                                      </SimpleGrid>
-                                      <Input placeholder="Address" value={editForm.address}
-                                        onChange={e => setEditField('address', e.target.value)}
-                                        bg="white" borderRadius="xl" h="11" border="1px solid" borderColor="slate.200" />
-                                      <HStack gap={3}>
-                                        <Input type="date" value={editForm.date}
-                                          onChange={e => setEditField('date', e.target.value)}
-                                          bg="white" borderRadius="xl" h="11" flex={1} border="1px solid" borderColor="slate.200" />
-                                        <Input type="time" value={editForm.time}
-                                          onChange={e => setEditField('time', e.target.value)}
-                                          bg="white" borderRadius="xl" h="11" flex={1} border="1px solid" borderColor="slate.200" />
-                                      </HStack>
-                                      <HStack gap={3} justify="flex-end">
-                                        <Button size="sm" variant="ghost" color="slate.500" onClick={() => setEditingId(null)}>Cancel</Button>
-                                        <Button size="sm" bg="brand.500" color="white" borderRadius="xl" fontWeight="bold"
-                                          _hover={{ bg: 'brand.600' }} loading={saving} loadingText="Saving…"
-                                          onClick={() => handleSaveEdit(lead.id)}>
-                                          Save changes
-                                        </Button>
-                                      </HStack>
-                                    </VStack>
-                                  </Box>
-                                </motion.div>
-                              )}
-                            </AnimatePresence>
+                            {editingId === lead.id && (
+                              <Box borderTop="1px solid #BFDBFE" bg="#EFF6FF" p={5}>
+                                <Text fontSize="sm" fontWeight="bold" color="brand.700" mb={4}>✏️ Edit booking</Text>
+                                <VStack gap={4} align="stretch">
+                                  <SimpleGrid columns={2} gap={3}>
+                                    {SERVICE_TYPES.map(sv => (
+                                      <Box key={sv.id} as="button" p={3}
+                                        border="2px solid"
+                                        borderColor={editForm.serviceType === sv.id ? 'brand.400' : 'slate.200'}
+                                        bg="white" cursor="pointer" textAlign="left"
+                                        onClick={() => setEditField('serviceType', sv.id)}
+                                        transition="all 0.15s">
+                                        <HStack gap={2}>
+                                          <Text>{sv.icon}</Text>
+                                          <Text fontSize="xs" fontWeight="bold"
+                                            color={editForm.serviceType === sv.id ? 'brand.700' : 'slate.700'}>{sv.labelEn}</Text>
+                                        </HStack>
+                                      </Box>
+                                    ))}
+                                  </SimpleGrid>
+                                  <Input placeholder="Address" value={editForm.address}
+                                    onChange={e => setEditField('address', e.target.value)}
+                                    bg="white" borderRadius="4px" h="11" border="1px solid" borderColor="slate.200" />
+                                  <HStack gap={3}>
+                                    <Input type="date" value={editForm.date}
+                                      onChange={e => setEditField('date', e.target.value)}
+                                      bg="white" borderRadius="4px" h="11" flex={1} border="1px solid" borderColor="slate.200" />
+                                    <Input type="time" value={editForm.time}
+                                      onChange={e => setEditField('time', e.target.value)}
+                                      bg="white" borderRadius="4px" h="11" flex={1} border="1px solid" borderColor="slate.200" />
+                                  </HStack>
+                                  <HStack gap={3} justify="flex-end">
+                                    <Button size="sm" variant="ghost" color="slate.500" onClick={() => setEditingId(null)}>Cancel</Button>
+                                    <Button size="sm" bg="brand.500" color="white" borderRadius="4px" fontWeight="bold"
+                                      _hover={{ bg: 'brand.600' }} loading={saving} loadingText="Saving…"
+                                      onClick={() => handleSaveEdit(lead.id)}>
+                                      Save changes
+                                    </Button>
+                                  </HStack>
+                                </VStack>
+                              </Box>
+                            )}
 
                           </Box>
-                        </motion.div>
                       );
                     })}
                   </VStack>
@@ -913,127 +818,104 @@ export default function ClientPage() {
 
                 {/* ── History Section ── */}
                 {historyLeads.length > 0 && (
-                  <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3, delay: 0.15 }}>
-                    <Box>
-                      <Button
-                        w="full" variant="outline" borderColor="slate.200" color="slate.500"
-                        borderRadius="xl" fontWeight="semibold" fontSize="sm" py={5}
-                        bg={showHistory ? 'slate.50' : 'white'}
-                        _hover={{ bg: 'slate.50', borderColor: 'slate.300', color: 'slate.700' }}
-                        transition="all 0.2s"
-                        onClick={() => setShowHistory(v => !v)}>
-                        <Icon as={showHistory ? LucideChevronUp : LucideChevronDown} w={4} h={4} mr={2} />
-                        {showHistory
-                          ? 'Hide history'
-                          : `View history (${historyLeads.length} booking${historyLeads.length !== 1 ? 's' : ''})`}
-                      </Button>
-
-                      <AnimatePresence>
-                        {showHistory && (
-                          <motion.div
-                            initial={{ opacity: 0, height: 0 }}
-                            animate={{ opacity: 1, height: 'auto' }}
-                            exit={{ opacity: 0, height: 0 }}
-                            transition={{ duration: 0.3 }}>
-                            <VStack gap={3} align="stretch" mt={3}>
-                              <Text fontSize="xs" fontWeight="bold" color="slate.400" textTransform="uppercase" letterSpacing="wider" px={1}>
-                                Completed & cancelled bookings
-                              </Text>
-                              {historyLeads.map((lead, i) => {
-                                const s = STATUS_MAP[lead.status] ?? { label: lead.status, bg: '#F3F4F6', color: '#6B7280', border: '#E5E7EB' };
-                                const scheduledTime = new Date(lead.dateTime);
-                                const freqLabel = FREQUENCY_OPTIONS.find(f => f.id === lead.frequency)?.labelEn;
-                                const canRate = lead.status === 'COMPLETED' && lead.cleanerId && !lead.review;
-                                return (
-                                  <motion.div key={lead.id}
-                                    initial={{ opacity: 0, y: 10 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    transition={{ duration: 0.25, delay: i * 0.04 }}>
-                                    <Box
-                                      bg="white" border="1px solid"
-                                      borderColor={lead.status === 'COMPLETED' ? 'green.200' : 'red.200'}
-                                      borderRadius="2xl" overflow="hidden" opacity={0.85}
-                                      boxShadow="0 1px 4px rgba(0,0,0,0.03)"
-                                      _hover={{ opacity: 1, boxShadow: '0 4px 16px rgba(0,0,0,0.07)' }}
-                                      transition="all 0.2s">
-                                      <Box p={4}>
-                                        <Flex justify="space-between" align="start" gap={4}>
-                                          <VStack align="start" gap={2} flex={1} minW={0}>
-                                            <HStack gap={2} flexWrap="wrap">
-                                              <Badge bg={s.bg} color={s.color} borderRadius="full" px={3} py={0.5}
-                                                fontSize="xs" fontWeight="bold" border="1px solid" borderColor={s.border}>
-                                                {s.label}
-                                              </Badge>
-                                              <Text fontWeight="bold" fontSize="sm" color="slate.700">{lead.serviceType}</Text>
-                                            </HStack>
-                                            <HStack gap={4} flexWrap="wrap">
-                                              <HStack gap={1} color="slate.400" fontSize="xs">
-                                                <Icon as={LucideMapPin} w={3.5} h={3.5} />
-                                                <Text lineClamp={1}>{lead.address}</Text>
-                                              </HStack>
-                                              <HStack gap={1} color="slate.400" fontSize="xs">
-                                                <Icon as={LucideCalendar} w={3.5} h={3.5} />
-                                                <Text>{scheduledTime.toLocaleString('en-US', { dateStyle: 'short', timeStyle: 'short' })}</Text>
-                                              </HStack>
-                                            </HStack>
-                                            {(lead.bedrooms || lead.squareMeters) && (
-                                              <HStack gap={2} flexWrap="wrap">
-                                                {lead.bedrooms && <Badge bg="slate.50" color="slate.500" borderRadius="full" px={2} py={0.5} fontSize="xs" border="1px solid" borderColor="slate.200">🛏 {lead.bedrooms}bd</Badge>}
-                                                {lead.bathrooms && <Badge bg="slate.50" color="slate.500" borderRadius="full" px={2} py={0.5} fontSize="xs" border="1px solid" borderColor="slate.200">🚿 {lead.bathrooms}ba</Badge>}
-                                                {(lead.squareMeters ?? 0) > 0 && <Badge bg="slate.50" color="slate.500" borderRadius="full" px={2} py={0.5} fontSize="xs" border="1px solid" borderColor="slate.200">📐 {lead.squareMeters}m²</Badge>}
-                                                {freqLabel && freqLabel !== 'One-time' && <Badge bg="green.50" color="green.600" borderRadius="full" px={2} py={0.5} fontSize="xs" border="1px solid" borderColor="green.200">{freqLabel}</Badge>}
-                                              </HStack>
-                                            )}
-                                            {lead.estimatedMinPrice && (
-                                              <HStack gap={1} color="slate.400" fontSize="xs">
-                                                <Icon as={LucideBanknote} w={3.5} h={3.5} />
-                                                <Text>${lead.estimatedMinPrice} – ${lead.estimatedMaxPrice}</Text>
-                                              </HStack>
-                                            )}
-                                            {lead.review && (
-                                              <HStack gap={1} bg="yellow.50" px={2.5} py={1} borderRadius="full"
-                                                border="1px solid" borderColor="yellow.200">
-                                                {[1,2,3,4,5].map(st => (
-                                                  <Icon key={st} as={LucideStar} w={3} h={3}
-                                                    color={lead.review!.rating >= st ? '#F59E0B' : '#E5E7EB'}
-                                                    fill={lead.review!.rating >= st ? '#F59E0B' : 'none'} />
-                                                ))}
-                                                <Text fontSize="xs" color="yellow.700" fontWeight="semibold" ml={0.5}>Rated</Text>
-                                              </HStack>
-                                            )}
-                                            {canRate && (
-                                              <motion.div whileTap={{ scale: 0.95 }}>
-                                                <Button size="xs" bg="yellow.400" color="white" borderRadius="lg" fontWeight="bold"
-                                                  _hover={{ bg: 'yellow.500' }} transition="all 0.2s"
-                                                  onClick={() => setRatingLead(lead)}>
-                                                  <Icon as={LucideStar} w={3} h={3} mr={1} />
-                                                  Rate professional
-                                                </Button>
-                                              </motion.div>
-                                            )}
-                                          </VStack>
-                                          <Text fontSize="xs" color="slate.400" whiteSpace="nowrap">
-                                            {new Date(lead.createdAt).toLocaleDateString('en-US')}
-                                          </Text>
-                                        </Flex>
-                                      </Box>
-                                    </Box>
-                                  </motion.div>
-                                );
-                              })}
-                            </VStack>
-                          </motion.div>
-                        )}
-                      </AnimatePresence>
+                  <Box border="1px solid #E2E8F0">
+                    {/* Section header / toggle */}
+                    <Box
+                      as="button" w="full" bg="#F8FAFC" px={5} py={3}
+                      borderBottom={showHistory ? '1px solid #E2E8F0' : undefined}
+                      onClick={() => setShowHistory(v => !v)}
+                      display="flex" alignItems="center" justifyContent="space-between"
+                      cursor="pointer" _hover={{ bg: '#F1F5F9' }} transition="background 0.12s">
+                      <Text fontSize="10.5px" fontWeight={700} color="#94A3B8" textTransform="uppercase"
+                        fontFamily="heading" letterSpacing="0.07em">
+                        HISTÓRICO ({historyLeads.length})
+                      </Text>
+                      <Icon as={showHistory ? LucideChevronUp : LucideChevronDown} w={4} h={4} color="#94A3B8" />
                     </Box>
-                  </motion.div>
+
+                    {showHistory && (
+                      <VStack gap={0} align="stretch">
+                        {historyLeads.map((lead, i) => {
+                          const s = STATUS_MAP[lead.status] ?? { label: lead.status, bg: '#F3F4F6', color: '#6B7280', border: '#E5E7EB' };
+                          const scheduledTime = new Date(lead.dateTime);
+                          const freqLabel = FREQUENCY_OPTIONS.find(f => f.id === lead.frequency)?.labelEn;
+                          const canRate = lead.status === 'COMPLETED' && lead.cleanerId && !lead.review;
+                          const isLast = i === historyLeads.length - 1;
+                          const histAccent = lead.status === 'COMPLETED' ? '#10B981' : '#EF4444';
+                          return (
+                            <Box key={lead.id} position="relative" bg="white"
+                              borderBottom={isLast ? undefined : '1px solid #F1F5F9'}>
+                              <Box position="absolute" left={0} top={0} bottom={0} w="3px" bg={histAccent} />
+                              <Box pl={6} pr={5} py={4}>
+                                <Flex justify="space-between" align="start" gap={4}>
+                                  <VStack align="start" gap={1.5} flex={1} minW={0}>
+                                    <HStack gap={2} flexWrap="wrap">
+                                      <Text style={{ borderRadius: 2, background: s.bg, color: s.color, border: `1px solid ${s.border}`, padding: '2px 8px', fontSize: '10px', fontWeight: 700 }}>
+                                        {s.label}
+                                      </Text>
+                                      <Text fontWeight="bold" fontSize="sm" color="slate.700" fontFamily="heading">{lead.serviceType}</Text>
+                                    </HStack>
+                                    <HStack gap={4} flexWrap="wrap">
+                                      <HStack gap={1} color="slate.400" fontSize="xs">
+                                        <Icon as={LucideMapPin} w={3.5} h={3.5} />
+                                        <Text lineClamp={1}>{lead.address}</Text>
+                                      </HStack>
+                                      <HStack gap={1} color="slate.400" fontSize="xs">
+                                        <Icon as={LucideCalendar} w={3.5} h={3.5} />
+                                        <Text>{scheduledTime.toLocaleString('en-US', { dateStyle: 'short', timeStyle: 'short' })}</Text>
+                                      </HStack>
+                                    </HStack>
+                                    {(lead.bedrooms || lead.squareMeters) && (
+                                      <HStack gap={3} flexWrap="wrap">
+                                        {lead.bedrooms && <Text fontSize="xs" color="slate.500">🛏 {lead.bedrooms}bd</Text>}
+                                        {lead.bathrooms && <Text fontSize="xs" color="slate.500">🚿 {lead.bathrooms}ba</Text>}
+                                        {(lead.squareMeters ?? 0) > 0 && <Text fontSize="xs" color="slate.500">📐 {lead.squareMeters}m²</Text>}
+                                        {freqLabel && freqLabel !== 'One-time' && <Text style={{ borderRadius: 2, background: '#F0FDF4', padding: '2px 6px', fontSize: '9.5px', fontWeight: 700, color: '#15803D' }}>🔄 {freqLabel}</Text>}
+                                      </HStack>
+                                    )}
+                                    {lead.estimatedMinPrice && (
+                                      <HStack gap={1} color="slate.400" fontSize="xs">
+                                        <Icon as={LucideBanknote} w={3.5} h={3.5} />
+                                        <Text>${lead.estimatedMinPrice} – ${lead.estimatedMaxPrice}</Text>
+                                      </HStack>
+                                    )}
+                                    {lead.review && (
+                                      <HStack gap={1} bg="#FFFBEB" px={2.5} py={1} border="1px solid #FDE68A">
+                                        {[1,2,3,4,5].map(st => (
+                                          <Icon key={st} as={LucideStar} w={3} h={3}
+                                            color={lead.review!.rating >= st ? '#F59E0B' : '#E5E7EB'}
+                                            fill={lead.review!.rating >= st ? '#F59E0B' : 'none'} />
+                                        ))}
+                                        <Text fontSize="xs" color="yellow.700" fontWeight="semibold" ml={0.5}>Rated</Text>
+                                      </HStack>
+                                    )}
+                                    {canRate && (
+                                      <Button size="xs" bg="yellow.400" color="white" borderRadius="4px" fontWeight="bold"
+                                        _hover={{ bg: 'yellow.500' }} transition="background 0.15s"
+                                        onClick={() => setRatingLead(lead)}>
+                                        <Icon as={LucideStar} w={3} h={3} mr={1} />
+                                        Rate professional
+                                      </Button>
+                                    )}
+                                  </VStack>
+                                  <Text fontSize="xs" color="slate.400" whiteSpace="nowrap">
+                                    {new Date(lead.createdAt).toLocaleDateString('en-US')}
+                                  </Text>
+                                </Flex>
+                              </Box>
+                            </Box>
+                          );
+                        })}
+                      </VStack>
+                    )}
+                  </Box>
                 )}
               </>
             );
           })()}
 
         </VStack>
-      </Container>
+      </Box>
 
       {/* ── Rating Modal ── */}
       <AnimatePresence>
@@ -1042,19 +924,20 @@ export default function ClientPage() {
             style={{ position: 'fixed', inset: 0, zIndex: 200, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <Box position="absolute" inset={0} bg="blackAlpha.600" onClick={() => setRatingLead(null)} />
             <motion.div
-              initial={{ opacity: 0, scale: 0.92, y: 20 }}
+              initial={{ opacity: 0, scale: 0.95, y: 12 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.92, y: 20 }}
-              transition={{ duration: 0.3, ease: 'easeOut' }}
+              exit={{ opacity: 0, scale: 0.95, y: 12 }}
+              transition={{ duration: 0.2, ease: 'easeOut' }}
               style={{ position: 'relative', zIndex: 1, width: '100%', maxWidth: '440px', margin: '0 16px' }}>
-              <Box bg="white" borderRadius="3xl" p={8} boxShadow="0 20px 60px rgba(0,0,0,0.18)">
+              <Box bg="white" border="1px solid #E2E8F0" p={8}
+                style={{ boxShadow: '0 16px 48px rgba(0,0,0,0.14)' }}>
                 <VStack gap={5} align="center" textAlign="center">
-                  <Box w="56px" h="56px" bg="yellow.100" borderRadius="2xl"
+                  <Box w="48px" h="48px" bg="#FFFBEB" border="1px solid #FDE68A"
                     display="flex" alignItems="center" justifyContent="center">
                     <Text fontSize="2xl">⭐</Text>
                   </Box>
                   <Box>
-                    <Heading size="md" fontWeight="black" color="slate.900">Rate professional</Heading>
+                    <Heading size="md" fontWeight="black" color="slate.900" fontFamily="heading">Rate professional</Heading>
                     <Text color="slate.500" fontSize="sm" mt={1}>
                       {ratingLead.cleaner?.name ?? 'Professional'}
                     </Text>
@@ -1068,16 +951,16 @@ export default function ClientPage() {
                     value={ratingComment}
                     onChange={e => setRatingComment(e.target.value)}
                     bg="slate.50" border="1px solid" borderColor="slate.200"
-                    borderRadius="xl" rows={3} fontSize="sm"
+                    borderRadius="4px" rows={3} fontSize="sm"
                     _focus={{ borderColor: 'brand.300', bg: 'white' }}
                     resize="none"
                   />
                   <HStack gap={3} w="full">
                     <Button flex={1} variant="outline" borderColor="slate.200" color="slate.500"
-                      borderRadius="xl" onClick={() => setRatingLead(null)}>
+                      borderRadius="4px" onClick={() => setRatingLead(null)}>
                       Not now
                     </Button>
-                    <Button flex={1} bg="yellow.400" color="white" borderRadius="xl" fontWeight="bold"
+                    <Button flex={1} bg="yellow.400" color="white" borderRadius="4px" fontWeight="bold"
                       _hover={{ bg: 'yellow.500' }}
                       loading={sendingRating} loadingText="Submitting…"
                       onClick={handleSubmitRating} disabled={starValue === 0}>
@@ -1099,41 +982,46 @@ export default function ClientPage() {
 function OrderForm({ form, setField, toggleExtra, estimate, progress, onSubmit, submitting, onCancel }: any) {
   const serviceLabel = SERVICE_TYPES.find(s => s.id === form.serviceType)?.labelEn ?? '';
   return (
-    <Box bg="white" border="1px solid" borderColor="slate.200" borderRadius="2xl" p={7}
-      boxShadow="0 4px 24px rgba(0,0,0,0.06)">
-      <Flex justify="space-between" align="center" mb={6}>
-        <Heading size="sm" color="slate.800">Request cleaning service</Heading>
-        <Button size="sm" variant="ghost" color="slate.400" onClick={onCancel} borderRadius="lg">
-          <Icon as={LucideX} w={4} h={4} />
-        </Button>
-      </Flex>
-
-      {/* Progress */}
-      <Box mb={6}>
-        <Flex justify="space-between" mb={2}>
-          <Text fontSize="sm" fontWeight="bold" color="slate.700">
-            {progress < 100 ? `${progress}% complete` : (
-              <HStack gap={1.5} as="span"><Icon as={LucideSparkles} w={4} h={4} color="green.500" /><Text as="span" color="green.600">Ready!</Text></HStack>
-            )}
+    <Box bg="white" border="1px solid #E2E8F0">
+      {/* Form header */}
+      <Box bg="#F8FAFC" px={5} py={3} borderBottom="1px solid #E2E8F0">
+        <Flex justify="space-between" align="center">
+          <Text fontSize="10.5px" fontWeight={700} color="#94A3B8" textTransform="uppercase"
+            letterSpacing="0.07em" fontFamily="heading">
+            NOVO PEDIDO
           </Text>
-          <Text fontSize="sm" fontWeight="black" color={progress === 100 ? 'green.600' : 'brand.500'}>{progress}%</Text>
+          <Button size="sm" variant="ghost" color="slate.400" onClick={onCancel} borderRadius="4px" minW={0} px={1.5}>
+            <Icon as={LucideX} w={4} h={4} />
+          </Button>
         </Flex>
-        <Box bg="slate.100" borderRadius="full" h="8px" overflow="hidden">
-          <motion.div style={{ height: '100%', borderRadius: 9999,
-            background: progress === 100 ? 'linear-gradient(to right, #22C55E, #16A34A)' : 'linear-gradient(to right, #2563EB, #60A5FA)' }}
-            animate={{ width: `${progress}%` }} transition={{ duration: 0.4, ease: 'easeOut' }} />
-        </Box>
       </Box>
 
-      <form onSubmit={onSubmit}>
-        <VStack gap={6} align="stretch">
-          {/* Service type */}
-          <Box>
-            <Text fontSize="xs" fontWeight="bold" color="slate.500" textTransform="uppercase" mb={3} letterSpacing="wider">Service type</Text>
-            <SimpleGrid columns={2} gap={3}>
-              {SERVICE_TYPES.map(s => (
-                <motion.div key={s.id} whileTap={{ scale: 0.97 }}>
-                  <Box as="button" w="full" p={3.5} borderRadius="xl" textAlign="left"
+      <Box p={6}>
+        {/* Progress */}
+        <Box mb={6}>
+          <Flex justify="space-between" mb={2}>
+            <Text fontSize="sm" fontWeight="bold" color="slate.700">
+              {progress < 100 ? `${progress}% complete` : (
+                <HStack gap={1.5} as="span"><Icon as={LucideSparkles} w={4} h={4} color="green.500" /><Text as="span" color="green.600">Ready!</Text></HStack>
+              )}
+            </Text>
+            <Text fontSize="sm" fontWeight="black" color={progress === 100 ? 'green.600' : 'brand.500'}>{progress}%</Text>
+          </Flex>
+          <Box bg="slate.100" h="6px" overflow="hidden">
+            <motion.div style={{ height: '100%', background: progress === 100 ? '#22C55E' : '#1A7FA0' }}
+              animate={{ width: `${progress}%` }} transition={{ duration: 0.4, ease: 'easeOut' }} />
+          </Box>
+        </Box>
+
+        <form onSubmit={onSubmit}>
+          <VStack gap={6} align="stretch">
+            {/* Service type */}
+            <Box>
+              <Text fontSize="10.5px" fontWeight={700} color="#94A3B8" textTransform="uppercase" mb={3}
+                letterSpacing="0.07em" fontFamily="heading">Service type</Text>
+              <SimpleGrid columns={2} gap={3}>
+                {SERVICE_TYPES.map(s => (
+                  <Box key={s.id} as="button" w="full" p={3.5} textAlign="left"
                     border="2px solid" borderColor={form.serviceType === s.id ? 'brand.400' : 'slate.200'}
                     bg={form.serviceType === s.id ? 'brand.50' : 'white'}
                     cursor="pointer" onClick={() => setField('serviceType', s.id)} transition="all 0.15s">
@@ -1145,130 +1033,133 @@ function OrderForm({ form, setField, toggleExtra, estimate, progress, onSubmit, 
                       </Box>
                     </HStack>
                   </Box>
-                </motion.div>
-              ))}
-            </SimpleGrid>
-          </Box>
+                ))}
+              </SimpleGrid>
+            </Box>
 
-          {/* Property size */}
-          <Box>
-            <Text fontSize="xs" fontWeight="bold" color="slate.500" textTransform="uppercase" mb={4} letterSpacing="wider">Property size</Text>
-            <SimpleGrid columns={{ base: 1, sm: 3 }} gap={4}>
-              <Box><Text fontSize="sm" color="slate.600" mb={2} fontWeight="medium">🛏 Bedrooms</Text><Stepper value={form.bedrooms} onChange={v => setField('bedrooms', v)} /></Box>
-              <Box><Text fontSize="sm" color="slate.600" mb={2} fontWeight="medium">🚿 Bathrooms</Text><Stepper value={form.bathrooms} onChange={v => setField('bathrooms', v)} /></Box>
-              <Box>
-                <Text fontSize="sm" color="slate.600" mb={2} fontWeight="medium">📐 Area (m²)</Text>
-                <Input type="number" placeholder="e.g. 80" value={form.squareMeters || ''}
-                  onChange={e => setField('squareMeters', Number(e.target.value))}
-                  bg="slate.50" border="1px solid" borderColor={form.squareMeters > 0 ? 'brand.300' : 'slate.200'}
-                  h="10" borderRadius="xl" fontSize="sm"
-                  _focus={{ bg: 'white', borderColor: 'brand.400' }} transition="all 0.2s" />
-              </Box>
-            </SimpleGrid>
-          </Box>
+            {/* Property size */}
+            <Box>
+              <Text fontSize="10.5px" fontWeight={700} color="#94A3B8" textTransform="uppercase" mb={4}
+                letterSpacing="0.07em" fontFamily="heading">Property size</Text>
+              <SimpleGrid columns={{ base: 1, sm: 3 }} gap={4}>
+                <Box><Text fontSize="sm" color="slate.600" mb={2} fontWeight="medium">🛏 Bedrooms</Text><Stepper value={form.bedrooms} onChange={v => setField('bedrooms', v)} /></Box>
+                <Box><Text fontSize="sm" color="slate.600" mb={2} fontWeight="medium">🚿 Bathrooms</Text><Stepper value={form.bathrooms} onChange={v => setField('bathrooms', v)} /></Box>
+                <Box>
+                  <Text fontSize="sm" color="slate.600" mb={2} fontWeight="medium">📐 Area (m²)</Text>
+                  <Input type="number" placeholder="e.g. 80" value={form.squareMeters || ''}
+                    onChange={e => setField('squareMeters', Number(e.target.value))}
+                    bg="slate.50" border="1px solid" borderColor={form.squareMeters > 0 ? 'brand.300' : 'slate.200'}
+                    h="10" borderRadius="4px" fontSize="sm"
+                    _focus={{ bg: 'white', borderColor: 'brand.400' }} transition="all 0.15s" />
+                </Box>
+              </SimpleGrid>
+            </Box>
 
-          {/* Add-ons */}
-          <Box>
-            <HStack gap={2} mb={3}><Text fontSize="xs" fontWeight="bold" color="slate.500" textTransform="uppercase" letterSpacing="wider">Add-ons</Text><Text fontSize="xs" color="slate.400">(optional)</Text></HStack>
-            <SimpleGrid columns={2} gap={3}>
-              {EXTRAS.map(ex => {
-                const sel = form.extras.includes(ex.id);
-                return (
-                  <motion.div key={ex.id} whileTap={{ scale: 0.97 }}>
-                    <Box as="button" w="full" p={3} borderRadius="xl" textAlign="left"
+            {/* Add-ons */}
+            <Box>
+              <HStack gap={2} mb={3}>
+                <Text fontSize="10.5px" fontWeight={700} color="#94A3B8" textTransform="uppercase"
+                  letterSpacing="0.07em" fontFamily="heading">Add-ons</Text>
+                <Text fontSize="xs" color="slate.400">(optional)</Text>
+              </HStack>
+              <SimpleGrid columns={2} gap={3}>
+                {EXTRAS.map(ex => {
+                  const sel = form.extras.includes(ex.id);
+                  return (
+                    <Box key={ex.id} as="button" w="full" p={3} textAlign="left"
                       border="2px solid" borderColor={sel ? 'yellow.400' : 'slate.200'}
                       bg={sel ? 'yellow.50' : 'white'} cursor="pointer"
                       onClick={() => toggleExtra(ex.id)} transition="all 0.15s">
                       <Flex justify="space-between" align="center">
                         <HStack gap={2}><Text fontSize="lg">{ex.icon}</Text><Box><Text fontSize="xs" fontWeight="bold" color={sel ? 'yellow.700' : 'slate.700'}>{ex.labelEn}</Text><Text fontSize="xs" color="slate.400">+${ex.price}</Text></Box></HStack>
-                        <Box w="18px" h="18px" borderRadius="full" bg={sel ? 'yellow.400' : 'slate.200'} display="flex" alignItems="center" justifyContent="center" transition="all 0.15s">
-                          {sel && <Text fontSize="10px" color="white" fontWeight="black">✓</Text>}
+                        <Box w="16px" h="16px" bg={sel ? 'yellow.400' : 'slate.200'} display="flex" alignItems="center" justifyContent="center" transition="all 0.15s">
+                          {sel && <Text fontSize="9px" color="white" fontWeight="black">✓</Text>}
                         </Box>
                       </Flex>
                     </Box>
-                  </motion.div>
-                );
-              })}
-            </SimpleGrid>
-          </Box>
+                  );
+                })}
+              </SimpleGrid>
+            </Box>
 
-          {/* Frequency */}
-          <Box>
-            <Text fontSize="xs" fontWeight="bold" color="slate.500" textTransform="uppercase" mb={3} letterSpacing="wider">Frequency</Text>
-            <SimpleGrid columns={3} gap={3}>
-              {FREQUENCY_OPTIONS.map(f => (
-                <motion.div key={f.id} whileTap={{ scale: 0.97 }}>
-                  <Box as="button" w="full" p={3} borderRadius="xl" textAlign="center"
+            {/* Frequency */}
+            <Box>
+              <Text fontSize="10.5px" fontWeight={700} color="#94A3B8" textTransform="uppercase" mb={3}
+                letterSpacing="0.07em" fontFamily="heading">Frequency</Text>
+              <SimpleGrid columns={3} gap={3}>
+                {FREQUENCY_OPTIONS.map(f => (
+                  <Box key={f.id} as="button" w="full" p={3} textAlign="center"
                     border="2px solid" borderColor={form.frequency === f.id ? 'green.400' : 'slate.200'}
                     bg={form.frequency === f.id ? 'green.50' : 'white'} cursor="pointer"
                     onClick={() => setField('frequency', f.id)} transition="all 0.15s">
                     <Text fontSize="sm" fontWeight="bold" color={form.frequency === f.id ? 'green.700' : 'slate.700'}>{f.labelEn}</Text>
                     {f.tag && <Text fontSize="10px" color="green.500" fontWeight="bold">{f.tag}</Text>}
                   </Box>
-                </motion.div>
-              ))}
-            </SimpleGrid>
-          </Box>
+                ))}
+              </SimpleGrid>
+            </Box>
 
-          {/* Location & date */}
-          <Box>
-            <Text fontSize="xs" fontWeight="bold" color="slate.500" textTransform="uppercase" mb={4} letterSpacing="wider">Location & date</Text>
-            <VStack gap={4} align="stretch">
-              <Input placeholder="Full address" value={form.address} onChange={e => setField('address', e.target.value)}
-                bg="slate.50" border="1px solid" borderColor={form.address ? 'brand.300' : 'slate.200'} h="12" borderRadius="xl" fontSize="sm"
-                _focus={{ bg: 'white', borderColor: 'brand.400', boxShadow: '0 0 0 3px rgba(37,99,235,0.1)' }} transition="all 0.2s" required />
-              <HStack gap={4}>
-                <Input type="date" value={form.date} onChange={e => setField('date', e.target.value)}
-                  bg="slate.50" border="1px solid" borderColor={form.date ? 'brand.300' : 'slate.200'} h="12" borderRadius="xl" fontSize="sm" flex={1}
-                  _focus={{ bg: 'white', borderColor: 'brand.400' }} transition="all 0.2s" required />
-                <Input type="time" value={form.time} onChange={e => setField('time', e.target.value)}
-                  bg="slate.50" border="1px solid" borderColor={form.time ? 'brand.300' : 'slate.200'} h="12" borderRadius="xl" fontSize="sm" flex={1}
-                  _focus={{ bg: 'white', borderColor: 'brand.400' }} transition="all 0.2s" required />
-              </HStack>
-              <textarea value={form.notes} onChange={e => setField('notes', e.target.value)}
-                placeholder="Notes (optional)..." rows={2}
-                style={{ background: '#F9FAFB', border: '1px solid #E5E7EB', borderRadius: '12px', padding: '12px 16px',
-                  width: '100%', fontSize: '14px', color: '#1F2937', resize: 'vertical', outline: 'none', fontFamily: 'inherit' }} />
-            </VStack>
-          </Box>
+            {/* Location & date */}
+            <Box>
+              <Text fontSize="10.5px" fontWeight={700} color="#94A3B8" textTransform="uppercase" mb={4}
+                letterSpacing="0.07em" fontFamily="heading">Location & date</Text>
+              <VStack gap={4} align="stretch">
+                <Input placeholder="Full address" value={form.address} onChange={e => setField('address', e.target.value)}
+                  bg="slate.50" border="1px solid" borderColor={form.address ? 'brand.300' : 'slate.200'} h="12" borderRadius="4px" fontSize="sm"
+                  _focus={{ bg: 'white', borderColor: 'brand.400' }} transition="all 0.15s" required />
+                <HStack gap={4}>
+                  <Input type="date" value={form.date} onChange={e => setField('date', e.target.value)}
+                    bg="slate.50" border="1px solid" borderColor={form.date ? 'brand.300' : 'slate.200'} h="12" borderRadius="4px" fontSize="sm" flex={1}
+                    _focus={{ bg: 'white', borderColor: 'brand.400' }} transition="all 0.15s" required />
+                  <Input type="time" value={form.time} onChange={e => setField('time', e.target.value)}
+                    bg="slate.50" border="1px solid" borderColor={form.time ? 'brand.300' : 'slate.200'} h="12" borderRadius="4px" fontSize="sm" flex={1}
+                    _focus={{ bg: 'white', borderColor: 'brand.400' }} transition="all 0.15s" required />
+                </HStack>
+                <textarea value={form.notes} onChange={e => setField('notes', e.target.value)}
+                  placeholder="Notes (optional)..." rows={2}
+                  style={{ background: '#F9FAFB', border: '1px solid #E5E7EB', borderRadius: '4px', padding: '12px 16px',
+                    width: '100%', fontSize: '14px', color: '#1F2937', resize: 'vertical', outline: 'none', fontFamily: 'inherit' }} />
+              </VStack>
+            </Box>
 
-          {/* Estimate */}
-          <AnimatePresence>
+            {/* Estimate */}
             {estimate && (
-              <motion.div key="est" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}>
-                <Box bg="linear-gradient(135deg, #EFF6FF 0%, #F0FDF4 100%)" border="1px solid" borderColor="brand.100" borderRadius="2xl" p={5}>
-                  <HStack gap={2} mb={3}>
-                    <Icon as={LucideSparkles} w={4} h={4} color="brand.500" />
-                    <Text fontSize="xs" fontWeight="bold" color="brand.600" textTransform="uppercase" letterSpacing="wider">
-                      Estimate — {serviceLabel}
+              <Box bg="#F8FAFC" border="1px solid #E2E8F0" p={5}>
+                <HStack gap={2} mb={3}>
+                  <Icon as={LucideSparkles} w={4} h={4} color="brand.500" />
+                  <Text fontSize="10.5px" fontWeight={700} color="#94A3B8" textTransform="uppercase"
+                    letterSpacing="0.07em" fontFamily="heading">
+                    Estimate — {serviceLabel}
+                  </Text>
+                  {estimate.discountPct > 0 && (
+                    <Text style={{ borderRadius: 2, background: '#DCFCE7', padding: '2px 6px', fontSize: '9.5px', fontWeight: 700, color: '#15803D' }}>
+                      -{estimate.discountPct}%
                     </Text>
-                    {estimate.discountPct > 0 && <Badge bg="green.100" color="green.700" fontSize="xs" borderRadius="full" px={2}>-{estimate.discountPct}%</Badge>}
+                  )}
+                </HStack>
+                <Flex gap={6} align="center" flexWrap="wrap">
+                  <HStack gap={2}>
+                    <Icon as={LucideBanknote} w={5} h={5} color="green.600" />
+                    <Box><Text fontSize="xs" color="slate.500">Price</Text><Text fontSize="xl" fontWeight="black" color="green.700" fontFamily="heading">${estimate.minPrice} – ${estimate.maxPrice}</Text></Box>
                   </HStack>
-                  <Flex gap={6} align="center" flexWrap="wrap">
-                    <HStack gap={2}>
-                      <Icon as={LucideBanknote} w={5} h={5} color="green.600" />
-                      <Box><Text fontSize="xs" color="slate.500">Price</Text><Text fontSize="xl" fontWeight="black" color="green.700">${estimate.minPrice} – ${estimate.maxPrice}</Text></Box>
-                    </HStack>
-                    <HStack gap={2}>
-                      <Icon as={LucideClock} w={5} h={5} color="brand.500" />
-                      <Box><Text fontSize="xs" color="slate.500">Duration</Text><Text fontSize="xl" fontWeight="black" color="brand.700">~{estimate.hours}h</Text></Box>
-                    </HStack>
-                  </Flex>
-                  <Text fontSize="xs" color="slate.400" mt={3}>* Estimate to guide the professional. Final price may vary.</Text>
-                </Box>
-              </motion.div>
+                  <HStack gap={2}>
+                    <Icon as={LucideClock} w={5} h={5} color="brand.500" />
+                    <Box><Text fontSize="xs" color="slate.500">Duration</Text><Text fontSize="xl" fontWeight="black" color="brand.700" fontFamily="heading">~{estimate.hours}h</Text></Box>
+                  </HStack>
+                </Flex>
+                <Text fontSize="xs" color="slate.400" mt={3}>* Estimate to guide the professional. Final price may vary.</Text>
+              </Box>
             )}
-          </AnimatePresence>
 
-
-          <Button type="submit" bg={progress === 100 ? 'green.500' : 'brand.500'} color="white"
-            h="13" borderRadius="xl" fontWeight="bold" fontSize="md"
-            _hover={{ bg: progress === 100 ? 'green.600' : 'brand.600', transform: 'translateY(-1px)', boxShadow: '0 6px 20px rgba(37,99,235,0.35)' }}
-            transition="all 0.2s" loading={submitting} loadingText="Submitting…">
-            {progress === 100 ? '✓ Submit Request' : 'Submit Request'}
-          </Button>
-        </VStack>
-      </form>
+            <Button type="submit" bg={progress === 100 ? 'green.500' : 'brand.500'} color="white"
+              h="12" borderRadius="4px" fontWeight="bold" fontSize="md"
+              _hover={{ bg: progress === 100 ? 'green.600' : 'brand.600' }}
+              transition="background 0.15s" loading={submitting} loadingText="Submitting…">
+              {progress === 100 ? '✓ Submit Request' : 'Submit Request'}
+            </Button>
+          </VStack>
+        </form>
+      </Box>
     </Box>
   );
 }

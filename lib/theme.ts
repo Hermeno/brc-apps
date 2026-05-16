@@ -4,53 +4,92 @@ const config = defineConfig({
   theme: {
     tokens: {
       colors: {
+        /* ── Petrol Blue — signature brand color ── */
         brand: {
-          50:  { value: "#EFF6FF" },
-          100: { value: "#DBEAFE" },
-          200: { value: "#BFDBFE" },
-          400: { value: "#60A5FA" },
-          500: { value: "#2563EB" },
-          600: { value: "#1D4ED8" },
-          700: { value: "#1E40AF" },
-          900: { value: "#1E3A8A" },
+          50:  { value: "#EEF7FA" },
+          100: { value: "#D1EEF5" },
+          200: { value: "#A3D8E8" },
+          300: { value: "#65BACE" },
+          400: { value: "#32A3BE" },
+          500: { value: "#1A7FA0" },
+          600: { value: "#156887" },
+          700: { value: "#0F4F67" },
+          800: { value: "#0A3548" },
+          900: { value: "#061D2B" },
         },
+
+        /* ── Emerald — modern, discrete success ── */
+        green: {
+          50:  { value: "#ECFDF5" },
+          100: { value: "#D1FAE5" },
+          200: { value: "#A7F3D0" },
+          400: { value: "#34D399" },
+          500: { value: "#10B981" },
+          600: { value: "#059669" },
+          700: { value: "#047857" },
+        },
+
+        /* ── Amber — warm warning ── */
         yellow: {
           50:  { value: "#FFFBEB" },
           100: { value: "#FEF3C7" },
+          200: { value: "#FDE68A" },
           400: { value: "#FBBF24" },
           500: { value: "#F59E0B" },
           600: { value: "#D97706" },
+          700: { value: "#B45309" },
         },
-        green: {
-          50:  { value: "#F0FDF4" },
-          100: { value: "#DCFCE7" },
-          200: { value: "#BBF7D0" },
-          500: { value: "#22C55E" },
-          600: { value: "#16A34A" },
-          700: { value: "#15803D" },
-        },
+
+        /* ── Rose — refined error ── */
         red: {
-          50:  { value: "#FEF2F2" },
-          100: { value: "#FEE2E2" },
-          500: { value: "#EF4444" },
-          600: { value: "#DC2626" },
-          700: { value: "#B91C1C" },
+          50:  { value: "#FFF1F2" },
+          100: { value: "#FFE4E6" },
+          200: { value: "#FECDD3" },
+          500: { value: "#F43F5E" },
+          600: { value: "#E11D48" },
+          700: { value: "#BE123C" },
         },
+
+        /* ── Blue-Gray — sophisticated neutral ── */
         slate: {
-          50:  { value: "#F9FAFB" },
-          100: { value: "#F3F4F6" },
-          200: { value: "#E5E7EB" },
-          400: { value: "#9CA3AF" },
-          500: { value: "#6B7280" },
-          600: { value: "#4B5563" },
-          700: { value: "#374151" },
-          800: { value: "#1F2937" },
-          900: { value: "#111827" },
+          50:  { value: "#F8FAFC" },
+          100: { value: "#F1F5F9" },
+          200: { value: "#E2E8F0" },
+          300: { value: "#CBD5E1" },
+          400: { value: "#94A3B8" },
+          500: { value: "#64748B" },
+          600: { value: "#475569" },
+          700: { value: "#334155" },
+          800: { value: "#1E293B" },
+          900: { value: "#0F172A" },
         },
       },
+
       fonts: {
-        heading: { value: "'Inter', sans-serif" },
-        body:    { value: "'Inter', sans-serif" },
+        heading: { value: "var(--font-dm-sans, 'DM Sans', sans-serif)" },
+        body:    { value: "var(--font-inter, 'Inter', sans-serif)" },
+      },
+
+      fontSizes: {
+        "2xs": { value: "0.65rem" },
+        xs:    { value: "0.75rem" },
+        sm:    { value: "0.875rem" },
+        md:    { value: "1rem" },
+        lg:    { value: "1.125rem" },
+        xl:    { value: "1.25rem" },
+        "2xl": { value: "1.5rem" },
+        "3xl": { value: "1.875rem" },
+        "4xl": { value: "2.25rem" },
+      },
+
+      radii: {
+        sm:  { value: "6px" },
+        md:  { value: "8px" },
+        lg:  { value: "12px" },
+        xl:  { value: "16px" },
+        "2xl": { value: "20px" },
+        "3xl": { value: "24px" },
+        full: { value: "9999px" },
       },
     },
   },

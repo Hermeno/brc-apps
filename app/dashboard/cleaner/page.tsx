@@ -1,30 +1,12 @@
 'use client';
-// Nenhum pedido disponível
+
 import { useState, useEffect, useCallback } from 'react';
+import { Box, Text, VStack, HStack, Button, Flex, Icon } from '@chakra-ui/react';
 import {
-  Box,
-  Heading,
-  Text,
-  VStack,
-  HStack,
-  Button,
-  Badge,
-  Flex,
-  Icon,
-} from '@chakra-ui/react';
-import {
-  LucideMapPin,
-  LucideCalendar,
-  LucideUser,
-  LucideCheckCircle2,
-  LucideRefreshCw,
-  LucideInbox,
-  LucideBriefcase,
-  LucideBanknote,
-  LucideClock,
-  LucideMessageCircle,
-  LucideShield,
-  LucideAlertCircle,
+  LucideMapPin, LucideCalendar, LucideUser, LucideCheckCircle2,
+  LucideRefreshCw, LucideBriefcase, LucideBanknote,
+  LucideClock, LucideMessageCircle, LucideShield, LucideAlertCircle,
+  LucideChevronDown, LucideChevronUp,
 } from 'lucide-react';
 import { EXTRAS, FREQUENCY_OPTIONS } from '@/lib/estimate';
 import CleanerNav from '@/components/cleaner-nav';
@@ -56,15 +38,71 @@ type MyConversation = {
   lead: Lead & { client: { name: string } | null };
 };
 
+// ─── Section panel ────────────────────────────────────────────────────────────
+
+function SectionPanel({ title, count, accentColor, extra, children }: {
+  title: string;
+  count?: number;
+  accentColor?: string;
+  extra?: React.ReactNode;
+  children: React.ReactNode;
+}) {
+  return (
+    <Box border="1px solid #E2E8F0" mb={4} bg="white">
+      <Box px={5} py={3} bg="#F8FAFC" borderBottom="1px solid #E2E8F0">
+        <Flex align="center" justify="space-between">
+          <HStack gap={2.5}>
+            <Text
+              fontSize="10.5px" fontWeight="700" color="#94A3B8"
+              fontFamily="heading" textTransform="uppercase" letterSpacing="0.07em"
+            >
+              {title}
+            </Text>
+            {!!count && count > 0 && (
+              <Box
+                bg={accentColor ?? '#0B1120'} color="white"
+                px={2} h="16px" minW="16px"
+                display="inline-flex" alignItems="center" justifyContent="center"
+                fontSize="9px" fontWeight="700" fontFamily="heading"
+                style={{ borderRadius: 2 }}
+              >
+                {count}
+              </Box>
+            )}
+          </HStack>
+          {extra}
+        </Flex>
+      </Box>
+      {children}
+    </Box>
+  );
+}
+
+// ─── Chip label ───────────────────────────────────────────────────────────────
+
+function Chip({ label, bg, color }: { label: string; bg: string; color: string }) {
+  return (
+    <Text
+      fontSize="9.5px" fontWeight="700" color={color} fontFamily="heading"
+      textTransform="uppercase" letterSpacing="0.08em"
+      px={2} py="2px" style={{ background: bg, borderRadius: 2, display: 'inline-block' }}
+    >
+      {label}
+    </Text>
+  );
+}
+
+// ─── Page ─────────────────────────────────────────────────────────────────────
+
 export default function CleanerDashboard() {
   const router = useRouter();
-  const [available, setAvailable]       = useState<Lead[]>([]);
-  const [accepted, setAccepted]         = useState<Lead[]>([]);
-  const [verifyStatus, setVerifyStatus] = useState<string | null>(null);
+  const [available, setAvailable]         = useState<Lead[]>([]);
+  const [accepted, setAccepted]           = useState<Lead[]>([]);
+  const [verifyStatus, setVerifyStatus]   = useState<string | null>(null);
   const [conversations, setConversations] = useState<MyConversation[]>([]);
-  const [responding, setResponding]     = useState<string | null>(null);
-  const [loading, setLoading]           = useState(true);
-  const [showHistory, setShowHistory]   = useState(false);
+  const [responding, setResponding]       = useState<string | null>(null);
+  const [loading, setLoading]             = useState(true);
+  const [showHistory, setShowHistory]     = useState(false);
 
   const fetchLeads = useCallback(async () => {
     setLoading(true);
@@ -76,14 +114,14 @@ export default function CleanerDashboard() {
         setAccepted(data.accepted);
         setConversations(data.conversations ?? []);
       }
-    } finally {
-      setLoading(false);
-    }
+    } finally { setLoading(false); }
   }, []);
 
   useEffect(() => {
     fetchLeads();
-    fetch('/api/cleaner/verification').then(r => r.json()).then(d => setVerifyStatus(d.verification?.status ?? 'NONE'));
+    fetch('/api/cleaner/verification')
+      .then(r => r.json())
+      .then(d => setVerifyStatus(d.verification?.status ?? 'NONE'));
   }, [fetchLeads]);
 
   const handleRespond = async (leadId: string) => {
@@ -102,619 +140,434 @@ export default function CleanerDashboard() {
           });
           router.push(`/dashboard/chat/${data.conversationId}`);
         }
-      } else {
-        throw new Error(data.error);
-      }
+      } else throw new Error(data.error);
     } catch (error: any) {
       toaster.create({ title: error.message, type: 'error' });
-    } finally {
-      setResponding(null);
-    }
+    } finally { setResponding(null); }
   };
 
+  const activeJobs    = accepted.filter(l => l.status !== 'COMPLETED');
+  const completedJobs = accepted.filter(l => l.status === 'COMPLETED');
+
   return (
-    <Box minH="100vh" bg="slate.50">
+    <Box minH="100vh" bg="#F8FAFC">
       <CleanerNav />
 
-      <Box p={6} maxW="1200px" mx="auto">
+      <Box maxW="1080px" mx="auto" px={{ base: 4, md: 6 }} py={5}>
 
-        {/* Verification banner */}
+        {/* ── Verification banners ── */}
         {verifyStatus === 'NONE' && (
-          <Box mb={5} bg="yellow.50" border="1px solid" borderColor="yellow.200" borderRadius="2xl" p={4}>
+          <Box mb={4} bg="#FFFBEB" border="1px solid #FDE68A" p={4}>
             <Flex align="center" justify="space-between" gap={3} flexWrap="wrap">
               <HStack gap={3}>
-                <Icon as={LucideAlertCircle} w={5} h={5} color="yellow.500" />
+                <Icon as={LucideAlertCircle} w={4} h={4} color="#D97706" flexShrink={0} />
                 <Box>
-                  <Text fontWeight="bold" color="yellow.800" fontSize="sm">Verifique sua conta para receber mais leads</Text>
-                  <Text fontSize="xs" color="yellow.600">Profissionais verificados aparecem com destaque e têm prioridade.</Text>
+                  <Text fontWeight="700" color="#92400E" fontSize="13px" fontFamily="heading">
+                    Verifique sua conta para receber mais leads
+                  </Text>
+                  <Text fontSize="11.5px" color="#B45309" mt={0.5}>
+                    Profissionais verificados têm prioridade e aparecem com destaque.
+                  </Text>
                 </Box>
               </HStack>
-              <Button size="sm" bg="yellow.400" color="yellow.900" borderRadius="full" fontWeight="bold"
-                _hover={{ bg: 'yellow.500' }} onClick={() => router.push('/dashboard/cleaner/verify')}>
-                <Icon as={LucideShield} w={3.5} h={3.5} mr={1} />Verificar agora
+              <Button
+                size="sm" bg="#D97706" color="white" borderRadius="4px"
+                fontWeight="600" fontFamily="heading"
+                _hover={{ bg: '#B45309' }}
+                onClick={() => router.push('/dashboard/cleaner/verify')}
+              >
+                <Icon as={LucideShield} w={3.5} h={3.5} mr={1.5} />Verificar agora
               </Button>
             </Flex>
           </Box>
         )}
         {verifyStatus === 'PENDING' && (
-          <Box mb={5} bg="blue.50" border="1px solid" borderColor="blue.200" borderRadius="2xl" p={4}>
+          <Box mb={4} bg="#EFF6FF" border="1px solid #BFDBFE" p={4}>
             <HStack gap={3}>
-              <Icon as={LucideClock} w={5} h={5} color="blue.400" />
-              <Text fontSize="sm" color="blue.700" fontWeight="bold">Verificação em análise — responderemos em até 48h.</Text>
+              <Icon as={LucideClock} w={4} h={4} color="#3B82F6" flexShrink={0} />
+              <Text fontSize="13px" color="#1E40AF" fontWeight="600" fontFamily="heading">
+                Verificação em análise — responderemos em até 48h.
+              </Text>
             </HStack>
           </Box>
         )}
         {verifyStatus === 'APPROVED' && (
-          <Box mb={5} bg="green.50" border="1px solid" borderColor="green.200" borderRadius="2xl" p={4}>
+          <Box mb={4} bg="#F0FDF4" border="1px solid #BBF7D0" p={4}>
             <HStack gap={3}>
-              <Icon as={LucideShield} w={5} h={5} color="green.500" />
-              <Text fontSize="sm" color="green.700" fontWeight="bold">Conta verificada ✓</Text>
+              <Icon as={LucideCheckCircle2} w={4} h={4} color="#16A34A" flexShrink={0} />
+              <Text fontSize="13px" color="#166534" fontWeight="600" fontFamily="heading">
+                Conta verificada
+              </Text>
             </HStack>
           </Box>
         )}
         {verifyStatus === 'REJECTED' && (
-          <Box mb={5} bg="red.50" border="1px solid" borderColor="red.200" borderRadius="2xl" p={4}>
+          <Box mb={4} bg="#FFF1F2" border="1px solid #FECDD3" p={4}>
             <Flex align="center" justify="space-between" gap={3} flexWrap="wrap">
               <HStack gap={3}>
-                <Icon as={LucideAlertCircle} w={5} h={5} color="red.500" />
-                <Text fontSize="sm" color="red.700" fontWeight="bold">Verificação recusada — corrija e reenvie.</Text>
+                <Icon as={LucideAlertCircle} w={4} h={4} color="#E11D48" flexShrink={0} />
+                <Text fontSize="13px" color="#9F1239" fontWeight="600" fontFamily="heading">
+                  Verificação recusada — corrija e reenvie os documentos.
+                </Text>
               </HStack>
-              <Button size="sm" bg="red.500" color="white" borderRadius="full" fontWeight="bold"
-                _hover={{ bg: 'red.600' }} onClick={() => router.push('/dashboard/cleaner/verify')}>
+              <Button
+                size="sm" bg="#E11D48" color="white" borderRadius="4px"
+                fontWeight="600" fontFamily="heading"
+                _hover={{ bg: '#BE123C' }}
+                onClick={() => router.push('/dashboard/cleaner/verify')}
+              >
                 Reenviar documentos
               </Button>
             </Flex>
           </Box>
         )}
 
-        <Flex justify="space-between" align="center" mb={6}>
-          <HStack gap={2.5}>
-            <Box w="8px" h="8px" bg="green.400" borderRadius="full" boxShadow="0 0 0 3px rgba(34,197,94,0.2)" />
-            <Heading size="md" fontWeight="bold" color="slate.900">Pedidos Disponíveis</Heading>
-          </HStack>
-          <Button size="sm" variant="ghost" color="slate.400" _hover={{ color: 'brand.500', bg: 'brand.50' }}
-            onClick={fetchLeads} loading={loading}>
-            <Icon as={LucideRefreshCw} w={4} h={4} mr={1} />Atualizar
-          </Button>
-        </Flex>
-        <VStack gap={8} align="stretch">
-
-            {/* ── Available Leads ── */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4, delay: 0.1 }}
+        {/* ── Pedidos Disponíveis ── */}
+        <SectionPanel
+          title="Pedidos Disponíveis"
+          count={available.length}
+          accentColor="#F59E0B"
+          extra={
+            <Button
+              size="xs" variant="ghost" color="#94A3B8" borderRadius="4px" fontFamily="heading"
+              _hover={{ color: '#1A7FA0', bg: 'rgba(26,127,160,0.06)' }}
+              onClick={fetchLeads} loading={loading}
             >
-              <Box>
-                <Flex justify="space-between" align="center" mb={4}>
-                  <HStack gap={2}>
-                    <Icon as={LucideInbox} w={5} h={5} color="brand.500" />
-                    <Heading size="sm" color="slate.700">Pedidos Disponíveis</Heading>
-                  </HStack>
-                  {available.length > 0 && (
-                    <motion.div
-                      initial={{ scale: 0 }}
-                      animate={{ scale: 1 }}
-                      transition={{ type: 'spring', stiffness: 300 }}
-                    >
-                      <Badge
-                        bg="yellow.100" color="yellow.700"
-                        border="1px solid" borderColor="yellow.300"
-                        borderRadius="full" px={3} fontSize="xs" fontWeight="bold"
-                      >
-                        {available.length} novo{available.length > 1 ? 's' : ''}
-                      </Badge>
-                    </motion.div>
-                  )}
-                </Flex>
-
-                <AnimatePresence mode="wait">
-                  {available.length === 0 ? (
-                    <motion.div
-                      key="empty"
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                    >
-                      <Box
-                        
-                        
-                        borderColor="slate.200"
-                        borderRadius="2xl"
-                        p={12}
-                        textAlign="center"
-                      >
-                        <Text fontSize="3xl" mb={2}>📭</Text>
-                        <Text color="slate.500" fontWeight="bold">Nenhum pedido disponível</Text>
-                        <Text color="slate.400" fontSize="sm" mt={1}>
-                          Novos pedidos aparecerão aqui automaticamente.
+              <Icon as={LucideRefreshCw} w={3} h={3} mr={1.5} />Atualizar
+            </Button>
+          }
+        >
+          {loading ? (
+            <Box px={6} py={8} textAlign="center">
+              <Text fontSize="13px" color="#94A3B8" fontFamily="heading">Carregando…</Text>
+            </Box>
+          ) : available.length === 0 ? (
+            <Box px={6} py={10} textAlign="center">
+              <Text fontSize="13px" color="#CBD5E1" fontFamily="heading" fontWeight="500">
+                Nenhum pedido disponível no momento
+              </Text>
+              <Text fontSize="12px" color="#94A3B8" mt={1}>
+                Novos pedidos aparecerão aqui automaticamente.
+              </Text>
+            </Box>
+          ) : (
+            available.map((lead, i) => {
+              const freqLabel = lead.frequency && lead.frequency !== 'once'
+                ? FREQUENCY_OPTIONS.find(f => f.id === lead.frequency)?.label
+                : null;
+              return (
+                <Box
+                  key={lead.id}
+                  bg="white"
+                  borderBottom={i < available.length - 1 ? '1px solid #F1F5F9' : 'none'}
+                  position="relative"
+                >
+                  <Box position="absolute" left={0} top={0} bottom={0} w="3px" bg="#F59E0B" />
+                  <Flex px={6} pl={8} py={4} gap={6} align="flex-start" justify="space-between">
+                    <Box flex={1} minW={0}>
+                      <HStack gap={2.5} mb={1.5} flexWrap="wrap">
+                        <Text
+                          fontSize="14px" fontWeight="700" color="#0F172A"
+                          fontFamily="heading" letterSpacing="-0.01em"
+                        >
+                          {lead.serviceType}
                         </Text>
-                      </Box>
-                    </motion.div>
-                  ) : (
-                    <VStack gap={3} align="stretch">
-                      {available.map((lead, i) => (
-                        <motion.div
-                          key={lead.id}
-                          initial={{ opacity: 0, x: -20 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          exit={{ opacity: 0, x: 20 }}
-                          transition={{ duration: 0.3, delay: i * 0.07 }}
-                        >
-                          <Box
-                            bg="white"
-                            border="1px solid"
-                            borderColor="slate.200"
-                            borderRadius="2xl"
-                            p={5}
-                            _hover={{ borderColor: 'brand.200', boxShadow: '0 4px 20px rgba(37,99,235,0.1)', transform: 'translateY(-2px)' }}
-                            transition="all 0.2s"
-                          >
-                            <Flex justify="space-between" align="center" gap={4}>
-                              <VStack align="start" gap={2} flex={1}>
-                                <HStack gap={2}>
-                                  <motion.div
-                                    animate={{ scale: [1, 1.12, 1] }}
-                                    transition={{ repeat: Infinity, duration: 2, ease: 'easeInOut' }}
-                                  >
-                                    <Badge
-                                      bg="yellow.100" color="yellow.700"
-                                      border="1px solid" borderColor="yellow.300"
-                                      borderRadius="full" px={3} py={0.5}
-                                      fontSize="xs" fontWeight="bold"
-                                    >
-                                      NOVO
-                                    </Badge>
-                                  </motion.div>
-                                  <Text fontWeight="semibold" color="slate.800">
-                                    {lead.serviceType}
-                                  </Text>
-                                </HStack>
+                        <Chip label="NOVO" bg="#FEF3C7" color="#92400E" />
+                        {lead.client?.name && (
+                          <HStack gap={1}>
+                            <Icon as={LucideUser} w="10px" h="10px" color="#94A3B8" />
+                            <Text fontSize="11.5px" color="#64748B" fontFamily="heading">
+                              {lead.client.name}
+                            </Text>
+                          </HStack>
+                        )}
+                      </HStack>
 
-                                <HStack gap={4} flexWrap="wrap">
-                                  <HStack gap={1} color="slate.500" fontSize="sm">
-                                    <Icon as={LucideMapPin} w={4} h={4} color="red.400" />
-                                    <Text>{lead.address}</Text>
-                                  </HStack>
-                                  <HStack gap={1} color="slate.500" fontSize="sm">
-                                    <Icon as={LucideCalendar} w={4} h={4} color="brand.400" />
-                                    <Text>
-                                      {new Date(lead.dateTime).toLocaleString('pt-BR', {
-                                        dateStyle: 'short',
-                                        timeStyle: 'short',
-                                      })}
-                                    </Text>
-                                  </HStack>
-                                </HStack>
+                      <HStack gap={4} mb={1.5} flexWrap="wrap">
+                        <HStack gap={1}>
+                          <Icon as={LucideMapPin} w="11px" h="11px" color="#94A3B8" />
+                          <Text fontSize="12px" color="#64748B">{lead.address}</Text>
+                        </HStack>
+                        <HStack gap={1}>
+                          <Icon as={LucideCalendar} w="11px" h="11px" color="#94A3B8" />
+                          <Text fontSize="12px" color="#64748B">
+                            {new Date(lead.dateTime).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' })}
+                          </Text>
+                        </HStack>
+                      </HStack>
 
-                                {/* Property details */}
-                                {(lead.bedrooms || lead.squareMeters) && (
-                                  <HStack gap={2} flexWrap="wrap">
-                                    {lead.bedrooms && (
-                                      <Badge bg="slate.50" color="slate.600" borderRadius="full"
-                                        px={2} py={0.5} fontSize="xs" border="1px solid" borderColor="slate.200">
-                                        🛏 {lead.bedrooms}q
-                                      </Badge>
-                                    )}
-                                    {lead.bathrooms && (
-                                      <Badge bg="slate.50" color="slate.600" borderRadius="full"
-                                        px={2} py={0.5} fontSize="xs" border="1px solid" borderColor="slate.200">
-                                        🚿 {lead.bathrooms}ban.
-                                      </Badge>
-                                    )}
-                                    {(lead.squareMeters ?? 0) > 0 && (
-                                      <Badge bg="slate.50" color="slate.600" borderRadius="full"
-                                        px={2} py={0.5} fontSize="xs" border="1px solid" borderColor="slate.200">
-                                        📐 {lead.squareMeters}m²
-                                      </Badge>
-                                    )}
-                                    {lead.frequency && lead.frequency !== 'once' && (
-                                      <Badge bg="green.50" color="green.700" borderRadius="full"
-                                        px={2} py={0.5} fontSize="xs" border="1px solid" borderColor="green.200">
-                                        {FREQUENCY_OPTIONS.find(f => f.id === lead.frequency)?.label}
-                                      </Badge>
-                                    )}
-                                  </HStack>
-                                )}
+                      {(lead.bedrooms || lead.squareMeters || freqLabel) && (
+                        <HStack gap={4} mb={1.5} flexWrap="wrap">
+                          {lead.bedrooms   && <Text fontSize="12px" color="#475569">🛏 {lead.bedrooms}q</Text>}
+                          {lead.bathrooms  && <Text fontSize="12px" color="#475569">🚿 {lead.bathrooms}ban.</Text>}
+                          {(lead.squareMeters ?? 0) > 0 && <Text fontSize="12px" color="#475569">📐 {lead.squareMeters}m²</Text>}
+                          {freqLabel       && (
+                            <Text fontSize="12px" color="#1A7FA0" fontWeight="600" fontFamily="heading">↻ {freqLabel}</Text>
+                          )}
+                        </HStack>
+                      )}
 
-                                {/* Extras */}
-                                {lead.extras && lead.extras.length > 0 && (
-                                  <HStack gap={1.5} flexWrap="wrap">
-                                    {lead.extras.map(exId => {
-                                      const ex = EXTRAS.find(e => e.id === exId);
-                                      return ex ? (
-                                        <Badge key={exId} bg="yellow.50" color="yellow.700"
-                                          borderRadius="full" px={2} py={0.5} fontSize="xs"
-                                          border="1px solid" borderColor="yellow.200">
-                                          {ex.icon} {ex.label}
-                                        </Badge>
-                                      ) : null;
-                                    })}
-                                  </HStack>
-                                )}
+                      {lead.extras && lead.extras.length > 0 && (
+                        <HStack gap={3} mb={1.5} flexWrap="wrap">
+                          {lead.extras.map(exId => {
+                            const ex = EXTRAS.find(e => e.id === exId);
+                            return ex
+                              ? <Text key={exId} fontSize="12px" color="#64748B">{ex.icon} {ex.label}</Text>
+                              : null;
+                          })}
+                        </HStack>
+                      )}
 
-                                {/* Estimate — chave para o profissional decidir */}
-                                {lead.estimatedMinPrice && (
-                                  <Box bg="linear-gradient(135deg, #EFF6FF, #F0FDF4)"
-                                    border="1px solid" borderColor="brand.100"
-                                    borderRadius="xl" px={4} py={3}>
-                                    <HStack gap={5}>
-                                      <HStack gap={1.5}>
-                                        <Icon as={LucideBanknote} w={4} h={4} color="green.600" />
-                                        <Text fontSize="md" fontWeight="black" color="green.700">
-                                          R$ {lead.estimatedMinPrice} – R$ {lead.estimatedMaxPrice}
-                                        </Text>
-                                      </HStack>
-                                      {lead.estimatedHours && (
-                                        <HStack gap={1.5}>
-                                          <Icon as={LucideClock} w={4} h={4} color="brand.500" />
-                                          <Text fontSize="md" fontWeight="black" color="brand.700">
-                                            ~{lead.estimatedHours}h
-                                          </Text>
-                                        </HStack>
-                                      )}
-                                    </HStack>
-                                  </Box>
-                                )}
-
-                                {lead.client && (
-                                  <HStack gap={1} color="slate.400" fontSize="xs">
-                                    <Icon as={LucideUser} w={3} h={3} />
-                                    <Text>Cliente: {lead.client.name}</Text>
-                                  </HStack>
-                                )}
-
-                                {lead.notes && (
-                                  <Text color="slate.400" fontSize="xs" fontStyle="italic">
-                                    {lead.notes}
-                                  </Text>
-                                )}
-                              </VStack>
-
-                              <motion.div whileTap={{ scale: 0.96 }}>
-                                <Button
-                                  bg="brand.500"
-                                  color="white"
-                                  px={5}
-                                  borderRadius="xl"
-                                  fontWeight="bold"
-                                  fontSize="sm"
-                                  flexShrink={0}
-                                  _hover={{ bg: 'brand.600', boxShadow: '0 4px 14px rgba(37,99,235,0.4)' }}
-                                  transition="all 0.2s"
-                                  onClick={() => handleRespond(lead.id)}
-                                  loading={responding === lead.id}
-                                  loadingText="Processando..."
-                                >
-                                  <Icon as={LucideBanknote} w={4} h={4} mr={1.5} />
-                                  Quero este lead
-                                </Button>
-                              </motion.div>
-                            </Flex>
-                          </Box>
-                        </motion.div>
-                      ))}
-                    </VStack>
-                  )}
-                </AnimatePresence>
-              </Box>
-            </motion.div>
-
-            {/* ── My Active Conversations (responded, awaiting client pick) ── */}
-            {conversations.length > 0 && (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4, delay: 0.15 }}
-              >
-                <Box>
-                  <HStack gap={2} mb={4}>
-                    <Icon as={LucideMessageCircle} w={5} h={5} color="brand.500" />
-                    <Heading size="sm" color="slate.700">Aguardando Resposta do Cliente</Heading>
-                    <Badge
-                      bg="blue.100" color="blue.700"
-                      border="1px solid" borderColor="blue.200"
-                      borderRadius="full" px={2} fontSize="xs" fontWeight="bold"
-                    >
-                      {conversations.length}
-                    </Badge>
-                  </HStack>
-
-                  <VStack gap={3} align="stretch">
-                    {conversations.map((conv, i) => (
-                      <motion.div
-                        key={conv.id}
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ duration: 0.3, delay: i * 0.07 }}
-                      >
-                        <Box
-                          bg="white"
-                          border="1px solid"
-                          borderColor="brand.200"
-                          borderRadius="2xl"
-                          p={5}
-                          _hover={{ boxShadow: '0 4px 20px rgba(37,99,235,0.1)' }}
-                          transition="all 0.2s"
-                          cursor="pointer"
-                          onClick={() => router.push(`/dashboard/chat/${conv.id}`)}
-                        >
-                          <Flex justify="space-between" align="center" gap={4}>
-                            <VStack align="start" gap={1.5}>
-                              <HStack gap={2}>
-                                <Badge bg="blue.50" color="blue.700" border="1px solid" borderColor="blue.200"
-                                  borderRadius="full" px={3} py={0.5} fontSize="xs" fontWeight="bold">
-                                  Proposta enviada
-                                </Badge>
-                                <Text fontWeight="semibold" color="slate.800">{conv.lead.serviceType}</Text>
-                              </HStack>
-                              <HStack gap={3} flexWrap="wrap">
-                                <HStack gap={1} color="slate.500" fontSize="sm">
-                                  <Icon as={LucideMapPin} w={4} h={4} color="red.400" />
-                                  <Text>{conv.lead.address}</Text>
-                                </HStack>
-                                <HStack gap={1} color="slate.500" fontSize="sm">
-                                  <Icon as={LucideCalendar} w={4} h={4} color="brand.400" />
-                                  <Text>
-                                    {new Date(conv.lead.dateTime).toLocaleString('pt-BR', {
-                                      dateStyle: 'short', timeStyle: 'short',
-                                    })}
-                                  </Text>
-                                </HStack>
-                              </HStack>
-                              {conv.lead.client && (
-                                <HStack gap={1} color="slate.400" fontSize="xs">
-                                  <Icon as={LucideUser} w={3} h={3} />
-                                  <Text>Cliente: {conv.lead.client.name}</Text>
-                                </HStack>
-                              )}
-                            </VStack>
-                            <Button
-                              size="sm" bg="brand.500" color="white" borderRadius="xl"
-                              fontWeight="bold" flexShrink={0}
-                              _hover={{ bg: 'brand.600' }}
-                              onClick={e => { e.stopPropagation(); router.push(`/dashboard/chat/${conv.id}`); }}
+                      {lead.estimatedMinPrice && (
+                        <HStack gap={4} mt={2}>
+                          <HStack gap={1.5}>
+                            <Icon as={LucideBanknote} w="13px" h="13px" color="#059669" />
+                            <Text
+                              fontSize="15px" fontWeight="800" color="#047857"
+                              fontFamily="heading" letterSpacing="-0.02em"
                             >
-                              <Icon as={LucideMessageCircle} w={4} h={4} mr={1.5} />
-                              Abrir chat
-                            </Button>
-                          </Flex>
-                        </Box>
-                      </motion.div>
-                    ))}
-                  </VStack>
-                </Box>
-              </motion.div>
-            )}
+                              R$ {lead.estimatedMinPrice}–{lead.estimatedMaxPrice}
+                            </Text>
+                          </HStack>
+                          {lead.estimatedHours && (
+                            <HStack gap={1}>
+                              <Icon as={LucideClock} w="11px" h="11px" color="#1A7FA0" />
+                              <Text fontSize="13px" fontWeight="600" color="#1A7FA0" fontFamily="heading">
+                                ~{lead.estimatedHours}h
+                              </Text>
+                            </HStack>
+                          )}
+                        </HStack>
+                      )}
 
-            {/* ── Active Jobs (IN_REVIEW, ACCEPTED) ── */}
-            {accepted.filter(l => l.status !== 'COMPLETED').length > 0 && (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4, delay: 0.2 }}
-              >
-                <Box>
-                  <HStack gap={2} mb={4}>
-                    <Icon as={LucideBriefcase} w={5} h={5} color="green.500" />
-                    <Heading size="sm" color="slate.700">Meus Trabalhos Aceitos</Heading>
-                    <Badge
-                      bg="green.100" color="green.700"
-                      border="1px solid" borderColor="green.200"
-                      borderRadius="full" px={2} fontSize="xs" fontWeight="bold"
+                      {lead.notes && (
+                        <Text color="#94A3B8" fontSize="11.5px" fontStyle="italic" mt={1.5}>
+                          {lead.notes}
+                        </Text>
+                      )}
+                    </Box>
+
+                    <Button
+                      bg="#1A7FA0" color="white" px={4} h="36px"
+                      borderRadius="4px" fontWeight="600" fontSize="13px" fontFamily="heading"
+                      flexShrink={0} alignSelf="center"
+                      _hover={{ bg: '#156B87' }} transition="background 0.15s"
+                      onClick={() => handleRespond(lead.id)}
+                      loading={responding === lead.id}
+                      loadingText="…"
                     >
-                      {accepted.filter(l => l.status !== 'COMPLETED').length}
-                    </Badge>
-                  </HStack>
-
-                  <VStack gap={3} align="stretch">
-                    {accepted.filter(l => l.status !== 'COMPLETED').map((lead, i) => (
-                      <motion.div
-                        key={lead.id}
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ duration: 0.3, delay: i * 0.07 }}
-                      >
-                        <Box
-                          bg="white"
-                          border="1px solid"
-                          borderColor="green.200"
-                          borderRadius="2xl"
-                          p={5}
-                          position="relative"
-                          overflow="hidden"
-                        >
-                          <Box
-                            position="absolute"
-                            left={0} top={0} bottom={0}
-                            w="4px"
-                            bg="green.400"
-                            borderLeftRadius="2xl"
-                          />
-                          <VStack align="start" gap={2} pl={3}>
-                            <HStack gap={2}>
-                              <Icon as={LucideCheckCircle2} w={5} h={5} color="green.500" />
-                              <Badge
-                                bg="green.50" color="green.700"
-                                border="1px solid" borderColor="green.200"
-                                borderRadius="full" px={3} py={0.5}
-                                fontSize="xs" fontWeight="bold"
-                              >
-                                ACEITO
-                              </Badge>
-                              <Text fontWeight="semibold" color="slate.800">
-                                {lead.serviceType}
-                              </Text>
-                            </HStack>
-
-                            <HStack gap={4} flexWrap="wrap">
-                              <HStack gap={1} color="slate.500" fontSize="sm">
-                                <Icon as={LucideMapPin} w={4} h={4} color="red.400" />
-                                <Text>{lead.address}</Text>
-                              </HStack>
-                              <HStack gap={1} color="slate.500" fontSize="sm">
-                                <Icon as={LucideCalendar} w={4} h={4} color="brand.400" />
-                                <Text>
-                                  {new Date(lead.dateTime).toLocaleString('pt-BR', {
-                                    dateStyle: 'short',
-                                    timeStyle: 'short',
-                                  })}
-                                </Text>
-                              </HStack>
-                            </HStack>
-
-                            {lead.client && (
-                              <HStack gap={1} color="slate.500" fontSize="sm">
-                                <Icon as={LucideUser} w={4} h={4} />
-                                <Text>
-                                  Cliente:{' '}
-                                  <Text as="span" fontWeight="semibold">{lead.client.name}</Text>
-                                </Text>
-                              </HStack>
-                            )}
-
-                            {lead.notes && (
-                              <Text color="slate.400" fontSize="xs" fontStyle="italic">
-                                {lead.notes}
-                              </Text>
-                            )}
-                          </VStack>
-                        </Box>
-                      </motion.div>
-                    ))}
-                  </VStack>
+                      <Icon as={LucideBanknote} w={3.5} h={3.5} mr={1.5} />
+                      Quero este lead
+                    </Button>
+                  </Flex>
                 </Box>
-              </motion.div>
-            )}
+              );
+            })
+          )}
+        </SectionPanel>
 
-            {/* ── Completed Jobs History ── */}
-            {accepted.filter(l => l.status === 'COMPLETED').length > 0 && (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4, delay: 0.25 }}
+        {/* ── Aguardando Resposta ── */}
+        {conversations.length > 0 && (
+          <SectionPanel
+            title="Aguardando Resposta do Cliente"
+            count={conversations.length}
+            accentColor="#60A5FA"
+          >
+            {conversations.map((conv, i) => (
+              <Box
+                key={conv.id}
+                bg="white"
+                borderBottom={i < conversations.length - 1 ? '1px solid #F1F5F9' : 'none'}
+                position="relative"
+                cursor="pointer"
+                onClick={() => router.push(`/dashboard/chat/${conv.id}`)}
+                _hover={{ bg: '#FAFBFD' }}
+                transition="background 0.12s"
               >
-                <Box>
-                  <Button
-                    variant="ghost"
-                    w="full"
-                    justifyContent="space-between"
-                    px={4} py={3} h="auto"
-                    borderRadius="2xl"
-                    border="1px solid"
-                    borderColor="slate.200"
-                    bg={showHistory ? 'slate.50' : 'white'}
-                    color="slate.600"
-                    fontWeight="bold"
-                    fontSize="sm"
-                    _hover={{ bg: 'slate.100', borderColor: 'slate.300' }}
-                    onClick={() => setShowHistory(h => !h)}
-                    mb={showHistory ? 3 : 0}
-                  >
-                    <HStack gap={2}>
-                      <Icon as={LucideBriefcase} w={4} h={4} color="slate.400" />
-                      <Text>Histórico de trabalhos concluídos</Text>
-                      <Badge
-                        bg="slate.100" color="slate.600"
-                        border="1px solid" borderColor="slate.200"
-                        borderRadius="full" px={2} fontSize="xs" fontWeight="bold"
-                      >
-                        {accepted.filter(l => l.status === 'COMPLETED').length}
-                      </Badge>
+                <Box position="absolute" left={0} top={0} bottom={0} w="3px" bg="#60A5FA" />
+                <Flex px={6} pl={8} py={3.5} gap={6} align="center" justify="space-between">
+                  <Box>
+                    <HStack gap={2.5} mb={1} flexWrap="wrap">
+                      <Chip label="Proposta enviada" bg="#EFF6FF" color="#1E40AF" />
+                      <Text fontSize="14px" fontWeight="700" color="#0F172A" fontFamily="heading" letterSpacing="-0.01em">
+                        {conv.lead.serviceType}
+                      </Text>
                     </HStack>
-                    <Text fontSize="xs" color="slate.400">
-                      {showHistory ? '▲ Ocultar' : '▼ Ver histórico'}
-                    </Text>
+                    <HStack gap={4} flexWrap="wrap">
+                      <HStack gap={1}>
+                        <Icon as={LucideMapPin} w="11px" h="11px" color="#94A3B8" />
+                        <Text fontSize="12px" color="#64748B">{conv.lead.address}</Text>
+                      </HStack>
+                      <HStack gap={1}>
+                        <Icon as={LucideCalendar} w="11px" h="11px" color="#94A3B8" />
+                        <Text fontSize="12px" color="#64748B">
+                          {new Date(conv.lead.dateTime).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' })}
+                        </Text>
+                      </HStack>
+                      {conv.lead.client && (
+                        <HStack gap={1}>
+                          <Icon as={LucideUser} w="11px" h="11px" color="#94A3B8" />
+                          <Text fontSize="12px" color="#64748B">{conv.lead.client.name}</Text>
+                        </HStack>
+                      )}
+                    </HStack>
+                  </Box>
+                  <Button
+                    size="sm" bg="#1A7FA0" color="white" borderRadius="4px"
+                    fontWeight="600" fontFamily="heading" flexShrink={0}
+                    _hover={{ bg: '#156B87' }}
+                    onClick={e => { e.stopPropagation(); router.push(`/dashboard/chat/${conv.id}`); }}
+                  >
+                    <Icon as={LucideMessageCircle} w={3.5} h={3.5} mr={1.5} />
+                    Abrir chat
                   </Button>
+                </Flex>
+              </Box>
+            ))}
+          </SectionPanel>
+        )}
 
-                  <AnimatePresence>
-                    {showHistory && (
-                      <motion.div
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: 'auto' }}
-                        exit={{ opacity: 0, height: 0 }}
-                        transition={{ duration: 0.3 }}
-                        style={{ overflow: 'hidden' }}
-                      >
-                        <VStack gap={3} align="stretch">
-                          {accepted.filter(l => l.status === 'COMPLETED').map((lead, i) => (
-                            <motion.div
-                              key={lead.id}
-                              initial={{ opacity: 0, x: -20 }}
-                              animate={{ opacity: 1, x: 0 }}
-                              transition={{ duration: 0.3, delay: i * 0.07 }}
-                            >
-                              <Box
-                                bg="slate.50"
-                                border="1px solid"
-                                borderColor="slate.200"
-                                borderRadius="2xl"
-                                p={5}
-                                position="relative"
-                                overflow="hidden"
-                                opacity={0.85}
-                              >
-                                <Box
-                                  position="absolute"
-                                  left={0} top={0} bottom={0}
-                                  w="4px"
-                                  bg="slate.300"
-                                  borderLeftRadius="2xl"
-                                />
-                                <VStack align="start" gap={2} pl={3}>
-                                  <HStack gap={2}>
-                                    <Icon as={LucideCheckCircle2} w={5} h={5} color="slate.400" />
-                                    <Badge
-                                      bg="slate.100" color="slate.600"
-                                      border="1px solid" borderColor="slate.200"
-                                      borderRadius="full" px={3} py={0.5}
-                                      fontSize="xs" fontWeight="bold"
-                                    >
-                                      CONCLUÍDO
-                                    </Badge>
-                                    <Text fontWeight="semibold" color="slate.600">
-                                      {lead.serviceType}
-                                    </Text>
-                                  </HStack>
-
-                                  <HStack gap={4} flexWrap="wrap">
-                                    <HStack gap={1} color="slate.400" fontSize="sm">
-                                      <Icon as={LucideMapPin} w={4} h={4} color="slate.400" />
-                                      <Text>{lead.address}</Text>
-                                    </HStack>
-                                    <HStack gap={1} color="slate.400" fontSize="sm">
-                                      <Icon as={LucideCalendar} w={4} h={4} color="slate.400" />
-                                      <Text>
-                                        {new Date(lead.dateTime).toLocaleString('pt-BR', {
-                                          dateStyle: 'short',
-                                          timeStyle: 'short',
-                                        })}
-                                      </Text>
-                                    </HStack>
-                                  </HStack>
-
-                                  {lead.client && (
-                                    <HStack gap={1} color="slate.400" fontSize="sm">
-                                      <Icon as={LucideUser} w={4} h={4} />
-                                      <Text>
-                                        Cliente:{' '}
-                                        <Text as="span" fontWeight="semibold">{lead.client.name}</Text>
-                                      </Text>
-                                    </HStack>
-                                  )}
-                                </VStack>
-                              </Box>
-                            </motion.div>
-                          ))}
-                        </VStack>
-                      </motion.div>
+        {/* ── Trabalhos Aceitos ── */}
+        {activeJobs.length > 0 && (
+          <SectionPanel
+            title="Trabalhos Aceitos"
+            count={activeJobs.length}
+            accentColor="#10B981"
+          >
+            {activeJobs.map((lead, i) => (
+              <Box
+                key={lead.id}
+                bg="white"
+                borderBottom={i < activeJobs.length - 1 ? '1px solid #F1F5F9' : 'none'}
+                position="relative"
+              >
+                <Box position="absolute" left={0} top={0} bottom={0} w="3px" bg="#10B981" />
+                <Flex px={6} pl={8} py={3.5} gap={6} align="flex-start">
+                  <Box flex={1}>
+                    <HStack gap={2.5} mb={1} flexWrap="wrap">
+                      <Chip label="Aceito" bg="#F0FDF4" color="#047857" />
+                      <Text fontSize="14px" fontWeight="700" color="#0F172A" fontFamily="heading" letterSpacing="-0.01em">
+                        {lead.serviceType}
+                      </Text>
+                    </HStack>
+                    <HStack gap={4} flexWrap="wrap">
+                      <HStack gap={1}>
+                        <Icon as={LucideMapPin} w="11px" h="11px" color="#94A3B8" />
+                        <Text fontSize="12px" color="#64748B">{lead.address}</Text>
+                      </HStack>
+                      <HStack gap={1}>
+                        <Icon as={LucideCalendar} w="11px" h="11px" color="#94A3B8" />
+                        <Text fontSize="12px" color="#64748B">
+                          {new Date(lead.dateTime).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' })}
+                        </Text>
+                      </HStack>
+                      {lead.client && (
+                        <HStack gap={1}>
+                          <Icon as={LucideUser} w="11px" h="11px" color="#94A3B8" />
+                          <Text fontSize="12px" color="#64748B">
+                            Cliente:{' '}
+                            <Text as="span" fontWeight="600" color="#475569">{lead.client.name}</Text>
+                          </Text>
+                        </HStack>
+                      )}
+                    </HStack>
+                    {lead.notes && (
+                      <Text color="#94A3B8" fontSize="11.5px" fontStyle="italic" mt={1.5}>{lead.notes}</Text>
                     )}
-                  </AnimatePresence>
-                </Box>
-              </motion.div>
-            )}
+                  </Box>
+                </Flex>
+              </Box>
+            ))}
+          </SectionPanel>
+        )}
 
-        </VStack>
+        {/* ── Histórico Concluídos ── */}
+        {completedJobs.length > 0 && (
+          <Box border="1px solid #E2E8F0" mb={4}>
+            <Box
+              as="button" w="full" bg="white" px={5} py={3}
+              borderBottom={showHistory ? '1px solid #E2E8F0' : 'none'}
+              cursor="pointer"
+              onClick={() => setShowHistory(h => !h)}
+              _hover={{ bg: '#F8FAFC' }}
+              transition="background 0.12s"
+              style={{ textAlign: 'left' }}
+            >
+              <Flex align="center" justify="space-between">
+                <HStack gap={2.5}>
+                  <Icon as={LucideBriefcase} w="12px" h="12px" color="#94A3B8" />
+                  <Text
+                    fontSize="10.5px" fontWeight="700" color="#94A3B8"
+                    fontFamily="heading" textTransform="uppercase" letterSpacing="0.07em"
+                  >
+                    Histórico concluídos
+                  </Text>
+                  <Box
+                    bg="#475569" color="white" px={2} h="16px" minW="16px"
+                    display="inline-flex" alignItems="center" justifyContent="center"
+                    fontSize="9px" fontWeight="700" fontFamily="heading"
+                    style={{ borderRadius: 2 }}
+                  >
+                    {completedJobs.length}
+                  </Box>
+                </HStack>
+                <Icon as={showHistory ? LucideChevronUp : LucideChevronDown} w="13px" h="13px" color="#94A3B8" />
+              </Flex>
+            </Box>
+            <AnimatePresence>
+              {showHistory && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  exit={{ opacity: 0, height: 0 }}
+                  transition={{ duration: 0.2 }}
+                  style={{ overflow: 'hidden' }}
+                >
+                  {completedJobs.map((lead, i) => (
+                    <Box
+                      key={lead.id}
+                      bg="white"
+                      borderBottom={i < completedJobs.length - 1 ? '1px solid #F1F5F9' : 'none'}
+                      position="relative"
+                      opacity={0.7}
+                    >
+                      <Box position="absolute" left={0} top={0} bottom={0} w="3px" bg="#CBD5E1" />
+                      <Flex px={6} pl={8} py={3.5} gap={6} align="flex-start">
+                        <Box flex={1}>
+                          <HStack gap={2.5} mb={1} flexWrap="wrap">
+                            <Chip label="Concluído" bg="#F1F5F9" color="#475569" />
+                            <Text fontSize="14px" fontWeight="600" color="#475569" fontFamily="heading" letterSpacing="-0.01em">
+                              {lead.serviceType}
+                            </Text>
+                          </HStack>
+                          <HStack gap={4} flexWrap="wrap">
+                            <HStack gap={1}>
+                              <Icon as={LucideMapPin} w="11px" h="11px" color="#CBD5E1" />
+                              <Text fontSize="12px" color="#94A3B8">{lead.address}</Text>
+                            </HStack>
+                            <HStack gap={1}>
+                              <Icon as={LucideCalendar} w="11px" h="11px" color="#CBD5E1" />
+                              <Text fontSize="12px" color="#94A3B8">
+                                {new Date(lead.dateTime).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' })}
+                              </Text>
+                            </HStack>
+                            {lead.client && (
+                              <HStack gap={1}>
+                                <Icon as={LucideUser} w="11px" h="11px" color="#CBD5E1" />
+                                <Text fontSize="12px" color="#94A3B8">{lead.client.name}</Text>
+                              </HStack>
+                            )}
+                          </HStack>
+                        </Box>
+                      </Flex>
+                    </Box>
+                  ))}
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </Box>
+        )}
+
       </Box>
     </Box>
   );

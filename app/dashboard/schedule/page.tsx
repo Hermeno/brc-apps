@@ -2,14 +2,13 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import {
-  Box, Flex, VStack, HStack, Text, Heading, Badge, Icon,
+  Box, Flex, VStack, HStack, Text, Heading, Icon,
 } from '@chakra-ui/react';
 import {
   LucideMapPin, LucideCalendar, LucideUser, LucideCheckCircle2,
   LucideClock, LucidePhone, LucideStar, LucideCalendarDays,
 } from 'lucide-react';
 import CleanerNav from '@/components/cleaner-nav';
-import { motion, AnimatePresence } from 'motion/react';
 
 type Job = {
   id: string; serviceType: string; address: string; dateTime: string;
@@ -49,175 +48,227 @@ export default function SchedulePage() {
   const today    = jobs.filter(j => j.status === 'ACCEPTED' && new Date(j.dateTime) < now && new Date(j.dateTime).toDateString() === now.toDateString());
   const completed = jobs.filter(j => j.status === 'COMPLETED');
 
-  const Section = ({ title, color, icon, items }: { title: string; color: string; icon: any; items: Job[] }) =>
+  const accentColor = (job: Job) => {
+    if (job.status === 'COMPLETED') return '#22C55E';
+    const dt = new Date(job.dateTime);
+    if (dt.toDateString() === now.toDateString()) return '#F97316';
+    return '#1A7FA0';
+  };
+
+  const SectionPanel = ({ label, items, accentBg }: { label: string; items: Job[]; accentBg: string }) =>
     items.length === 0 ? null : (
-      <Box>
-        <HStack gap={2} mb={4}>
-          <Icon as={icon} w={5} h={5} color={color} />
-          <Heading size="sm" color="slate.700">{title}</Heading>
-          <Badge bg={`${color.split('.')[0]}.50`} color={color} borderRadius="full" px={2} fontSize="xs" fontWeight="bold">
-            {items.length}
-          </Badge>
-        </HStack>
-        <VStack gap={3} align="stretch">
-          <AnimatePresence>
-            {items.map((job, i) => {
-              const dt = new Date(job.dateTime);
-              const isPast = dt < now;
-              return (
-                <motion.div key={job.id}
-                  initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.3, delay: i * 0.06 }}>
-                  <Box bg="white" border="1px solid"
-                    borderColor={job.status === 'COMPLETED' ? 'green.200' : 'slate.200'}
-                    borderRadius="2xl" overflow="hidden"
-                    boxShadow="0 1px 8px rgba(0,0,0,0.04)"
-                    _hover={{ boxShadow: '0 4px 20px rgba(0,0,0,0.08)' }}
-                    transition="all 0.2s">
-                    {/* Top accent */}
-                    <Box h="3px" bg={job.status === 'COMPLETED' ? 'green.400' : isPast ? 'orange.400' : 'brand.400'} />
-                    <Box p={5}>
-                      <Flex justify="space-between" align="start" gap={4}>
-                        <VStack align="start" gap={2.5} flex={1}>
+      <Box border="1px solid #E2E8F0">
+        {/* Section header */}
+        <Box bg="#F8FAFC" px={5} py={3} borderBottom="1px solid #E2E8F0">
+          <HStack gap={2}>
+            <Text
+              fontSize="10.5px"
+              fontWeight={700}
+              color="#94A3B8"
+              textTransform="uppercase"
+              fontFamily="heading"
+              letterSpacing="0.07em">
+              {label}
+            </Text>
+            <Text
+              style={{ borderRadius: 2, background: accentBg, padding: '2px 6px', fontSize: 9.5, fontWeight: 700, color: '#fff' }}>
+              {items.length}
+            </Text>
+          </HStack>
+        </Box>
 
-                          <HStack gap={2} flexWrap="wrap">
-                            <Badge
-                              bg={job.status === 'COMPLETED' ? 'green.50' : 'blue.50'}
-                              color={job.status === 'COMPLETED' ? 'green.700' : 'brand.700'}
-                              border="1px solid"
-                              borderColor={job.status === 'COMPLETED' ? 'green.200' : 'brand.200'}
-                              borderRadius="full" px={3} py={0.5} fontSize="xs" fontWeight="bold">
-                              {job.status === 'COMPLETED' ? '✓ Concluído' : 'Confirmado'}
-                            </Badge>
-                            <Text fontWeight="bold" color="slate.900">{job.serviceType}</Text>
+        {/* Job rows */}
+        <VStack gap={0} align="stretch">
+          {items.map((job, i) => {
+            const dt = new Date(job.dateTime);
+            const isPast = dt < now;
+            const leftColor = accentColor(job);
+            const isLast = i === items.length - 1;
+            return (
+              <Box
+                key={job.id}
+                position="relative"
+                bg="white"
+                px={5}
+                py={4}
+                borderBottom={isLast ? undefined : '1px solid #F1F5F9'}>
+                {/* Left accent strip */}
+                <Box position="absolute" left={0} top={0} bottom={0} w="3px" bg={leftColor} />
+
+                <Flex justify="space-between" align="start" gap={4}>
+                  <VStack align="start" gap={2} flex={1}>
+
+                    <HStack gap={2} flexWrap="wrap">
+                      <Text
+                        style={{
+                          borderRadius: 2,
+                          background: job.status === 'COMPLETED' ? '#DCFCE7' : '#DBEAFE',
+                          padding: '2px 6px',
+                          fontSize: 9.5,
+                          fontWeight: 700,
+                          color: job.status === 'COMPLETED' ? '#15803D' : '#1E40AF',
+                        }}>
+                        {job.status === 'COMPLETED' ? '✓ Concluído' : 'Confirmado'}
+                      </Text>
+                      <Text fontWeight="bold" color="slate.900" fontFamily="heading">{job.serviceType}</Text>
+                    </HStack>
+
+                    <HStack gap={4} flexWrap="wrap">
+                      <HStack gap={1.5} color="slate.500" fontSize="sm">
+                        <Icon as={LucideMapPin} w={4} h={4} color="red.400" />
+                        <Text>{job.address}</Text>
+                      </HStack>
+                      <HStack gap={1.5} color="slate.500" fontSize="sm">
+                        <Icon as={LucideCalendar} w={4} h={4} color="#1A7FA0" />
+                        <Text fontWeight="semibold" color={isPast ? 'orange.600' : 'slate.700'}>
+                          {dt.toLocaleString('pt-BR', { dateStyle: 'full', timeStyle: 'short' })}
+                        </Text>
+                      </HStack>
+                    </HStack>
+
+                    {/* Property details: inline text, no badges */}
+                    {(job.bedrooms || job.bathrooms || (job.squareMeters ?? 0) > 0 || job.estimatedHours) && (
+                      <HStack gap={3} flexWrap="wrap">
+                        {job.bedrooms && (
+                          <Text fontSize="xs" color="slate.500">🛏 {job.bedrooms}q</Text>
+                        )}
+                        {job.bathrooms && (
+                          <Text fontSize="xs" color="slate.500">🚿 {job.bathrooms}ban.</Text>
+                        )}
+                        {(job.squareMeters ?? 0) > 0 && (
+                          <Text fontSize="xs" color="slate.500">📐 {job.squareMeters}m²</Text>
+                        )}
+                        {job.estimatedHours && (
+                          <HStack gap={1}>
+                            <Icon as={LucideClock} w={3} h={3} color="slate.400" />
+                            <Text fontSize="xs" color="slate.500">~{job.estimatedHours}h</Text>
                           </HStack>
+                        )}
+                      </HStack>
+                    )}
 
-                          <HStack gap={4} flexWrap="wrap">
-                            <HStack gap={1.5} color="slate.500" fontSize="sm">
-                              <Icon as={LucideMapPin} w={4} h={4} color="red.400" />
-                              <Text>{job.address}</Text>
-                            </HStack>
-                            <HStack gap={1.5} color="slate.500" fontSize="sm">
-                              <Icon as={LucideCalendar} w={4} h={4} color="brand.400" />
-                              <Text fontWeight="semibold" color={isPast ? 'orange.600' : 'slate.700'}>
-                                {dt.toLocaleString('pt-BR', { dateStyle: 'full', timeStyle: 'short' })}
-                              </Text>
-                            </HStack>
+                    {/* Client info: flat HStack, no bg box */}
+                    {job.client && (
+                      <HStack gap={3} flexWrap="wrap">
+                        <HStack gap={1.5} color="slate.600" fontSize="sm">
+                          <Icon as={LucideUser} w={4} h={4} />
+                          <Text fontWeight="semibold">{job.client.name}</Text>
+                        </HStack>
+                        {job.client.phone && (
+                          <HStack gap={1} color="slate.500" fontSize="sm">
+                            <Icon as={LucidePhone} w={3} h={3} />
+                            <Text>{job.client.phone}</Text>
                           </HStack>
+                        )}
+                      </HStack>
+                    )}
 
-                          <HStack gap={2} flexWrap="wrap">
-                            {job.bedrooms && (
-                              <Badge bg="slate.50" color="slate.600" borderRadius="full" px={2} py={0.5}
-                                fontSize="xs" border="1px solid" borderColor="slate.200">
-                                🛏 {job.bedrooms}q
-                              </Badge>
-                            )}
-                            {job.bathrooms && (
-                              <Badge bg="slate.50" color="slate.600" borderRadius="full" px={2} py={0.5}
-                                fontSize="xs" border="1px solid" borderColor="slate.200">
-                                🚿 {job.bathrooms}ban.
-                              </Badge>
-                            )}
-                            {(job.squareMeters ?? 0) > 0 && (
-                              <Badge bg="slate.50" color="slate.600" borderRadius="full" px={2} py={0.5}
-                                fontSize="xs" border="1px solid" borderColor="slate.200">
-                                📐 {job.squareMeters}m²
-                              </Badge>
-                            )}
-                            {job.estimatedHours && (
-                              <Badge bg="brand.50" color="brand.700" borderRadius="full" px={2} py={0.5}
-                                fontSize="xs" border="1px solid" borderColor="brand.200">
-                                <Icon as={LucideClock} w={3} h={3} mr={1} />~{job.estimatedHours}h
-                              </Badge>
-                            )}
-                          </HStack>
-
-                          {job.client && (
-                            <HStack gap={3} bg="slate.50" px={3} py={2} borderRadius="xl" flexWrap="wrap">
-                              <HStack gap={1.5} color="slate.600" fontSize="sm">
-                                <Icon as={LucideUser} w={4} h={4} />
-                                <Text fontWeight="semibold">{job.client.name}</Text>
-                              </HStack>
-                              {job.client.phone && (
-                                <HStack gap={1} color="slate.500" fontSize="sm">
-                                  <Icon as={LucidePhone} w={3} h={3} />
-                                  <Text>{job.client.phone}</Text>
-                                </HStack>
-                              )}
-                            </HStack>
-                          )}
-
-                          {job.review && (
-                            <HStack gap={2} bg="yellow.50" px={3} py={2} borderRadius="xl"
-                              border="1px solid" borderColor="yellow.200">
-                              <Icon as={LucideStar} w={4} h={4} color="yellow.500" />
-                              <StarRow rating={job.review.rating} />
-                              {job.review.comment && (
-                                <Text fontSize="xs" color="yellow.700" fontStyle="italic">
-                                  "{job.review.comment}"
-                                </Text>
-                              )}
-                            </HStack>
-                          )}
-
-                        </VStack>
-
-                        <Box textAlign="right">
-                          {job.estimatedMinPrice && (
-                            <Text fontWeight="black" fontSize="lg" color="green.600">
-                              R$ {job.estimatedMinPrice}–{job.estimatedMaxPrice}
-                            </Text>
-                          )}
-                          <Text fontSize="xs" color="slate.400" mt={0.5}>
-                            {dt.toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' })}
+                    {/* Review: flat stars inline */}
+                    {job.review && (
+                      <HStack gap={2}>
+                        <Icon as={LucideStar} w={4} h={4} color="#F59E0B" />
+                        <StarRow rating={job.review.rating} />
+                        {job.review.comment && (
+                          <Text fontSize="xs" color="slate.500" fontStyle="italic">
+                            "{job.review.comment}"
                           </Text>
-                        </Box>
-                      </Flex>
-                    </Box>
+                        )}
+                      </HStack>
+                    )}
+
+                  </VStack>
+
+                  <Box textAlign="right" flexShrink={0}>
+                    {job.estimatedMinPrice && (
+                      <Text fontWeight="black" fontSize="lg" color="green.600" fontFamily="heading">
+                        R$ {job.estimatedMinPrice}–{job.estimatedMaxPrice}
+                      </Text>
+                    )}
+                    <Text fontSize="xs" color="slate.400" mt={0.5}>
+                      {dt.toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' })}
+                    </Text>
                   </Box>
-                </motion.div>
-              );
-            })}
-          </AnimatePresence>
+                </Flex>
+              </Box>
+            );
+          })}
         </VStack>
       </Box>
     );
 
+  // StatStrip counts
+  const statItems = [
+    { label: 'HOJE', value: today.length, color: '#F97316' },
+    { label: 'PRÓXIMOS', value: upcoming.length, color: '#1A7FA0' },
+    { label: 'CONCLUÍDOS', value: completed.length, color: '#22C55E' },
+  ];
+
   return (
-    <Box minH="100vh" bg="slate.50">
+    <Box minH="100vh" bg="#F8FAFC">
       <CleanerNav />
       <Box p={6} maxW="1200px" mx="auto">
-        <HStack gap={2.5} mb={6}>
-          <Box w="8px" h="8px" bg="brand.400" borderRadius="full" boxShadow="0 0 0 3px rgba(37,99,235,0.2)" />
-          <Heading size="md" fontWeight="bold" color="slate.900">Minha Agenda</Heading>
-        </HStack>
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
-            <VStack gap={8} align="stretch">
 
-              {loading ? (
-                <Box textAlign="center" py={16}>
-                  <Text color="slate.400">Carregando agenda…</Text>
-                </Box>
-              ) : jobs.length === 0 ? (
-                <Box  borderColor="slate.200" borderRadius="2xl" p={16} textAlign="center">
-                  <motion.div animate={{ rotate: [0, 5, -5, 0] }} transition={{ repeat: Infinity, duration: 4 }}>
-                    <Icon as={LucideCalendarDays} w={14} h={14} color="slate.300" mb={4} />
-                  </motion.div>
-                  <Text color="slate.600" fontWeight="bold" fontSize="lg">Nenhum trabalho agendado</Text>
-                  <Text color="slate.400" fontSize="sm" mt={1}>
-                    Aceite leads no Marketplace para ver seus trabalhos aqui.
+        <HStack gap={2.5} mb={6}>
+          <Heading size="md" fontWeight="bold" color="slate.900" fontFamily="heading">Minha Agenda</Heading>
+        </HStack>
+
+        <VStack gap={6} align="stretch">
+
+          {/* StatStrip */}
+          <Box border="1px solid #E2E8F0" bg="white">
+            <Flex>
+              {statItems.map((s, i) => (
+                <Box
+                  key={s.label}
+                  flex={1}
+                  px={5}
+                  py={4}
+                  borderRight={i < statItems.length - 1 ? '1px solid #E2E8F0' : undefined}
+                  textAlign="center">
+                  <Text
+                    fontSize="22px"
+                    fontWeight={800}
+                    fontFamily="heading"
+                    color={s.color}
+                    letterSpacing="-0.03em"
+                    lineHeight={1}>
+                    {loading ? '—' : s.value}
+                  </Text>
+                  <Text
+                    fontSize="11px"
+                    color="#94A3B8"
+                    textTransform="uppercase"
+                    fontFamily="heading"
+                    letterSpacing="0.07em"
+                    mt={1}>
+                    {s.label}
                   </Text>
                 </Box>
-              ) : (
-                <>
-                  <Section title="Hoje" color="orange.500" icon={LucideClock} items={today} />
-                  <Section title="Próximos trabalhos" color="brand.500" icon={LucideCalendar} items={upcoming} />
-                  <Section title="Histórico" color="green.500" icon={LucideCheckCircle2} items={completed} />
-                </>
-              )}
+              ))}
+            </Flex>
+          </Box>
 
-            </VStack>
-          </motion.div>
+          {loading ? (
+            <Box textAlign="center" py={16}>
+              <Text color="slate.400">Carregando agenda…</Text>
+            </Box>
+          ) : jobs.length === 0 ? (
+            <Box border="1px solid #E2E8F0" p={16} textAlign="center" bg="white">
+              <Icon as={LucideCalendarDays} w={14} h={14} color="slate.300" mb={4} />
+              <Text color="slate.600" fontWeight="bold" fontSize="lg" fontFamily="heading">Nenhum trabalho agendado</Text>
+              <Text color="slate.400" fontSize="sm" mt={1}>
+                Aceite leads no Marketplace para ver seus trabalhos aqui.
+              </Text>
+            </Box>
+          ) : (
+            <>
+              <SectionPanel label="HOJE" items={today} accentBg="#F97316" />
+              <SectionPanel label="PRÓXIMOS TRABALHOS" items={upcoming} accentBg="#1A7FA0" />
+              <SectionPanel label="HISTÓRICO" items={completed} accentBg="#22C55E" />
+            </>
+          )}
+
+        </VStack>
       </Box>
     </Box>
   );

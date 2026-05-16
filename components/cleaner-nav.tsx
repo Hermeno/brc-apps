@@ -1,138 +1,216 @@
 'use client';
 
-import { Box, Flex, HStack, Text, Icon, Button, Circle } from '@chakra-ui/react';
+import { Box, Flex, HStack, Text, Icon, Button } from '@chakra-ui/react';
 import {
   LucideLayoutDashboard, LucideCompass, LucideCalendar,
   LucideWallet, LucideCrown, LucideLogOut, LucideUser, LucideCreditCard,
+  LucideMenu,
 } from 'lucide-react';
 import { useSession, signOut } from 'next-auth/react';
 import NextLink from 'next/link';
 import { usePathname } from 'next/navigation';
 import NotificationBell from '@/components/notification-bell';
+import { useState } from 'react';
+import { AnimatePresence, motion } from 'motion/react';
 
 const NAV_ITEMS = [
-  { name: 'Dashboard',   icon: LucideLayoutDashboard, href: '/dashboard/cleaner' },
-  { name: 'Marketplace', icon: LucideCompass,          href: '/dashboard/marketplace' },
-  { name: 'Agenda',      icon: LucideCalendar,         href: '/dashboard/schedule' },
-  { name: 'Finanças',    icon: LucideWallet,            href: '/dashboard/finances' },
-  { name: 'Plano',       icon: LucideCrown,             href: '/dashboard/plan' },
-  { name: 'Perfil',      icon: LucideUser,              href: '/dashboard/profile' },
-  { name: 'Pagamentos',  icon: LucideCreditCard,        href: '/dashboard/payment-methods' },
+  { name: 'Dashboard',  icon: LucideLayoutDashboard, href: '/dashboard/cleaner' },
+  { name: 'Marketplace', icon: LucideCompass,         href: '/dashboard/marketplace' },
+  { name: 'Agenda',     icon: LucideCalendar,         href: '/dashboard/schedule' },
+  { name: 'Finanças',   icon: LucideWallet,           href: '/dashboard/finances' },
+  { name: 'Plano',      icon: LucideCrown,            href: '/dashboard/plan' },
+  { name: 'Perfil',     icon: LucideUser,             href: '/dashboard/profile' },
+  { name: 'Pagamentos', icon: LucideCreditCard,       href: '/dashboard/payment-methods' },
 ];
+
+const NAV_BG = '#0B1120';
 
 export default function CleanerNav() {
   const { data: session } = useSession();
   const pathname = usePathname();
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const firstName = session?.user?.name?.split(' ')[0] ?? 'Profissional';
+  const initial = firstName[0]?.toUpperCase() ?? 'P';
 
   return (
     <Box
-      bg="white"
-      borderBottom="1px solid"
-      borderColor="slate.100"
+      as="nav"
+      bg={NAV_BG}
+      borderBottom="1px solid rgba(255,255,255,0.06)"
       position="sticky"
       top={0}
       zIndex={50}
+      style={{ boxShadow: '0 1px 8px rgba(0,0,0,0.2)' }}
     >
-      <Flex align="center" justify="space-between" px={6} h="14" maxW="1400px" mx="auto">
-
+      <Flex
+        align="center"
+        h="60px"
+        px={{ base: 4, md: 6, lg: 8 }}
+        maxW="1440px"
+        mx="auto"
+        gap={2}
+      >
         {/* Logo */}
-        <NextLink href="/dashboard/cleaner">
-          <HStack gap={2.5} cursor="pointer" flexShrink={0}>
+        <NextLink href="/dashboard/cleaner" style={{ flexShrink: 0, textDecoration: 'none' }}>
+          <HStack gap={2.5} cursor="pointer" transition="opacity 0.15s" _hover={{ opacity: 0.8 }}>
             <Box
-              w="30px" h="30px"
-              bgGradient="to-br"
-              gradientFrom="brand.500"
-              gradientTo="brand.700"
-              borderRadius="lg"
-              display="flex" alignItems="center" justifyContent="center"
-              boxShadow="0 3px 8px rgba(37,99,235,0.3)"
+              w="32px" h="32px" bg="brand.500" borderRadius="6px"
+              display="flex" alignItems="center" justifyContent="center" flexShrink={0}
             >
-              <Text color="white" fontWeight="black" fontSize="xs">BC</Text>
+              <Text color="white" fontWeight="800" fontSize="11px" letterSpacing="-0.02em" fontFamily="heading">
+                BC
+              </Text>
             </Box>
-            <Text fontWeight="black" fontSize="sm" letterSpacing="tight" color="slate.900">
-              Brazilian<Text as="span" color="brand.500">Clean</Text>
+            <Text
+              fontWeight="700" fontSize="15px" letterSpacing="-0.02em"
+              color="white" fontFamily="heading"
+              display={{ base: 'none', sm: 'block' }}
+            >
+              Brazilian<Text as="span" color="brand.400">Clean</Text>
             </Text>
           </HStack>
         </NextLink>
 
-        {/* Nav links */}
-        <HStack gap={1} display={{ base: 'none', md: 'flex' }}>
+        <Box w="1px" h="22px" bg="rgba(255,255,255,0.1)" flexShrink={0} mx={2} display={{ base: 'none', md: 'block' }} />
+
+        {/* Desktop nav */}
+        <HStack h="60px" gap={0} flex={1} display={{ base: 'none', md: 'flex' }} align="center">
           {NAV_ITEMS.map(item => {
             const isActive =
               pathname === item.href ||
               (item.href !== '/dashboard/cleaner' && pathname.startsWith(item.href));
             return (
-              <NextLink key={item.name} href={item.href}>
-                <HStack
-                  gap={1.5} px={3} py={2} borderRadius="lg" cursor="pointer"
-                  bg={isActive ? 'brand.50' : 'transparent'}
-                  color={isActive ? 'brand.600' : 'slate.500'}
-                  fontWeight={isActive ? 'semibold' : 'normal'}
-                  _hover={{ bg: isActive ? 'brand.50' : 'slate.50', color: isActive ? 'brand.600' : 'slate.700' }}
-                  transition="all 0.15s"
-                  borderBottom="2px solid"
-                  borderBottomColor={isActive ? 'brand.500' : 'transparent'}
-                >
-                  <Icon as={item.icon} w={4} h={4} />
-                  <Text fontSize="sm">{item.name}</Text>
-                </HStack>
+              <NextLink
+                key={item.name}
+                href={item.href}
+                style={{ display: 'flex', height: '60px', alignItems: 'center', textDecoration: 'none' }}
+              >
+                <Box position="relative" h="full" px={3} display="flex" alignItems="center" cursor="pointer">
+                  <HStack
+                    gap={1.5}
+                    color={isActive ? 'white' : '#94A3B8'}
+                    fontWeight={isActive ? '600' : '400'}
+                    fontSize="13.5px"
+                    fontFamily="heading"
+                    letterSpacing="-0.01em"
+                    transition="color 0.15s"
+                    _hover={{ color: isActive ? 'white' : '#CBD5E1' }}
+                  >
+                    <Icon as={item.icon} w="14px" h="14px" />
+                    <Text>{item.name}</Text>
+                  </HStack>
+                  {isActive && (
+                    <Box
+                      position="absolute" bottom={0} left={2} right={2}
+                      h="2px" bg="brand.500" borderRadius="2px 2px 0 0"
+                    />
+                  )}
+                </Box>
               </NextLink>
             );
           })}
         </HStack>
 
-        {/* Right: bell + user + logout */}
-        <HStack gap={2} flexShrink={0}>
-          <HStack gap={2} display={{ base: 'none', sm: 'flex' }}>
-            <Circle
-              size="28px"
-              bgGradient="to-br"
-              gradientFrom="brand.400"
-              gradientTo="brand.600"
-              fontSize="xs"
-              fontWeight="bold"
-              color="white"
+        {/* Right */}
+        <HStack gap={1.5} flexShrink={0} ml={{ base: 'auto', md: 0 }}>
+          <HStack
+            gap={2} display={{ base: 'none', lg: 'flex' }}
+            bg="rgba(255,255,255,0.06)" border="1px solid" borderColor="rgba(255,255,255,0.1)"
+            borderRadius="full" px={3} py={1.5}
+          >
+            <Box
+              w="22px" h="22px" bg="brand.500" borderRadius="full"
+              display="flex" alignItems="center" justifyContent="center"
+              fontSize="9px" fontWeight="700" color="white" flexShrink={0}
             >
-              {session?.user?.name?.[0]?.toUpperCase() ?? 'P'}
-            </Circle>
-            <Text fontSize="sm" fontWeight="semibold" color="slate.700">
-              {session?.user?.name?.split(' ')[0] ?? 'Profissional'}
+              {initial}
+            </Box>
+            <Text fontSize="13px" fontWeight="500" color="#CBD5E1" fontFamily="heading" letterSpacing="-0.01em">
+              {firstName}
             </Text>
           </HStack>
-          <NotificationBell />
+
+          <NotificationBell dark />
+
           <Button
-            size="sm" variant="ghost" color="slate.400" px={2}
-            _hover={{ color: 'red.500', bg: 'red.50' }}
+            size="sm" variant="ghost" color="#6B7280" px={2} h="34px" borderRadius="lg"
+            _hover={{ color: '#F43F5E', bg: 'rgba(244,63,94,0.1)' }} transition="all 0.15s"
             onClick={() => signOut({ callbackUrl: '/auth/login' })}
             title="Sair"
+            display={{ base: 'none', sm: 'flex' }}
           >
             <Icon as={LucideLogOut} w={4} h={4} />
           </Button>
-        </HStack>
 
+          <Button
+            size="sm" variant="ghost" color="#94A3B8" px={2} h="34px" borderRadius="lg"
+            _hover={{ bg: 'rgba(255,255,255,0.08)' }}
+            display={{ base: 'flex', md: 'none' }}
+            onClick={() => setMobileOpen(v => !v)}
+          >
+            <Icon as={LucideMenu} w={4.5} h={4.5} />
+          </Button>
+        </HStack>
       </Flex>
 
-      {/* Mobile nav — horizontal scroll */}
-      <Box display={{ base: 'flex', md: 'none' }} overflowX="auto" px={4} pb={2} gap={1}>
-        {NAV_ITEMS.map(item => {
-          const isActive = pathname === item.href || (item.href !== '/dashboard/cleaner' && pathname.startsWith(item.href));
-          return (
-            <NextLink key={item.name} href={item.href}>
-              <HStack
-                gap={1} px={3} py={1.5} borderRadius="lg" cursor="pointer" flexShrink={0}
-                bg={isActive ? 'brand.50' : 'transparent'}
-                color={isActive ? 'brand.600' : 'slate.500'}
-                fontWeight={isActive ? 'semibold' : 'normal'}
-                _hover={{ bg: 'slate.50' }}
-                transition="all 0.15s"
-              >
-                <Icon as={item.icon} w={3.5} h={3.5} />
-                <Text fontSize="xs">{item.name}</Text>
+      {/* Mobile drawer */}
+      <AnimatePresence>
+        {mobileOpen && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.2, ease: 'easeInOut' }}
+            style={{ overflow: 'hidden' }}
+          >
+            <Box borderTop="1px solid rgba(255,255,255,0.06)" bg={NAV_BG} px={4} py={3}>
+              {NAV_ITEMS.map(item => {
+                const isActive =
+                  pathname === item.href ||
+                  (item.href !== '/dashboard/cleaner' && pathname.startsWith(item.href));
+                return (
+                  <NextLink key={item.name} href={item.href} style={{ textDecoration: 'none' }} onClick={() => setMobileOpen(false)}>
+                    <HStack
+                      gap={3} px={3} py={2.5} borderRadius="4px" mb={0.5}
+                      bg={isActive ? 'rgba(26,127,160,0.15)' : 'transparent'}
+                      color={isActive ? 'white' : '#94A3B8'}
+                      fontWeight={isActive ? '600' : '400'}
+                      fontSize="14px" fontFamily="heading"
+                      border="1px solid"
+                      borderColor={isActive ? 'rgba(26,127,160,0.25)' : 'transparent'}
+                      transition="all 0.15s"
+                      _hover={{ bg: 'rgba(255,255,255,0.06)', color: '#CBD5E1' }}
+                    >
+                      <Icon as={item.icon} w={4} h={4} />
+                      <Text>{item.name}</Text>
+                    </HStack>
+                  </NextLink>
+                );
+              })}
+              <HStack justify="space-between" px={3} pt={3} mt={1} borderTop="1px solid rgba(255,255,255,0.06)">
+                <HStack gap={2}>
+                  <Box
+                    w="28px" h="28px" bg="brand.500" borderRadius="full"
+                    display="flex" alignItems="center" justifyContent="center"
+                    fontSize="11px" fontWeight="700" color="white"
+                  >
+                    {initial}
+                  </Box>
+                  <Box>
+                    <Text fontSize="13px" fontWeight="600" color="white" fontFamily="heading">{firstName}</Text>
+                    <Text fontSize="11px" color="#475569">Profissional</Text>
+                  </Box>
+                </HStack>
+                <Button size="sm" variant="ghost" color="#6B7280" px={2}
+                  _hover={{ color: '#F43F5E', bg: 'rgba(244,63,94,0.1)' }}
+                  onClick={() => signOut({ callbackUrl: '/auth/login' })}>
+                  <Icon as={LucideLogOut} w={4} h={4} />
+                </Button>
               </HStack>
-            </NextLink>
-          );
-        })}
-      </Box>
+            </Box>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </Box>
   );
 }

@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import {
-  Box, Flex, HStack, VStack, Text, Heading, Badge, Icon,
+  Box, Flex, HStack, VStack, Text, Heading, Icon,
   Button, Input, Textarea, SimpleGrid,
 } from '@chakra-ui/react';
 import {
@@ -11,7 +11,7 @@ import {
 } from 'lucide-react';
 import CleanerNav from '@/components/cleaner-nav';
 import { toaster } from '@/lib/toaster';
-import { motion, AnimatePresence } from 'motion/react';
+import { AnimatePresence } from 'motion/react';
 import { ImageUpload } from '@/components/image-upload';
 
 /* ─── types ──────────────────────────────────────────────────── */
@@ -202,7 +202,7 @@ export default function ProfilePage() {
     : null;
 
   return (
-    <Box minH="100vh" bg="slate.50">
+    <Box minH="100vh" bg="#F8FAFC">
       <CleanerNav />
 
       <input ref={fileInputRef} type="file"
@@ -213,22 +213,28 @@ export default function ProfilePage() {
         <VStack gap={6} align="stretch">
 
           {/* Header */}
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
-            <Heading size="lg" fontWeight="black" color="slate.900">Meu Perfil</Heading>
+          <Box>
+            <Heading size="lg" fontWeight="black" color="slate.900" fontFamily="heading">Meu Perfil</Heading>
             <Text color="slate.500" fontSize="sm" mt={1}>
               Personalize seu perfil público e galeria de trabalhos
             </Text>
-          </motion.div>
+          </Box>
 
           {/* ── Avatar + About card ── */}
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.05 }}>
-            <Box bg="white" border="1px solid" borderColor="slate.200" borderRadius="2xl"
-              p={6} boxShadow="0 2px 12px rgba(0,0,0,0.04)">
-              <HStack gap={2} mb={5}>
-                <Icon as={LucideUser} w={5} h={5} color="brand.500" />
-                <Heading size="sm" fontWeight="bold" color="slate.800">Sobre você</Heading>
+          <Box bg="white" border="1px solid #E2E8F0" overflow="hidden">
+            {/* Section header */}
+            <Box bg="#F8FAFC" px={5} py={3} borderBottom="1px solid #E2E8F0">
+              <HStack gap={2}>
+                <Icon as={LucideUser} w={4} h={4} color="brand.500" />
+                <Text
+                  fontSize="10.5px" fontWeight={700} color="#94A3B8"
+                  textTransform="uppercase" letterSpacing="0.07em" fontFamily="heading">
+                  Sobre você
+                </Text>
               </HStack>
+            </Box>
 
+            <Box p={6}>
               {/* Avatar row */}
               <Flex gap={5} align="center" mb={6}
                 pb={6} borderBottom="1px solid" borderColor="slate.100">
@@ -260,7 +266,7 @@ export default function ProfilePage() {
                     onChange={e => setBio(e.target.value)}
                     placeholder="Conte sobre sua experiência, especialidades, diferencial…"
                     bg="slate.50" border="1px solid" borderColor="slate.200"
-                    borderRadius="xl" rows={4} fontSize="sm"
+                    borderRadius="4px" rows={4} fontSize="sm"
                     _focus={{ borderColor: 'brand.300', bg: 'white' }}
                     resize="vertical" maxLength={500}
                   />
@@ -275,12 +281,12 @@ export default function ProfilePage() {
                     {SERVICE_LIST.map(s => {
                       const sel = serviceTypes.includes(s);
                       return (
-                        <Box key={s} as="button" w="full" p={2.5} borderRadius="xl" textAlign="center"
-                          border="2px solid" borderColor={sel ? 'brand.400' : 'slate.200'}
-                          bg={sel ? 'brand.50' : 'white'} cursor="pointer"
+                        <Box key={s} as="button" w="full" p={2.5} borderRadius="4px" textAlign="center"
+                          border={sel ? '2px solid #1A7FA0' : '1px solid #E2E8F0'}
+                          bg={sel ? '#F0F9FF' : 'white'} cursor="pointer"
                           onClick={() => toggleService(s)} transition="all 0.15s">
                           <Text fontSize="xs" fontWeight={sel ? 'bold' : 'medium'}
-                            color={sel ? 'brand.700' : 'slate.600'}>{s}</Text>
+                            color={sel ? '#1A7FA0' : 'slate.600'}>{s}</Text>
                         </Box>
                       );
                     })}
@@ -288,8 +294,8 @@ export default function ProfilePage() {
                 </Box>
 
                 <Button
-                  bg="brand.500" color="white" borderRadius="xl" fontWeight="bold"
-                  _hover={{ bg: 'brand.600', transform: 'translateY(-1px)' }}
+                  bg="#1A7FA0" color="white" borderRadius="4px" fontWeight="bold"
+                  _hover={{ bg: '#166d8c' }}
                   transition="all 0.2s"
                   loading={saving} loadingText="Salvando..."
                   onClick={handleSave}
@@ -299,19 +305,26 @@ export default function ProfilePage() {
                 </Button>
               </VStack>
             </Box>
-          </motion.div>
+          </Box>
 
           {/* ── Location card ── */}
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.1 }}>
-            <Box bg="white" border="1px solid" borderColor="slate.200" borderRadius="2xl"
-              p={6} boxShadow="0 2px 12px rgba(0,0,0,0.04)">
-              <HStack gap={2} mb={2}>
-                <Icon as={LucideMapPin} w={5} h={5} color="brand.500" />
-                <Heading size="sm" fontWeight="bold" color="slate.800">Localização</Heading>
-                <Badge bg="slate.100" color="slate.500" borderRadius="full" px={2} fontSize="xs">
+          <Box bg="white" border="1px solid #E2E8F0" overflow="hidden">
+            {/* Section header */}
+            <Box bg="#F8FAFC" px={5} py={3} borderBottom="1px solid #E2E8F0">
+              <HStack gap={2}>
+                <Icon as={LucideMapPin} w={4} h={4} color="brand.500" />
+                <Text
+                  fontSize="10.5px" fontWeight={700} color="#94A3B8"
+                  textTransform="uppercase" letterSpacing="0.07em" fontFamily="heading">
+                  Localização
+                </Text>
+                <Text style={{ borderRadius: 2, background: '#F1F5F9', padding: '2px 6px', fontSize: '9.5px', fontWeight: 700, color: '#94A3B8' }}>
                   opcional
-                </Badge>
+                </Text>
               </HStack>
+            </Box>
+
+            <Box p={6}>
               <Text fontSize="xs" color="slate.400" mb={5}>
                 Usada para mostrar distância ao cliente e melhorar o matching de leads.
               </Text>
@@ -320,7 +333,7 @@ export default function ProfilePage() {
                 {/* Detect button */}
                 <Button
                   variant="outline" borderColor="slate.200" color="slate.600"
-                  borderRadius="xl" fontWeight="semibold" fontSize="sm"
+                  borderRadius="4px" fontWeight="semibold" fontSize="sm"
                   _hover={{ borderColor: 'brand.300', color: 'brand.600', bg: 'brand.50' }}
                   transition="all 0.15s"
                   loading={geoLoading} loadingText="Detectando…"
@@ -332,7 +345,7 @@ export default function ProfilePage() {
                 {/* Location label */}
                 {locationLabel && (
                   <HStack gap={2} bg="green.50" border="1px solid" borderColor="green.200"
-                    borderRadius="xl" px={4} py={3}>
+                    borderRadius="4px" px={4} py={3}>
                     <Icon as={LucideMapPin} w={4} h={4} color="green.600" flexShrink={0} />
                     <Text fontSize="sm" color="green.800" fontWeight="semibold">{locationLabel}</Text>
                     <Button size="xs" variant="ghost" color="slate.400" ml="auto" px={1}
@@ -344,11 +357,8 @@ export default function ProfilePage() {
 
                 {/* Map preview */}
                 {mapUrl && (
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.98 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.3 }}>
-                    <Box borderRadius="xl" overflow="hidden" border="1px solid" borderColor="slate.200" h="220px">
+                  <Box>
+                    <Box overflow="hidden" border="1px solid" borderColor="slate.200" h="220px">
                       <iframe
                         src={mapUrl}
                         width="100%"
@@ -361,14 +371,14 @@ export default function ProfilePage() {
                     <Text fontSize="xs" color="slate.400" mt={1.5} textAlign="center">
                       {latitude?.toFixed(5)}, {longitude?.toFixed(5)}
                     </Text>
-                  </motion.div>
+                  </Box>
                 )}
 
                 {/* Save location button */}
                 {latitude && longitude && (
                   <Button
-                    bg="brand.500" color="white" borderRadius="xl" fontWeight="bold"
-                    _hover={{ bg: 'brand.600', transform: 'translateY(-1px)' }}
+                    bg="#1A7FA0" color="white" borderRadius="4px" fontWeight="bold"
+                    _hover={{ bg: '#166d8c' }}
                     transition="all 0.2s"
                     loading={saving} loadingText="Salvando..."
                     onClick={handleSave}
@@ -379,23 +389,27 @@ export default function ProfilePage() {
                 )}
               </VStack>
             </Box>
-          </motion.div>
+          </Box>
 
           {/* ── Photo Gallery card ── */}
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.15 }}>
-            <Box bg="white" border="1px solid" borderColor="slate.200" borderRadius="2xl"
-              p={6} boxShadow="0 2px 12px rgba(0,0,0,0.04)">
-              <Flex justify="space-between" align="center" mb={5}>
+          <Box bg="white" border="1px solid #E2E8F0" overflow="hidden">
+            {/* Section header */}
+            <Box bg="#F8FAFC" px={5} py={3} borderBottom="1px solid #E2E8F0">
+              <Flex justify="space-between" align="center">
                 <HStack gap={2}>
-                  <Icon as={LucideCamera} w={5} h={5} color="brand.500" />
-                  <Heading size="sm" fontWeight="bold" color="slate.800">Galeria de trabalhos</Heading>
-                  <Badge bg="slate.100" color="slate.500" borderRadius="full" px={2} fontSize="xs">
+                  <Icon as={LucideCamera} w={4} h={4} color="brand.500" />
+                  <Text
+                    fontSize="10.5px" fontWeight={700} color="#94A3B8"
+                    textTransform="uppercase" letterSpacing="0.07em" fontFamily="heading">
+                    Galeria de trabalhos
+                  </Text>
+                  <Text style={{ borderRadius: 2, background: '#F1F5F9', padding: '2px 6px', fontSize: '9.5px', fontWeight: 700, color: '#94A3B8' }}>
                     {photos.length}/20
-                  </Badge>
+                  </Text>
                 </HStack>
                 {photos.length < 20 && !showPhotoForm && (
-                  <Button size="sm" bg="brand.500" color="white" borderRadius="xl" fontWeight="bold"
-                    _hover={{ bg: 'brand.600' }}
+                  <Button size="sm" bg="#1A7FA0" color="white" borderRadius="4px" fontWeight="bold"
+                    _hover={{ bg: '#166d8c' }}
                     loading={uploading} loadingText="Enviando…"
                     onClick={() => fileInputRef.current?.click()}>
                     <Icon as={LucidePlus} w={3.5} h={3.5} mr={1.5} />
@@ -403,55 +417,51 @@ export default function ProfilePage() {
                   </Button>
                 )}
               </Flex>
+            </Box>
 
+            <Box p={6}>
               {/* Caption form after upload */}
               <AnimatePresence>
                 {showPhotoForm && pendingUrl && (
-                  <motion.div
-                    initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: 'auto' }}
-                    exit={{ opacity: 0, height: 0 }}
-                    transition={{ duration: 0.25 }}>
-                    <Box bg="brand.50" border="1px solid" borderColor="brand.200" borderRadius="xl" p={4} mb={5}>
-                      <Text fontSize="sm" fontWeight="bold" color="brand.700" mb={3}>
-                        Foto enviada — adicione uma legenda (opcional)
-                      </Text>
-                      <Flex gap={3} align="flex-start">
-                        <Box w="80px" h="80px" borderRadius="xl" overflow="hidden" flexShrink={0}
-                          border="1px solid" borderColor="brand.200">
-                          <img src={pendingUrl} alt="Preview"
-                            style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                        </Box>
-                        <VStack gap={3} flex={1} align="stretch">
-                          <Input
-                            placeholder="Legenda (ex: Sala de estar pós-limpeza)"
-                            value={photoCaption}
-                            onChange={e => setPhotoCaption(e.target.value)}
-                            bg="white" borderRadius="xl" h="10" border="1px solid"
-                            borderColor="brand.200" fontSize="sm"
-                            _focus={{ borderColor: 'brand.400' }}
-                          />
-                          <HStack gap={2} justify="flex-end">
-                            <Button size="sm" variant="ghost" color="slate.500"
-                              onClick={() => { setShowPhotoForm(false); setPendingUrl(''); setPhotoCaption(''); }}>
-                              Cancelar
-                            </Button>
-                            <Button size="sm" bg="brand.500" color="white" borderRadius="xl" fontWeight="bold"
-                              _hover={{ bg: 'brand.600' }}
-                              loading={addingPhoto} loadingText="Salvando..."
-                              onClick={handleAddPhoto}>
-                              Salvar foto
-                            </Button>
-                          </HStack>
-                        </VStack>
-                      </Flex>
-                    </Box>
-                  </motion.div>
+                  <Box bg="brand.50" border="1px solid" borderColor="brand.200" borderRadius="4px" p={4} mb={5}>
+                    <Text fontSize="sm" fontWeight="bold" color="brand.700" mb={3}>
+                      Foto enviada — adicione uma legenda (opcional)
+                    </Text>
+                    <Flex gap={3} align="flex-start">
+                      <Box w="80px" h="80px" borderRadius="4px" overflow="hidden" flexShrink={0}
+                        border="1px solid" borderColor="brand.200">
+                        <img src={pendingUrl} alt="Preview"
+                          style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                      </Box>
+                      <VStack gap={3} flex={1} align="stretch">
+                        <Input
+                          placeholder="Legenda (ex: Sala de estar pós-limpeza)"
+                          value={photoCaption}
+                          onChange={e => setPhotoCaption(e.target.value)}
+                          bg="white" borderRadius="4px" h="10" border="1px solid"
+                          borderColor="brand.200" fontSize="sm"
+                          _focus={{ borderColor: 'brand.400' }}
+                        />
+                        <HStack gap={2} justify="flex-end">
+                          <Button size="sm" variant="ghost" color="slate.500"
+                            onClick={() => { setShowPhotoForm(false); setPendingUrl(''); setPhotoCaption(''); }}>
+                            Cancelar
+                          </Button>
+                          <Button size="sm" bg="#1A7FA0" color="white" borderRadius="4px" fontWeight="bold"
+                            _hover={{ bg: '#166d8c' }}
+                            loading={addingPhoto} loadingText="Salvando..."
+                            onClick={handleAddPhoto}>
+                            Salvar foto
+                          </Button>
+                        </HStack>
+                      </VStack>
+                    </Flex>
+                  </Box>
                 )}
               </AnimatePresence>
 
               {photos.length === 0 ? (
-                <Box textAlign="center" py={10} border="2px dashed" borderColor="slate.200" borderRadius="xl"
+                <Box textAlign="center" py={10} border="2px dashed" borderColor="slate.200" borderRadius="4px"
                   cursor="pointer" onClick={() => fileInputRef.current?.click()}
                   _hover={{ borderColor: 'brand.300', bg: 'brand.50' }} transition="all 0.15s">
                   <Text fontSize="3xl" mb={2}>📷</Text>
@@ -463,13 +473,8 @@ export default function ProfilePage() {
               ) : (
                 <SimpleGrid columns={{ base: 2, sm: 3, md: 4 }} gap={3}>
                   {photos.map((photo, i) => (
-                    <motion.div key={photo.id}
-                      initial={{ opacity: 0, scale: 0.9 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      exit={{ opacity: 0, scale: 0.9 }}
-                      transition={{ duration: 0.25, delay: i * 0.03 }}
-                      layout>
-                      <Box position="relative" borderRadius="xl" overflow="hidden"
+                    <Box key={photo.id}>
+                      <Box position="relative" borderRadius="4px" overflow="hidden"
                         border="2px solid" borderColor="slate.100"
                         paddingBottom="100%" bg="slate.100"
                         _hover={{ borderColor: 'red.200' }}
@@ -480,12 +485,12 @@ export default function ProfilePage() {
                           style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }}
                         />
                         <Button
-                          size="sm" bg="red.500" color="white" borderRadius="xl"
+                          size="sm" bg="red.500" color="white" borderRadius="4px"
                           _hover={{ bg: 'red.600' }}
                           loading={deletingId === photo.id}
                           onClick={() => handleDeletePhoto(photo.id)}
                           position="absolute" bottom={2} right={2}
-                          boxShadow="md" minW={0} px={2}>
+                          minW={0} px={2}>
                           <Icon as={LucideTrash2} w={3.5} h={3.5} />
                         </Button>
                       </Box>
@@ -494,12 +499,12 @@ export default function ProfilePage() {
                           {photo.caption}
                         </Text>
                       )}
-                    </motion.div>
+                    </Box>
                   ))}
                 </SimpleGrid>
               )}
             </Box>
-          </motion.div>
+          </Box>
 
         </VStack>
       </Box>

@@ -2,15 +2,15 @@
 
 import { useState, useEffect, Suspense } from 'react';
 import {
-  Box, Flex, VStack, HStack, Text, Heading, Button, Badge, Icon,
+  Box, Flex, VStack, HStack, Text, Heading, Button, Icon,
 } from '@chakra-ui/react';
 import {
-  LucideCreditCard, LucideTrash2, LucidePlus, LucideCheckCircle, LucideStar,
+  LucideCreditCard, LucideTrash2, LucidePlus, LucideStar,
   LucideShieldCheck,
 } from 'lucide-react';
 import CleanerNav from '@/components/cleaner-nav';
 import { toaster } from '@/lib/toaster';
-import { motion, AnimatePresence } from 'motion/react';
+import { AnimatePresence, motion } from 'motion/react';
 import { useSearchParams } from 'next/navigation';
 
 type SavedCard = {
@@ -116,95 +116,111 @@ function PaymentMethodsContent() {
   };
 
   return (
-    <Box minH="100vh" bg="slate.50">
+    <Box minH="100vh" bg="#F8FAFC">
       <CleanerNav />
 
       <Box p={6} maxW="600px" mx="auto">
         <VStack gap={6} align="stretch">
 
-          {/* Header */}
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
-            <Flex justify="space-between" align="center">
+          {/* Header: flat, no animation */}
+          <Flex justify="space-between" align="center">
+            <Box>
+              <Heading size="lg" fontWeight="black" color="slate.900" fontFamily="heading">
+                Formas de pagamento
+              </Heading>
+              <Text color="slate.500" fontSize="sm" mt={1}>
+                Cartões salvos para cobranças automáticas de leads
+              </Text>
+            </Box>
+            <Button
+              bg="#1A7FA0" color="white" borderRadius="4px" fontWeight="bold"
+              _hover={{ bg: '#15698A' }}
+              loading={adding} loadingText="Aguarde…"
+              onClick={handleAdd}>
+              <Icon as={LucidePlus} w={4} h={4} mr={2} />
+              Adicionar cartão
+            </Button>
+          </Flex>
+
+          {/* How it works: flat box, no radius, blue tint */}
+          <Box bg="#EFF6FF" border="1px solid #BFDBFE" p={5}>
+            <HStack gap={3} align="start">
+              <Icon as={LucideShieldCheck} w={5} h={5} color="blue.600" flexShrink={0} mt={0.5} />
               <Box>
-                <Heading size="lg" fontWeight="black" color="slate.900">Formas de pagamento</Heading>
-                <Text color="slate.500" fontSize="sm" mt={1}>
-                  Cartões salvos para cobranças automáticas de leads
+                <Text fontWeight="bold" color="blue.800" fontSize="sm">Como funciona</Text>
+                <Text color="blue.700" fontSize="xs" mt={1} lineHeight="1.6">
+                  Ao aceitar um lead, o valor da taxa é cobrado automaticamente no cartão padrão.
+                  Seus dados são armazenados com segurança pelo Stripe — nunca passam pelos nossos servidores.
                 </Text>
               </Box>
-              <Button
-                bg="brand.500" color="white" borderRadius="xl" fontWeight="bold"
-                _hover={{ bg: 'brand.600', transform: 'translateY(-1px)' }}
-                transition="all 0.2s"
-                loading={adding} loadingText="Aguarde…"
-                onClick={handleAdd}>
-                <Icon as={LucidePlus} w={4} h={4} mr={2} />
-                Adicionar cartão
-              </Button>
-            </Flex>
-          </motion.div>
+            </HStack>
+          </Box>
 
-          {/* How it works */}
-          <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.05 }}>
-            <Box bg="brand.50" border="1px solid" borderColor="brand.200" borderRadius="2xl" p={5}>
-              <HStack gap={3} align="start">
-                <Icon as={LucideShieldCheck} w={5} h={5} color="brand.600" flexShrink={0} mt={0.5} />
-                <Box>
-                  <Text fontWeight="bold" color="brand.800" fontSize="sm">Como funciona</Text>
-                  <Text color="brand.700" fontSize="xs" mt={1} lineHeight="1.6">
-                    Ao aceitar um lead, o valor da taxa é cobrado automaticamente no cartão padrão.
-                    Seus dados são armazenados com segurança pelo Stripe — nunca passam pelos nossos servidores.
-                  </Text>
-                </Box>
-              </HStack>
+          {/* Cards list: section panel */}
+          <Box border="1px solid #E2E8F0">
+            {/* Section header */}
+            <Box bg="#F8FAFC" px={5} py={3} borderBottom="1px solid #E2E8F0">
+              <Text
+                fontSize="10.5px"
+                fontWeight={700}
+                color="#94A3B8"
+                textTransform="uppercase"
+                fontFamily="heading"
+                letterSpacing="0.07em">
+                CARTÕES SALVOS
+              </Text>
             </Box>
-          </motion.div>
 
-          {/* Cards list */}
-          <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.1 }}>
-            <Box bg="white" border="1px solid" borderColor="slate.200" borderRadius="2xl"
-              p={6} boxShadow="0 2px 12px rgba(0,0,0,0.04)">
-
-              {loading ? (
-                <VStack gap={3} py={4}>
-                  {[1, 2].map(i => (
-                    <Box key={i} h="64px" bg="slate.100" borderRadius="xl" w="full"
-                      animation="pulse 1.5s ease-in-out infinite" />
-                  ))}
-                </VStack>
-              ) : cards.length === 0 ? (
-                <VStack py={10} gap={3} textAlign="center">
-                  <Box w="56px" h="56px" bg="slate.100" borderRadius="2xl"
-                    display="flex" alignItems="center" justifyContent="center">
-                    <Icon as={LucideCreditCard} w={7} h={7} color="slate.400" />
-                  </Box>
-                  <Text color="slate.600" fontWeight="semibold">Nenhum cartão cadastrado</Text>
-                  <Text color="slate.400" fontSize="xs" maxW="280px">
-                    Adicione um cartão para aceitar leads sem precisar pagar manualmente cada vez.
-                  </Text>
-                  <Button
-                    mt={2} bg="brand.500" color="white" borderRadius="xl" fontWeight="bold"
-                    _hover={{ bg: 'brand.600' }}
-                    loading={adding} loadingText="Aguarde…"
-                    onClick={handleAdd}>
-                    <Icon as={LucidePlus} w={4} h={4} mr={2} />
-                    Adicionar cartão
-                  </Button>
-                </VStack>
-              ) : (
-                <VStack gap={3} align="stretch">
-                  <AnimatePresence>
-                    {cards.map(card => (
+            {loading ? (
+              <VStack gap={0} py={4} bg="white">
+                {[1, 2].map(i => (
+                  <Box key={i} h="64px" bg="slate.100" w="full"
+                    borderBottom="1px solid #F1F5F9"
+                    animation="pulse 1.5s ease-in-out infinite" />
+                ))}
+              </VStack>
+            ) : cards.length === 0 ? (
+              <VStack py={10} gap={3} textAlign="center" bg="white">
+                <Box
+                  w="56px" h="56px" bg="slate.100"
+                  display="flex" alignItems="center" justifyContent="center">
+                  <Icon as={LucideCreditCard} w={7} h={7} color="slate.400" />
+                </Box>
+                <Text color="slate.600" fontWeight="semibold">Nenhum cartão cadastrado</Text>
+                <Text color="slate.400" fontSize="xs" maxW="280px">
+                  Adicione um cartão para aceitar leads sem precisar pagar manualmente cada vez.
+                </Text>
+                <Button
+                  mt={2} bg="#1A7FA0" color="white" borderRadius="4px" fontWeight="bold"
+                  _hover={{ bg: '#15698A' }}
+                  loading={adding} loadingText="Aguarde…"
+                  onClick={handleAdd}>
+                  <Icon as={LucidePlus} w={4} h={4} mr={2} />
+                  Adicionar cartão
+                </Button>
+              </VStack>
+            ) : (
+              <VStack gap={0} align="stretch">
+                <AnimatePresence>
+                  {cards.map((card, i) => {
+                    const isLast = i === cards.length - 1;
+                    return (
                       <motion.div key={card.id}
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, x: -20 }}
                         transition={{ duration: 0.2 }}>
                         <Box
-                          border="2px solid"
-                          borderColor={card.isDefault ? 'brand.300' : 'slate.200'}
-                          borderRadius="xl" p={4}
-                          bg={card.isDefault ? 'brand.50' : 'white'}
-                          transition="all 0.15s">
+                          position="relative"
+                          bg={card.isDefault ? '#F0F9FF' : 'white'}
+                          px={5}
+                          py={4}
+                          borderBottom={isLast ? undefined : '1px solid #F1F5F9'}>
+                          {/* Left accent strip */}
+                          <Box
+                            position="absolute" left={0} top={0} bottom={0} w="3px"
+                            bg={card.isDefault ? '#1A7FA0' : '#E2E8F0'} />
+
                           <Flex justify="space-between" align="center" gap={3}>
                             <HStack gap={3}>
                               <CardIcon brand={card.brand} />
@@ -214,10 +230,17 @@ function PaymentMethodsContent() {
                                     •••• {card.last4}
                                   </Text>
                                   {card.isDefault && (
-                                    <Badge bg="brand.500" color="white" borderRadius="full"
-                                      px={2} fontSize="10px" fontWeight="bold">
+                                    <Text
+                                      style={{
+                                        borderRadius: 2,
+                                        background: '#1A7FA0',
+                                        padding: '2px 6px',
+                                        fontSize: 9.5,
+                                        fontWeight: 700,
+                                        color: '#fff',
+                                      }}>
                                       Padrão
-                                    </Badge>
+                                    </Text>
                                   )}
                                 </HStack>
                                 <Text fontSize="xs" color="slate.400" mt={0.5}>
@@ -227,16 +250,16 @@ function PaymentMethodsContent() {
                             </HStack>
                             <HStack gap={2}>
                               {!card.isDefault && (
-                                <Button size="xs" variant="outline" borderColor="slate.200"
-                                  color="slate.500" borderRadius="lg" fontWeight="semibold"
-                                  _hover={{ bg: 'brand.50', borderColor: 'brand.300', color: 'brand.600' }}
+                                <Button size="xs" variant="outline" borderColor="#E2E8F0"
+                                  color="slate.500" borderRadius="4px" fontWeight="semibold"
+                                  _hover={{ bg: '#F0F9FF', borderColor: '#1A7FA0', color: '#1A7FA0' }}
                                   loading={settingId === card.id}
                                   onClick={() => handleSetDefault(card.id)}>
                                   <Icon as={LucideStar} w={3} h={3} mr={1} />
                                   Definir padrão
                                 </Button>
                               )}
-                              <Button size="xs" variant="ghost" color="red.400" borderRadius="lg"
+                              <Button size="xs" variant="ghost" color="red.400" borderRadius="4px"
                                 _hover={{ bg: 'red.50', color: 'red.600' }}
                                 loading={removingId === card.id}
                                 onClick={() => handleRemove(card.id)}>
@@ -246,31 +269,30 @@ function PaymentMethodsContent() {
                           </Flex>
                         </Box>
                       </motion.div>
-                    ))}
-                  </AnimatePresence>
+                    );
+                  })}
+                </AnimatePresence>
 
+                <Box px={5} py={3} borderTop="1px solid #F1F5F9" bg="white">
                   <Button
-                    variant="outline" borderColor="slate.200" color="slate.500"
-                    borderRadius="xl" fontWeight="semibold" fontSize="sm"
-                    _hover={{ borderColor: 'brand.300', color: 'brand.600', bg: 'brand.50' }}
-                    transition="all 0.15s"
+                    variant="outline" borderColor="#E2E8F0" color="slate.500"
+                    borderRadius="4px" fontWeight="semibold" fontSize="sm"
+                    _hover={{ borderColor: '#1A7FA0', color: '#1A7FA0', bg: '#F0F9FF' }}
                     loading={adding} loadingText="Aguarde…"
                     onClick={handleAdd}>
                     <Icon as={LucidePlus} w={4} h={4} mr={2} />
                     Adicionar outro cartão
                   </Button>
-                </VStack>
-              )}
-            </Box>
-          </motion.div>
+                </Box>
+              </VStack>
+            )}
+          </Box>
 
-          {/* Security note */}
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}>
-            <HStack gap={2} justify="center" color="slate.400">
-              <Icon as={LucideShieldCheck} w={4} h={4} />
-              <Text fontSize="xs">Pagamentos processados com segurança pelo Stripe</Text>
-            </HStack>
-          </motion.div>
+          {/* Security note: flat HStack */}
+          <HStack gap={2} justify="center" color="slate.400">
+            <Icon as={LucideShieldCheck} w={4} h={4} />
+            <Text fontSize="xs">Pagamentos processados com segurança pelo Stripe</Text>
+          </HStack>
 
         </VStack>
       </Box>
