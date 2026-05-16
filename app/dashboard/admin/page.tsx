@@ -16,11 +16,12 @@ import {
   LucideLayoutDashboard, LucideClipboardList, LucideStar,
   LucideRefreshCw, LucideSearch, LucideChevronLeft, LucideChevronRight,
   LucideCheckCircle2, LucideMapPin, LucidePhone, LucideCalendar,
+  LucideSettings,
 } from 'lucide-react';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
-type Tab = 'overview' | 'leads' | 'verifications' | 'users' | 'reviews';
+type Tab = 'overview' | 'leads' | 'verifications' | 'users' | 'reviews' | 'settings';
 
 interface StatsData {
   users:         { totalClients: number; totalCleaners: number; verifiedCleaners: number; total: number };
@@ -221,19 +222,30 @@ function Sidebar({ tab, setTab, pendingVerifs, onRefresh, user }: {
             <Text fontSize="10px" color="#475569" fontFamily="heading">Administrador</Text>
           </Box>
         </HStack>
-        <HStack gap={1} mt={1}>
-          <Box
-            as="button" w="full" display="flex" alignItems="center" gap={2}
-            px={3} py={2} cursor="pointer" color="#6B7280" fontSize="12px"
-            fontFamily="heading" fontWeight="500" borderRadius="0"
-            transition="color 0.12s"
-            _hover={{ color: '#E2E8F0' }}
-            onClick={onRefresh}
-          >
-            <Icon as={LucideRefreshCw} w={3} h={3} />
-            Atualizar dados
-          </Box>
-        </HStack>
+        <Box
+          as="button" w="full" display="flex" alignItems="center" gap={2}
+          px={3} py={2} cursor="pointer" fontSize="12px"
+          fontFamily="heading" fontWeight="500" borderRadius="0"
+          transition="all 0.12s"
+          color={tab === 'settings' ? 'white' : '#6B7280'}
+          bg={tab === 'settings' ? 'rgba(26,127,160,0.15)' : 'transparent'}
+          _hover={{ color: '#E2E8F0', bg: 'rgba(255,255,255,0.04)' }}
+          onClick={() => setTab('settings')}
+        >
+          <Icon as={LucideSettings} w={3} h={3} />
+          Meus dados
+        </Box>
+        <Box
+          as="button" w="full" display="flex" alignItems="center" gap={2}
+          px={3} py={2} cursor="pointer" color="#6B7280" fontSize="12px"
+          fontFamily="heading" fontWeight="500" borderRadius="0"
+          transition="color 0.12s"
+          _hover={{ color: '#E2E8F0' }}
+          onClick={onRefresh}
+        >
+          <Icon as={LucideRefreshCw} w={3} h={3} />
+          Atualizar dados
+        </Box>
         <Box
           as="button" w="full" display="flex" alignItems="center" gap={2}
           px={3} py={2} cursor="pointer" color="#6B7280" fontSize="12px"
@@ -1101,7 +1113,144 @@ export default function AdminPage() {
           </motion.div>
         )}
 
+        {/* ══ MEUS DADOS ══ */}
+        {tab === 'settings' && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.15 }}>
+            <PageHeader title="Meus Dados" sub="Atualize suas informações de administrador" />
+            <Box px={8} py={6} maxW="600px">
+              <AdminSettingsForm />
+            </Box>
+          </motion.div>
+        )}
+
       </Box>
     </Flex>
+  );
+}
+
+// ─── AdminSettingsForm ────────────────────────────────────────────────────────
+
+function AdminSettingsForm() {
+  const { data: session, update } = useSession();
+  const [name,     setName]     = useState(session?.user?.name ?? '');
+  const [email,    setEmail]    = useState(session?.user?.email ?? '');
+  const [password, setPassword] = useState('');
+  const [confirm,  setConfirm]  = useState('');
+  const [saving,   setSaving]   = useState(false);
+
+  const handleSave = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (password && password !== confirm) {
+      toaster.create({ title: 'As senhas não coincidem', type: 'error' }); return;
+    }
+    setSaving(true);
+    try {
+      const body: Record<string, string> = { name, email };
+      if (password) body.newPassword = password;
+      const res = await fetch('/api/admin/profile', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      });
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error ?? 'Erro ao salvar');
+      }
+      await update({ name, email });
+      setPassword(''); setConfirm('');
+      toaster.create({ title: 'Dados atualizados!', type: 'success' });
+    } catch (e: any) {
+      toaster.create({ title: e.message, type: 'error' });
+    } finally { setSaving(false); }
+  };
+
+  return (
+    <Box bg="white" border="1px solid #E2E8F0" overflow="hidden">
+      {/* Section header */}
+      <Box bg="#F8FAFC" px={5} py={3} borderBottom="1px solid #E2E8F0">
+        <HStack gap={2}>
+          <Icon as={LucideUser} w={4} h={4} color="brand.500" />
+          <Text fontSize="10.5px" fontWeight={700} color="#94A3B8"
+            textTransform="uppercase" letterSpacing="0.07em" fontFamily="heading">
+            Informações pessoais
+          </Text>
+        </HStack>
+      </Box>
+
+      <Box as="form" p={6} onSubmit={handleSave}>
+        <VStack gap={5} align="stretch">
+
+          {/* Name */}
+          <Box>
+            <Text fontSize="xs" fontWeight="700" color="slate.500" mb={2}
+              textTransform="uppercase" letterSpacing="wider">Nome</Text>
+            <Input
+              value={name} onChange={e => setName(e.target.value)}
+              placeholder="Seu nome"
+              bg="slate.50" border="1px solid" borderColor="slate.200"
+              borderRadius="4px" h="11" fontSize="sm"
+              _focus={{ bg: 'white', borderColor: 'brand.300' }} required
+            />
+          </Box>
+
+          {/* Email */}
+          <Box>
+            <Text fontSize="xs" fontWeight="700" color="slate.500" mb={2}
+              textTransform="uppercase" letterSpacing="wider">Email</Text>
+            <Input
+              type="email" value={email} onChange={e => setEmail(e.target.value)}
+              placeholder="admin@email.com"
+              bg="slate.50" border="1px solid" borderColor="slate.200"
+              borderRadius="4px" h="11" fontSize="sm"
+              _focus={{ bg: 'white', borderColor: 'brand.300' }} required
+            />
+          </Box>
+
+          {/* Divider */}
+          <Box borderTop="1px solid #E2E8F0" pt={4}>
+            <Text fontSize="10.5px" fontWeight={700} color="#94A3B8"
+              textTransform="uppercase" letterSpacing="0.07em" fontFamily="heading" mb={4}>
+              ALTERAR SENHA (opcional)
+            </Text>
+            <VStack gap={4} align="stretch">
+              <Box>
+                <Text fontSize="xs" fontWeight="700" color="slate.500" mb={2}
+                  textTransform="uppercase" letterSpacing="wider">Nova senha</Text>
+                <Input
+                  type="password" value={password} onChange={e => setPassword(e.target.value)}
+                  placeholder="Deixe em branco para não alterar"
+                  bg="slate.50" border="1px solid" borderColor="slate.200"
+                  borderRadius="4px" h="11" fontSize="sm"
+                  _focus={{ bg: 'white', borderColor: 'brand.300' }}
+                />
+              </Box>
+              <Box>
+                <Text fontSize="xs" fontWeight="700" color="slate.500" mb={2}
+                  textTransform="uppercase" letterSpacing="wider">Confirmar senha</Text>
+                <Input
+                  type="password" value={confirm} onChange={e => setConfirm(e.target.value)}
+                  placeholder="Repita a nova senha"
+                  bg="slate.50" border="1px solid" borderColor="slate.200"
+                  borderRadius="4px" h="11" fontSize="sm"
+                  _focus={{ bg: 'white', borderColor: 'brand.300' }}
+                  disabled={!password}
+                />
+              </Box>
+            </VStack>
+          </Box>
+
+          <Button
+            type="submit"
+            bg="#1A7FA0" color="white" borderRadius="4px" fontWeight="bold"
+            _hover={{ bg: '#15698A' }} transition="background 0.15s"
+            loading={saving} loadingText="Salvando…"
+            alignSelf="flex-start" px={6}>
+            <Icon as={LucideSave} w={4} h={4} mr={2} />
+            Salvar alterações
+          </Button>
+
+        </VStack>
+      </Box>
+    </Box>
   );
 }

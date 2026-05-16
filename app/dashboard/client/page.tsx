@@ -20,7 +20,9 @@ import { AnimatePresence, motion } from 'motion/react';
 import {
   SERVICE_TYPES, FREQUENCY_OPTIONS, EXTRAS, calculateEstimate,
 } from '@/lib/estimate';
-import Sidebar from '@/components/sidebar';
+import NotificationBell from '@/components/notification-bell';
+import { signOut } from 'next-auth/react';
+import { LucideLogOut } from 'lucide-react';
 
 /* ─── types ──────────────────────────────────────────────────── */
 const STATUS_MAP: Record<string, { label: string; bg: string; color: string; border: string }> = {
@@ -324,7 +326,48 @@ export default function ClientPage() {
 
   return (
     <Box minH="100vh" bg="#F8FAFC">
-      <Sidebar />
+      {/* ── Client header ── */}
+      <Box
+        bg="#0B1120" borderBottom="1px solid rgba(255,255,255,0.06)"
+        position="sticky" top={0} zIndex={50}
+        style={{ boxShadow: '0 1px 8px rgba(0,0,0,0.2)' }}
+      >
+        <Flex align="center" h="60px" px={{ base: 4, md: 6, lg: 8 }} maxW="1440px" mx="auto" justify="space-between">
+          {/* Logo */}
+          <HStack gap={2.5}>
+            <Box w="32px" h="32px" bg="brand.500" borderRadius="6px"
+              display="flex" alignItems="center" justifyContent="center">
+              <Text color="white" fontWeight="800" fontSize="11px" letterSpacing="-0.02em" fontFamily="heading">BC</Text>
+            </Box>
+            <Text fontWeight="700" fontSize="15px" letterSpacing="-0.02em" color="white" fontFamily="heading"
+              display={{ base: 'none', sm: 'block' }}>
+              Brazilian<Text as="span" color="brand.400">Clean</Text>
+            </Text>
+          </HStack>
+
+          {/* Right side */}
+          <HStack gap={1.5}>
+            <HStack gap={2} display={{ base: 'none', lg: 'flex' }}
+              bg="rgba(255,255,255,0.06)" border="1px solid" borderColor="rgba(255,255,255,0.1)"
+              borderRadius="full" px={3} py={1.5}>
+              <Box w="22px" h="22px" bg="brand.500" borderRadius="full"
+                display="flex" alignItems="center" justifyContent="center"
+                fontSize="9px" fontWeight="700" color="white">
+                {firstName[0]?.toUpperCase() ?? 'C'}
+              </Box>
+              <Text fontSize="13px" fontWeight="500" color="#CBD5E1" fontFamily="heading" letterSpacing="-0.01em">
+                {firstName}
+              </Text>
+            </HStack>
+            <NotificationBell dark />
+            <Button size="sm" variant="ghost" color="#6B7280" px={2} h="34px" borderRadius="lg"
+              _hover={{ color: '#F43F5E', bg: 'rgba(244,63,94,0.1)' }} transition="all 0.15s"
+              onClick={() => signOut({ callbackUrl: '/auth/login' })} title="Sair">
+              <Icon as={LucideLogOut} w={4} h={4} />
+            </Button>
+          </HStack>
+        </Flex>
+      </Box>
 
       <Box maxW="900px" mx="auto" py={8} px={6}>
         <VStack gap={6} align="stretch">
