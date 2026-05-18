@@ -148,6 +148,12 @@ export default function CleanerDashboard() {
 
   const activeJobs    = accepted.filter(l => l.status !== 'COMPLETED');
   const completedJobs = accepted.filter(l => l.status === 'COMPLETED');
+  // Conversations waiting for client response (lead IN_REVIEW)
+  const pendingConversations = conversations.filter(c => c.lead.status === 'IN_REVIEW');
+  // Conversations for accepted leads (client already accepted — show chat in Trabalhos Aceitos)
+  const activeAcceptedConvMap = new Map(
+    conversations.filter(c => c.lead.status === 'ACCEPTED').map(c => [c.lead.id, c.id])
+  );
 
   return (
     <Box minH="100vh" bg="#F8FAFC">
@@ -367,17 +373,17 @@ export default function CleanerDashboard() {
         </SectionPanel>
 
         {/* ── Aguardando Resposta ── */}
-        {conversations.length > 0 && (
+        {pendingConversations.length > 0 && (
           <SectionPanel
             title="Aguardando Resposta do Cliente"
-            count={conversations.length}
+            count={pendingConversations.length}
             accentColor="#60A5FA"
           >
-            {conversations.map((conv, i) => (
+            {pendingConversations.map((conv, i) => (
               <Box
                 key={conv.id}
                 bg="white"
-                borderBottom={i < conversations.length - 1 ? '1px solid #F1F5F9' : 'none'}
+                borderBottom={i < pendingConversations.length - 1 ? '1px solid #F1F5F9' : 'none'}
                 position="relative"
                 cursor="pointer"
                 onClick={() => router.push(`/dashboard/chat/${conv.id}`)}
@@ -475,6 +481,20 @@ export default function CleanerDashboard() {
                       <Text color="#94A3B8" fontSize="11.5px" fontStyle="italic" mt={1.5}>{lead.notes}</Text>
                     )}
                   </Box>
+                  {(() => {
+                    const convId = activeAcceptedConvMap.get(lead.id);
+                    return convId ? (
+                      <Button
+                        size="sm" bg="#1A7FA0" color="white" borderRadius="4px"
+                        fontWeight="600" fontFamily="heading" flexShrink={0}
+                        _hover={{ bg: '#156B87' }}
+                        onClick={() => router.push(`/dashboard/chat/${convId}`)}
+                      >
+                        <Icon as={LucideMessageCircle} w={3.5} h={3.5} mr={1.5} />
+                        Chat
+                      </Button>
+                    ) : null;
+                  })()}
                 </Flex>
               </Box>
             ))}

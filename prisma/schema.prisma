@@ -265,3 +265,9 @@ model VerificationToken {
 
   @@index([email, type])
 }
+
+model PlanConfig {
+  id        String   @id  // BASIC | PREMIUM | PRO
+  price     Float
+  updatedAt DateTime @updatedAt
+}

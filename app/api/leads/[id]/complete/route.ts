@@ -23,14 +23,31 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
   if (new Date(lead.dateTime) > new Date())
     return NextResponse.json({ error: 'A limpeza ainda não chegou no horário marcado' }, { status: 409 });
 
-  await prisma.lead.update({ where: { id }, data: { status: 'COMPLETED' } });
+  // For one-time services: mark lead COMPLETED + close the active conversation
+  // For recurring (weekly/biweekly): mark COMPLETED but keep conversation active
+  const ops: any[] = [
+    prisma.lead.update({ where: { id }, data: { status: 'COMPLETED' } }),
+  ];
+
+  if (lead.frequency === 'once') {
+    ops.push(
+      prisma.conversation.updateMany({
+        where: { leadId: id, status: 'active' },
+        data:  { status: 'closed' },
+      })
+    );
+  }
+
+  await prisma.$transaction(ops);
 
   if (lead.cleanerId) {
     createNotification({
       userId: lead.cleanerId,
       type:   'job_completed',
       title:  'Trabalho concluído!',
-      body:   'O cliente marcou o serviço como concluído. Aguarde a avaliação.',
+      body:   lead.frequency === 'once'
+        ? 'O cliente marcou o serviço como concluído. Aguarde a avaliação.'
+        : 'O cliente marcou o ciclo como concluído. O chat permanece ativo para os próximos agendamentos.',
       link:   '/dashboard/cleaner',
     }).catch(() => {});
   }

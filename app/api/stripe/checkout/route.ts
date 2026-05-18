@@ -1,6 +1,7 @@
 import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
-import { stripe, PLAN_PRICE_IDS, BASE_URL } from '@/lib/stripe';
+import { stripe, BASE_URL } from '@/lib/stripe';
+import { PLANS } from '@/lib/pricing';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(req: NextRequest) {
@@ -14,8 +15,16 @@ export async function POST(req: NextRequest) {
   if (!user || user.role !== 'CLEANER') return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
 
   const { planId } = await req.json();
-  const priceId = PLAN_PRICE_IDS[planId];
-  if (!priceId) return NextResponse.json({ error: 'Plano inválido ou sem price ID configurado' }, { status: 400 });
+  if (!['BASIC', 'PREMIUM', 'PRO'].includes(planId)) {
+    return NextResponse.json({ error: 'Plano inválido' }, { status: 400 });
+  }
+
+  // Fetch price from DB (falls back to lib/pricing.ts defaults)
+  const planDef = PLANS.find(p => p.id === planId);
+  const dbConfig = await prisma.planConfig.findUnique({ where: { id: planId } });
+  const price = dbConfig?.price ?? planDef?.price ?? 0;
+
+  if (price <= 0) return NextResponse.json({ error: 'Preço inválido' }, { status: 400 });
 
   // Find or create Stripe customer
   let customerId = user.stripeCustomerId;
@@ -32,7 +41,15 @@ export async function POST(req: NextRequest) {
   const checkoutSession = await stripe.checkout.sessions.create({
     customer: customerId,
     mode: 'subscription',
-    line_items: [{ price: priceId, quantity: 1 }],
+    line_items: [{
+      price_data: {
+        currency:   'brl',
+        unit_amount: Math.round(price * 100),
+        recurring:  { interval: 'month' },
+        product_data: { name: `Plano ${planDef?.name ?? planId}` },
+      },
+      quantity: 1,
+    }],
     success_url: `${BASE_URL}/dashboard/plan?upgraded=1`,
     cancel_url:  `${BASE_URL}/dashboard/plan`,
     metadata: { type: 'subscription', userId: user.id, planId },

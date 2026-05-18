@@ -35,16 +35,26 @@ export default function PlanPage() {
   const [saving, setSaving]               = useState(false);
   const [redirecting, setRedirecting]     = useState(false);
   const [loading, setLoading]             = useState(true);
+  const [livePrices, setLivePrices]       = useState<Record<string, number>>({});
 
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await fetch('/api/plan');
-      if (res.ok) {
-        const data = await res.json();
+      const [planRes, priceRes] = await Promise.all([
+        fetch('/api/plan'),
+        fetch('/api/plan/prices'),
+      ]);
+      if (planRes.ok) {
+        const data = await planRes.json();
         setCurrentPlan(data.plan as PlanId);
         setZipCode(data.zipCode ?? '');
         setHasSubscription(!!data.stripeSubscriptionId);
+      }
+      if (priceRes.ok) {
+        const prices: { id: string; price: number }[] = await priceRes.json();
+        const map: Record<string, number> = {};
+        prices.forEach(p => { map[p.id] = p.price; });
+        setLivePrices(map);
       }
     } finally { setLoading(false); }
   }, []);
@@ -279,7 +289,7 @@ export default function PlanPage() {
                         ) : (
                           <HStack gap={1} align="baseline">
                             <Text fontWeight="black" fontSize="xl" color={c.text} fontFamily="heading" letterSpacing="-0.03em">
-                              R$ {plan.price}
+                              R$ {livePrices[plan.id] ?? plan.price}
                             </Text>
                             <Text fontSize="xs" color="slate.400">/mês</Text>
                           </HStack>

@@ -15,13 +15,13 @@ import {
   LucideBan, LucideUnlock, LucidePencil, LucideSave, LucideX,
   LucideLayoutDashboard, LucideClipboardList, LucideStar,
   LucideRefreshCw, LucideSearch, LucideChevronLeft, LucideChevronRight,
-  LucideCheckCircle2, LucideMapPin, LucidePhone, LucideCalendar,
-  LucideSettings,
+  LucideCheckCircle2, LucideMapPin, LucidePhone,
+  LucideSettings, LucideDollarSign,
 } from 'lucide-react';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
-type Tab = 'overview' | 'leads' | 'verifications' | 'users' | 'reviews' | 'settings';
+type Tab = 'overview' | 'leads' | 'verifications' | 'users' | 'reviews' | 'pricing' | 'settings';
 
 interface StatsData {
   users:         { totalClients: number; totalCleaners: number; verifiedCleaners: number; total: number };
@@ -121,6 +121,7 @@ const NAV: { id: Tab; label: string; icon: any; section?: string }[] = [
   { id: 'verifications', label: 'Verificações',   icon: LucideShield,          section: 'CADASTROS' },
   { id: 'users',         label: 'Usuários',       icon: LucideUsers },
   { id: 'reviews',       label: 'Avaliações',     icon: LucideStar },
+  { id: 'pricing',       label: 'Preços dos Planos', icon: LucideDollarSign,   section: 'FINANCEIRO' },
 ];
 
 function Sidebar({ tab, setTab, pendingVerifs, onRefresh, user }: {
@@ -1113,6 +1114,16 @@ export default function AdminPage() {
           </motion.div>
         )}
 
+        {/* ══ PREÇOS DOS PLANOS ══ */}
+        {tab === 'pricing' && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.15 }}>
+            <PageHeader title="Preços dos Planos" sub="Visualize e altere os valores cobrados mensalmente" />
+            <Box px={8} py={6} maxW="720px">
+              <PlanPricingPanel />
+            </Box>
+          </motion.div>
+        )}
+
         {/* ══ MEUS DADOS ══ */}
         {tab === 'settings' && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.15 }}>
@@ -1252,5 +1263,199 @@ function AdminSettingsForm() {
         </VStack>
       </Box>
     </Box>
+  );
+}
+
+// ─── PlanPricingPanel ─────────────────────────────────────────────────────────
+
+interface PlanConfigRow { id: string; price: number; updatedAt?: string }
+
+const PLAN_META: Record<string, { name: string; color: string; badge: string; perks: string[] }> = {
+  BASIC: {
+    name: 'Basic', color: '#1A7FA0', badge: 'Popular',
+    perks: ['Wave 1 + Wave 2', '+10 pontos no ranking CFS', 'Perfil destacado'],
+  },
+  PREMIUM: {
+    name: 'Premium', color: '#7C3AED', badge: 'Recomendado',
+    perks: ['Wave 1 + Wave 2 (prioridade)', '+20 pontos no ranking CFS', 'Badge Premium no perfil', 'Suporte prioritário'],
+  },
+  PRO: {
+    name: 'Pro', color: '#D97706', badge: 'Máximo',
+    perks: ['Topo do ranking CFS', '+30 pontos garantidos', 'Instant Book elegível', 'Badge Pro exclusivo', 'Analytics avançado'],
+  },
+};
+
+function PlanPricingPanel() {
+  const [configs,  setConfigs]  = useState<PlanConfigRow[]>([]);
+  const [loading,  setLoading]  = useState(true);
+  const [editing,  setEditing]  = useState<string | null>(null);
+  const [draft,    setDraft]    = useState('');
+  const [saving,   setSaving]   = useState(false);
+
+  const load = async () => {
+    setLoading(true);
+    try {
+      const r = await fetch('/api/admin/plan-config');
+      if (r.ok) { const data = await r.json(); if (Array.isArray(data)) setConfigs(data); }
+      else toaster.create({ title: 'Erro ao carregar preços', type: 'error' });
+    } finally { setLoading(false); }
+  };
+
+  useEffect(() => { load(); }, []);
+
+  const startEdit = (row: PlanConfigRow) => { setEditing(row.id); setDraft(String(row.price)); };
+  const cancelEdit = () => { setEditing(null); setDraft(''); };
+
+  const save = async (id: string) => {
+    const price = parseFloat(draft);
+    if (!price || price < 1 || isNaN(price)) {
+      toaster.create({ title: 'Informe um valor válido (mínimo R$1)', type: 'error' }); return;
+    }
+    setSaving(true);
+    try {
+      const res = await fetch('/api/admin/plan-config', {
+        method: 'PATCH', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id, price }),
+      });
+      if (!res.ok) throw new Error((await res.json()).error ?? 'Erro');
+      const updated: PlanConfigRow = await res.json();
+      setConfigs(prev => prev.map(c => c.id === id ? updated : c));
+      setEditing(null);
+      toaster.create({ title: `Preço do plano ${PLAN_META[id]?.name ?? id} atualizado`, type: 'success' });
+    } catch (e: any) {
+      toaster.create({ title: e.message ?? 'Erro ao salvar', type: 'error' });
+    } finally { setSaving(false); }
+  };
+
+  if (loading) {
+    return (
+      <Box bg="white" border="1px solid #E2E8F0" p={12} textAlign="center">
+        <Text fontSize="13px" color="slate.400" fontFamily="heading">Carregando preços…</Text>
+      </Box>
+    );
+  }
+
+  return (
+    <VStack gap={4} align="stretch">
+
+      {/* Plan cards */}
+      {(['BASIC', 'PREMIUM', 'PRO'] as const).map(planId => {
+        const meta = PLAN_META[planId];
+        const row  = configs.find(c => c.id === planId);
+        const isEdit = editing === planId;
+
+        return (
+          <Box key={planId} bg="white" border="1px solid #E2E8F0" overflow="hidden" position="relative">
+            {/* Left accent */}
+            <Box position="absolute" left={0} top={0} bottom={0} w="3px" bg={meta.color} />
+
+            {/* Header row */}
+            <Flex px={6} pl={8} py={4} align="center" justify="space-between" gap={4} borderBottom="1px solid #F1F5F9">
+              <Box>
+                <HStack gap={2} mb={0.5}>
+                  <Text fontSize="15px" fontWeight="800" color="slate.900" fontFamily="heading" letterSpacing="-0.02em">
+                    {meta.name}
+                  </Text>
+                  <Text style={{
+                    fontSize: '9.5px', fontWeight: 700, padding: '2px 6px',
+                    background: `${meta.color}18`, color: meta.color,
+                    borderRadius: 2, fontFamily: 'var(--font-dm-sans,sans-serif)',
+                    textTransform: 'uppercase', letterSpacing: '0.08em',
+                  }}>
+                    {meta.badge}
+                  </Text>
+                </HStack>
+                <Text fontSize="11px" color="slate.400" fontFamily="heading">
+                  Cobrado mensalmente via Stripe
+                  {row?.updatedAt && ` · atualizado ${new Date(row.updatedAt).toLocaleDateString('pt-BR')}`}
+                </Text>
+              </Box>
+
+              {/* Price / edit */}
+              {isEdit ? (
+                <HStack gap={2} flexShrink={0}>
+                  <Text fontSize="14px" color="slate.500" fontWeight="700" fontFamily="heading">R$</Text>
+                  <Input
+                    type="number" value={draft} min={1} step={1}
+                    onChange={e => setDraft(e.target.value)}
+                    w="90px" size="sm" borderRadius="4px" fontFamily="heading" fontWeight="700"
+                    autoFocus
+                    onKeyDown={e => {
+                      if (e.key === 'Enter') save(planId);
+                      if (e.key === 'Escape') cancelEdit();
+                    }}
+                  />
+                  <Text fontSize="12px" color="slate.400" fontFamily="heading">/mês</Text>
+                  <Button size="sm" bg="brand.500" color="white" borderRadius="4px"
+                    loading={saving} loadingText="…" onClick={() => save(planId)}
+                    fontFamily="heading" fontWeight="600" fontSize="12px" px={3}>
+                    <Icon as={LucideSave} w={3.5} h={3.5} mr={1.5} />Salvar
+                  </Button>
+                  <Button size="sm" variant="ghost" borderRadius="4px" color="slate.400"
+                    onClick={cancelEdit} px={2}>
+                    <Icon as={LucideX} w={3.5} h={3.5} />
+                  </Button>
+                </HStack>
+              ) : (
+                <HStack gap={3} flexShrink={0}>
+                  <Box textAlign="right">
+                    <Text fontSize="26px" fontWeight="800" fontFamily="heading"
+                      letterSpacing="-0.04em" color="slate.900" lineHeight={1}>
+                      R${row?.price ?? '—'}
+                      <Text as="span" fontSize="13px" fontWeight="500" color="slate.400">/mês</Text>
+                    </Text>
+                  </Box>
+                  <Button size="sm" variant="outline" borderColor="slate.200" color="slate.500"
+                    borderRadius="4px" fontWeight="600" fontSize="12px" fontFamily="heading"
+                    _hover={{ borderColor: 'brand.300', color: 'brand.600', bg: 'brand.50' }}
+                    onClick={() => startEdit({ id: planId, price: row?.price ?? 0 })}>
+                    <Icon as={LucidePencil} w={3.5} h={3.5} mr={1.5} />Alterar
+                  </Button>
+                </HStack>
+              )}
+            </Flex>
+
+            {/* Perks */}
+            <Box px={8} py={3} bg="#FAFAFA">
+              <HStack gap={5} flexWrap="wrap">
+                {meta.perks.map(perk => (
+                  <HStack key={perk} gap={1.5}>
+                    <Box w="5px" h="5px" borderRadius="full" bg={meta.color} flexShrink={0} />
+                    <Text fontSize="12px" color="slate.600" fontFamily="heading">{perk}</Text>
+                  </HStack>
+                ))}
+              </HStack>
+            </Box>
+          </Box>
+        );
+      })}
+
+      {/* Info callout */}
+      <Box p={4} bg="#FFF7ED" border="1px solid #FDE68A">
+        <HStack gap={3} align="start">
+          <Text fontSize="16px" flexShrink={0}>⚠️</Text>
+          <VStack gap={1} align="start">
+            <Text fontSize="12.5px" fontWeight="700" color="#92400E" fontFamily="heading">
+              Importante sobre alterações de preço
+            </Text>
+            <Text fontSize="12px" color="#92400E" fontFamily="heading" lineHeight={1.6}>
+              Novos assinantes são cobrados com o valor atualizado imediatamente.
+              Assinaturas <strong>já existentes no Stripe</strong> não são alteradas automaticamente —
+              precisam ser migradas manualmente no painel Stripe se desejar aplicar o novo valor.
+            </Text>
+          </VStack>
+        </HStack>
+      </Box>
+
+      {/* Refresh button */}
+      <Flex justify="flex-end">
+        <Button size="sm" variant="ghost" color="slate.400" borderRadius="4px" fontFamily="heading"
+          _hover={{ color: '#1A7FA0', bg: 'rgba(26,127,160,0.06)' }}
+          onClick={load}>
+          <Icon as={LucideRefreshCw} w={3.5} h={3.5} mr={1.5} />Atualizar
+        </Button>
+      </Flex>
+
+    </VStack>
   );
 }
