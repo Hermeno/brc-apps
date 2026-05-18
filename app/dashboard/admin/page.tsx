@@ -1431,17 +1431,16 @@ function PlanPricingPanel() {
       })}
 
       {/* Info callout */}
-      <Box p={4} bg="#FFF7ED" border="1px solid #FDE68A">
+      <Box p={4} bg="#F0FDF4" border="1px solid #BBF7D0">
         <HStack gap={3} align="start">
-          <Text fontSize="16px" flexShrink={0}>⚠️</Text>
+          <Text fontSize="16px" flexShrink={0}>✅</Text>
           <VStack gap={1} align="start">
-            <Text fontSize="12.5px" fontWeight="700" color="#92400E" fontFamily="heading">
-              Importante sobre alterações de preço
+            <Text fontSize="12.5px" fontWeight="700" color="#166534" fontFamily="heading">
+              Altere apenas aqui — o Stripe usa o preço do sistema automaticamente
             </Text>
-            <Text fontSize="12px" color="#92400E" fontFamily="heading" lineHeight={1.6}>
-              Novos assinantes são cobrados com o valor atualizado imediatamente.
-              Assinaturas <strong>já existentes no Stripe</strong> não são alteradas automaticamente —
-              precisam ser migradas manualmente no painel Stripe se desejar aplicar o novo valor.
+            <Text fontSize="12px" color="#166534" fontFamily="heading" lineHeight={1.6}>
+              Novos assinantes pagam sempre o valor atual desta página. Não é preciso alterar nada no Stripe.
+              Assinaturas <strong>já ativas</strong> mantêm o valor original do momento da contratação (comportamento padrão de assinaturas).
             </Text>
           </VStack>
         </HStack>

@@ -39,6 +39,7 @@ function UploadBox({
     try {
       const fd = new FormData();
       fd.append('file', file);
+      fd.append('type', 'verification');
       const res = await fetch('/api/upload', { method: 'POST', body: fd });
       if (!res.ok) throw new Error('Erro no upload');
       const { url } = await res.json();

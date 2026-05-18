@@ -143,6 +143,7 @@ export default function ProfilePage() {
     try {
       const fd = new FormData();
       fd.append('file', file);
+      fd.append('type', 'gallery');
       const res = await fetch('/api/upload', { method: 'POST', body: fd });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? 'Erro no upload');
