@@ -1,345 +1,292 @@
 'use client';
 
-import {
-  Box,
-  Heading,
-  Text,
-  Button,
-  VStack,
-  HStack,
-  Container,
-  SimpleGrid,
-  Icon,
-  Circle,
-  Flex,
-  Badge,
-} from '@chakra-ui/react';
-import { LucideArrowRight, LucideCheckCircle, LucideShield, LucideTrendingUp, LucideStar } from 'lucide-react';
+import { Box, Text, Button, HStack, VStack, Flex, Icon, SimpleGrid } from '@chakra-ui/react';
+import { LucideArrowRight, LucideCheckCircle, LucideShield, LucideTrendingUp, LucideStar, LucideMapPin, LucideCalendar, LucideMessageCircle } from 'lucide-react';
 import NextLink from 'next/link';
-import { motion } from 'motion/react';
-
-const MotionBox  = motion.div;
-const MotionSpan = motion.span;
 
 export default function HomePage() {
   return (
-    <Box bg="white" minH="100vh" overflow="hidden">
+    <Box bg="white" minH="100vh">
 
-      {/* ── Header ── */}
+      {/* ── Navbar ── */}
       <Box
-        borderBottom="1px solid"
-        borderColor="slate.100"
-        position="sticky"
-        top={0}
-        zIndex={50}
-        bg="white"
-        backdropFilter="blur(12px)"
+        position="fixed" top={0} left={0} right={0} zIndex={100} h="64px"
+        style={{ background: 'rgba(11,17,32,0.92)', backdropFilter: 'blur(10px)', borderBottom: '1px solid rgba(255,255,255,0.06)' }}
       >
-        <Container maxW="7xl" py={4}>
-          <Flex justify="space-between" align="center">
-            <MotionBox
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.5 }}
-            >
-              <HStack gap={3}>
-                <Box
-                  w="36px" h="36px"
-                  bgGradient="to-br"
-                  gradientFrom="brand.500"
-                  gradientTo="brand.700"
-                  borderRadius="xl"
-                  display="flex" alignItems="center" justifyContent="center"
-                  boxShadow="0 4px 12px rgba(37,99,235,0.35)"
-                >
-                  <Text color="white" fontWeight="black" fontSize="sm">BC</Text>
-                </Box>
-                <Text fontWeight="black" fontSize="lg" letterSpacing="tight" color="slate.900">
-                  Brazilian<Text as="span" color="brand.500">Clean</Text>
-                </Text>
-              </HStack>
-            </MotionBox>
+        <Flex align="center" h="full" px={{ base: 5, md: 10, lg: 16 }} maxW="1440px" mx="auto" justify="space-between">
+          <HStack gap={2.5}>
+            <Box w="32px" h="32px" bg="#1A7FA0" style={{ borderRadius: 6 }}
+              display="flex" alignItems="center" justifyContent="center">
+              <Text color="white" fontWeight="800" fontSize="11px" letterSpacing="-0.02em" fontFamily="heading">BC</Text>
+            </Box>
+            <Text fontWeight="700" fontSize="15px" letterSpacing="-0.02em" color="white" fontFamily="heading">
+              Brazilian<Text as="span" color="#1A7FA0">Clean</Text>
+            </Text>
+          </HStack>
 
-            <MotionBox
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.5 }}
-            >
-              <HStack gap={3}>
-                <NextLink href="/auth/register?role=cleaner">
-                  <Button
-                    variant="outline"
-                    borderColor="yellow.400" color="yellow.600"
-                    size="sm" px={5} borderRadius="full"
-                    fontWeight="bold"
-                    _hover={{ bg: 'yellow.50' }}
-                    transition="all 0.2s"
-                  >
-                    Sou profissional
-                  </Button>
-                </NextLink>
-                <NextLink href="/auth/login">
-                  <Text fontSize="sm" fontWeight="semibold" color="slate.600" cursor="pointer" _hover={{ color: 'brand.500' }} transition="color 0.2s">
-                    Entrar
-                  </Text>
-                </NextLink>
-              </HStack>
-            </MotionBox>
-          </Flex>
-        </Container>
+          <HStack gap={2}>
+            <NextLink href="/auth/register?role=cleaner">
+              <Button
+                size="sm" variant="outline" borderColor="rgba(255,255,255,0.18)" color="white"
+                borderRadius="4px" fontWeight="600" fontSize="13px" fontFamily="heading"
+                _hover={{ bg: 'rgba(255,255,255,0.08)', borderColor: 'rgba(255,255,255,0.35)' }}
+                h="34px" px={4}
+              >
+                I'm a professional
+              </Button>
+            </NextLink>
+            <NextLink href="/auth/login">
+              <Button
+                size="sm" bg="#1A7FA0" color="white"
+                borderRadius="4px" fontWeight="600" fontSize="13px" fontFamily="heading"
+                _hover={{ bg: '#15698A' }} h="34px" px={4}
+              >
+                Sign in
+              </Button>
+            </NextLink>
+          </HStack>
+        </Flex>
       </Box>
 
       {/* ── Hero ── */}
-      <Box position="relative" overflow="hidden" minH="92vh" display="flex" alignItems="center">
-        {/* Full-bleed background image */}
+      <Box position="relative" minH="100vh" display="flex" alignItems="center">
         <Box
-          position="absolute" top={0} left={0} right={0} bottom={0}
+          position="absolute" inset={0}
           style={{
             backgroundImage: "url('https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=1800&q=80')",
             backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            backgroundRepeat: 'no-repeat',
+            backgroundPosition: 'center top',
           }}
         />
-        {/* Dark overlay so text stays readable */}
-        <Box position="absolute" top={0} left={0} right={0} bottom={0}
-          style={{ backgroundColor: 'rgba(0,0,0,0.55)' }} />
+        <Box position="absolute" inset={0} style={{
+          background: 'linear-gradient(180deg, rgba(11,17,32,0.82) 0%, rgba(11,17,32,0.65) 50%, rgba(11,17,32,0.78) 100%)',
+        }} />
 
-        <Container maxW="7xl" pt={28} pb={36} position="relative">
-          <VStack gap={8} align="center" textAlign="center" maxW="3xl" mx="auto">
+        <Box position="relative" w="full" px={{ base: 5, md: 10, lg: 16 }} maxW="1440px" mx="auto" pt="120px" pb="80px">
+          <Box maxW="640px">
 
-            <MotionBox
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
+            <Text
+              display="inline-block" mb={5}
+              fontSize="10.5px" fontWeight="700" letterSpacing="0.14em"
+              color="#1A7FA0" textTransform="uppercase" fontFamily="heading"
+              style={{ borderLeft: '2px solid #1A7FA0', paddingLeft: 10 }}
             >
-              <Badge
-                bg="whiteAlpha.200" color="white"
-                px={4} py={1.5} borderRadius="full"
-                fontSize="xs" fontWeight="bold" letterSpacing="widest"
-                border="1px solid" borderColor="whiteAlpha.400"
-                backdropFilter="blur(8px)"
-              >
-               PLATAFORMA #1 DE LIMPEZA DO BRASIL
-              </Badge>
-            </MotionBox>
+              Verified cleaning platform
+            </Text>
 
-            <MotionBox
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.1 }}
+            <Text
+              as="h1"
+              fontSize={{ base: '38px', md: '52px', lg: '60px' }}
+              fontWeight="800" lineHeight="1.08" letterSpacing="-0.03em"
+              color="white" fontFamily="heading" mb={6}
             >
-              <Heading
-                size="5xl" fontWeight="black"
-                letterSpacing="tight" lineHeight="1.1"
-                color="white"
-              >
-                Limpeza profissional{' '}
-                <Text as="span"
-                  bgGradient="to-r"
-                  gradientFrom="blue.300"
-                  gradientTo="cyan.200"
-                  bgClip="text"
+              Professional cleaning{' '}
+              <Text as="span" color="#1A7FA0">at your door</Text>
+            </Text>
+
+            <Text
+              fontSize={{ base: '16px', md: '18px' }} color="rgba(255,255,255,0.72)"
+              lineHeight="1.65" mb={10} maxW="520px" fontFamily="heading"
+            >
+              We connect you with the best verified professionals in your area.
+              Fast, safe, and satisfaction guaranteed.
+            </Text>
+
+            <HStack gap={3} flexWrap="wrap" mb={14}>
+              <NextLink href="/request">
+                <Button
+                  bg="#1A7FA0" color="white" h="48px" px={7}
+                  borderRadius="4px" fontWeight="700" fontSize="14px" fontFamily="heading"
+                  _hover={{ bg: '#15698A' }} transition="background 0.15s"
                 >
-                  na sua porta
-                </Text>
-              </Heading>
-            </MotionBox>
+                  Request cleaning
+                  <Icon as={LucideArrowRight} w={4} h={4} ml={2} />
+                </Button>
+              </NextLink>
+            </HStack>
 
-            <MotionBox
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-            >
-              <Text fontSize="xl" color="white" opacity={0.85} maxW="2xl" lineHeight="tall">
-                Conectamos você aos melhores profissionais de limpeza verificados da sua região. Rápido, seguro e garantido.
-              </Text>
-            </MotionBox>
-
-            <MotionBox
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.3 }}
-            >
-              <HStack gap={4} mt={2} justify="center">
-                <NextLink href="/request">
-                  <Button
-                    bg="brand.500" color="white" size="xl"
-                    px={10} h="14" borderRadius="full"
-                    fontSize="md" fontWeight="bold"
-                    _hover={{ bg: 'brand.600', transform: 'translateY(-2px)', boxShadow: '0 8px 24px rgba(37,99,235,0.4)' }}
-                    transition="all 0.25s"
-                  >
-                    Solicitar limpeza agora
-                    <Icon as={LucideArrowRight} ml={2} />
-                  </Button>
-                </NextLink>
-              </HStack>
-            </MotionBox>
-
-            {/* Trust badges */}
-            <MotionBox
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.8, delay: 0.5 }}
-            >
-              <HStack gap={6} color="whiteAlpha.700" fontSize="sm" flexWrap="wrap" justify="center">
-                <HStack gap={1.5}>
-                  <Icon as={LucideStar} w={4} h={4} color="yellow.300" />
-                  <Text>4.9/5 avaliação média</Text>
-                </HStack>
-                <Text color="whiteAlpha.400">|</Text>
-                <HStack gap={1.5}>
-                  <Icon as={LucideCheckCircle} w={4} h={4} color="green.300" />
-                  <Text>Profissionais verificados</Text>
-                </HStack>
-                <Text color="whiteAlpha.400">|</Text>
-                <HStack gap={1.5}>
-                  <Icon as={LucideShield} w={4} h={4} color="blue.300" />
-                  <Text>100% garantido</Text>
-                </HStack>
-              </HStack>
-            </MotionBox>
-
-          </VStack>
-        </Container>
-      </Box>
-
-      {/* ── Features ── */}
-      <Box bg="slate.50" py={24} borderTop="1px solid" borderColor="slate.100">
-        <Container maxW="7xl">
-          <VStack gap={12}>
-            <MotionBox
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5 }}
-            >
-              <VStack gap={3} textAlign="center">
-                <Heading size="2xl" fontWeight="black" color="slate.900">
-                  Por que escolher a BrazilianClean?
-                </Heading>
-                <Text color="slate.500" fontSize="lg">Tecnologia e cuidado para a sua casa</Text>
-              </VStack>
-            </MotionBox>
-
-            <SimpleGrid columns={{ base: 1, md: 3 }} gap={8} w="full">
+            <HStack gap={0} divideX="1px" divideColor="rgba(255,255,255,0.15)" flexWrap="wrap">
               {[
-                {
-                  icon: LucideTrendingUp,
-                  iconBg: 'brand.50',
-                  iconColor: 'brand.500',
-                  title: 'Distribuição por Ondas',
-                  desc: 'Nosso sistema garante que os melhores profissionais recebam os pedidos primeiro.',
-                },
-                {
-                  icon: LucideCheckCircle,
-                  iconBg: 'green.50',
-                  iconColor: 'green.500',
-                  title: 'Profissionais Verificados',
-                  desc: 'Todos os profissionais passam por verificação e são avaliados pela comunidade.',
-                },
-                {
-                  icon: LucideShield,
-                  iconBg: 'yellow.50',
-                  iconColor: 'yellow.500',
-                  title: 'Pagamento Seguro',
-                  desc: 'Processamento integrado com Stripe. Pague com segurança pelo serviço.',
-                },
-              ].map((item, i) => (
-                <MotionBox
-                  key={item.title}
-                  initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.5, delay: i * 0.12 }}
-                >
-                  <Box
-                    bg="white" p={8} borderRadius="2xl"
-                    border="1px solid" borderColor="slate.100"
-                    boxShadow="sm"
-                    _hover={{ boxShadow: 'md', transform: 'translateY(-4px)', borderColor: 'brand.100' }}
-                    transition="all 0.25s"
-                    h="full"
-                  >
-                    <VStack align="start" gap={4}>
-                      <Circle size="52px" bg={item.iconBg}>
-                        <Icon as={item.icon} w={6} h={6} color={item.iconColor} />
-                      </Circle>
-                      <Heading size="md" color="slate.900">{item.title}</Heading>
-                      <Text color="slate.500" lineHeight="relaxed">{item.desc}</Text>
-                    </VStack>
-                  </Box>
-                </MotionBox>
+                { icon: LucideStar,        color: '#FCD34D', text: '4.9 average rating' },
+                { icon: LucideCheckCircle, color: '#34D399', text: 'Verified professionals' },
+                { icon: LucideShield,      color: '#60A5FA', text: 'Secure payment' },
+              ].map(item => (
+                <HStack key={item.text} gap={1.5} px={4} py={1} _first={{ pl: 0 }}>
+                  <Icon as={item.icon} w="13px" h="13px" color={item.color} />
+                  <Text fontSize="12.5px" color="rgba(255,255,255,0.65)" fontFamily="heading">{item.text}</Text>
+                </HStack>
               ))}
-            </SimpleGrid>
-          </VStack>
-        </Container>
+            </HStack>
+
+          </Box>
+        </Box>
       </Box>
 
-      {/* ── CTA ── */}
-      <Box py={20}>
-        <Container maxW="3xl">
-          <MotionBox
-            initial={{ opacity: 0, scale: 0.97 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-          >
-            <Box
-              bgGradient="to-br"
-              gradientFrom="brand.500"
-              gradientTo="brand.700"
-              borderRadius="3xl"
-              p={12}
-              textAlign="center"
-              color="white"
-              position="relative"
-              overflow="hidden"
-            >
-              <Box position="absolute" top="-60px" right="-60px" w="200px" h="200px"
-                bg="white" opacity={0.05} borderRadius="full" />
-              <Box position="absolute" bottom="-40px" left="-40px" w="160px" h="160px"
-                bg="yellow.400" opacity={0.15} borderRadius="full" filter="blur(40px)" />
-              <VStack gap={5} position="relative">
-                <Heading size="2xl" fontWeight="black">Pronto para começar?</Heading>
-                <Text color="brand.100" fontSize="lg">
-                  Crie sua conta grátis e receba seu primeiro profissional em minutos.
+      {/* ── How it works ── */}
+      <Box bg="#F8FAFC" borderTop="1px solid #E2E8F0" borderBottom="1px solid #E2E8F0">
+        <Box px={{ base: 5, md: 10, lg: 16 }} py={20} maxW="1440px" mx="auto">
+
+          <Box mb={12}>
+            <Text fontSize="10.5px" fontWeight="700" letterSpacing="0.12em" color="#1A7FA0"
+              textTransform="uppercase" fontFamily="heading" mb={2}>
+              How it works
+            </Text>
+            <Text fontSize={{ base: '26px', md: '32px' }} fontWeight="800" color="#0B1120"
+              fontFamily="heading" letterSpacing="-0.025em">
+              Simple, fast, guaranteed
+            </Text>
+          </Box>
+
+          <SimpleGrid columns={{ base: 1, md: 3 }} gap={0}>
+            {[
+              {
+                n: '01', icon: LucideCalendar, color: '#1A7FA0',
+                title: 'Make a request',
+                desc: 'Describe the service, provide your address, and choose a date and time. Takes less than 2 minutes.',
+              },
+              {
+                n: '02', icon: LucideMessageCircle, color: '#7C3AED',
+                title: 'Receive proposals',
+                desc: 'Verified professionals in your area respond to your request. You choose and confirm.',
+              },
+              {
+                n: '03', icon: LucideCheckCircle, color: '#059669',
+                title: 'Job complete',
+                desc: 'Track via chat, rate the professional, and book again anytime.',
+              },
+            ].map((step, i) => (
+              <Box
+                key={step.n}
+                px={8} py={8}
+                borderRight={{ md: i < 2 ? '1px solid #E2E8F0' : 'none' }}
+                borderBottom={{ base: i < 2 ? '1px solid #E2E8F0' : 'none', md: 'none' }}
+                position="relative"
+              >
+                <Box position="absolute" left={0} top={0} bottom={0} w="2px" bg={step.color}
+                  display={{ base: 'none', md: 'block' }} />
+                <Text
+                  fontSize="42px" fontWeight="800" fontFamily="heading"
+                  letterSpacing="-0.05em" color="#E2E8F0" lineHeight={1} mb={4}
+                  style={{ userSelect: 'none' }}
+                >
+                  {step.n}
                 </Text>
-                <NextLink href="/request">
-                  <Button
-                    bg="white" color="brand.600"
-                    size="xl" px={10} h="14"
-                    borderRadius="full" fontWeight="bold"
-                    _hover={{ bg: 'brand.50', transform: 'translateY(-2px)' }}
-                    transition="all 0.2s"
-                  >
-                    Começar agora — é grátis
-                  </Button>
-                </NextLink>
-              </VStack>
-            </Box>
-          </MotionBox>
-        </Container>
+                <HStack gap={2} mb={3}>
+                  <Icon as={step.icon} w="16px" h="16px" color={step.color} />
+                  <Text fontSize="14px" fontWeight="700" color="#0B1120" fontFamily="heading">{step.title}</Text>
+                </HStack>
+                <Text fontSize="13.5px" color="#64748B" lineHeight="1.65" fontFamily="heading">{step.desc}</Text>
+              </Box>
+            ))}
+          </SimpleGrid>
+        </Box>
+      </Box>
+
+      {/* ── Why BrazilianClean ── */}
+      <Box bg="white">
+        <Box px={{ base: 5, md: 10, lg: 16 }} py={20} maxW="1440px" mx="auto">
+          <Box mb={12}>
+            <Text fontSize="10.5px" fontWeight="700" letterSpacing="0.12em" color="#1A7FA0"
+              textTransform="uppercase" fontFamily="heading" mb={2}>
+              Why choose us
+            </Text>
+            <Text fontSize={{ base: '26px', md: '32px' }} fontWeight="800" color="#0B1120"
+              fontFamily="heading" letterSpacing="-0.025em">
+              Technology at the service of cleaning
+            </Text>
+          </Box>
+
+          <SimpleGrid columns={{ base: 1, md: 3 }} gap={0} border="1px solid #E2E8F0">
+            {[
+              {
+                icon: LucideTrendingUp, color: '#1A7FA0',
+                title: 'Wave Distribution',
+                desc: 'Our CFS system ensures the best professionals receive requests first, based on ratings and history.',
+              },
+              {
+                icon: LucideShield, color: '#7C3AED',
+                title: 'Identity Verification',
+                desc: 'All professionals submit documents and a selfie for manual review before appearing on the platform.',
+              },
+              {
+                icon: LucideMapPin, color: '#059669',
+                title: 'Regional Matching',
+                desc: 'Leads directed by proximity. Professionals and clients find matches in the same area.',
+              },
+            ].map((item, i) => (
+              <Box
+                key={item.title}
+                p={8}
+                borderRight={{ md: i < 2 ? '1px solid #E2E8F0' : 'none' }}
+                borderBottom={{ base: i < 2 ? '1px solid #E2E8F0' : 'none', md: 'none' }}
+                position="relative" overflow="hidden"
+              >
+                <Box position="absolute" top={0} left={0} right={0} h="2px" bg={item.color} />
+                <Box
+                  w="40px" h="40px" mb={4}
+                  display="flex" alignItems="center" justifyContent="center"
+                  style={{ background: `${item.color}14`, borderRadius: 4 }}
+                >
+                  <Icon as={item.icon} w="18px" h="18px" color={item.color} />
+                </Box>
+                <Text fontSize="14px" fontWeight="700" color="#0B1120" fontFamily="heading" mb={2.5}>{item.title}</Text>
+                <Text fontSize="13px" color="#64748B" lineHeight="1.7" fontFamily="heading">{item.desc}</Text>
+              </Box>
+            ))}
+          </SimpleGrid>
+        </Box>
+      </Box>
+
+      {/* ── CTA band ── */}
+      <Box bg="#0B1120" borderTop="1px solid rgba(255,255,255,0.06)">
+        <Flex
+          px={{ base: 5, md: 10, lg: 16 }} py={16} maxW="1440px" mx="auto"
+          align="center" justify="space-between" gap={8} flexWrap="wrap"
+        >
+          <Box>
+            <Text fontSize={{ base: '22px', md: '28px' }} fontWeight="800" color="white"
+              fontFamily="heading" letterSpacing="-0.025em" mb={1.5}>
+              Ready to get started?
+            </Text>
+            <Text fontSize="14px" color="rgba(255,255,255,0.5)" fontFamily="heading">
+              Create your account and request your first cleaning in minutes.
+            </Text>
+          </Box>
+          <NextLink href="/request">
+            <Button
+              bg="#1A7FA0" color="white" h="46px" px={7}
+              borderRadius="4px" fontWeight="700" fontSize="14px" fontFamily="heading"
+              _hover={{ bg: '#15698A' }} transition="background 0.15s" flexShrink={0}
+            >
+              Request cleaning now
+              <Icon as={LucideArrowRight} w={4} h={4} ml={2} />
+            </Button>
+          </NextLink>
+        </Flex>
       </Box>
 
       {/* ── Footer ── */}
-      <Box py={10} borderTop="1px solid" borderColor="slate.100">
-        <Container maxW="7xl">
-          <Flex justify="space-between" align="center" flexWrap="wrap" gap={4}>
-            <HStack gap={2}>
-              <Box w="24px" h="24px" bg="brand.500" borderRadius="md"
-                display="flex" alignItems="center" justifyContent="center">
-                <Text color="white" fontWeight="black" fontSize="9px">BC</Text>
-              </Box>
-              <Text fontSize="sm" color="slate.400">© 2026 BrazilianClean. Todos os direitos reservados.</Text>
-            </HStack>
-            <HStack gap={6}>
-              <Text fontSize="sm" color="slate.400" cursor="pointer" _hover={{ color: 'brand.500' }}>Termos</Text>
-              <Text fontSize="sm" color="slate.400" cursor="pointer" _hover={{ color: 'brand.500' }}>Privacidade</Text>
-            </HStack>
-          </Flex>
-        </Container>
+      <Box bg="#0B1120" borderTop="1px solid rgba(255,255,255,0.06)" py={8}>
+        <Flex
+          px={{ base: 5, md: 10, lg: 16 }} maxW="1440px" mx="auto"
+          align="center" justify="space-between" flexWrap="wrap" gap={4}
+        >
+          <HStack gap={2}>
+            <Box w="24px" h="24px" bg="#1A7FA0" style={{ borderRadius: 4 }}
+              display="flex" alignItems="center" justifyContent="center">
+              <Text color="white" fontWeight="800" fontSize="9px" fontFamily="heading">BC</Text>
+            </Box>
+            <Text fontSize="12px" color="rgba(255,255,255,0.35)" fontFamily="heading">
+              © 2026 BrazilianClean. All rights reserved.
+            </Text>
+          </HStack>
+          <HStack gap={6}>
+            <Text fontSize="12px" color="rgba(255,255,255,0.35)" cursor="pointer" fontFamily="heading"
+              _hover={{ color: 'rgba(255,255,255,0.7)' }} transition="color 0.15s">Terms</Text>
+            <Text fontSize="12px" color="rgba(255,255,255,0.35)" cursor="pointer" fontFamily="heading"
+              _hover={{ color: 'rgba(255,255,255,0.7)' }} transition="color 0.15s">Privacy</Text>
+          </HStack>
+        </Flex>
       </Box>
 
     </Box>

@@ -72,9 +72,9 @@ export default function ClientProfilePage() {
           </Box>
           <Box w="1px" h="20px" bg="slate.200" />
           <HStack gap={2.5}>
-            <Box w="28px" h="28px" bgGradient="to-br" gradientFrom="brand.500" gradientTo="brand.700"
-              borderRadius="md" display="flex" alignItems="center" justifyContent="center">
-              <Text color="white" fontWeight="black" fontSize="10px">BC</Text>
+            <Box w="28px" h="28px" bg="#1A7FA0" style={{ borderRadius: 4 }}
+              display="flex" alignItems="center" justifyContent="center">
+              <Text color="white" fontWeight="800" fontSize="10px" fontFamily="heading">BC</Text>
             </Box>
             <Text fontWeight="black" fontSize="sm" color="slate.900">
               Brazilian<Text as="span" color="brand.500">Clean</Text>
@@ -93,8 +93,8 @@ export default function ClientProfilePage() {
             </Box>
 
             {/* Avatar upload */}
-            <Box bg="white" border="1px solid" borderColor="slate.200" borderRadius="2xl" p={6}
-              boxShadow="0 2px 12px rgba(0,0,0,0.04)">
+            <Box bg="white" border="1px solid" borderColor="slate.200" borderRadius="4px" p={6}
+              >
               <Flex align="center" gap={5}>
                 <ImageUpload
                   value={avatarUrl}
@@ -108,14 +108,14 @@ export default function ClientProfilePage() {
                   <Text fontSize="xs" color="slate.400" mt={0.5}>
                     Click the circle to choose a photo
                   </Text>
-                  <Text fontSize="xs" color="slate.300" mt={0.5}>JPG, PNG ou WEBP · max 8 MB</Text>
+                  <Text fontSize="xs" color="slate.300" mt={0.5}>JPG, PNG or WEBP · max 8 MB</Text>
                 </Box>
               </Flex>
             </Box>
 
             {/* Profile fields */}
-            <Box bg="white" border="1px solid" borderColor="slate.200" borderRadius="2xl" p={6}
-              boxShadow="0 2px 12px rgba(0,0,0,0.04)">
+            <Box bg="white" border="1px solid" borderColor="slate.200" borderRadius="4px" p={6}
+              >
               <VStack gap={4} align="stretch">
 
                 <Box>
@@ -129,7 +129,7 @@ export default function ClientProfilePage() {
                     value={name}
                     onChange={e => setName(e.target.value)}
                     bg="slate.50" border="1px solid" borderColor="slate.200"
-                    h="11" borderRadius="xl" fontSize="sm"
+                    h="11" borderRadius="4px" fontSize="sm"
                     _focus={{ bg: 'white', borderColor: 'brand.300' }}
                   />
                 </Box>
@@ -145,7 +145,7 @@ export default function ClientProfilePage() {
                     value={phone}
                     onChange={e => setPhone(e.target.value)}
                     bg="slate.50" border="1px solid" borderColor="slate.200"
-                    h="11" borderRadius="xl" fontSize="sm"
+                    h="11" borderRadius="4px" fontSize="sm"
                     _focus={{ bg: 'white', borderColor: 'brand.300' }}
                   />
                 </Box>
@@ -161,7 +161,7 @@ export default function ClientProfilePage() {
                     value={address}
                     onChange={e => setAddress(e.target.value)}
                     bg="slate.50" border="1px solid" borderColor="slate.200"
-                    h="11" borderRadius="xl" fontSize="sm"
+                    h="11" borderRadius="4px" fontSize="sm"
                     _focus={{ bg: 'white', borderColor: 'brand.300' }}
                   />
                 </Box>
@@ -169,9 +169,9 @@ export default function ClientProfilePage() {
             </Box>
 
             <Button
-              bg="brand.500" color="white" h="13" borderRadius="xl" fontWeight="bold" fontSize="md"
-              _hover={{ bg: 'brand.600', transform: 'translateY(-1px)', boxShadow: '0 6px 20px rgba(37,99,235,0.35)' }}
-              transition="all 0.2s"
+              bg="brand.500" color="white" h="44px" borderRadius="4px" fontWeight="bold" fontSize="md"
+              _hover={{ bg: 'brand.600' }}
+              transition="background 0.15s"
               loading={saving} loadingText="Saving..."
               onClick={handleSave}
               disabled={loading}>

@@ -871,7 +871,7 @@ export default function ClientPage() {
                       cursor="pointer" _hover={{ bg: '#F1F5F9' }} transition="background 0.12s">
                       <Text fontSize="10.5px" fontWeight={700} color="#94A3B8" textTransform="uppercase"
                         fontFamily="heading" letterSpacing="0.07em">
-                        HISTÓRICO ({historyLeads.length})
+                        HISTORY ({historyLeads.length})
                       </Text>
                       <Icon as={showHistory ? LucideChevronUp : LucideChevronDown} w={4} h={4} color="#94A3B8" />
                     </Box>
@@ -1031,7 +1031,7 @@ function OrderForm({ form, setField, toggleExtra, estimate, progress, onSubmit, 
         <Flex justify="space-between" align="center">
           <Text fontSize="10.5px" fontWeight={700} color="#94A3B8" textTransform="uppercase"
             letterSpacing="0.07em" fontFamily="heading">
-            NOVO PEDIDO
+            NEW REQUEST
           </Text>
           <Button size="sm" variant="ghost" color="slate.400" onClick={onCancel} borderRadius="4px" minW={0} px={1.5}>
             <Icon as={LucideX} w={4} h={4} />

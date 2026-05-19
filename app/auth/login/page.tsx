@@ -1,14 +1,14 @@
 'use client';
 
 import {
-  Box, Heading, Text, VStack, HStack, Input, Button, Container, Flex,
+  Box, Text, VStack, HStack, Input, Button, Flex, Icon,
 } from '@chakra-ui/react';
 import { useState } from 'react';
 import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { toaster } from '@/lib/toaster';
 import NextLink from 'next/link';
-import { motion } from 'motion/react';
+import { LucideArrowRight, LucideCheckCircle } from 'lucide-react';
 
 export default function LoginPage() {
   const [email, setEmail]       = useState('');
@@ -30,9 +30,9 @@ export default function LoginPage() {
         });
         router.push(`/auth/verify-email?email=${encodeURIComponent(email)}`);
       } else if (result.error.includes('ACCOUNT_SUSPENDED')) {
-        toaster.create({ title: 'Conta suspensa', description: 'Sua conta está suspensa. Contacte o suporte.', type: 'error' });
+        toaster.create({ title: 'Account suspended', description: 'Your account has been suspended. Please contact support.', type: 'error' });
       } else {
-        toaster.create({ title: 'Sign in failed', description: 'Invalid email or password', type: 'error' });
+        toaster.create({ title: 'Sign in failed', description: 'Invalid email or password.', type: 'error' });
       }
       setLoading(false);
     } else {
@@ -41,88 +41,171 @@ export default function LoginPage() {
   };
 
   return (
-    <Box minH="100vh" display="flex" alignItems="center" justifyContent="center"
-      px={4} position="relative" overflow="hidden">
-      <Box position="fixed" top="-120px" left="-120px" w="500px" h="500px"
-        bg="brand.50" borderRadius="full" filter="blur(80px)" opacity={0.6} zIndex={0} />
-      <Box position="fixed" bottom="-80px" right="-80px" w="400px" h="400px"
-        bg="yellow.50" borderRadius="full" filter="blur(80px)" opacity={0.7} zIndex={0} />
+    <Flex minH="100vh">
 
-      <Container maxW="md" position="relative" zIndex={1}>
-        <motion.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, ease: 'easeOut' }}>
-          <VStack gap={8} align="stretch">
+      {/* ── Left panel ── */}
+      <Box
+        display={{ base: 'none', lg: 'flex' }} flexDirection="column"
+        w="480px" flexShrink={0} bg="#0B1120" position="relative" overflow="hidden"
+      >
+        <Box
+          position="absolute" inset={0}
+          style={{
+            backgroundImage: "url('https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=1200&q=80')",
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+          }}
+        />
+        <Box position="absolute" inset={0} style={{ background: 'linear-gradient(180deg, rgba(11,17,32,0.88) 0%, rgba(11,17,32,0.60) 50%, rgba(11,17,32,0.88) 100%)' }} />
 
-            <VStack gap={3} textAlign="center">
-              <motion.div initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
-                transition={{ duration: 0.4, delay: 0.1 }}>
-                <HStack justify="center" gap={3}>
-                  <Box w="44px" h="44px" bgGradient="to-br" gradientFrom="brand.500" gradientTo="brand.700"
-                    borderRadius="xl" display="flex" alignItems="center" justifyContent="center"
-                    boxShadow="0 6px 20px rgba(37,99,235,0.35)">
-                    <Text color="white" fontWeight="black" fontSize="md">BC</Text>
-                  </Box>
-                  <Text fontWeight="black" fontSize="xl" letterSpacing="tight" color="slate.900">
-                    Brazilian<Text as="span" color="brand.500">Clean</Text>
-                  </Text>
-                </HStack>
-              </motion.div>
-              <Heading size="xl" fontWeight="black" letterSpacing="tight" color="slate.900">
-                Welcome back
-              </Heading>
-              <Text color="slate.500">Sign in to your account to continue.</Text>
-            </VStack>
-
-            <Box bg="white" p={8} borderRadius="3xl"
-              boxShadow="0 4px 40px rgba(0,0,0,0.08)" border="1px solid" borderColor="slate.100">
-              <form onSubmit={handleLogin}>
-                <VStack gap={5} align="stretch">
-                  <Box>
-                    <Text fontSize="xs" fontWeight="bold" color="slate.500"
-                      textTransform="uppercase" mb={2} letterSpacing="wider">Email</Text>
-                    <Input placeholder="name@email.com" value={email}
-                      onChange={e => setEmail(e.target.value)}
-                      bg="slate.50" border="1px solid" borderColor="slate.200" h="12" borderRadius="xl"
-                      _focus={{ bg: 'white', borderColor: 'brand.300', boxShadow: '0 0 0 3px rgba(37,99,235,0.1)' }}
-                      transition="all 0.2s" />
-                  </Box>
-
-                  <Box>
-                    <Flex justify="space-between" mb={2}>
-                      <Text fontSize="xs" fontWeight="bold" color="slate.500"
-                        textTransform="uppercase" letterSpacing="wider">Password</Text>
-                      <NextLink href="/auth/forgot-password">
-                        <Text fontSize="xs" color="brand.500" fontWeight="bold" cursor="pointer"
-                          _hover={{ color: 'brand.600' }}>Forgot password?</Text>
-                      </NextLink>
-                    </Flex>
-                    <Input type="password" placeholder="••••••••" value={password}
-                      onChange={e => setPassword(e.target.value)}
-                      bg="slate.50" border="1px solid" borderColor="slate.200" h="12" borderRadius="xl"
-                      _focus={{ bg: 'white', borderColor: 'brand.300', boxShadow: '0 0 0 3px rgba(37,99,235,0.1)' }}
-                      transition="all 0.2s" />
-                  </Box>
-
-                  <Button type="submit" bg="brand.500" color="white" h="12" borderRadius="xl" fontWeight="bold"
-                    _hover={{ bg: 'brand.600', transform: 'translateY(-1px)', boxShadow: '0 6px 20px rgba(37,99,235,0.4)' }}
-                    transition="all 0.2s" loading={loading} loadingText="Signing in…">
-                    Sign in to BrazilianClean
-                  </Button>
-                </VStack>
-              </form>
+        <Flex direction="column" justify="space-between" h="full" position="relative" p={10}>
+          <HStack gap={2.5}>
+            <Box w="32px" h="32px" bg="#1A7FA0" style={{ borderRadius: 4 }}
+              display="flex" alignItems="center" justifyContent="center">
+              <Text color="white" fontWeight="800" fontSize="11px" letterSpacing="-0.02em" fontFamily="heading">BC</Text>
             </Box>
+            <Text fontWeight="700" fontSize="15px" letterSpacing="-0.02em" color="white" fontFamily="heading">
+              Brazilian<Text as="span" color="#1A7FA0">Clean</Text>
+            </Text>
+          </HStack>
 
-            <Text textAlign="center" fontSize="sm" color="slate.500">
+          <Box>
+            <Text
+              fontSize="10.5px" fontWeight="700" letterSpacing="0.14em"
+              color="#1A7FA0" textTransform="uppercase" fontFamily="heading" mb={4}
+              style={{ borderLeft: '2px solid #1A7FA0', paddingLeft: 10 }}
+            >
+              Verified platform
+            </Text>
+            <Text fontSize="26px" fontWeight="800" color="white" fontFamily="heading"
+              letterSpacing="-0.03em" lineHeight="1.15" mb={6}>
+              Cleaning professionals<br />you can trust.
+            </Text>
+            <VStack align="stretch" gap={2.5}>
+              {[
+                'Identity-verified professionals',
+                'Secure and guaranteed payments',
+                '4.9 average star rating',
+              ].map(t => (
+                <HStack key={t} gap={2}>
+                  <Icon as={LucideCheckCircle} w="14px" h="14px" color="#1A7FA0" flexShrink={0} />
+                  <Text fontSize="13px" color="rgba(255,255,255,0.65)" fontFamily="heading">{t}</Text>
+                </HStack>
+              ))}
+            </VStack>
+          </Box>
+        </Flex>
+      </Box>
+
+      {/* ── Right panel — form ── */}
+      <Flex flex={1} bg="white" alignItems="center" justifyContent="center" px={{ base: 5, md: 12 }} py={12}>
+        <Box w="full" maxW="400px">
+
+          {/* Mobile logo */}
+          <HStack gap={2.5} mb={10} display={{ base: 'flex', lg: 'none' }}>
+            <Box w="28px" h="28px" bg="#1A7FA0" style={{ borderRadius: 4 }}
+              display="flex" alignItems="center" justifyContent="center">
+              <Text color="white" fontWeight="800" fontSize="10px" fontFamily="heading">BC</Text>
+            </Box>
+            <Text fontWeight="700" fontSize="14px" letterSpacing="-0.02em" color="#0B1120" fontFamily="heading">
+              Brazilian<Text as="span" color="#1A7FA0">Clean</Text>
+            </Text>
+          </HStack>
+
+          <Box mb={8}>
+            <Text fontSize="24px" fontWeight="800" color="#0B1120" fontFamily="heading"
+              letterSpacing="-0.025em" mb={1}>
+              Welcome back
+            </Text>
+            <Text fontSize="14px" color="#64748B" fontFamily="heading">
+              Sign in to your account to continue.
+            </Text>
+          </Box>
+
+          <form onSubmit={handleLogin}>
+            <VStack gap={5} align="stretch">
+
+              <Box>
+                <Text fontSize="11px" fontWeight="700" color="#64748B" textTransform="uppercase"
+                  letterSpacing="0.1em" fontFamily="heading" mb={1.5}>Email</Text>
+                <Input
+                  placeholder="name@email.com"
+                  value={email}
+                  onChange={e => setEmail(e.target.value)}
+                  bg="#F8FAFC"
+                  border="1px solid"
+                  borderColor="#E2E8F0"
+                  h="44px"
+                  borderRadius="4px"
+                  fontFamily="heading"
+                  fontSize="14px"
+                  _focus={{ bg: 'white', borderColor: '#1A7FA0' }}
+                  type="email"
+                  required
+                />
+              </Box>
+
+              <Box>
+                <Flex justify="space-between" align="center" mb={1.5}>
+                  <Text fontSize="11px" fontWeight="700" color="#64748B" textTransform="uppercase"
+                    letterSpacing="0.1em" fontFamily="heading">Password</Text>
+                  <NextLink href="/auth/forgot-password">
+                    <Text fontSize="12px" color="#1A7FA0" fontWeight="600" cursor="pointer"
+                      fontFamily="heading" _hover={{ color: '#15698A' }}>Forgot password?</Text>
+                  </NextLink>
+                </Flex>
+                <Input
+                  type="password"
+                  placeholder="••••••••"
+                  value={password}
+                  onChange={e => setPassword(e.target.value)}
+                  bg="#F8FAFC"
+                  border="1px solid"
+                  borderColor="#E2E8F0"
+                  h="44px"
+                  borderRadius="4px"
+                  fontFamily="heading"
+                  fontSize="14px"
+                  _focus={{ bg: 'white', borderColor: '#1A7FA0' }}
+                  required
+                />
+              </Box>
+
+              <Button
+                type="submit"
+                bg="#1A7FA0"
+                color="white"
+                h="44px"
+                borderRadius="4px"
+                fontWeight="700"
+                fontSize="14px"
+                fontFamily="heading"
+                _hover={{ bg: '#15698A' }}
+                transition="background 0.15s"
+                loading={loading}
+                loadingText="Signing in…"
+                mt={1}
+              >
+                Sign in to BrazilianClean
+                <Icon as={LucideArrowRight} w={4} h={4} ml={2} />
+              </Button>
+
+            </VStack>
+          </form>
+
+          <Box mt={7} pt={6} borderTop="1px solid #E2E8F0">
+            <Text fontSize="13px" color="#64748B" fontFamily="heading" textAlign="center">
               Don&apos;t have an account?{' '}
               <NextLink href="/auth/register">
-                <Text as="span" color="brand.500" fontWeight="bold" cursor="pointer"
-                  _hover={{ color: 'brand.600' }}>Create free account</Text>
+                <Text as="span" color="#1A7FA0" fontWeight="700" cursor="pointer"
+                  _hover={{ color: '#15698A' }}>Create free account</Text>
               </NextLink>
             </Text>
+          </Box>
 
-          </VStack>
-        </motion.div>
-      </Container>
-    </Box>
+        </Box>
+      </Flex>
+
+    </Flex>
   );
 }
