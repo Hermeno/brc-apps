@@ -1,0 +1,10 @@
+export async function register() {
+  if (process.env.NEXT_RUNTIME === 'nodejs') {
+    const { prisma } = await import('./lib/prisma');
+    // Add any columns that may not yet exist in the DB (safe, idempotent)
+    await prisma.$executeRawUnsafe(`
+      ALTER TABLE "User"
+      ADD COLUMN IF NOT EXISTS "serviceRadiusMiles" DOUBLE PRECISION DEFAULT 25
+    `).catch((e: unknown) => console.error('[instrumentation] migration error:', e));
+  }
+}
