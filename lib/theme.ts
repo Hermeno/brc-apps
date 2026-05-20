@@ -4,21 +4,21 @@ const config = defineConfig({
   theme: {
     tokens: {
       colors: {
-        /* ── Petrol Blue — signature brand color ── */
+        /* ── Sky Blue — signature brand color ── */
         brand: {
-          50:  { value: "#EEF7FA" },
-          100: { value: "#D1EEF5" },
-          200: { value: "#A3D8E8" },
-          300: { value: "#65BACE" },
-          400: { value: "#32A3BE" },
-          500: { value: "#1A7FA0" },
-          600: { value: "#156887" },
-          700: { value: "#0F4F67" },
-          800: { value: "#0A3548" },
-          900: { value: "#061D2B" },
+          50:  { value: "#EBF5FE" },
+          100: { value: "#D0E9FC" },
+          200: { value: "#A2D3F9" },
+          300: { value: "#60B5F5" },
+          400: { value: "#2D9AEC" },
+          500: { value: "#0A80DB" },
+          600: { value: "#0870C2" },
+          700: { value: "#065594" },
+          800: { value: "#043A65" },
+          900: { value: "#022039" },
         },
 
-        /* ── Emerald — modern, discrete success ── */
+        /* ── Emerald — confirmation / success only ── */
         green: {
           50:  { value: "#ECFDF5" },
           100: { value: "#D1FAE5" },

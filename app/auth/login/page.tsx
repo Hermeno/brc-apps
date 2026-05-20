@@ -60,20 +60,20 @@ export default function LoginPage() {
 
         <Flex direction="column" justify="space-between" h="full" position="relative" p={10}>
           <HStack gap={2.5}>
-            <Box w="32px" h="32px" bg="#1A7FA0" style={{ borderRadius: 4 }}
+            <Box w="32px" h="32px" bg="#0A80DB" style={{ borderRadius: 4 }}
               display="flex" alignItems="center" justifyContent="center">
               <Text color="white" fontWeight="800" fontSize="11px" letterSpacing="-0.02em" fontFamily="heading">BC</Text>
             </Box>
             <Text fontWeight="700" fontSize="15px" letterSpacing="-0.02em" color="white" fontFamily="heading">
-              Brazilian<Text as="span" color="#1A7FA0">Clean</Text>
+              Brazilian<Text as="span" color="#0A80DB">Clean</Text>
             </Text>
           </HStack>
 
           <Box>
             <Text
               fontSize="10.5px" fontWeight="700" letterSpacing="0.14em"
-              color="#1A7FA0" textTransform="uppercase" fontFamily="heading" mb={4}
-              style={{ borderLeft: '2px solid #1A7FA0', paddingLeft: 10 }}
+              color="#0A80DB" textTransform="uppercase" fontFamily="heading" mb={4}
+              style={{ borderLeft: '2px solid #0A80DB', paddingLeft: 10 }}
             >
               Trusted by homeowners
             </Text>
@@ -88,7 +88,7 @@ export default function LoginPage() {
                 '4.9 stars across 1,000+ reviews',
               ].map(t => (
                 <HStack key={t} gap={2}>
-                  <Icon as={LucideCheckCircle} w="14px" h="14px" color="#1A7FA0" flexShrink={0} />
+                  <Icon as={LucideCheckCircle} w="14px" h="14px" color="#0A80DB" flexShrink={0} />
                   <Text fontSize="13px" color="rgba(255,255,255,0.65)" fontFamily="heading">{t}</Text>
                 </HStack>
               ))}
@@ -103,12 +103,12 @@ export default function LoginPage() {
 
           {/* Mobile logo */}
           <HStack gap={2.5} mb={10} display={{ base: 'flex', lg: 'none' }}>
-            <Box w="28px" h="28px" bg="#1A7FA0" style={{ borderRadius: 4 }}
+            <Box w="28px" h="28px" bg="#0A80DB" style={{ borderRadius: 4 }}
               display="flex" alignItems="center" justifyContent="center">
               <Text color="white" fontWeight="800" fontSize="10px" fontFamily="heading">BC</Text>
             </Box>
             <Text fontWeight="700" fontSize="14px" letterSpacing="-0.02em" color="#0B1120" fontFamily="heading">
-              Brazilian<Text as="span" color="#1A7FA0">Clean</Text>
+              Brazilian<Text as="span" color="#0A80DB">Clean</Text>
             </Text>
           </HStack>
 
@@ -139,7 +139,7 @@ export default function LoginPage() {
                   borderRadius="4px"
                   fontFamily="heading"
                   fontSize="14px"
-                  _focus={{ bg: 'white', borderColor: '#1A7FA0' }}
+                  _focus={{ bg: 'white', borderColor: '#0A80DB' }}
                   type="email"
                   required
                 />
@@ -150,8 +150,8 @@ export default function LoginPage() {
                   <Text fontSize="11px" fontWeight="700" color="#64748B" textTransform="uppercase"
                     letterSpacing="0.1em" fontFamily="heading">Password</Text>
                   <NextLink href="/auth/forgot-password">
-                    <Text fontSize="12px" color="#1A7FA0" fontWeight="600" cursor="pointer"
-                      fontFamily="heading" _hover={{ color: '#15698A' }}>Forgot password?</Text>
+                    <Text fontSize="12px" color="#0A80DB" fontWeight="600" cursor="pointer"
+                      fontFamily="heading" _hover={{ color: '#0870C2' }}>Forgot password?</Text>
                   </NextLink>
                 </Flex>
                 <Input
@@ -166,21 +166,21 @@ export default function LoginPage() {
                   borderRadius="4px"
                   fontFamily="heading"
                   fontSize="14px"
-                  _focus={{ bg: 'white', borderColor: '#1A7FA0' }}
+                  _focus={{ bg: 'white', borderColor: '#0A80DB' }}
                   required
                 />
               </Box>
 
               <Button
                 type="submit"
-                bg="#1A7FA0"
+                bg="#0A80DB"
                 color="white"
                 h="44px"
                 borderRadius="4px"
                 fontWeight="700"
                 fontSize="14px"
                 fontFamily="heading"
-                _hover={{ bg: '#15698A' }}
+                _hover={{ bg: '#0870C2' }}
                 transition="background 0.15s"
                 loading={loading}
                 loadingText="Signing in…"
@@ -197,8 +197,8 @@ export default function LoginPage() {
             <Text fontSize="13px" color="#64748B" fontFamily="heading" textAlign="center">
               Don&apos;t have an account?{' '}
               <NextLink href="/auth/register">
-                <Text as="span" color="#1A7FA0" fontWeight="700" cursor="pointer"
-                  _hover={{ color: '#15698A' }}>Create free account</Text>
+                <Text as="span" color="#0A80DB" fontWeight="700" cursor="pointer"
+                  _hover={{ color: '#0870C2' }}>Create free account</Text>
               </NextLink>
             </Text>
           </Box>

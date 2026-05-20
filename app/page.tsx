@@ -15,12 +15,12 @@ export default function HomePage() {
       >
         <Flex align="center" h="full" px={{ base: 5, md: 10, lg: 16 }} maxW="1440px" mx="auto" justify="space-between">
           <HStack gap={2.5}>
-            <Box w="32px" h="32px" bg="#1A7FA0" style={{ borderRadius: 6 }}
+            <Box w="32px" h="32px" bg="#0A80DB" style={{ borderRadius: 6 }}
               display="flex" alignItems="center" justifyContent="center">
               <Text color="white" fontWeight="800" fontSize="11px" letterSpacing="-0.02em" fontFamily="heading">BC</Text>
             </Box>
             <Text fontWeight="700" fontSize="15px" letterSpacing="-0.02em" color="white" fontFamily="heading">
-              Brazilian<Text as="span" color="#1A7FA0">Clean</Text>
+              Brazilian<Text as="span" color="#0A80DB">Clean</Text>
             </Text>
           </HStack>
 
@@ -37,9 +37,9 @@ export default function HomePage() {
             </NextLink>
             <NextLink href="/auth/login">
               <Button
-                size="sm" bg="#1A7FA0" color="white"
+                size="sm" bg="#0A80DB" color="white"
                 borderRadius="4px" fontWeight="600" fontSize="13px" fontFamily="heading"
-                _hover={{ bg: '#15698A' }} h="34px" px={4}
+                _hover={{ bg: '#0870C2' }} h="34px" px={4}
               >
                 Sign in
               </Button>
@@ -68,8 +68,8 @@ export default function HomePage() {
             <Text
               display="inline-block" mb={5}
               fontSize="10.5px" fontWeight="700" letterSpacing="0.14em"
-              color="#1A7FA0" textTransform="uppercase" fontFamily="heading"
-              style={{ borderLeft: '2px solid #1A7FA0', paddingLeft: 10 }}
+              color="#0A80DB" textTransform="uppercase" fontFamily="heading"
+              style={{ borderLeft: '2px solid #0A80DB', paddingLeft: 10 }}
             >
               The trusted cleaning platform
             </Text>
@@ -81,7 +81,7 @@ export default function HomePage() {
               color="white" fontFamily="heading" mb={6}
             >
               A spotless home,{' '}
-              <Text as="span" color="#1A7FA0">on your schedule</Text>
+              <Text as="span" color="#0A80DB">on your schedule</Text>
             </Text>
 
             <Text
@@ -95,9 +95,9 @@ export default function HomePage() {
             <HStack gap={3} flexWrap="wrap" mb={14}>
               <NextLink href="/request">
                 <Button
-                  bg="#1A7FA0" color="white" h="48px" px={7}
+                  bg="#0A80DB" color="white" h="48px" px={7}
                   borderRadius="4px" fontWeight="700" fontSize="14px" fontFamily="heading"
-                  _hover={{ bg: '#15698A' }} transition="background 0.15s"
+                  _hover={{ bg: '#0870C2' }} transition="background 0.15s"
                 >
                   Book a cleaning
                   <Icon as={LucideArrowRight} w={4} h={4} ml={2} />
@@ -107,12 +107,12 @@ export default function HomePage() {
 
             <HStack gap={0} divideX="1px" divideColor="rgba(255,255,255,0.15)" flexWrap="wrap">
               {[
-                { icon: LucideStar,        color: '#FCD34D', text: '4.9 average rating' },
-                { icon: LucideCheckCircle, color: '#34D399', text: 'Vetted cleaners' },
-                { icon: LucideShield,      color: '#60A5FA', text: 'Secure payment' },
+                { icon: LucideStar,        text: '4.9 average rating' },
+                { icon: LucideCheckCircle, text: 'Vetted cleaners' },
+                { icon: LucideShield,      text: 'Secure payment' },
               ].map(item => (
                 <HStack key={item.text} gap={1.5} px={4} py={1} _first={{ pl: 0 }}>
-                  <Icon as={item.icon} w="13px" h="13px" color={item.color} />
+                  <Icon as={item.icon} w="13px" h="13px" color="#0A80DB" />
                   <Text fontSize="12.5px" color="rgba(255,255,255,0.65)" fontFamily="heading">{item.text}</Text>
                 </HStack>
               ))}
@@ -127,7 +127,7 @@ export default function HomePage() {
         <Box px={{ base: 5, md: 10, lg: 16 }} py={20} maxW="1440px" mx="auto">
 
           <Box mb={12}>
-            <Text fontSize="10.5px" fontWeight="700" letterSpacing="0.12em" color="#1A7FA0"
+            <Text fontSize="10.5px" fontWeight="700" letterSpacing="0.12em" color="#0A80DB"
               textTransform="uppercase" fontFamily="heading" mb={2}>
               How it works
             </Text>
@@ -140,17 +140,17 @@ export default function HomePage() {
           <SimpleGrid columns={{ base: 1, md: 3 }} gap={0}>
             {[
               {
-                n: '01', icon: LucideCalendar, color: '#1A7FA0',
+                n: '01', icon: LucideCalendar,
                 title: 'Book in minutes',
                 desc: 'Choose your cleaning type, enter your address, and pick a date. Takes less than 2 minutes.',
               },
               {
-                n: '02', icon: LucideMessageCircle, color: '#7C3AED',
+                n: '02', icon: LucideMessageCircle,
                 title: 'Get matched',
                 desc: 'Background-checked cleaners in your area respond. You review, choose, and confirm.',
               },
               {
-                n: '03', icon: LucideCheckCircle, color: '#059669',
+                n: '03', icon: LucideCheckCircle,
                 title: 'Enjoy your clean home',
                 desc: 'Your cleaner handles everything. Rate the job and rebook with one tap.',
               },
@@ -162,8 +162,6 @@ export default function HomePage() {
                 borderBottom={{ base: i < 2 ? '1px solid #E2E8F0' : 'none', md: 'none' }}
                 position="relative"
               >
-                <Box position="absolute" left={0} top={0} bottom={0} w="2px" bg={step.color}
-                  display={{ base: 'none', md: 'block' }} />
                 <Text
                   fontSize="42px" fontWeight="800" fontFamily="heading"
                   letterSpacing="-0.05em" color="#E2E8F0" lineHeight={1} mb={4}
@@ -172,7 +170,7 @@ export default function HomePage() {
                   {step.n}
                 </Text>
                 <HStack gap={2} mb={3}>
-                  <Icon as={step.icon} w="16px" h="16px" color={step.color} />
+                  <Icon as={step.icon} w="16px" h="16px" color="#0A80DB" />
                   <Text fontSize="14px" fontWeight="700" color="#0B1120" fontFamily="heading">{step.title}</Text>
                 </HStack>
                 <Text fontSize="13.5px" color="#64748B" lineHeight="1.65" fontFamily="heading">{step.desc}</Text>
@@ -186,7 +184,7 @@ export default function HomePage() {
       <Box bg="white">
         <Box px={{ base: 5, md: 10, lg: 16 }} py={20} maxW="1440px" mx="auto">
           <Box mb={12}>
-            <Text fontSize="10.5px" fontWeight="700" letterSpacing="0.12em" color="#1A7FA0"
+            <Text fontSize="10.5px" fontWeight="700" letterSpacing="0.12em" color="#0A80DB"
               textTransform="uppercase" fontFamily="heading" mb={2}>
               Why homeowners love us
             </Text>
@@ -199,17 +197,17 @@ export default function HomePage() {
           <SimpleGrid columns={{ base: 1, md: 3 }} gap={0} border="1px solid #E2E8F0">
             {[
               {
-                icon: LucideTrendingUp, color: '#1A7FA0',
+                icon: LucideTrendingUp,
                 title: 'Smart Matching',
                 desc: 'Our system connects you with top-rated cleaners first — based on proximity, ratings, and availability.',
               },
               {
-                icon: LucideShield, color: '#7C3AED',
+                icon: LucideShield,
                 title: 'Background Checks',
                 desc: 'Every cleaner is ID-verified and background-checked before they can accept bookings on BrazilianClean.',
               },
               {
-                icon: LucideMapPin, color: '#059669',
+                icon: LucideMapPin,
                 title: 'Local Cleaners',
                 desc: "You're matched with cleaners in your zip code — faster response times and better local knowledge.",
               },
@@ -221,19 +219,157 @@ export default function HomePage() {
                 borderBottom={{ base: i < 2 ? '1px solid #E2E8F0' : 'none', md: 'none' }}
                 position="relative" overflow="hidden"
               >
-                <Box position="absolute" top={0} left={0} right={0} h="2px" bg={item.color} />
                 <Box
                   w="40px" h="40px" mb={4}
                   display="flex" alignItems="center" justifyContent="center"
-                  style={{ background: `${item.color}14`, borderRadius: 4 }}
+                  style={{ background: '#F1F5F9', borderRadius: 4 }}
                 >
-                  <Icon as={item.icon} w="18px" h="18px" color={item.color} />
+                  <Icon as={item.icon} w="18px" h="18px" color="#0A80DB" />
                 </Box>
                 <Text fontSize="14px" fontWeight="700" color="#0B1120" fontFamily="heading" mb={2.5}>{item.title}</Text>
                 <Text fontSize="13px" color="#64748B" lineHeight="1.7" fontFamily="heading">{item.desc}</Text>
               </Box>
             ))}
           </SimpleGrid>
+        </Box>
+      </Box>
+
+      {/* ── Testimonials ── */}
+      <Box bg="#F8FAFC" borderTop="1px solid #E2E8F0" borderBottom="1px solid #E2E8F0">
+        <Box px={{ base: 5, md: 10, lg: 16 }} py={20} maxW="1440px" mx="auto">
+
+          <Box mb={12}>
+            <Text fontSize="10.5px" fontWeight="700" letterSpacing="0.12em" color="#0A80DB"
+              textTransform="uppercase" fontFamily="heading" mb={2}>
+              Client reviews
+            </Text>
+            <Text fontSize={{ base: '26px', md: '32px' }} fontWeight="800" color="#0B1120"
+              fontFamily="heading" letterSpacing="-0.025em">
+              Thousands of happy homes
+            </Text>
+          </Box>
+
+          <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} gap={0} border="1px solid #E2E8F0">
+            {[
+              {
+                name: 'Sarah M.',
+                location: 'Miami, FL',
+                service: 'Standard Cleaning',
+                text: "I've been using BrazilianClean for 6 months and it's completely changed my routine. The cleaner is always on time, professional, and my home looks spotless every single time.",
+                initials: 'SM',
+              },
+              {
+                name: 'Michael R.',
+                location: 'Hartford, CT',
+                service: 'Deep Cleaning',
+                text: 'Booked a deep clean before hosting a family gathering. They exceeded every expectation — areas I forgot existed were cleaned. Booking took 2 minutes. Highly recommend.',
+                initials: 'MR',
+              },
+              {
+                name: 'Jennifer K.',
+                location: 'Boston, MA',
+                service: 'Move-Out Cleaning',
+                text: 'Used BrazilianClean for a move-out clean. Got my full security deposit back. The platform makes everything so simple — booking, communication, payment. No stress at all.',
+                initials: 'JK',
+              },
+              {
+                name: 'David L.',
+                location: 'New York, NY',
+                service: 'Weekly Cleaning',
+                text: 'I work from home and having a reliable cleaner every week is non-negotiable. BrazilianClean matched me with an amazing professional in less than 24 hours.',
+                initials: 'DL',
+              },
+              {
+                name: 'Amanda T.',
+                location: 'Orlando, FL',
+                service: 'Deep Cleaning',
+                text: 'The matching system is impressive — my cleaner arrived knowing exactly what I needed, was thorough, and friendly. I already referred three neighbors.',
+                initials: 'AT',
+              },
+              {
+                name: 'Carlos & Lisa B.',
+                location: 'Stamford, CT',
+                service: 'Bi-weekly Cleaning',
+                text: "We've had the same cleaner for 4 months now through BrazilianClean. Consistent quality, always communicates if there's a schedule change. Exactly what we needed.",
+                initials: 'CB',
+              },
+            ].map((t, i) => (
+              <Box
+                key={t.name}
+                p={7}
+                bg="white"
+                borderRight={{ md: i % 3 < 2 ? '1px solid #E2E8F0' : 'none', base: 'none' }}
+                borderBottom={i < 3 ? '1px solid #E2E8F0' : 'none'}
+                position="relative"
+              >
+                {/* Stars */}
+                <HStack gap={0.5} mb={4}>
+                  {[1,2,3,4,5].map(s => (
+                    <Text key={s} color="#0A80DB" fontSize="13px">★</Text>
+                  ))}
+                </HStack>
+
+                {/* Quote */}
+                <Text fontSize="13.5px" color="#475569" lineHeight="1.75" fontFamily="heading" mb={5}>
+                  "{t.text}"
+                </Text>
+
+                {/* Author */}
+                <HStack gap={3}>
+                  <Box
+                    w="36px" h="36px" flexShrink={0}
+                    display="flex" alignItems="center" justifyContent="center"
+                    style={{ background: '#0A80DB18', borderRadius: 4 }}
+                  >
+                    <Text fontSize="11px" fontWeight="800" color="#0A80DB" fontFamily="heading">{t.initials}</Text>
+                  </Box>
+                  <Box>
+                    <Text fontSize="13px" fontWeight="700" color="#0B1120" fontFamily="heading">{t.name}</Text>
+                    <Text fontSize="11.5px" color="#94A3B8" fontFamily="heading">{t.location} · {t.service}</Text>
+                  </Box>
+                </HStack>
+              </Box>
+            ))}
+          </SimpleGrid>
+
+          {/* Overall rating bar */}
+          <Box mt={8} p={6} border="1px solid #E2E8F0" bg="white">
+            <Flex align="center" justify="space-between" flexWrap="wrap" gap={6}>
+              <HStack gap={5}>
+                <Box textAlign="center">
+                  <Text fontSize="42px" fontWeight="800" color="#0B1120" fontFamily="heading" letterSpacing="-0.04em" lineHeight={1}>4.9</Text>
+                  <HStack gap={0.5} justify="center" mt={1}>
+                    {[1,2,3,4,5].map(s => <Text key={s} color="#0A80DB" fontSize="14px">★</Text>)}
+                  </HStack>
+                  <Text fontSize="11px" color="#94A3B8" fontFamily="heading" mt={1}>Average rating</Text>
+                </Box>
+                <Box w="1px" h="60px" bg="#E2E8F0" display={{ base: 'none', md: 'block' }} />
+                <SimpleGrid columns={3} gap={6} display={{ base: 'none', md: 'grid' }}>
+                  {[
+                    { label: 'Bookings completed', value: '2,400+' },
+                    { label: 'Active cleaners', value: '500+' },
+                    { label: 'Cities covered', value: '12' },
+                  ].map(stat => (
+                    <Box key={stat.label} textAlign="center">
+                      <Text fontSize="22px" fontWeight="800" color="#0B1120" fontFamily="heading" letterSpacing="-0.03em">{stat.value}</Text>
+                      <Text fontSize="11px" color="#94A3B8" fontFamily="heading" mt={0.5}>{stat.label}</Text>
+                    </Box>
+                  ))}
+                </SimpleGrid>
+              </HStack>
+              <NextLink href="/request">
+                <Button
+                  bg="#0A80DB" color="white" h="44px" px={6}
+                  borderRadius="4px" fontWeight="700" fontSize="13px" fontFamily="heading"
+                  _hover={{ bg: '#0870C2' }} transition="background 0.15s"
+                >
+                  Join them — book now
+                  <Icon as={LucideArrowRight} w={4} h={4} ml={2} />
+                </Button>
+              </NextLink>
+            </Flex>
+          </Box>
+
         </Box>
       </Box>
 
@@ -254,9 +390,9 @@ export default function HomePage() {
           </Box>
           <NextLink href="/request">
             <Button
-              bg="#1A7FA0" color="white" h="46px" px={7}
+              bg="#0A80DB" color="white" h="46px" px={7}
               borderRadius="4px" fontWeight="700" fontSize="14px" fontFamily="heading"
-              _hover={{ bg: '#15698A' }} transition="background 0.15s" flexShrink={0}
+              _hover={{ bg: '#0870C2' }} transition="background 0.15s" flexShrink={0}
             >
               Book a cleaning
               <Icon as={LucideArrowRight} w={4} h={4} ml={2} />
@@ -266,27 +402,101 @@ export default function HomePage() {
       </Box>
 
       {/* ── Footer ── */}
-      <Box bg="#0B1120" borderTop="1px solid rgba(255,255,255,0.06)" py={8}>
-        <Flex
-          px={{ base: 5, md: 10, lg: 16 }} maxW="1440px" mx="auto"
-          align="center" justify="space-between" flexWrap="wrap" gap={4}
-        >
-          <HStack gap={2}>
-            <Box w="24px" h="24px" bg="#1A7FA0" style={{ borderRadius: 4 }}
-              display="flex" alignItems="center" justifyContent="center">
-              <Text color="white" fontWeight="800" fontSize="9px" fontFamily="heading">BC</Text>
+      <Box bg="#0B1120" borderTop="1px solid rgba(255,255,255,0.06)" py={10}>
+        <Box px={{ base: 5, md: 10, lg: 16 }} maxW="1440px" mx="auto">
+          <Flex justify="space-between" align="start" flexWrap="wrap" gap={8} mb={8}>
+
+            {/* Brand */}
+            <Box maxW="260px">
+              <HStack gap={2.5} mb={3}>
+                <Box w="28px" h="28px" bg="#0A80DB" style={{ borderRadius: 4 }}
+                  display="flex" alignItems="center" justifyContent="center">
+                  <Text color="white" fontWeight="800" fontSize="10px" fontFamily="heading">BC</Text>
+                </Box>
+                <Text fontWeight="700" fontSize="14px" letterSpacing="-0.02em" color="white" fontFamily="heading">
+                  Brazilian<Text as="span" color="#0A80DB">Clean</Text>
+                </Text>
+              </HStack>
+              <Text fontSize="12px" color="rgba(255,255,255,0.35)" fontFamily="heading" lineHeight="1.7">
+                The trusted cleaning marketplace connecting homeowners with vetted Brazilian cleaning professionals across the US.
+              </Text>
             </Box>
-            <Text fontSize="12px" color="rgba(255,255,255,0.35)" fontFamily="heading">
-              © 2026 BrazilianClean. All rights reserved.
+
+            {/* Links */}
+            <Flex gap={12} flexWrap="wrap">
+              <Box>
+                <Text fontSize="10.5px" fontWeight="700" letterSpacing="0.12em" color="rgba(255,255,255,0.25)"
+                  textTransform="uppercase" fontFamily="heading" mb={3}>
+                  Company
+                </Text>
+                <VStack gap={2} align="start">
+                  {[
+                    { label: 'About Us', href: '/about' },
+                    { label: 'How it works', href: '/#how-it-works' },
+                  ].map(l => (
+                    <NextLink key={l.label} href={l.href}>
+                      <Text fontSize="12.5px" color="rgba(255,255,255,0.4)" fontFamily="heading"
+                        _hover={{ color: 'rgba(255,255,255,0.75)' }} transition="color 0.15s" cursor="pointer">
+                        {l.label}
+                      </Text>
+                    </NextLink>
+                  ))}
+                </VStack>
+              </Box>
+
+              <Box>
+                <Text fontSize="10.5px" fontWeight="700" letterSpacing="0.12em" color="rgba(255,255,255,0.25)"
+                  textTransform="uppercase" fontFamily="heading" mb={3}>
+                  Platform
+                </Text>
+                <VStack gap={2} align="start">
+                  {[
+                    { label: 'Book a cleaning', href: '/request' },
+                    { label: 'Become a cleaner', href: '/auth/register?role=cleaner' },
+                    { label: 'Sign in', href: '/auth/login' },
+                  ].map(l => (
+                    <NextLink key={l.label} href={l.href}>
+                      <Text fontSize="12.5px" color="rgba(255,255,255,0.4)" fontFamily="heading"
+                        _hover={{ color: 'rgba(255,255,255,0.75)' }} transition="color 0.15s" cursor="pointer">
+                        {l.label}
+                      </Text>
+                    </NextLink>
+                  ))}
+                </VStack>
+              </Box>
+
+              <Box>
+                <Text fontSize="10.5px" fontWeight="700" letterSpacing="0.12em" color="rgba(255,255,255,0.25)"
+                  textTransform="uppercase" fontFamily="heading" mb={3}>
+                  Legal & support
+                </Text>
+                <VStack gap={2} align="start">
+                  {[
+                    { label: 'Privacy Policy', href: '/privacy' },
+                    { label: 'Terms of Service', href: '/terms' },
+                  ].map(l => (
+                    <NextLink key={l.label} href={l.href}>
+                      <Text fontSize="12.5px" color="rgba(255,255,255,0.4)" fontFamily="heading"
+                        _hover={{ color: 'rgba(255,255,255,0.75)' }} transition="color 0.15s" cursor="pointer">
+                        {l.label}
+                      </Text>
+                    </NextLink>
+                  ))}
+                  <a href="mailto:support@brazilianclean.com"
+                    style={{ fontSize: '12.5px', color: 'rgba(255,255,255,0.4)', transition: 'color 0.15s', textDecoration: 'none' }}>
+                    support@brazilianclean.com
+                  </a>
+                </VStack>
+              </Box>
+            </Flex>
+          </Flex>
+
+          <Box borderTop="1px solid rgba(255,255,255,0.06)" pt={6}>
+            <Text fontSize="11.5px" color="rgba(255,255,255,0.25)" fontFamily="heading">
+              © 2026 BrazilianClean. All rights reserved. Background checks provided by third-party partners.
             </Text>
-          </HStack>
-          <HStack gap={6}>
-            <Text fontSize="12px" color="rgba(255,255,255,0.35)" cursor="pointer" fontFamily="heading"
-              _hover={{ color: 'rgba(255,255,255,0.7)' }} transition="color 0.15s">Terms</Text>
-            <Text fontSize="12px" color="rgba(255,255,255,0.35)" cursor="pointer" fontFamily="heading"
-              _hover={{ color: 'rgba(255,255,255,0.7)' }} transition="color 0.15s">Privacy</Text>
-          </HStack>
-        </Flex>
+          </Box>
+        </Box>
       </Box>
 
     </Box>

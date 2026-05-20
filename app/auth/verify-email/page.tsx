@@ -69,12 +69,12 @@ function VerifyEmailForm() {
 
         {/* Logo */}
         <HStack gap={2.5} mb={10} justify="center">
-          <Box w="32px" h="32px" bg="#1A7FA0" style={{ borderRadius: 4 }}
+          <Box w="32px" h="32px" bg="#0A80DB" style={{ borderRadius: 4 }}
             display="flex" alignItems="center" justifyContent="center">
             <Text color="white" fontWeight="800" fontSize="11px" letterSpacing="-0.02em" fontFamily="heading">BC</Text>
           </Box>
           <Text fontWeight="700" fontSize="15px" letterSpacing="-0.02em" color="#0B1120" fontFamily="heading">
-            Brazilian<Text as="span" color="#1A7FA0">Clean</Text>
+            Brazilian<Text as="span" color="#0A80DB">Clean</Text>
           </Text>
         </HStack>
 
@@ -116,7 +116,7 @@ function VerifyEmailForm() {
                   borderColor="#E2E8F0"
                   h="64px"
                   borderRadius="4px"
-                  _focus={{ bg: 'white', borderColor: '#1A7FA0' }}
+                  _focus={{ bg: 'white', borderColor: '#0A80DB' }}
                   maxLength={6}
                 />
                 <Text fontSize="12px" color="#94A3B8" textAlign="center" mt={2} fontFamily="heading">
@@ -126,14 +126,14 @@ function VerifyEmailForm() {
 
               <Button
                 type="submit"
-                bg="#1A7FA0"
+                bg="#0A80DB"
                 color="white"
                 h="44px"
                 borderRadius="4px"
                 fontWeight="700"
                 fontSize="14px"
                 fontFamily="heading"
-                _hover={{ bg: '#15698A' }}
+                _hover={{ bg: '#0870C2' }}
                 transition="background 0.15s"
                 loading={loading}
                 loadingText="Verifying…"
@@ -154,7 +154,7 @@ function VerifyEmailForm() {
                 onClick={handleResend}
                 loading={resending}
                 disabled={countdown > 0}
-                _hover={{ color: '#1A7FA0', bg: '#F0F9FF' }}
+                _hover={{ color: '#0A80DB', bg: '#F0F9FF' }}
               >
                 <Icon as={LucideRefreshCw} w={3.5} h={3.5} mr={1.5} />
                 {countdown > 0 ? `Resend in ${countdown}s` : 'Resend code'}

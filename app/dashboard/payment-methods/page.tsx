@@ -133,8 +133,8 @@ function PaymentMethodsContent() {
               </Text>
             </Box>
             <Button
-              bg="#1A7FA0" color="white" borderRadius="4px" fontWeight="bold"
-              _hover={{ bg: '#15698A' }}
+              bg="#0A80DB" color="white" borderRadius="4px" fontWeight="bold"
+              _hover={{ bg: '#0870C2' }}
               loading={adding} loadingText="Please wait…"
               onClick={handleAdd}>
               <Icon as={LucidePlus} w={4} h={4} mr={2} />
@@ -143,7 +143,7 @@ function PaymentMethodsContent() {
           </Flex>
 
           {/* How it works: flat box, no radius, blue tint */}
-          <Box bg="#EFF6FF" border="1px solid #BFDBFE" p={5}>
+          <Box bg="#F8FAFC" border="1px solid #E2E8F0" p={5}>
             <HStack gap={3} align="start">
               <Icon as={LucideShieldCheck} w={5} h={5} color="blue.600" flexShrink={0} mt={0.5} />
               <Box>
@@ -191,8 +191,8 @@ function PaymentMethodsContent() {
                   Add a card to accept leads without having to pay manually each time.
                 </Text>
                 <Button
-                  mt={2} bg="#1A7FA0" color="white" borderRadius="4px" fontWeight="bold"
-                  _hover={{ bg: '#15698A' }}
+                  mt={2} bg="#0A80DB" color="white" borderRadius="4px" fontWeight="bold"
+                  _hover={{ bg: '#0870C2' }}
                   loading={adding} loadingText="Please wait…"
                   onClick={handleAdd}>
                   <Icon as={LucidePlus} w={4} h={4} mr={2} />
@@ -219,7 +219,7 @@ function PaymentMethodsContent() {
                           {/* Left accent strip */}
                           <Box
                             position="absolute" left={0} top={0} bottom={0} w="3px"
-                            bg={card.isDefault ? '#1A7FA0' : '#E2E8F0'} />
+                            bg={card.isDefault ? '#0A80DB' : '#E2E8F0'} />
 
                           <Flex justify="space-between" align="center" gap={3}>
                             <HStack gap={3}>
@@ -233,7 +233,7 @@ function PaymentMethodsContent() {
                                     <Text
                                       style={{
                                         borderRadius: 2,
-                                        background: '#1A7FA0',
+                                        background: '#0A80DB',
                                         padding: '2px 6px',
                                         fontSize: 9.5,
                                         fontWeight: 700,
@@ -252,7 +252,7 @@ function PaymentMethodsContent() {
                               {!card.isDefault && (
                                 <Button size="xs" variant="outline" borderColor="#E2E8F0"
                                   color="slate.500" borderRadius="4px" fontWeight="semibold"
-                                  _hover={{ bg: '#F0F9FF', borderColor: '#1A7FA0', color: '#1A7FA0' }}
+                                  _hover={{ bg: '#F0F9FF', borderColor: '#0A80DB', color: '#0A80DB' }}
                                   loading={settingId === card.id}
                                   onClick={() => handleSetDefault(card.id)}>
                                   <Icon as={LucideStar} w={3} h={3} mr={1} />
@@ -277,7 +277,7 @@ function PaymentMethodsContent() {
                   <Button
                     variant="outline" borderColor="#E2E8F0" color="slate.500"
                     borderRadius="4px" fontWeight="semibold" fontSize="sm"
-                    _hover={{ borderColor: '#1A7FA0', color: '#1A7FA0', bg: '#F0F9FF' }}
+                    _hover={{ borderColor: '#0A80DB', color: '#0A80DB', bg: '#F0F9FF' }}
                     loading={adding} loadingText="Please wait…"
                     onClick={handleAdd}>
                     <Icon as={LucidePlus} w={4} h={4} mr={2} />

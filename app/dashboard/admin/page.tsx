@@ -66,11 +66,11 @@ const SIDEBAR_W    = '216px';
 
 const LEAD_STATUS: Record<string, { label: string; color: string; dot: string }> = {
   NEW:       { label: 'New',            color: '#92400E', dot: '#F59E0B' },
-  WAVE1:     { label: 'Matching',       color: '#1E40AF', dot: '#60A5FA' },
-  WAVE2:     { label: 'Matching',       color: '#1E40AF', dot: '#60A5FA' },
-  WAVE3:     { label: 'Last wave',      color: '#1E40AF', dot: '#60A5FA' },
+  WAVE1:     { label: 'Matching',       color: '#0A80DB', dot: '#60A5FA' },
+  WAVE2:     { label: 'Matching',       color: '#0A80DB', dot: '#60A5FA' },
+  WAVE3:     { label: 'Last wave',      color: '#0A80DB', dot: '#60A5FA' },
   IN_REVIEW: { label: 'Pending',        color: '#0369A1', dot: '#38BDF8' },
-  ACCEPTED:  { label: 'Accepted',       color: '#0F4F67', dot: '#1A7FA0' },
+  ACCEPTED:  { label: 'Accepted',       color: '#0F4F67', dot: '#0A80DB' },
   COMPLETED: { label: 'Completed',      color: '#047857', dot: '#10B981' },
   CANCELLED: { label: 'Cancelled',      color: '#BE123C', dot: '#F43F5E' },
   UNMATCHED: { label: 'No cleaner',     color: '#475569', dot: '#94A3B8' },
@@ -438,7 +438,7 @@ function UserTableRow({ user, onRefresh }: { user: UserRow; onRefresh: () => voi
             )}
             {suspended ? (
               <Button size="xs" variant="ghost" borderRadius="4px" loading={loading} onClick={() => call({ action: 'unsuspend' })}>
-                <Icon as={LucideUnlock} w={3} h={3} color="green.500" />
+                <Icon as={LucideUnlock} w={3} h={3} color="#0A80DB" />
               </Button>
             ) : (
               <HStack gap={1}>
@@ -448,7 +448,7 @@ function UserTableRow({ user, onRefresh }: { user: UserRow; onRefresh: () => voi
                 <Text fontSize="10px" color="slate.400">d</Text>
                 <Button size="xs" variant="ghost" borderRadius="4px" loading={loading}
                   onClick={() => call({ action: 'suspend', suspendDays })}>
-                  <Icon as={LucideBan} w={3} h={3} color="yellow.600" />
+                  <Icon as={LucideBan} w={3} h={3} color="#0A80DB" />
                 </Button>
               </HStack>
             )}
@@ -515,7 +515,7 @@ function VerifRow({ v, onAction }: { v: Verification; onAction: () => void }) {
             </Button>
             {v.status === 'PENDING' && (
               <>
-                <Button size="xs" bg="green.500" color="white" borderRadius="4px" loading={load} onClick={() => act('approve')}>
+                <Button size="xs" bg="#059669" color="white" borderRadius="4px" loading={load} onClick={() => act('approve')}>
                   <Icon as={LucideCheckCircle} w={3} h={3} mr={1} />Approve
                 </Button>
                 <Button size="xs" bg="red.500" color="white" borderRadius="4px" loading={load} onClick={() => act('reject')}>
@@ -592,7 +592,7 @@ function LeadDetailRow({ lead }: { lead: LeadRow }) {
           {lead.cleaner ? (
             <HStack gap={1.5}>
               <Text fontSize="13px" color="slate.700">{lead.cleaner.name || '—'}</Text>
-              {lead.cleaner.isVerified && <Icon as={LucideCheckCircle2} w="13px" h="13px" color="green.500" />}
+              {lead.cleaner.isVerified && <Icon as={LucideCheckCircle2} w="13px" h="13px" color="#059669" />}
             </HStack>
           ) : <Text fontSize="12px" color="slate.300">—</Text>}
         </td>
@@ -602,7 +602,7 @@ function LeadDetailRow({ lead }: { lead: LeadRow }) {
         </td>
         <td style={TD}>
           {lead.estimatedMinPrice
-            ? <Text fontSize="12px" fontWeight="600" color="green.700">${lead.estimatedMinPrice}–{lead.estimatedMaxPrice}</Text>
+            ? <Text fontSize="12px" fontWeight="600" color="#0A80DB">${lead.estimatedMinPrice}–{lead.estimatedMaxPrice}</Text>
             : <Text fontSize="12px" color="slate.300">—</Text>}
         </td>
         <td style={{ ...TD, textAlign: 'center' }}>
@@ -629,7 +629,7 @@ function LeadDetailRow({ lead }: { lead: LeadRow }) {
                       <Text fontSize="12.5px" fontWeight="600" color="slate.800" fontFamily="heading" flex={1}>{c.cleaner.name || '—'}</Text>
                       <Text fontSize="12px" color="slate.500" fontFamily="heading">{c.status === 'active' ? 'Active' : 'Closed'}</Text>
                       <Text fontSize="11px" color="slate.400">Lead fee $${c.leadFee}</Text>
-                      <Text fontSize="11px" fontWeight="600" color={c.feeStatus === 'charged' ? 'green.600' : 'slate.400'}>
+                      <Text fontSize="11px" fontWeight="600" color={c.feeStatus === 'charged' ? '#059669' : '#94A3B8'}>
                         {c.feeStatus === 'charged' ? 'Charged' : 'Pending'}
                       </Text>
                     </HStack>
@@ -841,7 +841,7 @@ export default function AdminPage() {
                       >
                         <Box
                           w="6px" h="6px" borderRadius="full" flexShrink={0}
-                          bg={l.status === 'COMPLETED' ? '#10B981' : l.status === 'ACCEPTED' ? '#1A7FA0' : l.status === 'CANCELLED' ? '#F43F5E' : '#F59E0B'}
+                          bg={l.status === 'COMPLETED' ? '#10B981' : l.status === 'ACCEPTED' ? '#0A80DB' : l.status === 'CANCELLED' ? '#F43F5E' : '#F59E0B'}
                         />
                         <Box flex={1} minW={0}>
                           <Text fontSize="13px" fontWeight="500" color="slate.800" fontFamily="heading" lineClamp={1}>
@@ -885,7 +885,7 @@ export default function AdminPage() {
                         <Box flex={1} minW={0}>
                           <HStack gap={1.5}>
                             <Text fontSize="13px" fontWeight="500" color="slate.800" fontFamily="heading" lineClamp={1}>{c.cleaner.name || '—'}</Text>
-                            {c.cleaner.isVerified && <Icon as={LucideCheckCircle2} w="12px" h="12px" color="green.500" />}
+                            {c.cleaner.isVerified && <Icon as={LucideCheckCircle2} w="12px" h="12px" color="#059669" />}
                           </HStack>
                           <Text fontSize="11px" color="slate.400">{c.totalLeads} bookings</Text>
                         </Box>
@@ -1174,7 +1174,7 @@ export default function AdminPage() {
                           <td style={TD}>
                             <HStack gap={1.5}>
                               <Text fontSize="13px" fontWeight="500" color="slate.800" fontFamily="heading">{r.cleaner.name || '—'}</Text>
-                              {r.cleaner.isVerified && <Icon as={LucideCheckCircle2} w="12px" h="12px" color="green.500" />}
+                              {r.cleaner.isVerified && <Icon as={LucideCheckCircle2} w="12px" h="12px" color="#059669" />}
                             </HStack>
                           </td>
                           <td style={TD}>
@@ -1351,8 +1351,8 @@ function AdminSettingsForm() {
 
           <Button
             type="submit"
-            bg="#1A7FA0" color="white" borderRadius="4px" fontWeight="bold"
-            _hover={{ bg: '#15698A' }} transition="background 0.15s"
+            bg="#0A80DB" color="white" borderRadius="4px" fontWeight="bold"
+            _hover={{ bg: '#0870C2' }} transition="background 0.15s"
             loading={saving} loadingText="Saving…"
             alignSelf="flex-start" px={6}>
             <Icon as={LucideSave} w={4} h={4} mr={2} />
@@ -1371,15 +1371,15 @@ interface PlanConfigRow { id: string; price: number; updatedAt?: string }
 
 const PLAN_META: Record<string, { name: string; color: string; badge: string; perks: string[] }> = {
   BASIC: {
-    name: 'Basic', color: '#1A7FA0', badge: 'Popular',
+    name: 'Basic', color: '#0A80DB', badge: 'Popular',
     perks: ['Wave 1 + Wave 2', '+10 CFS ranking points', 'Featured profile'],
   },
   PREMIUM: {
-    name: 'Premium', color: '#7C3AED', badge: 'Recommended',
+    name: 'Premium', color: '#0A80DB', badge: 'Recommended',
     perks: ['Wave 1 + Wave 2 (priority)', '+20 CFS ranking points', 'Premium badge on profile', 'Priority support'],
   },
   PRO: {
-    name: 'Pro', color: '#D97706', badge: 'Max',
+    name: 'Pro', color: '#0A80DB', badge: 'Max',
     perks: ['Top of CFS ranking', '+30 guaranteed points', 'Instant Book eligible', 'Exclusive Pro badge', 'Advanced analytics'],
   },
 };
@@ -1530,14 +1530,14 @@ function PlanPricingPanel() {
       })}
 
       {/* Info callout */}
-      <Box p={4} bg="#F0FDF4" border="1px solid #BBF7D0">
+      <Box p={4} bg="#F8FAFC" border="1px solid #E2E8F0">
         <HStack gap={3} align="start">
           <Text fontSize="16px" flexShrink={0}>✅</Text>
           <VStack gap={1} align="start">
-            <Text fontSize="12.5px" fontWeight="700" color="#166534" fontFamily="heading">
+            <Text fontSize="12.5px" fontWeight="700" color="#0A80DB" fontFamily="heading">
               Edit prices here only — Stripe uses this price automatically
             </Text>
-            <Text fontSize="12px" color="#166534" fontFamily="heading" lineHeight={1.6}>
+            <Text fontSize="12px" color="#0A80DB" fontFamily="heading" lineHeight={1.6}>
               New subscribers always pay the current price on this page. No changes needed in Stripe.
               <strong>Active subscriptions</strong> keep their original price (standard subscription behavior).
             </Text>
@@ -1548,7 +1548,7 @@ function PlanPricingPanel() {
       {/* Refresh button */}
       <Flex justify="flex-end">
         <Button size="sm" variant="ghost" color="slate.400" borderRadius="4px" fontFamily="heading"
-          _hover={{ color: '#1A7FA0', bg: 'rgba(26,127,160,0.06)' }}
+          _hover={{ color: '#0A80DB', bg: 'rgba(26,127,160,0.06)' }}
           onClick={load}>
           <Icon as={LucideRefreshCw} w={3.5} h={3.5} mr={1.5} />Refresh
         </Button>
@@ -1861,14 +1861,14 @@ function LeadPricingPanel() {
       </Box>
 
       {/* Info callout */}
-      <Box p={4} bg="#EFF6FF" border="1px solid #BFDBFE">
+      <Box p={4} bg="#F8FAFC" border="1px solid #E2E8F0">
         <HStack gap={3} align="start">
           <Text fontSize="16px" flexShrink={0}>💡</Text>
           <VStack gap={1} align="start">
-            <Text fontSize="12.5px" fontWeight="700" color="#1E40AF" fontFamily="heading">
+            <Text fontSize="12.5px" fontWeight="700" color="#0A80DB" fontFamily="heading">
               How lead pricing works
             </Text>
-            <Text fontSize="12px" color="#1E40AF" fontFamily="heading" lineHeight={1.6}>
+            <Text fontSize="12px" color="#0A80DB" fontFamily="heading" lineHeight={1.6}>
               The base price is charged to the cleaner who accepts the lead.
               Same-day and recurring multipliers stack on top of the base price.
               ZIP coverage, when configured, restricts which areas can submit leads.
@@ -1879,7 +1879,7 @@ function LeadPricingPanel() {
 
       <Flex justify="flex-end">
         <Button size="sm" variant="ghost" color="slate.400" borderRadius="4px" fontFamily="heading"
-          _hover={{ color: '#1A7FA0', bg: 'rgba(26,127,160,0.06)' }}
+          _hover={{ color: '#0A80DB', bg: 'rgba(26,127,160,0.06)' }}
           onClick={load}>
           <Icon as={LucideRefreshCw} w={3.5} h={3.5} mr={1.5} />Refresh
         </Button>

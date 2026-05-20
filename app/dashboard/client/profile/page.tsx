@@ -73,7 +73,7 @@ export default function ClientProfilePage() {
           </Box>
           <Box w="1px" h="20px" bg="slate.200" />
           <HStack gap={2.5}>
-            <Box w="28px" h="28px" bg="#1A7FA0" style={{ borderRadius: 4 }}
+            <Box w="28px" h="28px" bg="#0A80DB" style={{ borderRadius: 4 }}
               display="flex" alignItems="center" justifyContent="center">
               <Text color="white" fontWeight="800" fontSize="10px" fontFamily="heading">BC</Text>
             </Box>

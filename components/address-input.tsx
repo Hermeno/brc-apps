@@ -95,7 +95,7 @@ export function AddressInput({ value, onChange, placeholder, inputProps = {} }: 
           cursor={detecting ? 'default' : 'pointer'}
           title="Detect my location"
           style={{ borderRadius: 4, transition: 'all 0.15s', height: (inputProps.h ?? '44px') }}
-          _hover={{ borderColor: '#1A7FA0', color: '#1A7FA0' }}
+          _hover={{ borderColor: '#0A80DB', color: '#0A80DB' }}
         >
           <Icon
             as={detecting ? LucideLoader2 : LucideNavigation}
@@ -109,15 +109,15 @@ export function AddressInput({ value, onChange, placeholder, inputProps = {} }: 
       {/* ZIP feedback */}
       {zip ? (
         <HStack gap={1.5} mt={1.5}>
-          <Icon as={LucideMapPin} w="11px" h="11px" color="green.500" />
-          <Text fontSize="11px" color="green.700" fontWeight="600" fontFamily="heading">
+          <Icon as={LucideMapPin} w="11px" h="11px" color="#0A80DB" />
+          <Text fontSize="11px" color="#0A80DB" fontWeight="600" fontFamily="heading">
             {city ? `${city} · ` : ''}ZIP {zip} — cleaners in your area will be notified
           </Text>
         </HStack>
       ) : showHint ? (
         <HStack gap={1.5} mt={1.5}>
-          <Icon as={LucideMapPin} w="11px" h="11px" color="orange.400" />
-          <Text fontSize="11px" color="orange.600" fontFamily="heading">
+          <Icon as={LucideMapPin} w="11px" h="11px" color="#94A3B8" />
+          <Text fontSize="11px" color="#94A3B8" fontFamily="heading">
             Add your ZIP code so we can match you with nearby cleaners
           </Text>
         </HStack>

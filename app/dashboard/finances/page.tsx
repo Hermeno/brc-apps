@@ -61,7 +61,7 @@ export default function FinancesPage() {
     {
       label: 'EST. EARNINGS',
       value: data ? `$${data.estimatedEarnings.toFixed(2)}` : '—',
-      color: '#1A7FA0',
+      color: '#0A80DB',
     },
     {
       label: 'RATING',
@@ -124,16 +124,16 @@ export default function FinancesPage() {
                   border="1px solid #E2E8F0"
                   display="flex" alignItems="center" justifyContent="center"
                   flexShrink={0}>
-                  <Icon as={LucideTrendingUp} w={5} h={5} color="green.500" />
+                  <Icon as={LucideTrendingUp} w={5} h={5} color="#0A80DB" />
                 </Box>
                 <Box>
                   <Text fontWeight="bold" color="slate.800" fontSize="sm">Return on investment</Text>
                   <Text color="slate.500" fontSize="sm">
                     For every <Text as="span" fontWeight="bold" color="red.600">${data.totalFeesPaid.toFixed(0)}</Text> invested in leads,
                     you generated approximately{' '}
-                    <Text as="span" fontWeight="black" color="green.600">${data.estimatedEarnings.toFixed(0)}</Text> in jobs.
+                    <Text as="span" fontWeight="black" color="#0A80DB">${data.estimatedEarnings.toFixed(0)}</Text> in jobs.
                     {data.totalFeesPaid > 0 && data.estimatedEarnings > 0 && (
-                      <Text as="span" fontWeight="bold" color="#1A7FA0">
+                      <Text as="span" fontWeight="bold" color="#0A80DB">
                         {' '}({Math.round((data.estimatedEarnings / data.totalFeesPaid) * 100)}% return)
                       </Text>
                     )}
@@ -184,7 +184,7 @@ export default function FinancesPage() {
                   const isLast = i === data.transactions.length - 1;
                   const leftColor =
                     tx.lead.status === 'COMPLETED' ? '#22C55E' :
-                    tx.lead.status === 'ACCEPTED'  ? '#1A7FA0' : '#CBD5E1';
+                    tx.lead.status === 'ACCEPTED'  ? '#0A80DB' : '#CBD5E1';
                   return (
                     <Box
                       key={tx.id}
@@ -201,7 +201,7 @@ export default function FinancesPage() {
                           {/* Status dot */}
                           <Box
                             w="7px" h="7px" borderRadius="full" flexShrink={0}
-                            bg={tx.lead.status === 'COMPLETED' ? '#22C55E' : tx.lead.status === 'ACCEPTED' ? '#1A7FA0' : '#CBD5E1'} />
+                            bg={tx.lead.status === 'COMPLETED' ? '#22C55E' : tx.lead.status === 'ACCEPTED' ? '#0A80DB' : '#CBD5E1'} />
 
                           <VStack align="start" gap={0.5}>
                             <Text fontWeight="semibold" color="slate.800" fontSize="sm">{tx.lead.serviceType}</Text>
@@ -223,11 +223,11 @@ export default function FinancesPage() {
                           <Text
                             style={{
                               borderRadius: 2,
-                              background: tx.lead.status === 'COMPLETED' ? '#DCFCE7' : '#F1F5F9',
+                              background: tx.lead.status === 'COMPLETED' ? '#F8FAFC' : '#F1F5F9',
                               padding: '2px 6px',
                               fontSize: 9.5,
                               fontWeight: 700,
-                              color: tx.lead.status === 'COMPLETED' ? '#15803D' : '#64748B',
+                              color: tx.lead.status === 'COMPLETED' ? '#0A80DB' : '#64748B',
                             }}>
                             {tx.lead.status === 'COMPLETED' ? 'Completed' :
                              tx.lead.status === 'ACCEPTED' ? 'In progress' : tx.lead.status}

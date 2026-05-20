@@ -163,23 +163,23 @@ export default function CleanerDashboard() {
 
         {/* ── Verification banners ── */}
         {verifyStatus === 'NONE' && (
-          <Box mb={4} bg="#FFFBEB" border="1px solid #FDE68A" p={4}>
+          <Box mb={4} bg="#F8FAFC" border="1px solid #FDE68A" p={4}>
             <Flex align="center" justify="space-between" gap={3} flexWrap="wrap">
               <HStack gap={3}>
-                <Icon as={LucideAlertCircle} w={4} h={4} color="#D97706" flexShrink={0} />
+                <Icon as={LucideAlertCircle} w={4} h={4} color="#0A80DB" flexShrink={0} />
                 <Box>
                   <Text fontWeight="700" color="#92400E" fontSize="13px" fontFamily="heading">
                     Verify your account to get more leads
                   </Text>
-                  <Text fontSize="11.5px" color="#B45309" mt={0.5}>
+                  <Text fontSize="11.5px" color="#0870C2" mt={0.5}>
                     Verified cleaners get priority and a trusted badge.
                   </Text>
                 </Box>
               </HStack>
               <Button
-                size="sm" bg="#D97706" color="white" borderRadius="4px"
+                size="sm" bg="#0A80DB" color="white" borderRadius="4px"
                 fontWeight="600" fontFamily="heading"
-                _hover={{ bg: '#B45309' }}
+                _hover={{ bg: '#0870C2' }}
                 onClick={() => router.push('/dashboard/cleaner/verify')}
               >
                 <Icon as={LucideShield} w={3.5} h={3.5} mr={1.5} />Verify now
@@ -188,10 +188,10 @@ export default function CleanerDashboard() {
           </Box>
         )}
         {verifyStatus === 'PENDING' && (
-          <Box mb={4} bg="#EFF6FF" border="1px solid #BFDBFE" p={4}>
+          <Box mb={4} bg="#F8FAFC" border="1px solid #E2E8F0" p={4}>
             <HStack gap={3}>
               <Icon as={LucideClock} w={4} h={4} color="#3B82F6" flexShrink={0} />
-              <Text fontSize="13px" color="#1E40AF" fontWeight="600" fontFamily="heading">
+              <Text fontSize="13px" color="#0A80DB" fontWeight="600" fontFamily="heading">
                 Verification under review — we'll respond within 48h.
               </Text>
             </HStack>
@@ -200,8 +200,8 @@ export default function CleanerDashboard() {
         {verifyStatus === 'APPROVED' && (
           <Box mb={4} bg="#F0FDF4" border="1px solid #BBF7D0" p={4}>
             <HStack gap={3}>
-              <Icon as={LucideCheckCircle2} w={4} h={4} color="#16A34A" flexShrink={0} />
-              <Text fontSize="13px" color="#166534" fontWeight="600" fontFamily="heading">
+              <Icon as={LucideCheckCircle2} w={4} h={4} color="#0A80DB" flexShrink={0} />
+              <Text fontSize="13px" color="#0A80DB" fontWeight="600" fontFamily="heading">
                 Conta verificada
               </Text>
             </HStack>
@@ -236,7 +236,7 @@ export default function CleanerDashboard() {
           extra={
             <Button
               size="xs" variant="ghost" color="#94A3B8" borderRadius="4px" fontFamily="heading"
-              _hover={{ color: '#1A7FA0', bg: 'rgba(26,127,160,0.06)' }}
+              _hover={{ color: '#0A80DB', bg: 'rgba(26,127,160,0.06)' }}
               onClick={fetchLeads} loading={loading}
             >
               <Icon as={LucideRefreshCw} w={3} h={3} mr={1.5} />Refresh
@@ -308,7 +308,7 @@ export default function CleanerDashboard() {
                           {lead.bathrooms  && <Text fontSize="12px" color="#475569">🚿 {lead.bathrooms}ba</Text>}
                           {(lead.squareMeters ?? 0) > 0 && <Text fontSize="12px" color="#475569">📐 {lead.squareMeters}m²</Text>}
                           {freqLabel       && (
-                            <Text fontSize="12px" color="#1A7FA0" fontWeight="600" fontFamily="heading">↻ {freqLabel}</Text>
+                            <Text fontSize="12px" color="#0A80DB" fontWeight="600" fontFamily="heading">↻ {freqLabel}</Text>
                           )}
                         </HStack>
                       )}
@@ -327,7 +327,7 @@ export default function CleanerDashboard() {
                       {lead.estimatedMinPrice && (
                         <HStack gap={4} mt={2}>
                           <HStack gap={1.5}>
-                            <Icon as={LucideBanknote} w="13px" h="13px" color="#059669" />
+                            <Icon as={LucideBanknote} w="13px" h="13px" color="#0A80DB" />
                             <Text
                               fontSize="15px" fontWeight="800" color="#047857"
                               fontFamily="heading" letterSpacing="-0.02em"
@@ -337,8 +337,8 @@ export default function CleanerDashboard() {
                           </HStack>
                           {lead.estimatedHours && (
                             <HStack gap={1}>
-                              <Icon as={LucideClock} w="11px" h="11px" color="#1A7FA0" />
-                              <Text fontSize="13px" fontWeight="600" color="#1A7FA0" fontFamily="heading">
+                              <Icon as={LucideClock} w="11px" h="11px" color="#0A80DB" />
+                              <Text fontSize="13px" fontWeight="600" color="#0A80DB" fontFamily="heading">
                                 ~{lead.estimatedHours}h
                               </Text>
                             </HStack>
@@ -354,7 +354,7 @@ export default function CleanerDashboard() {
                     </Box>
 
                     <Button
-                      bg="#1A7FA0" color="white" px={4} h="36px"
+                      bg="#0A80DB" color="white" px={4} h="36px"
                       borderRadius="4px" fontWeight="600" fontSize="13px" fontFamily="heading"
                       flexShrink={0} alignSelf="center"
                       _hover={{ bg: '#156B87' }} transition="background 0.15s"
@@ -394,7 +394,7 @@ export default function CleanerDashboard() {
                 <Flex px={6} pl={8} py={3.5} gap={6} align="center" justify="space-between">
                   <Box>
                     <HStack gap={2.5} mb={1} flexWrap="wrap">
-                      <Chip label="Proposal sent" bg="#EFF6FF" color="#1E40AF" />
+                      <Chip label="Proposal sent" bg="#F8FAFC" color="#0A80DB" />
                       <Text fontSize="14px" fontWeight="700" color="#0F172A" fontFamily="heading" letterSpacing="-0.01em">
                         {conv.lead.serviceType}
                       </Text>
@@ -419,7 +419,7 @@ export default function CleanerDashboard() {
                     </HStack>
                   </Box>
                   <Button
-                    size="sm" bg="#1A7FA0" color="white" borderRadius="4px"
+                    size="sm" bg="#0A80DB" color="white" borderRadius="4px"
                     fontWeight="600" fontFamily="heading" flexShrink={0}
                     _hover={{ bg: '#156B87' }}
                     onClick={e => { e.stopPropagation(); router.push(`/dashboard/chat/${conv.id}`); }}
@@ -485,7 +485,7 @@ export default function CleanerDashboard() {
                     const convId = activeAcceptedConvMap.get(lead.id);
                     return convId ? (
                       <Button
-                        size="sm" bg="#1A7FA0" color="white" borderRadius="4px"
+                        size="sm" bg="#0A80DB" color="white" borderRadius="4px"
                         fontWeight="600" fontFamily="heading" flexShrink={0}
                         _hover={{ bg: '#156B87' }}
                         onClick={() => router.push(`/dashboard/chat/${convId}`)}

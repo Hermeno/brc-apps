@@ -78,20 +78,20 @@ function RegisterForm() {
 
         <Flex direction="column" justify="space-between" h="full" position="relative" p={10}>
           <HStack gap={2.5}>
-            <Box w="32px" h="32px" bg="#1A7FA0" style={{ borderRadius: 4 }}
+            <Box w="32px" h="32px" bg="#0A80DB" style={{ borderRadius: 4 }}
               display="flex" alignItems="center" justifyContent="center">
               <Text color="white" fontWeight="800" fontSize="11px" letterSpacing="-0.02em" fontFamily="heading">BC</Text>
             </Box>
             <Text fontWeight="700" fontSize="15px" letterSpacing="-0.02em" color="white" fontFamily="heading">
-              Brazilian<Text as="span" color="#1A7FA0">Clean</Text>
+              Brazilian<Text as="span" color="#0A80DB">Clean</Text>
             </Text>
           </HStack>
 
           <Box>
             <Text
               fontSize="10.5px" fontWeight="700" letterSpacing="0.14em"
-              color="#1A7FA0" textTransform="uppercase" fontFamily="heading" mb={4}
-              style={{ borderLeft: '2px solid #1A7FA0', paddingLeft: 10 }}
+              color="#0A80DB" textTransform="uppercase" fontFamily="heading" mb={4}
+              style={{ borderLeft: '2px solid #0A80DB', paddingLeft: 10 }}
             >
               {forcedRole ? 'For cleaners' : 'For homeowners & cleaners'}
             </Text>
@@ -115,7 +115,7 @@ function RegisterForm() {
                   ]
               ).map(t => (
                 <HStack key={t} gap={2}>
-                  <Icon as={LucideCheckCircle} w="14px" h="14px" color="#1A7FA0" flexShrink={0} />
+                  <Icon as={LucideCheckCircle} w="14px" h="14px" color="#0A80DB" flexShrink={0} />
                   <Text fontSize="13px" color="rgba(255,255,255,0.65)" fontFamily="heading">{t}</Text>
                 </HStack>
               ))}
@@ -130,12 +130,12 @@ function RegisterForm() {
 
           {/* Mobile logo */}
           <HStack gap={2.5} mb={10} display={{ base: 'flex', lg: 'none' }}>
-            <Box w="28px" h="28px" bg="#1A7FA0" style={{ borderRadius: 4 }}
+            <Box w="28px" h="28px" bg="#0A80DB" style={{ borderRadius: 4 }}
               display="flex" alignItems="center" justifyContent="center">
               <Text color="white" fontWeight="800" fontSize="10px" fontFamily="heading">BC</Text>
             </Box>
             <Text fontWeight="700" fontSize="14px" letterSpacing="-0.02em" color="#0B1120" fontFamily="heading">
-              Brazilian<Text as="span" color="#1A7FA0">Clean</Text>
+              Brazilian<Text as="span" color="#0A80DB">Clean</Text>
             </Text>
           </HStack>
 
@@ -168,7 +168,7 @@ function RegisterForm() {
                   borderRadius="4px"
                   fontFamily="heading"
                   fontSize="14px"
-                  _focus={{ bg: 'white', borderColor: '#1A7FA0' }}
+                  _focus={{ bg: 'white', borderColor: '#0A80DB' }}
                   required
                 />
               </Box>
@@ -187,7 +187,7 @@ function RegisterForm() {
                   borderRadius="4px"
                   fontFamily="heading"
                   fontSize="14px"
-                  _focus={{ bg: 'white', borderColor: '#1A7FA0' }}
+                  _focus={{ bg: 'white', borderColor: '#0A80DB' }}
                   type="email"
                   required
                 />
@@ -208,21 +208,21 @@ function RegisterForm() {
                   borderRadius="4px"
                   fontFamily="heading"
                   fontSize="14px"
-                  _focus={{ bg: 'white', borderColor: '#1A7FA0' }}
+                  _focus={{ bg: 'white', borderColor: '#0A80DB' }}
                   required
                 />
               </Box>
 
               <Button
                 type="submit"
-                bg={isCleaner ? '#1A7FA0' : '#0B1120'}
+                bg={isCleaner ? '#0A80DB' : '#0B1120'}
                 color="white"
                 h="44px"
                 borderRadius="4px"
                 fontWeight="700"
                 fontSize="14px"
                 fontFamily="heading"
-                _hover={{ bg: isCleaner ? '#15698A' : '#1a2744' }}
+                _hover={{ bg: isCleaner ? '#0870C2' : '#1a2744' }}
                 transition="background 0.15s"
                 loading={loading}
                 loadingText="Creating account…"
@@ -239,8 +239,8 @@ function RegisterForm() {
             <Text fontSize="13px" color="#64748B" fontFamily="heading" textAlign="center">
               Already have an account?{' '}
               <NextLink href="/auth/login">
-                <Text as="span" color="#1A7FA0" fontWeight="700" cursor="pointer"
-                  _hover={{ color: '#15698A' }}>Sign in</Text>
+                <Text as="span" color="#0A80DB" fontWeight="700" cursor="pointer"
+                  _hover={{ color: '#0870C2' }}>Sign in</Text>
               </NextLink>
             </Text>
             <Text fontSize="13px" color="#64748B" fontFamily="heading" textAlign="center">

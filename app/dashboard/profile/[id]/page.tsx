@@ -32,9 +32,9 @@ type Cleaner = {
 
 const PLAN_COLORS: Record<string, { bg: string; color: string; label: string }> = {
   FREE:    { bg: '#F3F4F6', color: '#6B7280', label: 'Free' },
-  BASIC:   { bg: '#EFF6FF', color: '#2563EB', label: 'Basic' },
+  BASIC:   { bg: '#F8FAFC', color: '#0A80DB', label: 'Basic' },
   PREMIUM: { bg: '#FDF4FF', color: '#9333EA', label: 'Premium' },
-  PRO:     { bg: '#FFFBEB', color: '#D97706', label: 'Pro ⭐' },
+  PRO:     { bg: '#F8FAFC', color: '#0A80DB', label: 'Pro ⭐' },
 };
 
 function Stars({ value, size = 4 }: { value: number; size?: number }) {
@@ -162,8 +162,8 @@ export default function PublicProfilePage() {
                         {planStyle.label}
                       </Badge>
                       <Badge
-                        bg={isExperienced ? '#ECFDF5' : '#EFF6FF'}
-                        color={isExperienced ? '#059669' : '#2563EB'}
+                        bg={isExperienced ? '#F8FAFC' : '#F8FAFC'}
+                        color={isExperienced ? '#0A80DB' : '#0A80DB'}
                         borderRadius="full" px={3} py={0.5}
                         fontSize="xs" fontWeight="bold">
                         {isExperienced ? '⭐ Experiente' : '🆕 Novo na plataforma'}
@@ -208,10 +208,10 @@ export default function PublicProfilePage() {
 
                 {/* Contact info — only shown after client accepts + cleaner pays */}
                 {cleaner.canSeeContact && cleaner.phone && (
-                  <HStack gap={2} mt={4} bg="green.50" border="1px solid" borderColor="green.200"
+                  <HStack gap={2} mt={4} bg="#F8FAFC" border="1px solid" borderColor="#E2E8F0"
                     borderRadius="xl" px={4} py={3}>
-                    <Icon as={LucideMapPin} w={4} h={4} color="green.600" />
-                    <Text fontSize="sm" fontWeight="semibold" color="green.800">
+                    <Icon as={LucideMapPin} w={4} h={4} color="#0A80DB" />
+                    <Text fontSize="sm" fontWeight="semibold" color="#0A80DB">
                       📱 {cleaner.phone}
                     </Text>
                   </HStack>
@@ -293,7 +293,7 @@ export default function PublicProfilePage() {
               <Box bg="white" border="1px solid" borderColor="slate.200" borderRadius="2xl"
                 p={6} boxShadow="0 2px 12px rgba(0,0,0,0.04)">
                 <HStack gap={2} mb={5}>
-                  <Icon as={LucideAward} w={5} h={5} color="yellow.500" />
+                  <Icon as={LucideAward} w={5} h={5} color="#0A80DB" />
                   <Heading size="sm" fontWeight="bold" color="slate.800">Client reviews</Heading>
                   {ratingAvg > 0 && (
                     <HStack gap={1.5}>

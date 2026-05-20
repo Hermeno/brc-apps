@@ -54,10 +54,10 @@ function UploadBox({
   return (
     <Box
       border="2px dashed"
-      borderColor={value ? 'green.400' : 'slate.200'}
+      borderColor={value ? '#0A80DB' : 'slate.200'}
       borderRadius="4px"
       p={4}
-      bg={value ? 'green.50' : 'slate.50'}
+      bg={value ? '#F8FAFC' : 'slate.50'}
       cursor="pointer"
       onClick={() => ref.current?.click()}
       transition="all 0.2s"
@@ -71,8 +71,8 @@ function UploadBox({
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={value} alt={label} style={{ width: '100%', maxHeight: 140, objectFit: 'cover', borderRadius: 4 }} />
             <HStack gap={1}>
-              <Icon as={LucideCheckCircle} w={4} h={4} color="green.500" />
-              <Text fontSize="xs" color="green.600" fontWeight="bold">Uploaded</Text>
+              <Icon as={LucideCheckCircle} w={4} h={4} color="#0A80DB" />
+              <Text fontSize="xs" color="#0A80DB" fontWeight="bold">Uploaded</Text>
             </HStack>
           </>
         ) : (
@@ -152,22 +152,22 @@ export default function CleanerVerifyPage() {
   );
 
   const statusBanner = existing?.status === 'APPROVED' ? (
-    <Box bg="green.50" border="1px solid" borderColor="green.200" borderRadius="4px" p={6}>
+    <Box bg="#ECFDF5" border="1px solid" borderColor="#A7F3D0" borderRadius="4px" p={6}>
       <HStack gap={3}>
-        <Icon as={LucideCheckCircle} w={7} h={7} color="green.500" />
+        <Icon as={LucideCheckCircle} w={7} h={7} color="#059669" />
         <Box>
-          <Text fontWeight="black" color="green.700" fontSize="lg">Account verified!</Text>
-          <Text color="green.600" fontSize="sm">Your profile is active and verified on the platform.</Text>
+          <Text fontWeight="black" color="#047857" fontSize="lg">Account verified!</Text>
+          <Text color="#059669" fontSize="sm">Your profile is active and verified on the platform.</Text>
         </Box>
       </HStack>
     </Box>
   ) : existing?.status === 'PENDING' ? (
-    <Box bg="yellow.50" border="1px solid" borderColor="yellow.200" borderRadius="4px" p={6}>
+    <Box bg="#F8FAFC" border="1px solid" borderColor="#E2E8F0" borderRadius="4px" p={6}>
       <HStack gap={3}>
-        <Icon as={LucideClock} w={7} h={7} color="yellow.500" />
+        <Icon as={LucideClock} w={7} h={7} color="#0A80DB" />
         <Box>
-          <Text fontWeight="black" color="yellow.700" fontSize="lg">Under review</Text>
-          <Text color="yellow.600" fontSize="sm">We received your documents. We'll respond within 48 hours.</Text>
+          <Text fontWeight="black" color="#0A80DB" fontSize="lg">Under review</Text>
+          <Text color="#0A80DB" fontSize="sm">We received your documents. We'll respond within 48 hours.</Text>
         </Box>
       </HStack>
     </Box>
@@ -294,7 +294,7 @@ export default function CleanerVerifyPage() {
                 <VStack gap={5} align="stretch">
                   <HStack justify="space-between">
                     <Text fontWeight="black" color="slate.900" fontSize="lg">Document photos</Text>
-                    <Badge bg="yellow.100" color="yellow.700" borderRadius="4px" px={3}>
+                    <Badge bg="#F8FAFC" color="#0A80DB" borderRadius="4px" px={3}>
                       <Icon as={LucideCamera} w={3} h={3} mr={1} />All required
                     </Badge>
                   </HStack>

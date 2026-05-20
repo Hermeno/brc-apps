@@ -150,15 +150,15 @@ export default function ChatPage() {
             <HStack gap={2}>
               <Text fontWeight="bold" fontSize="md" color="slate.900">{otherName}</Text>
               {isInstant && (
-                <Badge bg="yellow.100" color="yellow.700" borderRadius="full" px={2} fontSize="xs"
-                  border="1px solid" borderColor="yellow.300">
+                <Badge bg="#ECFDF5" color="#059669" borderRadius="full" px={2} fontSize="xs"
+                  border="1px solid" borderColor="#A7F3D0">
                   <Icon as={LucideZap} w={3} h={3} mr={1} />
                   Instant Book
                 </Badge>
               )}
               {isAccepted && (
-                <Badge bg="green.100" color="green.700" borderRadius="full" px={2} fontSize="xs"
-                  border="1px solid" borderColor="green.200">
+                <Badge bg="#ECFDF5" color="#059669" borderRadius="full" px={2} fontSize="xs"
+                  border="1px solid" borderColor="#A7F3D0">
                   <Icon as={LucideCheckCircle} w={3} h={3} mr={1} />
                   Confirmed
                 </Badge>
@@ -170,8 +170,8 @@ export default function ChatPage() {
           {/* Client confirms cleaner */}
           {isClient && !isAccepted && (
             <Button
-              size="sm" bg="green.500" color="white" borderRadius="xl" fontWeight="bold"
-              _hover={{ bg: 'green.600' }}
+              size="sm" bg="#0A80DB" color="white" borderRadius="4px" fontWeight="bold"
+              _hover={{ bg: '#0870C2' }}
               onClick={confirmCleaner} loading={confirming}
               loadingText="Confirming..."
             >
@@ -184,14 +184,14 @@ export default function ChatPage() {
 
       {/* ── Client contact card (visible to cleaner when accepted) ── */}
       {!isClient && isAccepted && (conv.client.phone || conv.lead.clientPhone) && (
-        <Box bg="green.50" borderBottom="1px solid" borderColor="green.200" px={4} py={2.5} flexShrink={0}>
+        <Box bg="#F8FAFC" borderBottom="1px solid" borderColor="#E2E8F0" px={4} py={2.5} flexShrink={0}>
           <Container maxW="760px">
             <HStack gap={2}>
-              <Icon as={LucidePhone} w={4} h={4} color="green.600" />
-              <Text fontSize="sm" fontWeight="bold" color="green.800">
+              <Icon as={LucidePhone} w={4} h={4} color="#0A80DB" />
+              <Text fontSize="sm" fontWeight="bold" color="#064882">
                 Client contact:
               </Text>
-              <Text fontSize="sm" color="green.700" fontWeight="semibold">
+              <Text fontSize="sm" color="#0A80DB" fontWeight="semibold">
                 {conv.client.phone || conv.lead.clientPhone}
               </Text>
             </HStack>
@@ -215,8 +215,8 @@ export default function ChatPage() {
             </HStack>
             {conv.lead.estimatedMinPrice && (
               <HStack gap={1.5}>
-                <Icon as={LucideBanknote} w={4} h={4} color="green.500" />
-                <Text fontSize="sm" fontWeight="bold" color="green.700">
+                <Icon as={LucideBanknote} w={4} h={4} color="#0A80DB" />
+                <Text fontSize="sm" fontWeight="bold" color="#0A80DB">
                   ${conv.lead.estimatedMinPrice} – ${conv.lead.estimatedMaxPrice}
                 </Text>
               </HStack>

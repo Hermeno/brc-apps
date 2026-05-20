@@ -60,8 +60,8 @@ function WaveTimer({ lead }: { lead: Lead }) {
   const expired = secsLeft === 0;
 
   const label = isWave1 ? 'Wave 1 · Exclusive' : isWave2 ? 'Wave 2 · Open' : `Wave ${dist.wave}`;
-  const chipBg = urgent ? '#FEF2F2' : isWave1 ? '#EFF6FF' : '#F5F3FF';
-  const chipColor = urgent ? '#B91C1C' : isWave1 ? '#1A7FA0' : '#7C3AED';
+  const chipBg = urgent ? '#FEF2F2' : '#F8FAFC';
+  const chipColor = urgent ? '#B91C1C' : '#0A80DB';
 
   return (
     <HStack gap={2}>
@@ -175,7 +175,7 @@ export default function MarketplacePage() {
                 textTransform="uppercase" letterSpacing="0.06em" fontFamily="heading" mb={1}>
                 Wave 1 Exclusive
               </Text>
-              <Text fontSize="2xl" fontWeight="black" color="#1A7FA0" fontFamily="heading" letterSpacing="-0.03em">
+              <Text fontSize="2xl" fontWeight="black" color="#0A80DB" fontFamily="heading" letterSpacing="-0.03em">
                 {w1Count}
               </Text>
             </Box>
@@ -185,7 +185,7 @@ export default function MarketplacePage() {
                 textTransform="uppercase" letterSpacing="0.06em" fontFamily="heading" mb={1}>
                 Wave 2 Competitive
               </Text>
-              <Text fontSize="2xl" fontWeight="black" color="#7C3AED" fontFamily="heading" letterSpacing="-0.03em">
+              <Text fontSize="2xl" fontWeight="black" color="#0A80DB" fontFamily="heading" letterSpacing="-0.03em">
                 {w2Count}
               </Text>
             </Box>
@@ -214,7 +214,7 @@ export default function MarketplacePage() {
                 const dist  = lead.distributions?.[0];
                 const wave  = dist?.wave ?? 0;
                 const isW1  = wave === 1;
-                const accentColor = isW1 ? '#1A7FA0' : '#7C3AED';
+                const accentColor = isW1 ? '#0A80DB' : '#7C3AED';
 
                 return (
                   <Box
@@ -269,11 +269,11 @@ export default function MarketplacePage() {
                                   fontSize="xs"
                                   style={{
                                     borderRadius: 2,
-                                    background: '#F0FDF4',
+                                    background: '#F8FAFC',
                                     padding: '2px 6px',
                                     fontSize: '9.5px',
                                     fontWeight: 700,
-                                    color: '#15803D',
+                                    color: '#0A80DB',
                                   }}>
                                   🔄 {FREQUENCY_OPTIONS.find(f => f.id === lead.frequency)?.labelEn}
                                 </Text>
@@ -298,8 +298,8 @@ export default function MarketplacePage() {
                             {lead.estimatedMinPrice && (
                               <HStack gap={3}>
                                 <HStack gap={1.5}>
-                                  <Icon as={LucideBanknote} w={4} h={4} color="green.600" />
-                                  <Text fontWeight="black" color="green.700" fontSize="sm">
+                                  <Icon as={LucideBanknote} w={4} h={4} color="#0A80DB" />
+                                  <Text fontWeight="black" color="#0A80DB" fontSize="sm">
                                     ${lead.estimatedMinPrice}–${lead.estimatedMaxPrice}
                                   </Text>
                                 </HStack>
@@ -314,7 +314,7 @@ export default function MarketplacePage() {
                             {lead.leadPrice && (
                               <HStack gap={1.5}>
                                 <Text fontSize="xs" color="slate.500">Lead fee:</Text>
-                                <Text fontWeight="black" color={isW1 ? '#1A7FA0' : '#7C3AED'} fontSize="sm">
+                                <Text fontWeight="black" color="#0A80DB" fontSize="sm">
                                   ${lead.leadPrice}
                                 </Text>
                               </HStack>
@@ -335,11 +335,11 @@ export default function MarketplacePage() {
 
                         {/* CTA */}
                         <Button
-                          bg={isW1 ? '#1A7FA0' : '#7C3AED'}
+                          bg="#0A80DB"
                           color="white" px={5} py={7} h="auto"
                           borderRadius="4px" fontWeight="bold" fontSize="sm"
                           flexShrink={0} flexDirection="column" gap={1.5}
-                          _hover={{ bg: isW1 ? '#15698A' : '#6D28D9' }}
+                          _hover={{ bg: '#0870C2' }}
                           transition="background 0.15s"
                           onClick={() => handleRespond(lead.id)}
                           loading={responding === lead.id}

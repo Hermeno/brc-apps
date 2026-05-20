@@ -285,11 +285,11 @@ export default function ProfilePage() {
                       const sel = serviceTypes.includes(s);
                       return (
                         <Box key={s} as="button" w="full" p={2.5} borderRadius="4px" textAlign="center"
-                          border={sel ? '2px solid #1A7FA0' : '1px solid #E2E8F0'}
+                          border={sel ? '2px solid #0A80DB' : '1px solid #E2E8F0'}
                           bg={sel ? '#F0F9FF' : 'white'} cursor="pointer"
                           onClick={() => toggleService(s)} transition="all 0.15s">
                           <Text fontSize="xs" fontWeight={sel ? 'bold' : 'medium'}
-                            color={sel ? '#1A7FA0' : 'slate.600'}>{s}</Text>
+                            color={sel ? '#0A80DB' : 'slate.600'}>{s}</Text>
                         </Box>
                       );
                     })}
@@ -297,7 +297,7 @@ export default function ProfilePage() {
                 </Box>
 
                 <Button
-                  bg="#1A7FA0" color="white" borderRadius="4px" fontWeight="bold"
+                  bg="#0A80DB" color="white" borderRadius="4px" fontWeight="bold"
                   _hover={{ bg: '#166d8c' }}
                   transition="all 0.2s"
                   loading={saving} loadingText="Saving..."
@@ -347,10 +347,10 @@ export default function ProfilePage() {
 
                 {/* Location label */}
                 {locationLabel && (
-                  <HStack gap={2} bg="green.50" border="1px solid" borderColor="green.200"
+                  <HStack gap={2} bg="#F8FAFC" border="1px solid" borderColor="#E2E8F0"
                     borderRadius="4px" px={4} py={3}>
-                    <Icon as={LucideMapPin} w={4} h={4} color="green.600" flexShrink={0} />
-                    <Text fontSize="sm" color="green.800" fontWeight="semibold">{locationLabel}</Text>
+                    <Icon as={LucideMapPin} w={4} h={4} color="#0A80DB" flexShrink={0} />
+                    <Text fontSize="sm" color="#0A80DB" fontWeight="semibold">{locationLabel}</Text>
                     <Button size="xs" variant="ghost" color="slate.400" ml="auto" px={1}
                       onClick={() => { setLatitude(null); setLongitude(null); setLocationLabel(''); }}>
                       <Icon as={LucideX} w={3} h={3} />
@@ -394,10 +394,10 @@ export default function ProfilePage() {
                         borderRadius="4px"
                         cursor="pointer"
                         transition="all 0.12s"
-                        bg={serviceRadiusMiles === miles ? '#1A7FA0' : 'white'}
+                        bg={serviceRadiusMiles === miles ? '#0A80DB' : 'white'}
                         color={serviceRadiusMiles === miles ? 'white' : 'slate.600'}
-                        borderColor={serviceRadiusMiles === miles ? '#1A7FA0' : '#E2E8F0'}
-                        _hover={{ borderColor: '#1A7FA0', color: serviceRadiusMiles === miles ? 'white' : '#1A7FA0' }}
+                        borderColor={serviceRadiusMiles === miles ? '#0A80DB' : '#E2E8F0'}
+                        _hover={{ borderColor: '#0A80DB', color: serviceRadiusMiles === miles ? 'white' : '#0A80DB' }}
                         onClick={() => setServiceRadius(miles)}
                       >
                         {miles} mi
@@ -411,7 +411,7 @@ export default function ProfilePage() {
 
                 {/* Save location button */}
                 <Button
-                  bg="#1A7FA0" color="white" borderRadius="4px" fontWeight="bold"
+                  bg="#0A80DB" color="white" borderRadius="4px" fontWeight="bold"
                   _hover={{ bg: '#166d8c' }}
                   transition="all 0.2s"
                   loading={saving} loadingText="Saving..."
@@ -441,7 +441,7 @@ export default function ProfilePage() {
                   </Text>
                 </HStack>
                 {photos.length < 20 && !showPhotoForm && (
-                  <Button size="sm" bg="#1A7FA0" color="white" borderRadius="4px" fontWeight="bold"
+                  <Button size="sm" bg="#0A80DB" color="white" borderRadius="4px" fontWeight="bold"
                     _hover={{ bg: '#166d8c' }}
                     loading={uploading} loadingText="Uploading…"
                     onClick={() => fileInputRef.current?.click()}>
@@ -480,7 +480,7 @@ export default function ProfilePage() {
                             onClick={() => { setShowPhotoForm(false); setPendingUrl(''); setPhotoCaption(''); }}>
                             Cancel
                           </Button>
-                          <Button size="sm" bg="#1A7FA0" color="white" borderRadius="4px" fontWeight="bold"
+                          <Button size="sm" bg="#0A80DB" color="white" borderRadius="4px" fontWeight="bold"
                             _hover={{ bg: '#166d8c' }}
                             loading={addingPhoto} loadingText="Saving..."
                             onClick={handleAddPhoto}>

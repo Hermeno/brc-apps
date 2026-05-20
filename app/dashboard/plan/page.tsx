@@ -24,8 +24,8 @@ const PLAN_ICONS: Record<PlanId, any> = {
 const PLAN_COLORS: Record<PlanId, { bg: string; border: string; text: string; btn: string; btnHover: string }> = {
   FREE:    { bg: 'slate.50',   border: 'slate.200',  text: 'slate.600',  btn: 'slate.600',  btnHover: 'slate.700' },
   BASIC:   { bg: 'brand.50',   border: 'brand.300',  text: 'brand.700',  btn: 'brand.500',  btnHover: 'brand.600' },
-  PREMIUM: { bg: '#F5F3FF',    border: '#C4B5FD',    text: '#7C3AED',    btn: '#7C3AED',    btnHover: '#6D28D9' },
-  PRO:     { bg: 'yellow.50',  border: 'yellow.400', text: 'yellow.700', btn: '#D97706',    btnHover: '#B45309' },
+  PREMIUM: { bg: '#F5F3FF',    border: '#C4B5FD',    text: '#0A80DB',    btn: '#0A80DB',    btnHover: '#6D28D9' },
+  PRO:     { bg: 'slate.50',  border: 'slate.300', text: 'slate.700', btn: '#0A80DB',    btnHover: '#0870C2' },
 };
 
 export default function PlanPage() {
@@ -191,11 +191,11 @@ export default function PlanPage() {
                 <Text
                   style={{
                     borderRadius: 2,
-                    background: '#F0FDF4',
+                    background: '#F8FAFC',
                     padding: '2px 6px',
                     fontSize: '9.5px',
                     fontWeight: 700,
-                    color: '#15803D',
+                    color: '#0A80DB',
                   }}>
                   +10 pts no ranking
                 </Text>
@@ -239,7 +239,7 @@ export default function PlanPage() {
                 const c = PLAN_COLORS[pid];
                 const isActive = currentPlan === pid;
                 const PlanIcon = PLAN_ICONS[pid];
-                const accentColor = pid === 'FREE' ? '#64748B' : pid === 'BASIC' ? '#1A7FA0' : pid === 'PREMIUM' ? '#7C3AED' : '#D97706';
+                const accentColor = pid === 'FREE' ? '#64748B' : pid === 'BASIC' ? '#0A80DB' : pid === 'PREMIUM' ? '#0A80DB' : '#0A80DB';
 
                 return (
                   <Box
@@ -352,8 +352,8 @@ export default function PlanPage() {
                   time: '90 segundos',
                   cleaners: '1 exclusive',
                   desc: 'Top 1 in the ranking. Exclusive window — no one else sees the lead.',
-                  chipBg: '#EFF6FF',
-                  chipColor: '#1A7FA0',
+                  chipBg: '#F8FAFC',
+                  chipColor: '#0A80DB',
                 },
                 {
                   wave: 'Wave 2',
@@ -361,7 +361,7 @@ export default function PlanPage() {
                   cleaners: '2 simultaneous',
                   desc: 'If Wave 1 expires: 2 cleaners compete. First to accept wins. The other is not charged.',
                   chipBg: '#F5F3FF',
-                  chipColor: '#7C3AED',
+                  chipColor: '#0A80DB',
                 },
               ].map((w, i, arr) => (
                 <HStack
