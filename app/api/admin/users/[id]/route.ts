@@ -48,15 +48,50 @@ export async function DELETE(_req: NextRequest, { params }: { params: Promise<{ 
 
   const { id } = await params;
 
-  // Cascade-delete related records before deleting user
-  await prisma.$transaction([
-    prisma.notification.deleteMany({ where: { userId: id } }),
-    prisma.workPhoto.deleteMany({ where: { cleanerId: id } }),
-    prisma.cleanerVerification.deleteMany({ where: { cleanerId: id } }),
-    prisma.cleanerStats.deleteMany({ where: { cleanerId: id } }),
-    prisma.verificationToken.deleteMany({ where: { userId: id } }),
-    prisma.user.delete({ where: { id } }),
-  ]);
+  const target = await prisma.user.findUnique({ where: { id }, select: { role: true } });
+  if (!target) return NextResponse.json({ error: 'User not found' }, { status: 404 });
+
+  await prisma.$transaction(async tx => {
+    // 1. Delete messages inside conversations this user is part of
+    const convIds = (await tx.conversation.findMany({
+      where: { OR: [{ clientId: id }, { cleanerId: id }] },
+      select: { id: true },
+    })).map(c => c.id);
+
+    if (convIds.length > 0) {
+      await tx.message.deleteMany({ where: { conversationId: { in: convIds } } });
+    }
+    await tx.conversation.deleteMany({ where: { OR: [{ clientId: id }, { cleanerId: id }] } });
+
+    if (target.role === 'CLIENT') {
+      // 2a. Delete everything tied to leads this client created
+      const leadIds = (await tx.lead.findMany({
+        where: { clientId: id },
+        select: { id: true },
+      })).map(l => l.id);
+
+      if (leadIds.length > 0) {
+        await tx.leadDistribution.deleteMany({ where: { leadId: { in: leadIds } } });
+        await tx.review.deleteMany({ where: { leadId: { in: leadIds } } });
+        await tx.lead.deleteMany({ where: { clientId: id } });
+      }
+    } else {
+      // 2b. Cleaner — detach from leads, delete their distributions and reviews
+      await tx.lead.updateMany({ where: { cleanerId: id }, data: { cleanerId: null } });
+      await tx.leadDistribution.deleteMany({ where: { cleanerId: id } });
+      await tx.review.deleteMany({ where: { cleanerId: id } });
+    }
+
+    // 3. Delete profile-related records
+    await tx.notification.deleteMany({ where: { userId: id } });
+    await tx.workPhoto.deleteMany({ where: { cleanerId: id } });
+    await tx.cleanerVerification.deleteMany({ where: { cleanerId: id } });
+    await tx.cleanerStats.deleteMany({ where: { cleanerId: id } });
+    await tx.verificationToken.deleteMany({ where: { userId: id } });
+
+    // 4. Delete the user
+    await tx.user.delete({ where: { id } });
+  });
 
   return NextResponse.json({ ok: true });
 }

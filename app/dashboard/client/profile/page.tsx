@@ -7,6 +7,7 @@ import {
 import {
   LucideArrowLeft, LucideSave, LucideUser, LucidePhone, LucideMapPin,
 } from 'lucide-react';
+import { AddressInput } from '@/components/address-input';
 import { useRouter } from 'next/navigation';
 import { toaster } from '@/lib/toaster';
 import { motion } from 'motion/react';
@@ -156,13 +157,15 @@ export default function ClientProfilePage() {
                     <Text fontSize="xs" fontWeight="bold" color="slate.500"
                       textTransform="uppercase" letterSpacing="wider">Home address</Text>
                   </HStack>
-                  <Input
-                    placeholder="Street, number — e.g. Miami, FL"
+                  <AddressInput
                     value={address}
-                    onChange={e => setAddress(e.target.value)}
-                    bg="slate.50" border="1px solid" borderColor="slate.200"
-                    h="11" borderRadius="4px" fontSize="sm"
-                    _focus={{ bg: 'white', borderColor: 'brand.300' }}
+                    onChange={setAddress}
+                    placeholder="123 Main St, Miami, FL 33101"
+                    inputProps={{
+                      bg: 'slate.50', border: '1px solid', borderColor: 'slate.200',
+                      h: '11', borderRadius: '4px', fontSize: 'sm',
+                      _focus: { bg: 'white', borderColor: 'brand.300' },
+                    }}
                   />
                 </Box>
               </VStack>

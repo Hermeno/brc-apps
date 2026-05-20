@@ -264,15 +264,87 @@ function Sidebar({ tab, setTab, pendingVerifs, onRefresh, user }: {
   );
 }
 
+// ─── DeleteConfirmModal ───────────────────────────────────────────────────────
+
+function DeleteConfirmModal({ user, onConfirm, onCancel, loading }: {
+  user: UserRow; onConfirm: () => void; onCancel: () => void; loading: boolean;
+}) {
+  return (
+    <Box
+      position="fixed" inset={0} zIndex={9999}
+      display="flex" alignItems="center" justifyContent="center"
+      style={{ background: 'rgba(11,17,32,0.55)', backdropFilter: 'blur(2px)' }}
+      onClick={onCancel}
+    >
+      <Box
+        bg="white" border="1px solid #E2E8F0" w="400px" mx={4}
+        onClick={e => e.stopPropagation()}
+      >
+        {/* Header */}
+        <Flex align="center" justify="space-between" px={5} py={4}
+          borderBottom="1px solid #F1F5F9">
+          <HStack gap={2.5}>
+            <Box w="28px" h="28px" bg="red.50" border="1px solid #FCA5A5"
+              display="flex" alignItems="center" justifyContent="center">
+              <Icon as={LucideTrash2} w="13px" h="13px" color="red.500" />
+            </Box>
+            <Text fontSize="14px" fontWeight="700" color="slate.900" fontFamily="heading">
+              Delete account
+            </Text>
+          </HStack>
+          <Box as="button" onClick={onCancel} p={1} color="slate.400"
+            _hover={{ color: 'slate.600' }} cursor="pointer">
+            <Icon as={LucideX} w="14px" h="14px" />
+          </Box>
+        </Flex>
+
+        {/* Body */}
+        <Box px={5} py={5}>
+          <Text fontSize="13.5px" color="slate.700" fontFamily="heading" lineHeight={1.6} mb={4}>
+            You are about to permanently delete this account. This action{' '}
+            <strong>cannot be undone</strong> and will remove all leads, conversations,
+            and data associated with this user.
+          </Text>
+          <Box bg="#FEF2F2" border="1px solid #FECACA" p={3} mb={1}>
+            <Text fontSize="13px" fontWeight="600" color="slate.900" fontFamily="heading">
+              {user.name || '(no name)'}
+            </Text>
+            <Text fontSize="12px" color="slate.500" fontFamily="heading">{user.email}</Text>
+            <Text fontSize="11px" color="slate.400" fontFamily="heading" mt={0.5}>
+              {user.role === 'CLEANER' ? 'Cleaner' : 'Client'} · joined {new Date(user.createdAt).toLocaleDateString('en-US')}
+            </Text>
+          </Box>
+        </Box>
+
+        {/* Footer */}
+        <Flex gap={2} px={5} pb={5} justify="flex-end">
+          <Button size="sm" variant="ghost" borderRadius="4px" color="slate.500"
+            fontFamily="heading" onClick={onCancel} disabled={loading}>
+            Cancel
+          </Button>
+          <Button size="sm" bg="red.500" color="white" borderRadius="4px"
+            fontFamily="heading" fontWeight="600"
+            loading={loading} loadingText="Deleting…"
+            _hover={{ bg: 'red.600' }} onClick={onConfirm}>
+            <Icon as={LucideTrash2} w={3.5} h={3.5} mr={1.5} />
+            Delete permanently
+          </Button>
+        </Flex>
+      </Box>
+    </Box>
+  );
+}
+
 // ─── UserTableRow ─────────────────────────────────────────────────────────────
 
 function UserTableRow({ user, onRefresh }: { user: UserRow; onRefresh: () => void }) {
-  const [editing, setEditing]     = useState(false);
-  const [name, setName]           = useState(user.name ?? '');
-  const [email, setEmail]         = useState(user.email);
-  const [phone, setPhone]         = useState(user.phone ?? '');
-  const [suspendDays, setSuspDays] = useState(7);
-  const [loading, setLoading]     = useState(false);
+  const [editing, setEditing]       = useState(false);
+  const [name, setName]             = useState(user.name ?? '');
+  const [email, setEmail]           = useState(user.email);
+  const [phone, setPhone]           = useState(user.phone ?? '');
+  const [suspendDays, setSuspDays]  = useState(7);
+  const [loading, setLoading]       = useState(false);
+  const [showDeleteModal, setShowDelete] = useState(false);
   const suspended = isSuspended(user);
 
   const call = async (body: object) => {
@@ -290,89 +362,105 @@ function UserTableRow({ user, onRefresh }: { user: UserRow; onRefresh: () => voi
   };
 
   const handleDelete = async () => {
-    if (!confirm(`Delete ${user.email}?`)) return;
     setLoading(true);
     try {
       const res = await fetch(`/api/admin/users/${user.id}`, { method: 'DELETE' });
-      if (!res.ok) throw new Error();
-      toaster.create({ title: 'User deleted', type: 'success' });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.error ?? 'Error');
+      }
+      toaster.create({ title: 'Account deleted', type: 'success' });
+      setShowDelete(false);
       onRefresh();
-    } catch { toaster.create({ title: 'Error deleting user', type: 'error' }); }
-    finally { setLoading(false); }
+    } catch (e: any) {
+      toaster.create({ title: e.message ?? 'Error deleting account', type: 'error' });
+    } finally { setLoading(false); }
   };
 
   return (
-    <tr>
-      <td style={TD}>
-        {editing ? (
-          <VStack gap={1.5} align="stretch">
-            <Input size="sm" value={name}  onChange={e => setName(e.target.value)}  placeholder="Name"  borderRadius="4px" />
-            <Input size="sm" value={email} onChange={e => setEmail(e.target.value)} placeholder="Email" borderRadius="4px" />
-            <Input size="sm" value={phone} onChange={e => setPhone(e.target.value)} placeholder="Phone"   borderRadius="4px" />
-          </VStack>
-        ) : (
-          <Box>
-            <Text fontSize="13px" fontWeight="600" color="slate.900" fontFamily="heading">{user.name || '—'}</Text>
-            <Text fontSize="11.5px" color="slate.500">{user.email}</Text>
-            {user.phone && <Text fontSize="11px" color="slate.400">{user.phone}</Text>}
-          </Box>
-        )}
-      </td>
-      <td style={TD}>
-        <Text fontSize="12px" fontWeight="500" color="slate.600" fontFamily="heading">
-          {user.role === 'CLEANER' ? 'Cleaner' : 'Client'}
-        </Text>
-      </td>
-      <td style={TD}>
-        {suspended
-          ? <span style={{ fontSize: 12, fontWeight: 600, color: '#BE123C', fontFamily: 'var(--font-dm-sans,sans-serif)' }}>Suspended until {new Date(user.suspendedUntil!).toLocaleDateString('en-US')}</span>
-          : user.isVerified
-          ? <span style={{ fontSize: 12, fontWeight: 600, color: '#047857', fontFamily: 'var(--font-dm-sans,sans-serif)' }}>Active</span>
-          : <span style={{ fontSize: 12, fontWeight: 600, color: '#92400E', fontFamily: 'var(--font-dm-sans,sans-serif)' }}>Pending</span>
-        }
-      </td>
-      <td style={TD}>
-        <Text fontSize="12px" color="slate.400" fontFamily="heading">{new Date(user.createdAt).toLocaleDateString('en-US')}</Text>
-      </td>
-      <td style={{ ...TD, textAlign: 'right' }}>
-        <HStack gap={1} justify="flex-end">
+    <>
+      {showDeleteModal && (
+        <DeleteConfirmModal
+          user={user}
+          onConfirm={handleDelete}
+          onCancel={() => setShowDelete(false)}
+          loading={loading}
+        />
+      )}
+      <tr>
+        <td style={TD}>
           {editing ? (
-            <>
-              <Button size="xs" bg="brand.500" color="white" borderRadius="4px" loading={loading}
-                onClick={() => { call({ name, email, phone }); setEditing(false); }}>
-                <Icon as={LucideSave} w={3} h={3} />
-              </Button>
-              <Button size="xs" variant="ghost" borderRadius="4px" onClick={() => setEditing(false)}>
-                <Icon as={LucideX} w={3} h={3} />
-              </Button>
-            </>
+            <VStack gap={1.5} align="stretch">
+              <Input size="sm" value={name}  onChange={e => setName(e.target.value)}  placeholder="Name"  borderRadius="4px" />
+              <Input size="sm" value={email} onChange={e => setEmail(e.target.value)} placeholder="Email" borderRadius="4px" />
+              <Input size="sm" value={phone} onChange={e => setPhone(e.target.value)} placeholder="Phone" borderRadius="4px" />
+            </VStack>
           ) : (
-            <Button size="xs" variant="ghost" borderRadius="4px" onClick={() => setEditing(true)}>
-              <Icon as={LucidePencil} w={3} h={3} color="slate.400" />
-            </Button>
+            <Box>
+              <Text fontSize="13px" fontWeight="600" color="slate.900" fontFamily="heading">{user.name || '—'}</Text>
+              <Text fontSize="11.5px" color="slate.500">{user.email}</Text>
+              {user.phone && <Text fontSize="11px" color="slate.400">{user.phone}</Text>}
+            </Box>
           )}
-          {suspended ? (
-            <Button size="xs" variant="ghost" borderRadius="4px" loading={loading} onClick={() => call({ action: 'unsuspend' })}>
-              <Icon as={LucideUnlock} w={3} h={3} color="green.500" />
-            </Button>
-          ) : (
-            <HStack gap={1}>
-              <Input size="xs" type="number" value={suspendDays} min={1} max={365}
-                onChange={e => setSuspDays(Number(e.target.value))}
-                w="40px" borderRadius="4px" textAlign="center" fontSize="11px" />
-              <Text fontSize="10px" color="slate.400">d</Text>
-              <Button size="xs" variant="ghost" borderRadius="4px" loading={loading}
-                onClick={() => call({ action: 'suspend', suspendDays })}>
-                <Icon as={LucideBan} w={3} h={3} color="yellow.600" />
+        </td>
+        <td style={TD}>
+          <Text fontSize="12px" fontWeight="500" color="slate.600" fontFamily="heading">
+            {user.role === 'CLEANER' ? 'Cleaner' : 'Client'}
+          </Text>
+        </td>
+        <td style={TD}>
+          {suspended
+            ? <span style={{ fontSize: 12, fontWeight: 600, color: '#BE123C', fontFamily: 'var(--font-dm-sans,sans-serif)' }}>Suspended until {new Date(user.suspendedUntil!).toLocaleDateString('en-US')}</span>
+            : user.isVerified
+            ? <span style={{ fontSize: 12, fontWeight: 600, color: '#047857', fontFamily: 'var(--font-dm-sans,sans-serif)' }}>Active</span>
+            : <span style={{ fontSize: 12, fontWeight: 600, color: '#92400E', fontFamily: 'var(--font-dm-sans,sans-serif)' }}>Pending</span>
+          }
+        </td>
+        <td style={TD}>
+          <Text fontSize="12px" color="slate.400" fontFamily="heading">{new Date(user.createdAt).toLocaleDateString('en-US')}</Text>
+        </td>
+        <td style={{ ...TD, textAlign: 'right' }}>
+          <HStack gap={1} justify="flex-end">
+            {editing ? (
+              <>
+                <Button size="xs" bg="brand.500" color="white" borderRadius="4px" loading={loading}
+                  onClick={() => { call({ name, email, phone }); setEditing(false); }}>
+                  <Icon as={LucideSave} w={3} h={3} />
+                </Button>
+                <Button size="xs" variant="ghost" borderRadius="4px" onClick={() => setEditing(false)}>
+                  <Icon as={LucideX} w={3} h={3} />
+                </Button>
+              </>
+            ) : (
+              <Button size="xs" variant="ghost" borderRadius="4px" onClick={() => setEditing(true)}>
+                <Icon as={LucidePencil} w={3} h={3} color="slate.400" />
               </Button>
-            </HStack>
-          )}
-          <Button size="xs" variant="ghost" borderRadius="4px" loading={loading} onClick={handleDelete}>
-            <Icon as={LucideTrash2} w={3} h={3} color="red.400" />
-          </Button>
-        </HStack>
-      </td>
-    </tr>
+            )}
+            {suspended ? (
+              <Button size="xs" variant="ghost" borderRadius="4px" loading={loading} onClick={() => call({ action: 'unsuspend' })}>
+                <Icon as={LucideUnlock} w={3} h={3} color="green.500" />
+              </Button>
+            ) : (
+              <HStack gap={1}>
+                <Input size="xs" type="number" value={suspendDays} min={1} max={365}
+                  onChange={e => setSuspDays(Number(e.target.value))}
+                  w="40px" borderRadius="4px" textAlign="center" fontSize="11px" />
+                <Text fontSize="10px" color="slate.400">d</Text>
+                <Button size="xs" variant="ghost" borderRadius="4px" loading={loading}
+                  onClick={() => call({ action: 'suspend', suspendDays })}>
+                  <Icon as={LucideBan} w={3} h={3} color="yellow.600" />
+                </Button>
+              </HStack>
+            )}
+            <Button size="xs" variant="ghost" borderRadius="4px"
+              onClick={() => setShowDelete(true)}
+              title="Delete account">
+              <Icon as={LucideTrash2} w={3} h={3} color="red.400" />
+            </Button>
+          </HStack>
+        </td>
+      </tr>
+    </>
   );
 }
 

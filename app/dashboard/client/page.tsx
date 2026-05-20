@@ -23,6 +23,7 @@ import {
 import NotificationBell from '@/components/notification-bell';
 import { signOut } from 'next-auth/react';
 import { LucideLogOut } from 'lucide-react';
+import { AddressInput } from '@/components/address-input';
 
 /* ─── types ──────────────────────────────────────────────────── */
 const STATUS_MAP: Record<string, { label: string; bg: string; color: string; border: string }> = {
@@ -830,9 +831,12 @@ export default function ClientPage() {
                                       </Box>
                                     ))}
                                   </SimpleGrid>
-                                  <Input placeholder="Address" value={editForm.address}
-                                    onChange={e => setEditField('address', e.target.value)}
-                                    bg="white" borderRadius="4px" h="11" border="1px solid" borderColor="slate.200" />
+                                  <AddressInput
+                                    value={editForm.address}
+                                    onChange={v => setEditField('address', v)}
+                                    placeholder="123 Main St, City, ST 00000"
+                                    inputProps={{ bg: 'white', borderRadius: '4px', h: '11', border: '1px solid', borderColor: 'slate.200' }}
+                                  />
                                   <HStack gap={3}>
                                     <Input type="date" value={editForm.date}
                                       onChange={e => setEditField('date', e.target.value)}
@@ -1147,9 +1151,17 @@ function OrderForm({ form, setField, toggleExtra, estimate, progress, onSubmit, 
               <Text fontSize="10.5px" fontWeight={700} color="#94A3B8" textTransform="uppercase" mb={4}
                 letterSpacing="0.07em" fontFamily="heading">Location & date</Text>
               <VStack gap={4} align="stretch">
-                <Input placeholder="Full address" value={form.address} onChange={e => setField('address', e.target.value)}
-                  bg="slate.50" border="1px solid" borderColor={form.address ? 'brand.300' : 'slate.200'} h="12" borderRadius="4px" fontSize="sm"
-                  _focus={{ bg: 'white', borderColor: 'brand.400' }} transition="all 0.15s" required />
+                <AddressInput
+                  value={form.address}
+                  onChange={v => setField('address', v)}
+                  placeholder="123 Main St, Miami, FL 33101"
+                  inputProps={{
+                    bg: 'slate.50', border: '1px solid',
+                    borderColor: form.address ? 'brand.300' : 'slate.200',
+                    h: '12', borderRadius: '4px', fontSize: 'sm',
+                    _focus: { bg: 'white', borderColor: 'brand.400' }, transition: 'all 0.15s',
+                  }}
+                />
                 <HStack gap={4}>
                   <Input type="date" value={form.date} onChange={e => setField('date', e.target.value)}
                     bg="slate.50" border="1px solid" borderColor={form.date ? 'brand.300' : 'slate.200'} h="12" borderRadius="4px" fontSize="sm" flex={1}

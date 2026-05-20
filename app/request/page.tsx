@@ -15,6 +15,7 @@ import { AnimatePresence, motion } from 'motion/react';
 import NextLink from 'next/link';
 import { SERVICE_TYPES, FREQUENCY_OPTIONS, EXTRAS, calculateEstimate } from '@/lib/estimate';
 import { toaster } from '@/lib/toaster';
+import { AddressInput } from '@/components/address-input';
 
 const LABEL_STYLE = {
   fontSize: '11px' as const,
@@ -216,12 +217,13 @@ export default function RequestPage() {
 
               {/* Address */}
               <Box>
-                <Text {...LABEL_STYLE}>Address</Text>
-                <HStack>
-                  <Icon as={LucideMapPin} color="#E53E3E" w="15px" h="15px" flexShrink={0} />
-                  <Input value={address} onChange={e => setAddress(e.target.value)}
-                    placeholder="Street, city, state, ZIP" {...inputStyle} />
-                </HStack>
+                <Text {...LABEL_STYLE}>Service address</Text>
+                <AddressInput
+                  value={address}
+                  onChange={setAddress}
+                  placeholder="123 Main St, Miami, FL 33101"
+                  inputProps={inputStyle}
+                />
               </Box>
 
               {/* Phone */}
