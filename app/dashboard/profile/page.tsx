@@ -94,22 +94,27 @@ export default function ProfilePage() {
       return;
     }
     setGeoLoading(true);
-    navigator.geolocation.getCurrentPosition(
-      async pos => {
-        const lat = pos.coords.latitude;
-        const lng = pos.coords.longitude;
-        setLatitude(lat);
-        setLongitude(lng);
-        setGeoLoading(false);
-        await reverseGeocode(lat, lng);
-        toaster.create({ title: 'Location detected!', type: 'success' });
-      },
-      err => {
-        setGeoLoading(false);
-        toaster.create({ title: 'Could not detect location', description: err.message, type: 'error' });
-      },
-      { enableHighAccuracy: true, timeout: 10000 }
-    );
+    const onSuccess = async (pos: GeolocationPosition) => {
+      const lat = pos.coords.latitude;
+      const lng = pos.coords.longitude;
+      setLatitude(lat);
+      setLongitude(lng);
+      setGeoLoading(false);
+      await reverseGeocode(lat, lng);
+      toaster.create({ title: 'Location detected!', type: 'success' });
+    };
+    const onError = () => {
+      // Retry with low accuracy (IP/WiFi-based) if high accuracy fails
+      navigator.geolocation.getCurrentPosition(
+        onSuccess,
+        () => {
+          setGeoLoading(false);
+          toaster.create({ title: 'Could not detect location', description: 'Please allow location access in your browser settings.', type: 'error' });
+        },
+        { enableHighAccuracy: false, timeout: 15000 }
+      );
+    };
+    navigator.geolocation.getCurrentPosition(onSuccess, onError, { enableHighAccuracy: false, timeout: 15000 });
   };
 
   const toggleService = (s: string) =>
@@ -298,7 +303,7 @@ export default function ProfilePage() {
 
                 <Button
                   bg="#0A80DB" color="white" borderRadius="4px" fontWeight="bold"
-                  _hover={{ bg: '#166d8c' }}
+                  _hover={{ bg: '#0870C2' }}
                   transition="all 0.2s"
                   loading={saving} loadingText="Saving..."
                   onClick={handleSave}
@@ -412,7 +417,7 @@ export default function ProfilePage() {
                 {/* Save location button */}
                 <Button
                   bg="#0A80DB" color="white" borderRadius="4px" fontWeight="bold"
-                  _hover={{ bg: '#166d8c' }}
+                  _hover={{ bg: '#0870C2' }}
                   transition="all 0.2s"
                   loading={saving} loadingText="Saving..."
                   onClick={handleSave}
@@ -442,7 +447,7 @@ export default function ProfilePage() {
                 </HStack>
                 {photos.length < 20 && !showPhotoForm && (
                   <Button size="sm" bg="#0A80DB" color="white" borderRadius="4px" fontWeight="bold"
-                    _hover={{ bg: '#166d8c' }}
+                    _hover={{ bg: '#0870C2' }}
                     loading={uploading} loadingText="Uploading…"
                     onClick={() => fileInputRef.current?.click()}>
                     <Icon as={LucidePlus} w={3.5} h={3.5} mr={1.5} />
@@ -481,7 +486,7 @@ export default function ProfilePage() {
                             Cancel
                           </Button>
                           <Button size="sm" bg="#0A80DB" color="white" borderRadius="4px" fontWeight="bold"
-                            _hover={{ bg: '#166d8c' }}
+                            _hover={{ bg: '#0870C2' }}
                             loading={addingPhoto} loadingText="Saving..."
                             onClick={handleAddPhoto}>
                             Save photo

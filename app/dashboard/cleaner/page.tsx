@@ -357,7 +357,7 @@ export default function CleanerDashboard() {
                       bg="#0A80DB" color="white" px={4} h="36px"
                       borderRadius="4px" fontWeight="600" fontSize="13px" fontFamily="heading"
                       flexShrink={0} alignSelf="center"
-                      _hover={{ bg: '#156B87' }} transition="background 0.15s"
+                      _hover={{ bg: '#0870C2' }} transition="background 0.15s"
                       onClick={() => handleRespond(lead.id)}
                       loading={responding === lead.id}
                       loadingText="…"
@@ -421,7 +421,7 @@ export default function CleanerDashboard() {
                   <Button
                     size="sm" bg="#0A80DB" color="white" borderRadius="4px"
                     fontWeight="600" fontFamily="heading" flexShrink={0}
-                    _hover={{ bg: '#156B87' }}
+                    _hover={{ bg: '#0870C2' }}
                     onClick={e => { e.stopPropagation(); router.push(`/dashboard/chat/${conv.id}`); }}
                   >
                     <Icon as={LucideMessageCircle} w={3.5} h={3.5} mr={1.5} />
@@ -487,7 +487,7 @@ export default function CleanerDashboard() {
                       <Button
                         size="sm" bg="#0A80DB" color="white" borderRadius="4px"
                         fontWeight="600" fontFamily="heading" flexShrink={0}
-                        _hover={{ bg: '#156B87' }}
+                        _hover={{ bg: '#0870C2' }}
                         onClick={() => router.push(`/dashboard/chat/${convId}`)}
                       >
                         <Icon as={LucideMessageCircle} w={3.5} h={3.5} mr={1.5} />

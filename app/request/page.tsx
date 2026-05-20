@@ -392,16 +392,16 @@ export default function RequestPage() {
               </Text>
               <VStack gap={4} align="stretch">
 
-                <Box bg="#F0FDF4" border="1px solid #BBF7D0" p={4}>
+                <Box bg="#EBF5FE" border="1px solid #A2D3F9" p={4}>
                   <HStack gap={2} mb={1}>
-                    <Icon as={LucideBanknote} w="15px" h="15px" color="#16A34A" />
-                    <Text fontSize="11px" color="#16A34A" fontWeight="700" fontFamily="heading">Estimated range</Text>
+                    <Icon as={LucideBanknote} w="15px" h="15px" color="#0A80DB" />
+                    <Text fontSize="11px" color="#0A80DB" fontWeight="700" fontFamily="heading">Estimated range</Text>
                   </HStack>
-                  <Text fontSize="26px" fontWeight="800" color="#15803D" fontFamily="heading" letterSpacing="-0.02em">
+                  <Text fontSize="26px" fontWeight="800" color="#065594" fontFamily="heading" letterSpacing="-0.02em">
                     ${estimate.minPrice}–${estimate.maxPrice}
                   </Text>
                   {estimate.discountPct > 0 && (
-                    <Text fontSize="11px" fontWeight="700" color="#16A34A" fontFamily="heading" mt={1}>
+                    <Text fontSize="11px" fontWeight="700" color="#0A80DB" fontFamily="heading" mt={1}>
                       {estimate.discountPct}% frequency discount
                     </Text>
                   )}
