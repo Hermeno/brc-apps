@@ -21,7 +21,7 @@ import {
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
-type Tab = 'overview' | 'leads' | 'verifications' | 'users' | 'reviews' | 'pricing' | 'settings';
+type Tab = 'overview' | 'leads' | 'verifications' | 'users' | 'reviews' | 'pricing' | 'lead-pricing' | 'settings';
 
 interface StatsData {
   users:         { totalClients: number; totalCleaners: number; verifiedCleaners: number; total: number };
@@ -65,15 +65,15 @@ const SIDEBAR_BG   = '#0B1120';
 const SIDEBAR_W    = '216px';
 
 const LEAD_STATUS: Record<string, { label: string; color: string; dot: string }> = {
-  NEW:       { label: 'Novo',              color: '#92400E', dot: '#F59E0B' },
-  WAVE1:     { label: 'Buscando',          color: '#1E40AF', dot: '#60A5FA' },
-  WAVE2:     { label: 'Buscando',          color: '#1E40AF', dot: '#60A5FA' },
-  WAVE3:     { label: 'Última onda',       color: '#1E40AF', dot: '#60A5FA' },
-  IN_REVIEW: { label: 'Aguardando',        color: '#0369A1', dot: '#38BDF8' },
-  ACCEPTED:  { label: 'Aceito',           color: '#0F4F67', dot: '#1A7FA0' },
-  COMPLETED: { label: 'Concluído',        color: '#047857', dot: '#10B981' },
-  CANCELLED: { label: 'Cancelado',        color: '#BE123C', dot: '#F43F5E' },
-  UNMATCHED: { label: 'Sem profissional', color: '#475569', dot: '#94A3B8' },
+  NEW:       { label: 'New',            color: '#92400E', dot: '#F59E0B' },
+  WAVE1:     { label: 'Matching',       color: '#1E40AF', dot: '#60A5FA' },
+  WAVE2:     { label: 'Matching',       color: '#1E40AF', dot: '#60A5FA' },
+  WAVE3:     { label: 'Last wave',      color: '#1E40AF', dot: '#60A5FA' },
+  IN_REVIEW: { label: 'Pending',        color: '#0369A1', dot: '#38BDF8' },
+  ACCEPTED:  { label: 'Accepted',       color: '#0F4F67', dot: '#1A7FA0' },
+  COMPLETED: { label: 'Completed',      color: '#047857', dot: '#10B981' },
+  CANCELLED: { label: 'Cancelled',      color: '#BE123C', dot: '#F43F5E' },
+  UNMATCHED: { label: 'No cleaner',     color: '#475569', dot: '#94A3B8' },
 };
 
 const TH: React.CSSProperties = {
@@ -116,12 +116,13 @@ function isSuspended(u: UserRow) { return !!u.suspendedUntil && new Date(u.suspe
 // ─── Sidebar ──────────────────────────────────────────────────────────────────
 
 const NAV: { id: Tab; label: string; icon: any; section?: string }[] = [
-  { id: 'overview',      label: 'Visão Geral',   icon: LucideLayoutDashboard, section: 'PLATAFORMA' },
-  { id: 'leads',         label: 'Pedidos',        icon: LucideClipboardList },
-  { id: 'verifications', label: 'Verificações',   icon: LucideShield,          section: 'CADASTROS' },
-  { id: 'users',         label: 'Usuários',       icon: LucideUsers },
-  { id: 'reviews',       label: 'Avaliações',     icon: LucideStar },
-  { id: 'pricing',       label: 'Preços dos Planos', icon: LucideDollarSign,   section: 'FINANCEIRO' },
+  { id: 'overview',      label: 'Overview',     icon: LucideLayoutDashboard, section: 'PLATFORM' },
+  { id: 'leads',         label: 'Bookings',     icon: LucideClipboardList },
+  { id: 'verifications', label: 'Verifications', icon: LucideShield,          section: 'ACCOUNTS' },
+  { id: 'users',         label: 'Users',         icon: LucideUsers },
+  { id: 'reviews',       label: 'Reviews',       icon: LucideStar },
+  { id: 'pricing',       label: 'Plan Pricing',  icon: LucideDollarSign,      section: 'FINANCIAL' },
+  { id: 'lead-pricing',  label: 'Lead Prices',   icon: LucideDollarSign },
 ];
 
 function Sidebar({ tab, setTab, pendingVerifs, onRefresh, user }: {
@@ -220,7 +221,7 @@ function Sidebar({ tab, setTab, pendingVerifs, onRefresh, user }: {
           </Box>
           <Box flex={1} minW={0}>
             <Text fontSize="12px" fontWeight="600" color="white" fontFamily="heading" lineClamp={1}>{user}</Text>
-            <Text fontSize="10px" color="#475569" fontFamily="heading">Administrador</Text>
+            <Text fontSize="10px" color="#475569" fontFamily="heading">Administrator</Text>
           </Box>
         </HStack>
         <Box
@@ -234,7 +235,7 @@ function Sidebar({ tab, setTab, pendingVerifs, onRefresh, user }: {
           onClick={() => setTab('settings')}
         >
           <Icon as={LucideSettings} w={3} h={3} />
-          Meus dados
+          My settings
         </Box>
         <Box
           as="button" w="full" display="flex" alignItems="center" gap={2}
@@ -245,7 +246,7 @@ function Sidebar({ tab, setTab, pendingVerifs, onRefresh, user }: {
           onClick={onRefresh}
         >
           <Icon as={LucideRefreshCw} w={3} h={3} />
-          Atualizar dados
+          Refresh data
         </Box>
         <Box
           as="button" w="full" display="flex" alignItems="center" gap={2}
@@ -256,7 +257,7 @@ function Sidebar({ tab, setTab, pendingVerifs, onRefresh, user }: {
           onClick={() => signOut({ callbackUrl: '/auth/login' })}
         >
           <Icon as={LucideLogOut} w={3} h={3} />
-          Sair da conta
+          Sign out
         </Box>
       </Box>
     </Box>
@@ -282,21 +283,21 @@ function UserTableRow({ user, onRefresh }: { user: UserRow; onRefresh: () => voi
         body: JSON.stringify(body),
       });
       if (!res.ok) throw new Error();
-      toaster.create({ title: 'Atualizado', type: 'success' });
+      toaster.create({ title: 'Updated', type: 'success' });
       onRefresh();
-    } catch { toaster.create({ title: 'Erro', type: 'error' }); }
+    } catch { toaster.create({ title: 'Error', type: 'error' }); }
     finally { setLoading(false); }
   };
 
   const handleDelete = async () => {
-    if (!confirm(`Deletar ${user.email}?`)) return;
+    if (!confirm(`Delete ${user.email}?`)) return;
     setLoading(true);
     try {
       const res = await fetch(`/api/admin/users/${user.id}`, { method: 'DELETE' });
       if (!res.ok) throw new Error();
-      toaster.create({ title: 'Usuário deletado', type: 'success' });
+      toaster.create({ title: 'User deleted', type: 'success' });
       onRefresh();
-    } catch { toaster.create({ title: 'Erro ao deletar', type: 'error' }); }
+    } catch { toaster.create({ title: 'Error deleting user', type: 'error' }); }
     finally { setLoading(false); }
   };
 
@@ -305,9 +306,9 @@ function UserTableRow({ user, onRefresh }: { user: UserRow; onRefresh: () => voi
       <td style={TD}>
         {editing ? (
           <VStack gap={1.5} align="stretch">
-            <Input size="sm" value={name}  onChange={e => setName(e.target.value)}  placeholder="Nome"  borderRadius="4px" />
+            <Input size="sm" value={name}  onChange={e => setName(e.target.value)}  placeholder="Name"  borderRadius="4px" />
             <Input size="sm" value={email} onChange={e => setEmail(e.target.value)} placeholder="Email" borderRadius="4px" />
-            <Input size="sm" value={phone} onChange={e => setPhone(e.target.value)} placeholder="Tel"   borderRadius="4px" />
+            <Input size="sm" value={phone} onChange={e => setPhone(e.target.value)} placeholder="Phone"   borderRadius="4px" />
           </VStack>
         ) : (
           <Box>
@@ -319,19 +320,19 @@ function UserTableRow({ user, onRefresh }: { user: UserRow; onRefresh: () => voi
       </td>
       <td style={TD}>
         <Text fontSize="12px" fontWeight="500" color="slate.600" fontFamily="heading">
-          {user.role === 'CLEANER' ? 'Profissional' : 'Cliente'}
+          {user.role === 'CLEANER' ? 'Cleaner' : 'Client'}
         </Text>
       </td>
       <td style={TD}>
         {suspended
-          ? <span style={{ fontSize: 12, fontWeight: 600, color: '#BE123C', fontFamily: 'var(--font-dm-sans,sans-serif)' }}>Suspenso até {new Date(user.suspendedUntil!).toLocaleDateString('pt-BR')}</span>
+          ? <span style={{ fontSize: 12, fontWeight: 600, color: '#BE123C', fontFamily: 'var(--font-dm-sans,sans-serif)' }}>Suspended until {new Date(user.suspendedUntil!).toLocaleDateString('en-US')}</span>
           : user.isVerified
-          ? <span style={{ fontSize: 12, fontWeight: 600, color: '#047857', fontFamily: 'var(--font-dm-sans,sans-serif)' }}>Ativo</span>
-          : <span style={{ fontSize: 12, fontWeight: 600, color: '#92400E', fontFamily: 'var(--font-dm-sans,sans-serif)' }}>Pendente</span>
+          ? <span style={{ fontSize: 12, fontWeight: 600, color: '#047857', fontFamily: 'var(--font-dm-sans,sans-serif)' }}>Active</span>
+          : <span style={{ fontSize: 12, fontWeight: 600, color: '#92400E', fontFamily: 'var(--font-dm-sans,sans-serif)' }}>Pending</span>
         }
       </td>
       <td style={TD}>
-        <Text fontSize="12px" color="slate.400" fontFamily="heading">{new Date(user.createdAt).toLocaleDateString('pt-BR')}</Text>
+        <Text fontSize="12px" color="slate.400" fontFamily="heading">{new Date(user.createdAt).toLocaleDateString('en-US')}</Text>
       </td>
       <td style={{ ...TD, textAlign: 'right' }}>
         <HStack gap={1} justify="flex-end">
@@ -384,7 +385,7 @@ function VerifRow({ v, onAction }: { v: Verification; onAction: () => void }) {
 
   const act = async (action: 'approve' | 'reject') => {
     if (action === 'reject' && !note.trim()) {
-      toaster.create({ title: 'Informe o motivo', type: 'error' }); return;
+      toaster.create({ title: 'Please provide a reason', type: 'error' }); return;
     }
     setLoad(true);
     try {
@@ -393,14 +394,14 @@ function VerifRow({ v, onAction }: { v: Verification; onAction: () => void }) {
         body: JSON.stringify({ action, note }),
       });
       if (!res.ok) throw new Error();
-      toaster.create({ title: action === 'approve' ? 'Aprovado' : 'Recusado', type: 'success' });
+      toaster.create({ title: action === 'approve' ? 'Approved' : 'Rejected', type: 'success' });
       onAction();
-    } catch { toaster.create({ title: 'Erro', type: 'error' }); }
+    } catch { toaster.create({ title: 'Error', type: 'error' }); }
     finally { setLoad(false); }
   };
 
   const statusColor = v.status === 'APPROVED' ? '#047857' : v.status === 'REJECTED' ? '#BE123C' : '#92400E';
-  const statusLabel = v.status === 'APPROVED' ? 'Aprovado' : v.status === 'REJECTED' ? 'Recusado' : 'Pendente';
+  const statusLabel = v.status === 'APPROVED' ? 'Approved' : v.status === 'REJECTED' ? 'Rejected' : 'Pending';
 
   return (
     <>
@@ -417,7 +418,7 @@ function VerifRow({ v, onAction }: { v: Verification; onAction: () => void }) {
           <span style={{ fontSize: 12, fontWeight: 600, color: statusColor, fontFamily: 'var(--font-dm-sans,sans-serif)' }}>{statusLabel}</span>
         </td>
         <td style={TD}>
-          <Text fontSize="12px" color="slate.400" fontFamily="heading">{new Date(v.createdAt).toLocaleDateString('pt-BR')}</Text>
+          <Text fontSize="12px" color="slate.400" fontFamily="heading">{new Date(v.createdAt).toLocaleDateString('en-US')}</Text>
         </td>
         <td style={{ ...TD, textAlign: 'right' }}>
           <HStack gap={2} justify="flex-end">
@@ -427,10 +428,10 @@ function VerifRow({ v, onAction }: { v: Verification; onAction: () => void }) {
             {v.status === 'PENDING' && (
               <>
                 <Button size="xs" bg="green.500" color="white" borderRadius="4px" loading={load} onClick={() => act('approve')}>
-                  <Icon as={LucideCheckCircle} w={3} h={3} mr={1} />Aprovar
+                  <Icon as={LucideCheckCircle} w={3} h={3} mr={1} />Approve
                 </Button>
                 <Button size="xs" bg="red.500" color="white" borderRadius="4px" loading={load} onClick={() => act('reject')}>
-                  <Icon as={LucideXCircle} w={3} h={3} mr={1} />Recusar
+                  <Icon as={LucideXCircle} w={3} h={3} mr={1} />Reject
                 </Button>
               </>
             )}
@@ -443,7 +444,7 @@ function VerifRow({ v, onAction }: { v: Verification; onAction: () => void }) {
             <td colSpan={5} style={{ padding: 0 }}>
               <Box p={5} bg="slate.50" borderBottom="1px solid #E2E8F0">
                 <SimpleGrid columns={{ base: 1, md: 3 }} gap={3} mb={4}>
-                  {[{ label: 'Frente do documento', url: v.frontDocUrl }, { label: 'Verso do documento', url: v.backDocUrl }, { label: 'Selfie com documento', url: v.selfieUrl }].map(img => (
+                  {[{ label: 'ID front', url: v.frontDocUrl }, { label: 'ID back', url: v.backDocUrl }, { label: 'Selfie with ID', url: v.selfieUrl }].map(img => (
                     <Box key={img.label}>
                       <Text fontSize="10.5px" fontWeight="700" color="slate.400" fontFamily="heading" mb={1.5} textTransform="uppercase" letterSpacing="0.06em">{img.label}</Text>
                       <a href={img.url} target="_blank" rel="noreferrer">
@@ -453,12 +454,12 @@ function VerifRow({ v, onAction }: { v: Verification; onAction: () => void }) {
                     </Box>
                   ))}
                 </SimpleGrid>
-                <Text fontSize="12px" color="slate.500" mb={3}><strong>Endereço:</strong> {v.address}</Text>
+                <Text fontSize="12px" color="slate.500" mb={3}><strong>Address:</strong> {v.address}</Text>
                 {v.status === 'PENDING' && (
                   <Box>
                     <Text fontSize="10.5px" fontWeight="700" color="slate.400" fontFamily="heading" textTransform="uppercase" letterSpacing="0.06em" mb={1.5}>Nota de recusa</Text>
                     <Textarea value={note} onChange={e => setNote(e.target.value)}
-                      placeholder="Descreva o motivo da recusa…"
+                      placeholder="Describe the reason for rejection…"
                       size="sm" borderRadius="4px" bg="white" rows={2} />
                   </Box>
                 )}
@@ -509,11 +510,11 @@ function LeadDetailRow({ lead }: { lead: LeadRow }) {
         </td>
         <td style={TD}><StatusDot status={lead.status} /></td>
         <td style={TD}>
-          <Text fontSize="12px" color="slate.400" fontFamily="heading">{new Date(lead.createdAt).toLocaleDateString('pt-BR')}</Text>
+          <Text fontSize="12px" color="slate.400" fontFamily="heading">{new Date(lead.createdAt).toLocaleDateString('en-US')}</Text>
         </td>
         <td style={TD}>
           {lead.estimatedMinPrice
-            ? <Text fontSize="12px" fontWeight="600" color="green.700">R${lead.estimatedMinPrice}–{lead.estimatedMaxPrice}</Text>
+            ? <Text fontSize="12px" fontWeight="600" color="green.700">${lead.estimatedMinPrice}–{lead.estimatedMaxPrice}</Text>
             : <Text fontSize="12px" color="slate.300">—</Text>}
         </td>
         <td style={{ ...TD, textAlign: 'center' }}>
@@ -538,10 +539,10 @@ function LeadDetailRow({ lead }: { lead: LeadRow }) {
                   {convs.map(c => (
                     <HStack key={c.id} gap={4} px={3} py={2} bg="white" border="1px solid #E2E8F0">
                       <Text fontSize="12.5px" fontWeight="600" color="slate.800" fontFamily="heading" flex={1}>{c.cleaner.name || '—'}</Text>
-                      <Text fontSize="12px" color="slate.500" fontFamily="heading">{c.status === 'active' ? 'Ativo' : 'Encerrado'}</Text>
-                      <Text fontSize="11px" color="slate.400">Lead fee R${c.leadFee}</Text>
+                      <Text fontSize="12px" color="slate.500" fontFamily="heading">{c.status === 'active' ? 'Active' : 'Closed'}</Text>
+                      <Text fontSize="11px" color="slate.400">Lead fee $${c.leadFee}</Text>
                       <Text fontSize="11px" fontWeight="600" color={c.feeStatus === 'charged' ? 'green.600' : 'slate.400'}>
-                        {c.feeStatus === 'charged' ? 'Cobrado' : 'Pendente'}
+                        {c.feeStatus === 'charged' ? 'Charged' : 'Pending'}
                       </Text>
                     </HStack>
                   ))}
@@ -549,7 +550,7 @@ function LeadDetailRow({ lead }: { lead: LeadRow }) {
                 {lead.review && (
                   <HStack gap={3} mt={3} p={3} bg="white" border="1px solid #FDE68A">
                     <Stars n={lead.review.rating} />
-                    <Text fontSize="12px" color="slate.600">{lead.review.comment || 'Sem comentário'}</Text>
+                    <Text fontSize="12px" color="slate.600">{lead.review.comment || 'No comment'}</Text>
                   </HStack>
                 )}
               </Box>
@@ -697,7 +698,7 @@ export default function AdminPage() {
 
   if (authStatus === 'loading') return (
     <Flex h="100vh" align="center" justify="center" bg="slate.50">
-      <Text color="slate.400" fontFamily="heading">Carregando…</Text>
+      <Text color="slate.400" fontFamily="heading">Loading…</Text>
     </Flex>
   );
 
@@ -718,18 +719,18 @@ export default function AdminPage() {
         {/* ══ VISÃO GERAL ══ */}
         {tab === 'overview' && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.15 }}>
-            <PageHeader title="Visão Geral" sub="Resumo operacional da plataforma" />
+            <PageHeader title="Overview" sub="Platform operational summary" />
 
             {/* Stats strip */}
             <StatStrip items={[
-              { label: 'Total usuários',        value: loadingStats ? '…' : stats?.users.total ?? 0 },
-              { label: 'Clientes',              value: loadingStats ? '…' : stats?.users.totalClients ?? 0 },
-              { label: 'Profissionais',         value: loadingStats ? '…' : stats?.users.totalCleaners ?? 0 },
-              { label: 'Verificados',           value: loadingStats ? '…' : stats?.users.verifiedCleaners ?? 0, accent: true },
-              { label: 'Total pedidos',         value: loadingStats ? '…' : totalLeads,                          onClick: () => setTab('leads') },
-              { label: 'Concluídos',            value: loadingStats ? '…' : stats?.leads?.COMPLETED ?? 0,        accent: true, onClick: () => { setTab('leads'); setLeadStatus('COMPLETED'); } },
-              { label: 'Avaliação média',       value: loadingStats ? '…' : `${(stats?.reviews.avgRating ?? 0).toFixed(1)}★` },
-              { label: 'Verif. pendentes',      value: loadingStats ? '…' : stats?.verifications.pending ?? 0,   onClick: () => setTab('verifications') },
+              { label: 'Total users',        value: loadingStats ? '…' : stats?.users.total ?? 0 },
+              { label: 'Clients',              value: loadingStats ? '…' : stats?.users.totalClients ?? 0 },
+              { label: 'Cleaners',         value: loadingStats ? '…' : stats?.users.totalCleaners ?? 0 },
+              { label: 'Verified',           value: loadingStats ? '…' : stats?.users.verifiedCleaners ?? 0, accent: true },
+              { label: 'Total bookings',         value: loadingStats ? '…' : totalLeads,                          onClick: () => setTab('leads') },
+              { label: 'Completed',            value: loadingStats ? '…' : stats?.leads?.COMPLETED ?? 0,        accent: true, onClick: () => { setTab('leads'); setLeadStatus('COMPLETED'); } },
+              { label: 'Avg. rating',       value: loadingStats ? '…' : `${(stats?.reviews.avgRating ?? 0).toFixed(1)}★` },
+              { label: 'Pending verifs',      value: loadingStats ? '…' : stats?.verifications.pending ?? 0,   onClick: () => setTab('verifications') },
             ]} />
 
             {/* Detail rows */}
@@ -740,7 +741,7 @@ export default function AdminPage() {
                 <Box borderRight={{ lg: '1px solid #E2E8F0' }}>
                   <Box px={5} py={3} borderBottom="1px solid #E2E8F0" bg="white">
                     <Text fontSize="11px" fontWeight="700" color="slate.400" fontFamily="heading" textTransform="uppercase" letterSpacing="0.07em">
-                      Atividade recente
+                      Recent activity
                     </Text>
                   </Box>
                   <Box bg="white">
@@ -759,14 +760,14 @@ export default function AdminPage() {
                             {l.serviceType} — {l.client.name || '?'}
                           </Text>
                           <Text fontSize="11px" color="slate.400">
-                            {l.cleaner ? `Atendido por ${l.cleaner.name}` : 'Aguardando profissional'}
+                            {l.cleaner ? `Handled by ${l.cleaner.name}` : 'Awaiting a cleaner'}
                           </Text>
                         </Box>
                         <StatusDot status={l.status} />
                       </HStack>
                     ))}
                     {!stats?.recentLeads?.length && (
-                      <Box px={5} py={6}><Text fontSize="13px" color="slate.300" fontFamily="heading">Sem dados</Text></Box>
+                      <Box px={5} py={6}><Text fontSize="13px" color="slate.300" fontFamily="heading">No data</Text></Box>
                     )}
                   </Box>
                 </Box>
@@ -775,7 +776,7 @@ export default function AdminPage() {
                 <Box>
                   <Box px={5} py={3} borderBottom="1px solid #E2E8F0" bg="white">
                     <Text fontSize="11px" fontWeight="700" color="slate.400" fontFamily="heading" textTransform="uppercase" letterSpacing="0.07em">
-                      Top Profissionais
+                      Top Cleaners
                     </Text>
                   </Box>
                   <Box bg="white">
@@ -798,7 +799,7 @@ export default function AdminPage() {
                             <Text fontSize="13px" fontWeight="500" color="slate.800" fontFamily="heading" lineClamp={1}>{c.cleaner.name || '—'}</Text>
                             {c.cleaner.isVerified && <Icon as={LucideCheckCircle2} w="12px" h="12px" color="green.500" />}
                           </HStack>
-                          <Text fontSize="11px" color="slate.400">{c.totalLeads} pedidos</Text>
+                          <Text fontSize="11px" color="slate.400">{c.totalLeads} bookings</Text>
                         </Box>
                         <HStack gap={1}>
                           <Text fontSize="13px" fontWeight="700" color="#F59E0B">★</Text>
@@ -807,7 +808,7 @@ export default function AdminPage() {
                       </HStack>
                     ))}
                     {!stats?.topCleaners?.length && (
-                      <Box px={5} py={6}><Text fontSize="13px" color="slate.300" fontFamily="heading">Sem dados</Text></Box>
+                      <Box px={5} py={6}><Text fontSize="13px" color="slate.300" fontFamily="heading">No data</Text></Box>
                     )}
                   </Box>
                 </Box>
@@ -818,7 +819,7 @@ export default function AdminPage() {
               <Box mt={0} border="1px solid #E2E8F0" borderTop="none" bg="white">
                 <Box px={5} py={3} borderBottom="1px solid #E2E8F0">
                   <Text fontSize="11px" fontWeight="700" color="slate.400" fontFamily="heading" textTransform="uppercase" letterSpacing="0.07em">
-                    Pedidos por status
+                    Bookings by status
                   </Text>
                 </Box>
                 <HStack gap={0} px={5} py={4} flexWrap="wrap">
@@ -853,13 +854,13 @@ export default function AdminPage() {
         {/* ══ PEDIDOS ══ */}
         {tab === 'leads' && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.15 }}>
-            <PageHeader title="Pedidos" sub={`${leadsTotal} pedidos no total`}>
+            <PageHeader title="Bookings" sub={`${leadsTotal} bookings total`}>
               <HStack gap={3}>
                 <Box position="relative">
                   <Icon as={LucideSearch} w="13px" h="13px" color="slate.400"
                     position="absolute" left="10px" top="50%" style={{ transform: 'translateY(-50%)' }} />
                   <Input value={leadSearch} onChange={e => { setLeadSearch(e.target.value); setLeadPage(0); }}
-                    placeholder="Buscar…" size="sm" pl="30px" borderRadius="4px" w="220px" fontSize="13px" fontFamily="heading" />
+                    placeholder="Search…" size="sm" pl="30px" borderRadius="4px" w="220px" fontSize="13px" fontFamily="heading" />
                 </Box>
               </HStack>
             </PageHeader>
@@ -867,7 +868,7 @@ export default function AdminPage() {
             {/* Status filter bar */}
             <Box bg="white" borderBottom="1px solid #E2E8F0" px={8} py={0}>
               <HStack gap={0} overflowX="auto">
-                {[{ key: '', label: 'Todos', count: totalLeads }, ...Object.entries(LEAD_STATUS).map(([k, v]) => ({ key: k, label: v.label, count: stats?.leads?.[k] ?? 0, dot: v.dot }))].map(item => (
+                {[{ key: '', label: 'All', count: totalLeads }, ...Object.entries(LEAD_STATUS).map(([k, v]) => ({ key: k, label: v.label, count: stats?.leads?.[k] ?? 0, dot: v.dot }))].map(item => (
                   <Box
                     key={item.key}
                     as="button"
@@ -893,20 +894,20 @@ export default function AdminPage() {
 
             <Box>
               {loadingLeads ? (
-                <Box p={12} textAlign="center"><Text color="slate.400" fontFamily="heading">Carregando…</Text></Box>
+                <Box p={12} textAlign="center"><Text color="slate.400" fontFamily="heading">Loading…</Text></Box>
               ) : leads.length === 0 ? (
-                <Box p={12} textAlign="center"><Text color="slate.300" fontFamily="heading">Nenhum pedido encontrado</Text></Box>
+                <Box p={12} textAlign="center"><Text color="slate.300" fontFamily="heading">No bookings found</Text></Box>
               ) : (
                 <Box overflowX="auto" bg="white">
                   <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                     <thead><tr>
                       <th style={TH}>ID</th>
-                      <th style={TH}>Serviço</th>
-                      <th style={TH}>Cliente</th>
-                      <th style={TH}>Profissional</th>
+                      <th style={TH}>Service</th>
+                      <th style={TH}>Client</th>
+                      <th style={TH}>Cleaner</th>
                       <th style={TH}>Status</th>
-                      <th style={TH}>Data</th>
-                      <th style={TH}>Valor</th>
+                      <th style={TH}>Date</th>
+                      <th style={TH}>Amount</th>
                       <th style={{ ...TH, textAlign: 'center' }}>Convs.</th>
                     </tr></thead>
                     <tbody>{leads.map(l => <LeadDetailRow key={l.id} lead={l} />)}</tbody>
@@ -917,13 +918,13 @@ export default function AdminPage() {
               {leadsTotal > PAGE_SIZE && (
                 <Flex align="center" justify="space-between" px={6} py={3} bg="white" borderTop="1px solid #E2E8F0">
                   <Text fontSize="12px" color="slate.400" fontFamily="heading">
-                    {leadPage * PAGE_SIZE + 1}–{Math.min((leadPage + 1) * PAGE_SIZE, leadsTotal)} de {leadsTotal}
+                    {leadPage * PAGE_SIZE + 1}–{Math.min((leadPage + 1) * PAGE_SIZE, leadsTotal)} of {leadsTotal}
                   </Text>
                   <HStack gap={2}>
                     <Button size="xs" variant="ghost" borderRadius="4px" disabled={leadPage === 0} onClick={() => setLeadPage(p => p - 1)}>
                       <Icon as={LucideChevronLeft} w={3.5} h={3.5} />
                     </Button>
-                    <Text fontSize="12px" fontFamily="heading" color="slate.600" fontWeight="600">Pág. {leadPage + 1} de {Math.ceil(leadsTotal / PAGE_SIZE)}</Text>
+                    <Text fontSize="12px" fontFamily="heading" color="slate.600" fontWeight="600">Page {leadPage + 1} of {Math.ceil(leadsTotal / PAGE_SIZE)}</Text>
                     <Button size="xs" variant="ghost" borderRadius="4px" disabled={(leadPage + 1) * PAGE_SIZE >= leadsTotal} onClick={() => setLeadPage(p => p + 1)}>
                       <Icon as={LucideChevronRight} w={3.5} h={3.5} />
                     </Button>
@@ -937,7 +938,7 @@ export default function AdminPage() {
         {/* ══ VERIFICAÇÕES ══ */}
         {tab === 'verifications' && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.15 }}>
-            <PageHeader title="Verificações" sub="Documentos enviados por profissionais" />
+            <PageHeader title="Verifications" sub="Documents submitted by cleaners" />
 
             <Box bg="white" borderBottom="1px solid #E2E8F0" px={8} py={0}>
               <HStack gap={0}>
@@ -950,7 +951,7 @@ export default function AdminPage() {
                       fontWeight={verifFilter === f ? '600' : '400'}
                       fontSize="13px" fontFamily="heading" transition="all 0.12s" _hover={{ color: 'slate.800' }}
                       onClick={() => setVF(f)}>
-                      {f === 'ALL' ? `Todas (${count})` : f === 'PENDING' ? `Pendentes (${count})` : f === 'APPROVED' ? `Aprovadas (${count})` : `Recusadas (${count})`}
+                      {f === 'ALL' ? `All (${count})` : f === 'PENDING' ? `Pending (${count})` : f === 'APPROVED' ? `Approved (${count})` : `Rejected (${count})`}
                     </Box>
                   );
                 })}
@@ -959,18 +960,18 @@ export default function AdminPage() {
 
             <Box bg="white">
               {loadingVerifs ? (
-                <Box p={12} textAlign="center"><Text color="slate.400" fontFamily="heading">Carregando…</Text></Box>
+                <Box p={12} textAlign="center"><Text color="slate.400" fontFamily="heading">Loading…</Text></Box>
               ) : filteredVerifs.length === 0 ? (
-                <Box p={12} textAlign="center"><Text color="slate.300" fontFamily="heading">Nenhuma verificação encontrada</Text></Box>
+                <Box p={12} textAlign="center"><Text color="slate.300" fontFamily="heading">No verifications found</Text></Box>
               ) : (
                 <Box overflowX="auto">
                   <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                     <thead><tr>
-                      <th style={TH}>Profissional</th>
-                      <th style={TH}>Documento</th>
+                      <th style={TH}>Cleaner</th>
+                      <th style={TH}>Document</th>
                       <th style={TH}>Status</th>
-                      <th style={TH}>Data</th>
-                      <th style={{ ...TH, textAlign: 'right' }}>Ações</th>
+                      <th style={TH}>Date</th>
+                      <th style={{ ...TH, textAlign: 'right' }}>Actions</th>
                     </tr></thead>
                     <tbody>{filteredVerifs.map(v => <VerifRow key={v.id} v={v} onAction={fetchVerifs} />)}</tbody>
                   </table>
@@ -983,12 +984,12 @@ export default function AdminPage() {
         {/* ══ USUÁRIOS ══ */}
         {tab === 'users' && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.15 }}>
-            <PageHeader title="Usuários" sub={`${users.length} cadastros`}>
+            <PageHeader title="Users" sub={`${users.length} accounts`}>
               <Box position="relative">
                 <Icon as={LucideSearch} w="13px" h="13px" color="slate.400"
                   position="absolute" left="10px" top="50%" style={{ transform: 'translateY(-50%)' }} />
                 <Input value={userSearch} onChange={e => setUserSearch(e.target.value)}
-                  placeholder="Buscar…" size="sm" pl="30px" borderRadius="4px" w="220px" fontSize="13px" fontFamily="heading" />
+                  placeholder="Search…" size="sm" pl="30px" borderRadius="4px" w="220px" fontSize="13px" fontFamily="heading" />
               </Box>
             </PageHeader>
 
@@ -1001,7 +1002,7 @@ export default function AdminPage() {
                     fontWeight={roleFilter === r ? '600' : '400'}
                     fontSize="13px" fontFamily="heading" transition="all 0.12s" _hover={{ color: 'slate.800' }}
                     onClick={() => setRoleFilter(r)}>
-                    {r === 'ALL' ? `Todos (${users.length})` : r === 'CLIENT' ? `Clientes (${users.filter(u => u.role === 'CLIENT').length})` : `Profissionais (${users.filter(u => u.role === 'CLEANER').length})`}
+                    {r === 'ALL' ? `All (${users.length})` : r === 'CLIENT' ? `Clients (${users.filter(u => u.role === 'CLIENT').length})` : `Cleaners (${users.filter(u => u.role === 'CLEANER').length})`}
                   </Box>
                 ))}
               </HStack>
@@ -1009,18 +1010,18 @@ export default function AdminPage() {
 
             <Box bg="white">
               {loadingUsers ? (
-                <Box p={12} textAlign="center"><Text color="slate.400" fontFamily="heading">Carregando…</Text></Box>
+                <Box p={12} textAlign="center"><Text color="slate.400" fontFamily="heading">Loading…</Text></Box>
               ) : filteredUsers.length === 0 ? (
-                <Box p={12} textAlign="center"><Text color="slate.300" fontFamily="heading">Nenhum usuário encontrado</Text></Box>
+                <Box p={12} textAlign="center"><Text color="slate.300" fontFamily="heading">No users found</Text></Box>
               ) : (
                 <Box overflowX="auto">
                   <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                     <thead><tr>
-                      <th style={TH}>Usuário</th>
-                      <th style={TH}>Tipo</th>
+                      <th style={TH}>User</th>
+                      <th style={TH}>Type</th>
                       <th style={TH}>Status</th>
-                      <th style={TH}>Cadastro</th>
-                      <th style={{ ...TH, textAlign: 'right' }}>Ações</th>
+                      <th style={TH}>Joined</th>
+                      <th style={{ ...TH, textAlign: 'right' }}>Actions</th>
                     </tr></thead>
                     <tbody>{filteredUsers.map(u => <UserTableRow key={u.id} user={u} onRefresh={fetchUsers} />)}</tbody>
                   </table>
@@ -1034,8 +1035,8 @@ export default function AdminPage() {
         {tab === 'reviews' && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.15 }}>
             <PageHeader
-              title="Avaliações"
-              sub={`${reviews.length} avaliações · média ${(reviews.length ? reviews.reduce((a, r) => a + r.rating, 0) / reviews.length : 0).toFixed(1)}★`}
+              title="Reviews"
+              sub={`${reviews.length} reviews · avg ${(reviews.length ? reviews.reduce((a, r) => a + r.rating, 0) / reviews.length : 0).toFixed(1)}★`}
             />
 
             <Box bg="white" borderBottom="1px solid #E2E8F0" px={8} py={0}>
@@ -1045,7 +1046,7 @@ export default function AdminPage() {
                   color={revFilter === 0 ? 'brand.600' : 'slate.500'} fontWeight={revFilter === 0 ? '600' : '400'}
                   fontSize="13px" fontFamily="heading" transition="all 0.12s" _hover={{ color: 'slate.800' }}
                   onClick={() => setRevFilter(0)}>
-                  Todas ({reviews.length})
+                  All ({reviews.length})
                 </Box>
                 {[5, 4, 3, 2, 1].map(star => (
                   <Box key={star} as="button" px={4} py={3} cursor="pointer"
@@ -1061,19 +1062,19 @@ export default function AdminPage() {
 
             <Box bg="white">
               {loadingRevs ? (
-                <Box p={12} textAlign="center"><Text color="slate.400" fontFamily="heading">Carregando…</Text></Box>
+                <Box p={12} textAlign="center"><Text color="slate.400" fontFamily="heading">Loading…</Text></Box>
               ) : filteredRevs.length === 0 ? (
-                <Box p={12} textAlign="center"><Text color="slate.300" fontFamily="heading">Nenhuma avaliação encontrada</Text></Box>
+                <Box p={12} textAlign="center"><Text color="slate.300" fontFamily="heading">No reviews found</Text></Box>
               ) : (
                 <Box overflowX="auto">
                   <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                     <thead><tr>
-                      <th style={TH}>Cliente</th>
-                      <th style={TH}>Profissional</th>
-                      <th style={TH}>Serviço</th>
-                      <th style={TH}>Nota</th>
-                      <th style={TH}>Comentário</th>
-                      <th style={TH}>Data</th>
+                      <th style={TH}>Client</th>
+                      <th style={TH}>Cleaner</th>
+                      <th style={TH}>Service</th>
+                      <th style={TH}>Rating</th>
+                      <th style={TH}>Comment</th>
+                      <th style={TH}>Date</th>
                     </tr></thead>
                     <tbody>
                       {filteredRevs.map(r => (
@@ -1101,7 +1102,7 @@ export default function AdminPage() {
                           </td>
                           <td style={TD}>
                             <Text fontSize="12px" color="slate.400" fontFamily="heading" whiteSpace="nowrap">
-                              {new Date(r.createdAt).toLocaleDateString('pt-BR')}
+                              {new Date(r.createdAt).toLocaleDateString('en-US')}
                             </Text>
                           </td>
                         </tr>
@@ -1117,9 +1118,19 @@ export default function AdminPage() {
         {/* ══ PREÇOS DOS PLANOS ══ */}
         {tab === 'pricing' && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.15 }}>
-            <PageHeader title="Preços dos Planos" sub="Visualize e altere os valores cobrados mensalmente" />
+            <PageHeader title="Plan Pricing" sub="View and update monthly subscription prices" />
             <Box px={8} py={6} maxW="720px">
               <PlanPricingPanel />
+            </Box>
+          </motion.div>
+        )}
+
+        {/* ══ LEAD PRICES ══ */}
+        {tab === 'lead-pricing' && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.15 }}>
+            <PageHeader title="Lead Prices" sub="Configure base lead fees and dynamic multipliers" />
+            <Box px={8} py={6} maxW="760px">
+              <LeadPricingPanel />
             </Box>
           </motion.div>
         )}
@@ -1127,7 +1138,7 @@ export default function AdminPage() {
         {/* ══ MEUS DADOS ══ */}
         {tab === 'settings' && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.15 }}>
-            <PageHeader title="Meus Dados" sub="Atualize suas informações de administrador" />
+            <PageHeader title="My Settings" sub="Update your administrator information" />
             <Box px={8} py={6} maxW="600px">
               <AdminSettingsForm />
             </Box>
@@ -1152,7 +1163,7 @@ function AdminSettingsForm() {
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     if (password && password !== confirm) {
-      toaster.create({ title: 'As senhas não coincidem', type: 'error' }); return;
+      toaster.create({ title: 'Passwords do not match', type: 'error' }); return;
     }
     setSaving(true);
     try {
@@ -1165,11 +1176,11 @@ function AdminSettingsForm() {
       });
       if (!res.ok) {
         const err = await res.json();
-        throw new Error(err.error ?? 'Erro ao salvar');
+        throw new Error(err.error ?? 'Error saving');
       }
       await update({ name, email });
       setPassword(''); setConfirm('');
-      toaster.create({ title: 'Dados atualizados!', type: 'success' });
+      toaster.create({ title: 'Profile updated!', type: 'success' });
     } catch (e: any) {
       toaster.create({ title: e.message, type: 'error' });
     } finally { setSaving(false); }
@@ -1183,7 +1194,7 @@ function AdminSettingsForm() {
           <Icon as={LucideUser} w={4} h={4} color="brand.500" />
           <Text fontSize="10.5px" fontWeight={700} color="#94A3B8"
             textTransform="uppercase" letterSpacing="0.07em" fontFamily="heading">
-            Informações pessoais
+            Personal information
           </Text>
         </HStack>
       </Box>
@@ -1194,10 +1205,10 @@ function AdminSettingsForm() {
           {/* Name */}
           <Box>
             <Text fontSize="xs" fontWeight="700" color="slate.500" mb={2}
-              textTransform="uppercase" letterSpacing="wider">Nome</Text>
+              textTransform="uppercase" letterSpacing="wider">Name</Text>
             <Input
               value={name} onChange={e => setName(e.target.value)}
-              placeholder="Seu nome"
+              placeholder="Your name"
               bg="slate.50" border="1px solid" borderColor="slate.200"
               borderRadius="4px" h="11" fontSize="sm"
               _focus={{ bg: 'white', borderColor: 'brand.300' }} required
@@ -1221,15 +1232,15 @@ function AdminSettingsForm() {
           <Box borderTop="1px solid #E2E8F0" pt={4}>
             <Text fontSize="10.5px" fontWeight={700} color="#94A3B8"
               textTransform="uppercase" letterSpacing="0.07em" fontFamily="heading" mb={4}>
-              ALTERAR SENHA (opcional)
+              CHANGE PASSWORD (optional)
             </Text>
             <VStack gap={4} align="stretch">
               <Box>
                 <Text fontSize="xs" fontWeight="700" color="slate.500" mb={2}
-                  textTransform="uppercase" letterSpacing="wider">Nova senha</Text>
+                  textTransform="uppercase" letterSpacing="wider">New password</Text>
                 <Input
                   type="password" value={password} onChange={e => setPassword(e.target.value)}
-                  placeholder="Deixe em branco para não alterar"
+                  placeholder="Leave blank to keep current password"
                   bg="slate.50" border="1px solid" borderColor="slate.200"
                   borderRadius="4px" h="11" fontSize="sm"
                   _focus={{ bg: 'white', borderColor: 'brand.300' }}
@@ -1237,10 +1248,10 @@ function AdminSettingsForm() {
               </Box>
               <Box>
                 <Text fontSize="xs" fontWeight="700" color="slate.500" mb={2}
-                  textTransform="uppercase" letterSpacing="wider">Confirmar senha</Text>
+                  textTransform="uppercase" letterSpacing="wider">Confirm password</Text>
                 <Input
                   type="password" value={confirm} onChange={e => setConfirm(e.target.value)}
-                  placeholder="Repita a nova senha"
+                  placeholder="Repeat new password"
                   bg="slate.50" border="1px solid" borderColor="slate.200"
                   borderRadius="4px" h="11" fontSize="sm"
                   _focus={{ bg: 'white', borderColor: 'brand.300' }}
@@ -1254,10 +1265,10 @@ function AdminSettingsForm() {
             type="submit"
             bg="#1A7FA0" color="white" borderRadius="4px" fontWeight="bold"
             _hover={{ bg: '#15698A' }} transition="background 0.15s"
-            loading={saving} loadingText="Salvando…"
+            loading={saving} loadingText="Saving…"
             alignSelf="flex-start" px={6}>
             <Icon as={LucideSave} w={4} h={4} mr={2} />
-            Salvar alterações
+            Save changes
           </Button>
 
         </VStack>
@@ -1273,15 +1284,15 @@ interface PlanConfigRow { id: string; price: number; updatedAt?: string }
 const PLAN_META: Record<string, { name: string; color: string; badge: string; perks: string[] }> = {
   BASIC: {
     name: 'Basic', color: '#1A7FA0', badge: 'Popular',
-    perks: ['Wave 1 + Wave 2', '+10 pontos no ranking CFS', 'Perfil destacado'],
+    perks: ['Wave 1 + Wave 2', '+10 CFS ranking points', 'Featured profile'],
   },
   PREMIUM: {
-    name: 'Premium', color: '#7C3AED', badge: 'Recomendado',
-    perks: ['Wave 1 + Wave 2 (prioridade)', '+20 pontos no ranking CFS', 'Badge Premium no perfil', 'Suporte prioritário'],
+    name: 'Premium', color: '#7C3AED', badge: 'Recommended',
+    perks: ['Wave 1 + Wave 2 (priority)', '+20 CFS ranking points', 'Premium badge on profile', 'Priority support'],
   },
   PRO: {
-    name: 'Pro', color: '#D97706', badge: 'Máximo',
-    perks: ['Topo do ranking CFS', '+30 pontos garantidos', 'Instant Book elegível', 'Badge Pro exclusivo', 'Analytics avançado'],
+    name: 'Pro', color: '#D97706', badge: 'Max',
+    perks: ['Top of CFS ranking', '+30 guaranteed points', 'Instant Book eligible', 'Exclusive Pro badge', 'Advanced analytics'],
   },
 };
 
@@ -1297,7 +1308,7 @@ function PlanPricingPanel() {
     try {
       const r = await fetch('/api/admin/plan-config');
       if (r.ok) { const data = await r.json(); if (Array.isArray(data)) setConfigs(data); }
-      else toaster.create({ title: 'Erro ao carregar preços', type: 'error' });
+      else toaster.create({ title: 'Error loading prices', type: 'error' });
     } finally { setLoading(false); }
   };
 
@@ -1309,7 +1320,7 @@ function PlanPricingPanel() {
   const save = async (id: string) => {
     const price = parseFloat(draft);
     if (!price || price < 1 || isNaN(price)) {
-      toaster.create({ title: 'Informe um valor válido (mínimo R$1)', type: 'error' }); return;
+      toaster.create({ title: 'Enter a valid amount (minimum $1)', type: 'error' }); return;
     }
     setSaving(true);
     try {
@@ -1317,20 +1328,20 @@ function PlanPricingPanel() {
         method: 'PATCH', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id, price }),
       });
-      if (!res.ok) throw new Error((await res.json()).error ?? 'Erro');
+      if (!res.ok) throw new Error((await res.json()).error ?? 'Error');
       const updated: PlanConfigRow = await res.json();
       setConfigs(prev => prev.map(c => c.id === id ? updated : c));
       setEditing(null);
-      toaster.create({ title: `Preço do plano ${PLAN_META[id]?.name ?? id} atualizado`, type: 'success' });
+      toaster.create({ title: `${PLAN_META[id]?.name ?? id} plan price updated`, type: 'success' });
     } catch (e: any) {
-      toaster.create({ title: e.message ?? 'Erro ao salvar', type: 'error' });
+      toaster.create({ title: e.message ?? 'Error saving', type: 'error' });
     } finally { setSaving(false); }
   };
 
   if (loading) {
     return (
       <Box bg="white" border="1px solid #E2E8F0" p={12} textAlign="center">
-        <Text fontSize="13px" color="slate.400" fontFamily="heading">Carregando preços…</Text>
+        <Text fontSize="13px" color="slate.400" fontFamily="heading">Loading prices…</Text>
       </Box>
     );
   }
@@ -1366,15 +1377,15 @@ function PlanPricingPanel() {
                   </Text>
                 </HStack>
                 <Text fontSize="11px" color="slate.400" fontFamily="heading">
-                  Cobrado mensalmente via Stripe
-                  {row?.updatedAt && ` · atualizado ${new Date(row.updatedAt).toLocaleDateString('pt-BR')}`}
+                  Billed monthly via Stripe
+                  {row?.updatedAt && ` · updated ${new Date(row.updatedAt).toLocaleDateString('en-US')}`}
                 </Text>
               </Box>
 
               {/* Price / edit */}
               {isEdit ? (
                 <HStack gap={2} flexShrink={0}>
-                  <Text fontSize="14px" color="slate.500" fontWeight="700" fontFamily="heading">R$</Text>
+                  <Text fontSize="14px" color="slate.500" fontWeight="700" fontFamily="heading">$</Text>
                   <Input
                     type="number" value={draft} min={1} step={1}
                     onChange={e => setDraft(e.target.value)}
@@ -1385,11 +1396,11 @@ function PlanPricingPanel() {
                       if (e.key === 'Escape') cancelEdit();
                     }}
                   />
-                  <Text fontSize="12px" color="slate.400" fontFamily="heading">/mês</Text>
+                  <Text fontSize="12px" color="slate.400" fontFamily="heading">/mo</Text>
                   <Button size="sm" bg="brand.500" color="white" borderRadius="4px"
                     loading={saving} loadingText="…" onClick={() => save(planId)}
                     fontFamily="heading" fontWeight="600" fontSize="12px" px={3}>
-                    <Icon as={LucideSave} w={3.5} h={3.5} mr={1.5} />Salvar
+                    <Icon as={LucideSave} w={3.5} h={3.5} mr={1.5} />Save
                   </Button>
                   <Button size="sm" variant="ghost" borderRadius="4px" color="slate.400"
                     onClick={cancelEdit} px={2}>
@@ -1401,15 +1412,15 @@ function PlanPricingPanel() {
                   <Box textAlign="right">
                     <Text fontSize="26px" fontWeight="800" fontFamily="heading"
                       letterSpacing="-0.04em" color="slate.900" lineHeight={1}>
-                      R${row?.price ?? '—'}
-                      <Text as="span" fontSize="13px" fontWeight="500" color="slate.400">/mês</Text>
+                      ${row?.price ?? '—'}
+                      <Text as="span" fontSize="13px" fontWeight="500" color="slate.400">/mo</Text>
                     </Text>
                   </Box>
                   <Button size="sm" variant="outline" borderColor="slate.200" color="slate.500"
                     borderRadius="4px" fontWeight="600" fontSize="12px" fontFamily="heading"
                     _hover={{ borderColor: 'brand.300', color: 'brand.600', bg: 'brand.50' }}
                     onClick={() => startEdit({ id: planId, price: row?.price ?? 0 })}>
-                    <Icon as={LucidePencil} w={3.5} h={3.5} mr={1.5} />Alterar
+                    <Icon as={LucidePencil} w={3.5} h={3.5} mr={1.5} />Edit
                   </Button>
                 </HStack>
               )}
@@ -1436,11 +1447,11 @@ function PlanPricingPanel() {
           <Text fontSize="16px" flexShrink={0}>✅</Text>
           <VStack gap={1} align="start">
             <Text fontSize="12.5px" fontWeight="700" color="#166534" fontFamily="heading">
-              Altere apenas aqui — o Stripe usa o preço do sistema automaticamente
+              Edit prices here only — Stripe uses this price automatically
             </Text>
             <Text fontSize="12px" color="#166534" fontFamily="heading" lineHeight={1.6}>
-              Novos assinantes pagam sempre o valor atual desta página. Não é preciso alterar nada no Stripe.
-              Assinaturas <strong>já ativas</strong> mantêm o valor original do momento da contratação (comportamento padrão de assinaturas).
+              New subscribers always pay the current price on this page. No changes needed in Stripe.
+              <strong>Active subscriptions</strong> keep their original price (standard subscription behavior).
             </Text>
           </VStack>
         </HStack>
@@ -1451,7 +1462,338 @@ function PlanPricingPanel() {
         <Button size="sm" variant="ghost" color="slate.400" borderRadius="4px" fontFamily="heading"
           _hover={{ color: '#1A7FA0', bg: 'rgba(26,127,160,0.06)' }}
           onClick={load}>
-          <Icon as={LucideRefreshCw} w={3.5} h={3.5} mr={1.5} />Atualizar
+          <Icon as={LucideRefreshCw} w={3.5} h={3.5} mr={1.5} />Refresh
+        </Button>
+      </Flex>
+
+    </VStack>
+  );
+}
+
+// ─── LeadPricingPanel ─────────────────────────────────────────────────────────
+
+const SERVICE_META: { id: string; label: string; range: string }[] = [
+  { id: 'standard',  label: 'Standard Clean',      range: '$8–$12' },
+  { id: 'deep',      label: 'Deep Clean',           range: '$15–$25' },
+  { id: 'post-work', label: 'Post-Construction',    range: '$25–$40' },
+  { id: 'moving',    label: 'Move In / Move Out',   range: '$25–$40' },
+];
+
+const MULTIPLIER_META: { id: string; label: string; description: string }[] = [
+  { id: 'same_day_multiplier',  label: 'Same-day urgency',  description: 'Applied when booking is < 24 h away' },
+  { id: 'recurring_multiplier', label: 'Recurring premium', description: 'Applied for weekly / bi-weekly frequency' },
+];
+
+type LeadPriceRow      = { id: string; price: number };
+type LeadPlatformRow   = { id: string; value: string };
+
+function LeadPricingPanel() {
+  const [prices,    setPrices]    = useState<LeadPriceRow[]>([]);
+  const [platform,  setPlatform]  = useState<LeadPlatformRow[]>([]);
+  const [loading,   setLoading]   = useState(true);
+  const [editId,    setEditId]    = useState<string | null>(null);
+  const [draft,     setDraft]     = useState('');
+  const [saving,    setSaving]    = useState(false);
+  const [zipsEdit,  setZipsEdit]  = useState(false);
+  const [zipsDraft, setZipsDraft] = useState('');
+
+  const load = useCallback(async () => {
+    setLoading(true);
+    try {
+      const res = await fetch('/api/admin/lead-config');
+      if (res.ok) {
+        const data = await res.json();
+        setPrices(data.prices ?? []);
+        setPlatform(data.platform ?? []);
+      }
+    } finally { setLoading(false); }
+  }, []);
+
+  useEffect(() => { load(); }, [load]);
+
+  const savePrice = async (id: string) => {
+    const price = parseFloat(draft);
+    if (isNaN(price) || price < 0) return;
+    setSaving(true);
+    try {
+      const res = await fetch('/api/admin/lead-config', {
+        method: 'PATCH', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type: 'price', id, price }),
+      });
+      if (!res.ok) throw new Error();
+      toaster.create({ title: 'Price updated', type: 'success' });
+      await load();
+      setEditId(null);
+    } catch { toaster.create({ title: 'Error saving price', type: 'error' }); }
+    finally { setSaving(false); }
+  };
+
+  const savePlatform = async (id: string, value: string) => {
+    setSaving(true);
+    try {
+      const res = await fetch('/api/admin/lead-config', {
+        method: 'PATCH', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type: 'platform', id, value }),
+      });
+      if (!res.ok) throw new Error();
+      toaster.create({ title: 'Saved', type: 'success' });
+      await load();
+      setEditId(null);
+      setZipsEdit(false);
+    } catch { toaster.create({ title: 'Error saving', type: 'error' }); }
+    finally { setSaving(false); }
+  };
+
+  const getPlatformValue = (id: string) => platform.find(p => p.id === id)?.value ?? '';
+
+  if (loading) {
+    return (
+      <VStack gap={3} align="stretch">
+        {[1, 2, 3].map(i => <Box key={i} h="56px" bg="slate.100" borderRadius="4px" style={{ animation: 'pulse 1.5s ease-in-out infinite' }} />)}
+      </VStack>
+    );
+  }
+
+  const coverageRaw = getPlatformValue('coverage_zips');
+  const coverageZips: string[] = (() => { try { return JSON.parse(coverageRaw); } catch { return []; } })();
+
+  return (
+    <VStack gap={6} align="stretch">
+
+      {/* ── Base Lead Fees ── */}
+      <Box>
+        <Text fontSize="13px" fontWeight="700" color="slate.500" fontFamily="heading"
+          letterSpacing="0.08em" textTransform="uppercase" mb={3}>
+          Base Lead Fees
+        </Text>
+        <VStack gap={0} align="stretch" border="1px solid" borderColor="slate.200">
+          {SERVICE_META.map((svc, i) => {
+            const row = prices.find(p => p.id === svc.id);
+            const isEditing = editId === svc.id;
+            return (
+              <Flex
+                key={svc.id}
+                align="center" justify="space-between"
+                px={5} py={4}
+                bg="white"
+                borderBottom={i < SERVICE_META.length - 1 ? '1px solid' : 'none'}
+                borderColor="slate.100"
+              >
+                <Box>
+                  <Text fontSize="14px" fontWeight="600" color="slate.900" fontFamily="heading">{svc.label}</Text>
+                  <Text fontSize="11px" color="slate.400" fontFamily="heading">Suggested range: {svc.range}</Text>
+                </Box>
+                {isEditing ? (
+                  <HStack gap={2}>
+                    <Text fontSize="14px" color="slate.400" fontFamily="heading">$</Text>
+                    <Input
+                      type="number" value={draft}
+                      onChange={e => setDraft(e.target.value)}
+                      w="80px" size="sm" borderRadius="4px" fontFamily="heading" fontWeight="700"
+                      autoFocus
+                      onKeyDown={e => {
+                        if (e.key === 'Enter') savePrice(svc.id);
+                        if (e.key === 'Escape') setEditId(null);
+                      }}
+                    />
+                    <Button size="sm" bg="brand.500" color="white" borderRadius="4px"
+                      loading={saving} loadingText="…" onClick={() => savePrice(svc.id)}
+                      fontFamily="heading" fontWeight="600" fontSize="12px" px={3}>
+                      <Icon as={LucideSave} w={3.5} h={3.5} mr={1.5} />Save
+                    </Button>
+                    <Button size="sm" variant="ghost" borderRadius="4px" color="slate.400"
+                      onClick={() => setEditId(null)} px={2}>
+                      <Icon as={LucideX} w={3.5} h={3.5} />
+                    </Button>
+                  </HStack>
+                ) : (
+                  <HStack gap={3}>
+                    <Text fontSize="24px" fontWeight="800" fontFamily="heading"
+                      letterSpacing="-0.04em" color="slate.900">
+                      ${row?.price ?? '—'}
+                    </Text>
+                    <Button size="sm" variant="outline" borderColor="slate.200" color="slate.500"
+                      borderRadius="4px" fontWeight="600" fontSize="12px" fontFamily="heading"
+                      _hover={{ borderColor: 'brand.300', color: 'brand.600', bg: 'brand.50' }}
+                      onClick={() => { setEditId(svc.id); setDraft(String(row?.price ?? '')); }}>
+                      <Icon as={LucidePencil} w={3.5} h={3.5} mr={1.5} />Edit
+                    </Button>
+                  </HStack>
+                )}
+              </Flex>
+            );
+          })}
+        </VStack>
+      </Box>
+
+      {/* ── Multipliers ── */}
+      <Box>
+        <Text fontSize="13px" fontWeight="700" color="slate.500" fontFamily="heading"
+          letterSpacing="0.08em" textTransform="uppercase" mb={3}>
+          Price Multipliers
+        </Text>
+        <VStack gap={0} align="stretch" border="1px solid" borderColor="slate.200">
+          {MULTIPLIER_META.map((m, i) => {
+            const current = getPlatformValue(m.id);
+            const isEditing = editId === m.id;
+            return (
+              <Flex
+                key={m.id}
+                align="center" justify="space-between"
+                px={5} py={4}
+                bg="white"
+                borderBottom={i < MULTIPLIER_META.length - 1 ? '1px solid' : 'none'}
+                borderColor="slate.100"
+              >
+                <Box>
+                  <Text fontSize="14px" fontWeight="600" color="slate.900" fontFamily="heading">{m.label}</Text>
+                  <Text fontSize="11px" color="slate.400" fontFamily="heading">{m.description}</Text>
+                </Box>
+                {isEditing ? (
+                  <HStack gap={2}>
+                    <Input
+                      type="number" step="0.1" value={draft}
+                      onChange={e => setDraft(e.target.value)}
+                      w="80px" size="sm" borderRadius="4px" fontFamily="heading" fontWeight="700"
+                      autoFocus
+                      onKeyDown={e => {
+                        if (e.key === 'Enter') savePlatform(m.id, draft);
+                        if (e.key === 'Escape') setEditId(null);
+                      }}
+                    />
+                    <Text fontSize="12px" color="slate.400" fontFamily="heading">×</Text>
+                    <Button size="sm" bg="brand.500" color="white" borderRadius="4px"
+                      loading={saving} loadingText="…" onClick={() => savePlatform(m.id, draft)}
+                      fontFamily="heading" fontWeight="600" fontSize="12px" px={3}>
+                      <Icon as={LucideSave} w={3.5} h={3.5} mr={1.5} />Save
+                    </Button>
+                    <Button size="sm" variant="ghost" borderRadius="4px" color="slate.400"
+                      onClick={() => setEditId(null)} px={2}>
+                      <Icon as={LucideX} w={3.5} h={3.5} />
+                    </Button>
+                  </HStack>
+                ) : (
+                  <HStack gap={3}>
+                    <Text fontSize="22px" fontWeight="800" fontFamily="heading"
+                      letterSpacing="-0.04em" color="slate.900">
+                      {current ? `${current}×` : '—'}
+                    </Text>
+                    <Button size="sm" variant="outline" borderColor="slate.200" color="slate.500"
+                      borderRadius="4px" fontWeight="600" fontSize="12px" fontFamily="heading"
+                      _hover={{ borderColor: 'brand.300', color: 'brand.600', bg: 'brand.50' }}
+                      onClick={() => { setEditId(m.id); setDraft(current); }}>
+                      <Icon as={LucidePencil} w={3.5} h={3.5} mr={1.5} />Edit
+                    </Button>
+                  </HStack>
+                )}
+              </Flex>
+            );
+          })}
+        </VStack>
+      </Box>
+
+      {/* ── Coverage ZIPs ── */}
+      <Box>
+        <Flex justify="space-between" align="center" mb={3}>
+          <Box>
+            <Text fontSize="13px" fontWeight="700" color="slate.500" fontFamily="heading"
+              letterSpacing="0.08em" textTransform="uppercase">
+              Coverage ZIP Codes
+            </Text>
+            <Text fontSize="11px" color="slate.400" fontFamily="heading" mt={0.5}>
+              {coverageZips.length === 0
+                ? 'Empty = all ZIP codes accepted'
+                : `${coverageZips.length} ZIP${coverageZips.length === 1 ? '' : 's'} configured`}
+            </Text>
+          </Box>
+          {!zipsEdit && (
+            <Button size="sm" variant="outline" borderColor="slate.200" color="slate.500"
+              borderRadius="4px" fontWeight="600" fontSize="12px" fontFamily="heading"
+              _hover={{ borderColor: 'brand.300', color: 'brand.600', bg: 'brand.50' }}
+              onClick={() => {
+                setZipsEdit(true);
+                setZipsDraft(coverageZips.join('\n'));
+              }}>
+              <Icon as={LucidePencil} w={3.5} h={3.5} mr={1.5} />Edit
+            </Button>
+          )}
+        </Flex>
+
+        {zipsEdit ? (
+          <VStack gap={2} align="stretch">
+            <Textarea
+              value={zipsDraft}
+              onChange={e => setZipsDraft(e.target.value)}
+              placeholder={"Enter one ZIP code per line, e.g.:\n33101\n33102\n10001"}
+              rows={6}
+              borderRadius="4px"
+              fontFamily="heading"
+              fontSize="13px"
+              bg="#F8FAFC"
+            />
+            <Text fontSize="11px" color="slate.400" fontFamily="heading">
+              One ZIP code per line. Leave empty to accept all areas.
+            </Text>
+            <HStack gap={2}>
+              <Button size="sm" bg="brand.500" color="white" borderRadius="4px"
+                loading={saving} loadingText="Saving…"
+                fontFamily="heading" fontWeight="600" fontSize="12px" px={4}
+                onClick={() => {
+                  const zips = zipsDraft
+                    .split(/[\n,\s]+/)
+                    .map(z => z.trim())
+                    .filter(z => /^\d{5}$/.test(z));
+                  savePlatform('coverage_zips', JSON.stringify(zips));
+                }}>
+                <Icon as={LucideSave} w={3.5} h={3.5} mr={1.5} />Save Coverage
+              </Button>
+              <Button size="sm" variant="ghost" borderRadius="4px" color="slate.400"
+                onClick={() => setZipsEdit(false)} px={3}>
+                Cancel
+              </Button>
+            </HStack>
+          </VStack>
+        ) : (
+          <Box border="1px solid" borderColor="slate.200" bg="white" p={4} minH="48px">
+            {coverageZips.length === 0 ? (
+              <Text fontSize="13px" color="slate.400" fontFamily="heading" fontStyle="italic">
+                All areas accepted (no restriction)
+              </Text>
+            ) : (
+              <Flex gap={2} flexWrap="wrap">
+                {coverageZips.map(z => (
+                  <Box key={z} px={2} py={0.5} bg="brand.50" border="1px solid" borderColor="brand.200">
+                    <Text fontSize="12px" fontWeight="600" color="brand.700" fontFamily="heading">{z}</Text>
+                  </Box>
+                ))}
+              </Flex>
+            )}
+          </Box>
+        )}
+      </Box>
+
+      {/* Info callout */}
+      <Box p={4} bg="#EFF6FF" border="1px solid #BFDBFE">
+        <HStack gap={3} align="start">
+          <Text fontSize="16px" flexShrink={0}>💡</Text>
+          <VStack gap={1} align="start">
+            <Text fontSize="12.5px" fontWeight="700" color="#1E40AF" fontFamily="heading">
+              How lead pricing works
+            </Text>
+            <Text fontSize="12px" color="#1E40AF" fontFamily="heading" lineHeight={1.6}>
+              The base price is charged to the cleaner who accepts the lead.
+              Same-day and recurring multipliers stack on top of the base price.
+              ZIP coverage, when configured, restricts which areas can submit leads.
+            </Text>
+          </VStack>
+        </HStack>
+      </Box>
+
+      <Flex justify="flex-end">
+        <Button size="sm" variant="ghost" color="slate.400" borderRadius="4px" fontFamily="heading"
+          _hover={{ color: '#1A7FA0', bg: 'rgba(26,127,160,0.06)' }}
+          onClick={load}>
+          <Icon as={LucideRefreshCw} w={3.5} h={3.5} mr={1.5} />Refresh
         </Button>
       </Flex>
 

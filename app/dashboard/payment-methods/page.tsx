@@ -57,7 +57,7 @@ function PaymentMethodsContent() {
 
   useEffect(() => {
     if (searchParams.get('setup') === '1') {
-      toaster.create({ title: 'Cartão adicionado com sucesso!', type: 'success' });
+      toaster.create({ title: 'Card added successfully!', type: 'success' });
     }
     fetchCards();
   }, []);
@@ -76,7 +76,7 @@ function PaymentMethodsContent() {
       const res = await fetch('/api/stripe/setup', { method: 'POST' });
       const data = await res.json();
       if (data.url) window.location.href = data.url;
-      else throw new Error(data.error ?? 'Erro');
+      else throw new Error(data.error ?? 'Error');
     } catch (e: any) {
       toaster.create({ title: e.message, type: 'error' });
       setAdding(false);
@@ -89,7 +89,7 @@ function PaymentMethodsContent() {
       const res = await fetch(`/api/stripe/payment-methods/${id}`, { method: 'DELETE' });
       if (res.ok) {
         setCards(prev => prev.filter(c => c.id !== id));
-        toaster.create({ title: 'Cartão removido', type: 'success' });
+        toaster.create({ title: 'Card removed', type: 'success' });
       } else {
         const err = await res.json();
         throw new Error(err.error);
@@ -105,7 +105,7 @@ function PaymentMethodsContent() {
       const res = await fetch(`/api/stripe/payment-methods/${id}`, { method: 'POST' });
       if (res.ok) {
         setCards(prev => prev.map(c => ({ ...c, isDefault: c.id === id })));
-        toaster.create({ title: 'Cartão padrão atualizado', type: 'success' });
+        toaster.create({ title: 'Default card updated', type: 'success' });
       } else {
         const err = await res.json();
         throw new Error(err.error);
@@ -126,19 +126,19 @@ function PaymentMethodsContent() {
           <Flex justify="space-between" align="center">
             <Box>
               <Heading size="lg" fontWeight="black" color="slate.900" fontFamily="heading">
-                Formas de pagamento
+                Payment methods
               </Heading>
               <Text color="slate.500" fontSize="sm" mt={1}>
-                Cartões salvos para cobranças automáticas de leads
+                Saved cards for automatic lead charges
               </Text>
             </Box>
             <Button
               bg="#1A7FA0" color="white" borderRadius="4px" fontWeight="bold"
               _hover={{ bg: '#15698A' }}
-              loading={adding} loadingText="Aguarde…"
+              loading={adding} loadingText="Please wait…"
               onClick={handleAdd}>
               <Icon as={LucidePlus} w={4} h={4} mr={2} />
-              Adicionar cartão
+              Add card
             </Button>
           </Flex>
 
@@ -147,10 +147,10 @@ function PaymentMethodsContent() {
             <HStack gap={3} align="start">
               <Icon as={LucideShieldCheck} w={5} h={5} color="blue.600" flexShrink={0} mt={0.5} />
               <Box>
-                <Text fontWeight="bold" color="blue.800" fontSize="sm">Como funciona</Text>
+                <Text fontWeight="bold" color="blue.800" fontSize="sm">How it works</Text>
                 <Text color="blue.700" fontSize="xs" mt={1} lineHeight="1.6">
-                  Ao aceitar um lead, o valor da taxa é cobrado automaticamente no cartão padrão.
-                  Seus dados são armazenados com segurança pelo Stripe — nunca passam pelos nossos servidores.
+                  When you accept a lead, the fee is automatically charged to your default card.
+                  Your data is stored securely by Stripe — it never passes through our servers.
                 </Text>
               </Box>
             </HStack>
@@ -167,7 +167,7 @@ function PaymentMethodsContent() {
                 textTransform="uppercase"
                 fontFamily="heading"
                 letterSpacing="0.07em">
-                CARTÕES SALVOS
+                SAVED CARDS
               </Text>
             </Box>
 
@@ -186,17 +186,17 @@ function PaymentMethodsContent() {
                   display="flex" alignItems="center" justifyContent="center">
                   <Icon as={LucideCreditCard} w={7} h={7} color="slate.400" />
                 </Box>
-                <Text color="slate.600" fontWeight="semibold">Nenhum cartão cadastrado</Text>
+                <Text color="slate.600" fontWeight="semibold">No card on file</Text>
                 <Text color="slate.400" fontSize="xs" maxW="280px">
-                  Adicione um cartão para aceitar leads sem precisar pagar manualmente cada vez.
+                  Add a card to accept leads without having to pay manually each time.
                 </Text>
                 <Button
                   mt={2} bg="#1A7FA0" color="white" borderRadius="4px" fontWeight="bold"
                   _hover={{ bg: '#15698A' }}
-                  loading={adding} loadingText="Aguarde…"
+                  loading={adding} loadingText="Please wait…"
                   onClick={handleAdd}>
                   <Icon as={LucidePlus} w={4} h={4} mr={2} />
-                  Adicionar cartão
+                  Add card
                 </Button>
               </VStack>
             ) : (
@@ -239,12 +239,12 @@ function PaymentMethodsContent() {
                                         fontWeight: 700,
                                         color: '#fff',
                                       }}>
-                                      Padrão
+                                      Default
                                     </Text>
                                   )}
                                 </HStack>
                                 <Text fontSize="xs" color="slate.400" mt={0.5}>
-                                  {BRAND_LABELS[card.brand] ?? card.brand} · expira {String(card.expMonth).padStart(2, '0')}/{String(card.expYear).slice(-2)}
+                                  {BRAND_LABELS[card.brand] ?? card.brand} · expires {String(card.expMonth).padStart(2, '0')}/{String(card.expYear).slice(-2)}
                                 </Text>
                               </Box>
                             </HStack>
@@ -256,7 +256,7 @@ function PaymentMethodsContent() {
                                   loading={settingId === card.id}
                                   onClick={() => handleSetDefault(card.id)}>
                                   <Icon as={LucideStar} w={3} h={3} mr={1} />
-                                  Definir padrão
+                                  Set default
                                 </Button>
                               )}
                               <Button size="xs" variant="ghost" color="red.400" borderRadius="4px"
@@ -278,10 +278,10 @@ function PaymentMethodsContent() {
                     variant="outline" borderColor="#E2E8F0" color="slate.500"
                     borderRadius="4px" fontWeight="semibold" fontSize="sm"
                     _hover={{ borderColor: '#1A7FA0', color: '#1A7FA0', bg: '#F0F9FF' }}
-                    loading={adding} loadingText="Aguarde…"
+                    loading={adding} loadingText="Please wait…"
                     onClick={handleAdd}>
                     <Icon as={LucidePlus} w={4} h={4} mr={2} />
-                    Adicionar outro cartão
+                    Add another card
                   </Button>
                 </Box>
               </VStack>
@@ -291,7 +291,7 @@ function PaymentMethodsContent() {
           {/* Security note: flat HStack */}
           <HStack gap={2} justify="center" color="slate.400">
             <Icon as={LucideShieldCheck} w={4} h={4} />
-            <Text fontSize="xs">Pagamentos processados com segurança pelo Stripe</Text>
+            <Text fontSize="xs">Payments securely processed by Stripe</Text>
           </HStack>
 
         </VStack>

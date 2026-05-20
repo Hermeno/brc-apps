@@ -14,14 +14,14 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
   const lead = await prisma.lead.findUnique({ where: { id } });
 
   if (!lead || lead.clientId !== user.id)
-    return NextResponse.json({ error: 'Não encontrado' }, { status: 404 });
+    return NextResponse.json({ error: 'Not found' }, { status: 404 });
 
   if (['COMPLETED', 'CANCELLED'].includes(lead.status))
-    return NextResponse.json({ error: 'Pedido já encerrado' }, { status: 409 });
+    return NextResponse.json({ error: 'Booking already closed' }, { status: 409 });
 
   // Can only complete AFTER the scheduled time
   if (new Date(lead.dateTime) > new Date())
-    return NextResponse.json({ error: 'A limpeza ainda não chegou no horário marcado' }, { status: 409 });
+    return NextResponse.json({ error: 'The cleaning has not reached the scheduled time yet' }, { status: 409 });
 
   // For one-time services: mark lead COMPLETED + close the active conversation
   // For recurring (weekly/biweekly): mark COMPLETED but keep conversation active
@@ -44,10 +44,10 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
     createNotification({
       userId: lead.cleanerId,
       type:   'job_completed',
-      title:  'Trabalho concluído!',
+      title:  'Job completed!',
       body:   lead.frequency === 'once'
-        ? 'O cliente marcou o serviço como concluído. Aguarde a avaliação.'
-        : 'O cliente marcou o ciclo como concluído. O chat permanece ativo para os próximos agendamentos.',
+        ? 'The client marked the job as completed. Awaiting review.'
+        : 'The client marked the cycle as completed. The chat remains active for future bookings.',
       link:   '/dashboard/cleaner',
     }).catch(() => {});
   }

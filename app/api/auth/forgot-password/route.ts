@@ -11,7 +11,7 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const validation = schema.safeParse(body);
     if (!validation.success) {
-      return NextResponse.json({ error: 'Email inválido' }, { status: 400 });
+      return NextResponse.json({ error: 'Invalid email' }, { status: 400 });
     }
 
     const { email } = validation.data;
@@ -19,18 +19,18 @@ export async function POST(request: NextRequest) {
 
     // always return success to avoid user enumeration
     if (!user) {
-      return NextResponse.json({ message: 'Se o email existir, um código foi enviado.' });
+      return NextResponse.json({ message: 'A reset code was sent if that email exists.' });
     }
 
     const code = await createVerificationCode(user.id, email, 'PASSWORD_RESET');
 
     await sendMail({
       to: email,
-      subject: 'Redefinição de senha — BrazilianClean',
-      html: passwordResetHtml(code, user.name ?? 'usuário'),
+      subject: 'Password reset — BrazilianClean',
+      html: passwordResetHtml(code, user.name ?? 'there'),
     });
 
-    return NextResponse.json({ message: 'Código de redefinição enviado para seu email.' });
+    return NextResponse.json({ message: 'Password reset code sent to your email.' });
   } catch {
     return NextResponse.json({ error: 'Erro interno' }, { status: 500 });
   }

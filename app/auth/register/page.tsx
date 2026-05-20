@@ -93,25 +93,25 @@ function RegisterForm() {
               color="#1A7FA0" textTransform="uppercase" fontFamily="heading" mb={4}
               style={{ borderLeft: '2px solid #1A7FA0', paddingLeft: 10 }}
             >
-              {forcedRole ? 'For professionals' : 'For clients & professionals'}
+              {forcedRole ? 'For cleaners' : 'For homeowners & cleaners'}
             </Text>
             <Text fontSize="26px" fontWeight="800" color="white" fontFamily="heading"
               letterSpacing="-0.03em" lineHeight="1.15" mb={6}>
               {forcedRole
-                ? 'Get clients.\nGrow your business.'
-                : 'Professional cleaning\nat your door.'}
+                ? 'Earn on your schedule.'
+                : 'A clean home,\non your schedule.'}
             </Text>
             <VStack align="stretch" gap={2.5}>
               {(forcedRole
                 ? [
-                    'Direct leads in your area',
-                    'Guaranteed payment on the platform',
-                    'Verified profile with priority visibility',
+                    'Get matched with local clients daily',
+                    'Secure payments, every job',
+                    'Stand out with a verified badge',
                   ]
                 : [
-                    'Identity-verified professionals',
-                    'Secure and guaranteed payments',
-                    '4.9 average star rating',
+                    'Background-checked cleaners',
+                    'Secure payments & satisfaction guarantee',
+                    '4.9 stars across 1,000+ reviews',
                   ]
               ).map(t => (
                 <HStack key={t} gap={2}>
@@ -142,12 +142,12 @@ function RegisterForm() {
           <Box mb={8}>
             <Text fontSize="24px" fontWeight="800" color="#0B1120" fontFamily="heading"
               letterSpacing="-0.025em" mb={1}>
-              {forcedRole ? 'Professional sign up' : 'Create free account'}
+              {forcedRole ? 'Join as a cleaner' : 'Create free account'}
             </Text>
             <Text fontSize="14px" color="#64748B" fontFamily="heading">
               {forcedRole
-                ? 'Join the platform and start receiving clients.'
-                : 'The #1 cleaning platform in the US.'}
+                ? 'Start earning. Set your own schedule.'
+                : 'Trusted by thousands of homeowners.'}
             </Text>
           </Box>
 
@@ -228,7 +228,7 @@ function RegisterForm() {
                 loadingText="Creating account…"
                 mt={1}
               >
-                {isCleaner ? 'Sign up as professional' : 'Create account on BrazilianClean'}
+                {isCleaner ? 'Join as a cleaner' : 'Create my free account'}
                 <Icon as={LucideArrowRight} w={4} h={4} ml={2} />
               </Button>
 
@@ -244,11 +244,11 @@ function RegisterForm() {
               </NextLink>
             </Text>
             <Text fontSize="13px" color="#64748B" fontFamily="heading" textAlign="center">
-              {forcedRole ? 'Need cleaning?' : 'Are you a cleaning professional?'}{' '}
+              {forcedRole ? 'Need your home cleaned?' : 'Want to earn as a cleaner?'}{' '}
               <NextLink href={forcedRole ? '/auth/register' : '/auth/register?role=cleaner'}>
                 <Text as="span" color="#64748B" fontWeight="700" cursor="pointer"
                   textDecoration="underline" _hover={{ color: '#0B1120' }}>
-                  {forcedRole ? 'Sign up as customer' : 'Sign up as professional'}
+                  {forcedRole ? 'Book as a homeowner' : 'Join as a cleaner'}
                 </Text>
               </NextLink>
             </Text>

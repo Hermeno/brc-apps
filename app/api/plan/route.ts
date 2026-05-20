@@ -31,7 +31,7 @@ export async function PUT(req: NextRequest) {
 
   const validPlans = ['FREE', 'BASIC', 'PREMIUM', 'PRO'];
   if (plan && !validPlans.includes(plan)) {
-    return NextResponse.json({ error: 'Plano inválido' }, { status: 400 });
+    return NextResponse.json({ error: 'Invalid plan' }, { status: 400 });
   }
 
   const updated = await prisma.user.update({

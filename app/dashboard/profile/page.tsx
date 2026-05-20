@@ -18,20 +18,21 @@ import { ImageUpload } from '@/components/image-upload';
 type Photo = { id: string; url: string; caption?: string | null; createdAt: string };
 
 const SERVICE_LIST = [
-  'Limpeza Padrão', 'Limpeza Profunda', 'Pós-Obra', 'Mudança',
-  'Escritório', 'Condomínio', 'Airbnb', 'Janelas',
+  'Standard Cleaning', 'Deep Cleaning', 'Post-Construction', 'Move-In/Out',
+  'Office', 'Condo/Apartment', 'Airbnb', 'Window Cleaning',
 ];
 
 export default function ProfilePage() {
-  const [bio,          setBio]          = useState('');
-  const [serviceTypes, setServiceTypes] = useState<string[]>([]);
-  const [avatarUrl,    setAvatarUrl]    = useState('');
-  const [latitude,     setLatitude]     = useState<number | null>(null);
-  const [longitude,    setLongitude]    = useState<number | null>(null);
-  const [locationLabel, setLocationLabel] = useState('');
-  const [geoLoading,   setGeoLoading]   = useState(false);
-  const [photos,       setPhotos]       = useState<Photo[]>([]);
-  const [saving,       setSaving]       = useState(false);
+  const [bio,               setBio]          = useState('');
+  const [serviceTypes,      setServiceTypes] = useState<string[]>([]);
+  const [avatarUrl,         setAvatarUrl]    = useState('');
+  const [latitude,          setLatitude]     = useState<number | null>(null);
+  const [longitude,         setLongitude]    = useState<number | null>(null);
+  const [locationLabel,     setLocationLabel] = useState('');
+  const [geoLoading,        setGeoLoading]   = useState(false);
+  const [serviceRadiusMiles, setServiceRadius] = useState<number>(25);
+  const [photos,            setPhotos]       = useState<Photo[]>([]);
+  const [saving,            setSaving]       = useState(false);
 
   // Photo gallery state
   const [showPhotoForm, setShowPhotoForm] = useState(false);
@@ -60,6 +61,7 @@ export default function ProfilePage() {
         setServiceTypes(d.cleaner.serviceTypes ?? []);
         setAvatarUrl(d.cleaner.avatarUrl ?? '');
         setPhotos(d.cleaner.workPhotos ?? []);
+        setServiceRadius(d.cleaner.serviceRadiusMiles ?? 25);
         if (d.cleaner.latitude && d.cleaner.longitude) {
           setLatitude(d.cleaner.latitude);
           setLongitude(d.cleaner.longitude);
@@ -73,7 +75,7 @@ export default function ProfilePage() {
     try {
       const res = await fetch(
         `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`,
-        { headers: { 'Accept-Language': 'pt-BR' } }
+        { headers: { 'Accept-Language': 'en-US' } }
       );
       const data = await res.json();
       const addr = data.address;
@@ -88,7 +90,7 @@ export default function ProfilePage() {
 
   const handleDetectLocation = () => {
     if (!navigator.geolocation) {
-      toaster.create({ title: 'Geolocalização não suportada neste browser', type: 'error' });
+      toaster.create({ title: 'Geolocation not supported in this browser', type: 'error' });
       return;
     }
     setGeoLoading(true);
@@ -100,11 +102,11 @@ export default function ProfilePage() {
         setLongitude(lng);
         setGeoLoading(false);
         await reverseGeocode(lat, lng);
-        toaster.create({ title: 'Localização detectada!', type: 'success' });
+        toaster.create({ title: 'Location detected!', type: 'success' });
       },
       err => {
         setGeoLoading(false);
-        toaster.create({ title: 'Não foi possível detectar a localização', description: err.message, type: 'error' });
+        toaster.create({ title: 'Could not detect location', description: err.message, type: 'error' });
       },
       { enableHighAccuracy: true, timeout: 10000 }
     );
@@ -119,10 +121,10 @@ export default function ProfilePage() {
       const res = await fetch('/api/profile', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ bio, serviceTypes, avatarUrl, latitude, longitude }),
+        body: JSON.stringify({ bio, serviceTypes, avatarUrl, latitude, longitude, serviceRadiusMiles }),
       });
       if (res.ok) {
-        toaster.create({ title: 'Perfil salvo!', type: 'success' });
+        toaster.create({ title: 'Profile saved!', type: 'success' });
       } else {
         const err = await res.json();
         throw new Error(err.error);
@@ -146,7 +148,7 @@ export default function ProfilePage() {
       fd.append('type', 'gallery');
       const res = await fetch('/api/upload', { method: 'POST', body: fd });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error ?? 'Erro no upload');
+      if (!res.ok) throw new Error(data.error ?? 'Upload error');
       setPendingUrl(data.url);
       setShowPhotoForm(true);
     } catch (e: any) {
@@ -169,7 +171,7 @@ export default function ProfilePage() {
       if (res.ok) {
         setPhotos(prev => [d.photo, ...prev]);
         setPendingUrl(''); setPhotoCaption(''); setShowPhotoForm(false);
-        toaster.create({ title: 'Foto adicionada!', type: 'success' });
+        toaster.create({ title: 'Photo added!', type: 'success' });
       } else {
         throw new Error(d.error);
       }
@@ -186,7 +188,7 @@ export default function ProfilePage() {
       const res = await fetch(`/api/photos/${photoId}`, { method: 'DELETE' });
       if (res.ok) {
         setPhotos(prev => prev.filter(p => p.id !== photoId));
-        toaster.create({ title: 'Foto removida', type: 'success' });
+        toaster.create({ title: 'Photo removed', type: 'success' });
       } else {
         const err = await res.json();
         throw new Error(err.error);
@@ -215,9 +217,9 @@ export default function ProfilePage() {
 
           {/* Header */}
           <Box>
-            <Heading size="lg" fontWeight="black" color="slate.900" fontFamily="heading">Meu Perfil</Heading>
+            <Heading size="lg" fontWeight="black" color="slate.900" fontFamily="heading">My Profile</Heading>
             <Text color="slate.500" fontSize="sm" mt={1}>
-              Personalize seu perfil público e galeria de trabalhos
+              Customize your public profile and work gallery
             </Text>
           </Box>
 
@@ -230,7 +232,7 @@ export default function ProfilePage() {
                 <Text
                   fontSize="10.5px" fontWeight={700} color="#94A3B8"
                   textTransform="uppercase" letterSpacing="0.07em" fontFamily="heading">
-                  Sobre você
+                  About you
                 </Text>
               </HStack>
             </Box>
@@ -244,15 +246,15 @@ export default function ProfilePage() {
                   onChange={setAvatarUrl}
                   shape="circle"
                   size={88}
-                  placeholder="Foto de perfil"
+                  placeholder="Profile photo"
                 />
                 <Box flex={1}>
-                  <Text fontWeight="bold" color="slate.800" fontSize="sm">Foto de perfil</Text>
+                  <Text fontWeight="bold" color="slate.800" fontSize="sm">Profile photo</Text>
                   <Text fontSize="xs" color="slate.400" mt={0.5}>
-                    Clique no círculo para fazer upload
+                    Click the circle to upload
                   </Text>
                   <Text fontSize="xs" color="slate.300" mt={0.5}>
-                    JPG, PNG ou WEBP · máx. 8 MB
+                    JPG, PNG or WEBP · max 8 MB
                   </Text>
                 </Box>
               </Flex>
@@ -261,11 +263,11 @@ export default function ProfilePage() {
                 {/* Bio */}
                 <Box>
                   <Text fontSize="xs" fontWeight="bold" color="slate.500" mb={2}
-                    textTransform="uppercase" letterSpacing="wider">Biografia</Text>
+                    textTransform="uppercase" letterSpacing="wider">Bio</Text>
                   <Textarea
                     value={bio}
                     onChange={e => setBio(e.target.value)}
-                    placeholder="Conte sobre sua experiência, especialidades, diferencial…"
+                    placeholder="Tell us about your experience, specialties, and what sets you apart…"
                     bg="slate.50" border="1px solid" borderColor="slate.200"
                     borderRadius="4px" rows={4} fontSize="sm"
                     _focus={{ borderColor: 'brand.300', bg: 'white' }}
@@ -277,7 +279,7 @@ export default function ProfilePage() {
                 {/* Service types */}
                 <Box>
                   <Text fontSize="xs" fontWeight="bold" color="slate.500" mb={3}
-                    textTransform="uppercase" letterSpacing="wider">Tipos de serviço</Text>
+                    textTransform="uppercase" letterSpacing="wider">Service types</Text>
                   <SimpleGrid columns={{ base: 2, sm: 3 }} gap={2}>
                     {SERVICE_LIST.map(s => {
                       const sel = serviceTypes.includes(s);
@@ -298,11 +300,11 @@ export default function ProfilePage() {
                   bg="#1A7FA0" color="white" borderRadius="4px" fontWeight="bold"
                   _hover={{ bg: '#166d8c' }}
                   transition="all 0.2s"
-                  loading={saving} loadingText="Salvando..."
+                  loading={saving} loadingText="Saving..."
                   onClick={handleSave}
                   alignSelf="flex-end">
                   <Icon as={LucideSave} w={4} h={4} mr={2} />
-                  Salvar perfil
+                  Save profile
                 </Button>
               </VStack>
             </Box>
@@ -317,17 +319,17 @@ export default function ProfilePage() {
                 <Text
                   fontSize="10.5px" fontWeight={700} color="#94A3B8"
                   textTransform="uppercase" letterSpacing="0.07em" fontFamily="heading">
-                  Localização
+                  Location
                 </Text>
                 <Text style={{ borderRadius: 2, background: '#F1F5F9', padding: '2px 6px', fontSize: '9.5px', fontWeight: 700, color: '#94A3B8' }}>
-                  opcional
+                  optional
                 </Text>
               </HStack>
             </Box>
 
             <Box p={6}>
               <Text fontSize="xs" color="slate.400" mb={5}>
-                Usada para mostrar distância ao cliente e melhorar o matching de leads.
+                Used to show distance to clients and improve lead matching.
               </Text>
 
               <VStack gap={4} align="stretch">
@@ -337,10 +339,10 @@ export default function ProfilePage() {
                   borderRadius="4px" fontWeight="semibold" fontSize="sm"
                   _hover={{ borderColor: 'brand.300', color: 'brand.600', bg: 'brand.50' }}
                   transition="all 0.15s"
-                  loading={geoLoading} loadingText="Detectando…"
+                  loading={geoLoading} loadingText="Detecting…"
                   onClick={handleDetectLocation}>
                   <Icon as={LucideNavigation} w={4} h={4} mr={2} />
-                  {latitude ? 'Atualizar minha localização' : 'Detectar minha localização'}
+                  {latitude ? 'Update my location' : 'Detect my location'}
                 </Button>
 
                 {/* Location label */}
@@ -365,7 +367,7 @@ export default function ProfilePage() {
                         width="100%"
                         height="100%"
                         style={{ border: 'none', display: 'block' }}
-                        title="Localização no mapa"
+                        title="Location on map"
                         loading="lazy"
                       />
                     </Box>
@@ -375,19 +377,49 @@ export default function ProfilePage() {
                   </Box>
                 )}
 
+                {/* Service radius selector */}
+                <Box>
+                  <Text fontSize="xs" fontWeight="700" color="slate.500"
+                    textTransform="uppercase" letterSpacing="0.07em" mb={2}>
+                    Service radius
+                  </Text>
+                  <Box display="flex" gap={2} flexWrap="wrap">
+                    {[15, 25, 50, 75, 100].map(miles => (
+                      <Box
+                        key={miles}
+                        as="button"
+                        px={3} py={1.5}
+                        fontSize="13px" fontWeight="600" fontFamily="heading"
+                        border="1px solid"
+                        borderRadius="4px"
+                        cursor="pointer"
+                        transition="all 0.12s"
+                        bg={serviceRadiusMiles === miles ? '#1A7FA0' : 'white'}
+                        color={serviceRadiusMiles === miles ? 'white' : 'slate.600'}
+                        borderColor={serviceRadiusMiles === miles ? '#1A7FA0' : '#E2E8F0'}
+                        _hover={{ borderColor: '#1A7FA0', color: serviceRadiusMiles === miles ? 'white' : '#1A7FA0' }}
+                        onClick={() => setServiceRadius(miles)}
+                      >
+                        {miles} mi
+                      </Box>
+                    ))}
+                  </Box>
+                  <Text fontSize="11px" color="slate.400" mt={1.5}>
+                    You will only receive leads within this distance from your location.
+                  </Text>
+                </Box>
+
                 {/* Save location button */}
-                {latitude && longitude && (
-                  <Button
-                    bg="#1A7FA0" color="white" borderRadius="4px" fontWeight="bold"
-                    _hover={{ bg: '#166d8c' }}
-                    transition="all 0.2s"
-                    loading={saving} loadingText="Salvando..."
-                    onClick={handleSave}
-                    alignSelf="flex-end">
-                    <Icon as={LucideSave} w={4} h={4} mr={2} />
-                    Salvar localização
-                  </Button>
-                )}
+                <Button
+                  bg="#1A7FA0" color="white" borderRadius="4px" fontWeight="bold"
+                  _hover={{ bg: '#166d8c' }}
+                  transition="all 0.2s"
+                  loading={saving} loadingText="Saving..."
+                  onClick={handleSave}
+                  alignSelf="flex-end">
+                  <Icon as={LucideSave} w={4} h={4} mr={2} />
+                  Save location & radius
+                </Button>
               </VStack>
             </Box>
           </Box>
@@ -402,7 +434,7 @@ export default function ProfilePage() {
                   <Text
                     fontSize="10.5px" fontWeight={700} color="#94A3B8"
                     textTransform="uppercase" letterSpacing="0.07em" fontFamily="heading">
-                    Galeria de trabalhos
+                    Work gallery
                   </Text>
                   <Text style={{ borderRadius: 2, background: '#F1F5F9', padding: '2px 6px', fontSize: '9.5px', fontWeight: 700, color: '#94A3B8' }}>
                     {photos.length}/20
@@ -411,10 +443,10 @@ export default function ProfilePage() {
                 {photos.length < 20 && !showPhotoForm && (
                   <Button size="sm" bg="#1A7FA0" color="white" borderRadius="4px" fontWeight="bold"
                     _hover={{ bg: '#166d8c' }}
-                    loading={uploading} loadingText="Enviando…"
+                    loading={uploading} loadingText="Uploading…"
                     onClick={() => fileInputRef.current?.click()}>
                     <Icon as={LucidePlus} w={3.5} h={3.5} mr={1.5} />
-                    Adicionar foto
+                    Add photo
                   </Button>
                 )}
               </Flex>
@@ -426,7 +458,7 @@ export default function ProfilePage() {
                 {showPhotoForm && pendingUrl && (
                   <Box bg="brand.50" border="1px solid" borderColor="brand.200" borderRadius="4px" p={4} mb={5}>
                     <Text fontSize="sm" fontWeight="bold" color="brand.700" mb={3}>
-                      Foto enviada — adicione uma legenda (opcional)
+                      Photo uploaded — add a caption (optional)
                     </Text>
                     <Flex gap={3} align="flex-start">
                       <Box w="80px" h="80px" borderRadius="4px" overflow="hidden" flexShrink={0}
@@ -436,7 +468,7 @@ export default function ProfilePage() {
                       </Box>
                       <VStack gap={3} flex={1} align="stretch">
                         <Input
-                          placeholder="Legenda (ex: Sala de estar pós-limpeza)"
+                          placeholder="Caption (e.g., Living room after cleaning)"
                           value={photoCaption}
                           onChange={e => setPhotoCaption(e.target.value)}
                           bg="white" borderRadius="4px" h="10" border="1px solid"
@@ -446,13 +478,13 @@ export default function ProfilePage() {
                         <HStack gap={2} justify="flex-end">
                           <Button size="sm" variant="ghost" color="slate.500"
                             onClick={() => { setShowPhotoForm(false); setPendingUrl(''); setPhotoCaption(''); }}>
-                            Cancelar
+                            Cancel
                           </Button>
                           <Button size="sm" bg="#1A7FA0" color="white" borderRadius="4px" fontWeight="bold"
                             _hover={{ bg: '#166d8c' }}
-                            loading={addingPhoto} loadingText="Salvando..."
+                            loading={addingPhoto} loadingText="Saving..."
                             onClick={handleAddPhoto}>
-                            Salvar foto
+                            Save photo
                           </Button>
                         </HStack>
                       </VStack>
@@ -466,9 +498,9 @@ export default function ProfilePage() {
                   cursor="pointer" onClick={() => fileInputRef.current?.click()}
                   _hover={{ borderColor: 'brand.300', bg: 'brand.50' }} transition="all 0.15s">
                   <Text fontSize="3xl" mb={2}>📷</Text>
-                  <Text color="slate.500" fontSize="sm" fontWeight="semibold">Nenhuma foto ainda</Text>
+                  <Text color="slate.500" fontSize="sm" fontWeight="semibold">No photos yet</Text>
                   <Text color="slate.400" fontSize="xs" mt={1}>
-                    Clique aqui para adicionar fotos dos seus trabalhos
+                    Click here to add photos of your work
                   </Text>
                 </Box>
               ) : (

@@ -63,7 +63,7 @@ export default function PlanPage() {
     load();
     // Check if returning from successful payment
     if (typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('upgraded')) {
-      toaster.create({ title: 'Assinatura ativada! 🎉', description: 'Seu ranking CFS foi atualizado.', type: 'success' });
+      toaster.create({ title: 'Subscription activated! 🎉', description: 'Your CFS ranking has been updated.', type: 'success' });
       window.history.replaceState({}, '', '/dashboard/plan');
     }
   }, [load]);
@@ -81,8 +81,8 @@ export default function PlanPage() {
           body: JSON.stringify({ plan: 'FREE' }),
         });
         setCurrentPlan('FREE');
-        toaster.create({ title: 'Plano rebaixado para Free', type: 'success' });
-      } catch { toaster.create({ title: 'Erro ao alterar plano', type: 'error' }); }
+        toaster.create({ title: 'Plan downgraded to Free', type: 'success' });
+      } catch { toaster.create({ title: 'Error updating plan', type: 'error' }); }
       finally { setSaving(false); }
       return;
     }
@@ -99,7 +99,7 @@ export default function PlanPage() {
       if (data.url) {
         window.location.href = data.url;
       } else {
-        throw new Error(data.error ?? 'Erro ao criar checkout');
+        throw new Error(data.error ?? 'Error creating checkout');
       }
     } catch (e: any) {
       toaster.create({ title: e.message, type: 'error' });
@@ -115,7 +115,7 @@ export default function PlanPage() {
       if (data.url) {
         window.location.href = data.url;
       } else {
-        throw new Error(data.error ?? 'Erro ao abrir portal');
+        throw new Error(data.error ?? 'Error opening portal');
       }
     } catch (e: any) {
       toaster.create({ title: e.message, type: 'error' });
@@ -132,9 +132,9 @@ export default function PlanPage() {
         body: JSON.stringify({ zipCode }),
       });
       if (res.ok) {
-        toaster.create({ title: 'CEP salvo!', description: 'Leads da sua região serão priorizados.', type: 'success' });
+        toaster.create({ title: 'ZIP saved!', description: 'Leads in your area will be prioritized.', type: 'success' });
       }
-    } catch { toaster.create({ title: 'Erro ao salvar CEP', type: 'error' }); }
+    } catch { toaster.create({ title: 'Error saving ZIP', type: 'error' }); }
     finally { setSaving(false); }
   };
 
@@ -143,7 +143,7 @@ export default function PlanPage() {
       <CleanerNav />
       <Box p={6} maxW="960px" mx="auto">
         <Heading size="md" fontWeight="bold" color="slate.900" fontFamily="heading" mb={6}>
-          Meu Plano
+          My Plan
         </Heading>
 
         <VStack gap={8} align="stretch">
@@ -155,19 +155,19 @@ export default function PlanPage() {
                 <Icon as={LucideTrendingUp} w={4} h={4} color="brand.500" />
                 <Box>
                   <Text fontSize="10.5px" fontWeight={700} color="#94A3B8" textTransform="uppercase" letterSpacing="0.06em" fontFamily="heading">
-                    Como funciona o Ranking CFS
+                    How the CFS Ranking works
                   </Text>
-                  <Text fontSize="xs" color="slate.500">Cleaner Fit Score — determina quem recebe os leads primeiro</Text>
+                  <Text fontSize="xs" color="slate.500">Cleaner Fit Score — determines who gets leads first</Text>
                 </Box>
               </HStack>
             </Box>
             <Box p={5}>
               <SimpleGrid columns={{ base: 2, sm: 4 }} gap={3}>
                 {[
-                  { label: 'Plano', max: '30 pts', icon: '💎', desc: 'PRO = topo' },
-                  { label: 'Serviço', max: '40 pts', icon: '🧹', desc: 'Match exato' },
-                  { label: 'Rating', max: '20 pts', icon: '⭐', desc: 'Avaliação média' },
-                  { label: 'Região', max: '10 pts', icon: '📍', desc: 'Mesmo CEP' },
+                  { label: 'Plan', max: '30 pts', icon: '💎', desc: 'PRO = top' },
+                  { label: 'Service', max: '40 pts', icon: '🧹', desc: 'Exact match' },
+                  { label: 'Rating', max: '20 pts', icon: '⭐', desc: 'Avg. rating' },
+                  { label: 'Area', max: '10 pts', icon: '📍', desc: 'Same ZIP' },
                 ].map(item => (
                   <Box key={item.label} border="1px solid #E2E8F0" p={3} textAlign="center">
                     <Text fontSize="lg" mb={1}>{item.icon}</Text>
@@ -186,7 +186,7 @@ export default function PlanPage() {
               <HStack gap={2}>
                 <Icon as={LucideMapPin} w={4} h={4} color="red.500" />
                 <Text fontSize="10.5px" fontWeight={700} color="#94A3B8" textTransform="uppercase" letterSpacing="0.06em" fontFamily="heading">
-                  Minha Região (CEP)
+                  My Area (ZIP code)
                 </Text>
                 <Text
                   style={{
@@ -204,7 +204,7 @@ export default function PlanPage() {
             <Box p={5}>
               <HStack gap={3}>
                 <Input
-                  placeholder="Ex: 01310-100"
+                  placeholder="e.g., 33101"
                   value={zipCode}
                   onChange={e => setZipCode(e.target.value)}
                   maxLength={9}
@@ -219,7 +219,7 @@ export default function PlanPage() {
                 </Button>
               </HStack>
               <Text fontSize="xs" color="slate.400" mt={2}>
-                Leads na mesma região ganham +10 pontos no seu CFS, aumentando suas chances de ser chamado primeiro.
+                Leads in the same area earn +10 points in your CFS, increasing your chances of being matched first.
               </Text>
             </Box>
           </Box>
@@ -227,10 +227,10 @@ export default function PlanPage() {
           {/* Plan Cards */}
           <Box>
             <Text fontWeight="black" color="slate.900" fontSize="lg" mb={1} fontFamily="heading">
-              Escolha seu plano
+              Choose your plan
             </Text>
             <Text color="slate.500" fontSize="sm" mb={5}>
-              Planos maiores = mais pontos no CFS = você aparece primeiro para os clientes.
+              Higher plans = more CFS points = you appear first to clients.
             </Text>
 
             <SimpleGrid columns={{ base: 1, sm: 2, lg: 4 }} gap={4}>
@@ -285,13 +285,13 @@ export default function PlanPage() {
                       <Box>
                         <Text fontWeight="black" color="slate.900" fontSize="lg" fontFamily="heading">{plan.name}</Text>
                         {plan.price === 0 ? (
-                          <Text fontSize="sm" color="slate.400">Gratuito</Text>
+                          <Text fontSize="sm" color="slate.400">Free</Text>
                         ) : (
                           <HStack gap={1} align="baseline">
                             <Text fontWeight="black" fontSize="xl" color={c.text} fontFamily="heading" letterSpacing="-0.03em">
-                              R$ {livePrices[plan.id] ?? plan.price}
+                              ${livePrices[plan.id] ?? plan.price}
                             </Text>
-                            <Text fontSize="xs" color="slate.400">/mês</Text>
+                            <Text fontSize="xs" color="slate.400">/mo</Text>
                           </HStack>
                         )}
                       </Box>
@@ -309,7 +309,7 @@ export default function PlanPage() {
                         <Box w="full" py={2} px={4} bg={accentColor} textAlign="center">
                           <HStack gap={1.5} justify="center">
                             <Icon as={LucideZap} w={3.5} h={3.5} color="white" />
-                            <Text fontSize="xs" fontWeight="bold" color="white">Plano atual</Text>
+                            <Text fontSize="xs" fontWeight="bold" color="white">Current plan</Text>
                           </HStack>
                         </Box>
                       ) : (
@@ -320,7 +320,7 @@ export default function PlanPage() {
                           onClick={() => handleSelectPlan(pid)}
                           loading={redirecting || saving}
                           disabled={redirecting}>
-                          {plan.price === 0 ? 'Usar grátis' : `Assinar ${plan.name}`}
+                          {plan.price === 0 ? 'Use free' : `Subscribe to ${plan.name}`}
                         </Button>
                       )}
                     </VStack>
@@ -334,7 +334,7 @@ export default function PlanPage() {
           <Box border="1px solid #E2E8F0">
             <Box bg="#F8FAFC" px={5} py={3} borderBottom="1px solid #E2E8F0">
               <Text fontSize="10.5px" fontWeight={700} color="#94A3B8" textTransform="uppercase" letterSpacing="0.06em" fontFamily="heading">
-                Como os leads são distribuídos
+                How leads are distributed
               </Text>
             </Box>
             <VStack gap={0} align="stretch">
@@ -342,24 +342,24 @@ export default function PlanPage() {
                 {
                   wave: 'Instant Book',
                   time: 'Imediato',
-                  cleaners: '1 profissional',
-                  desc: 'Score ≥ 85 pts — o sistema faz o match direto. Sem concorrência.',
+                  cleaners: '1 cleaner',
+                  desc: 'Score ≥ 85 pts — the system matches directly. No competition.',
                   chipBg: '#FEFCE8',
                   chipColor: '#854D0E',
                 },
                 {
                   wave: 'Wave 1',
                   time: '90 segundos',
-                  cleaners: '1 exclusivo',
-                  desc: 'Top 1 do ranking. Janela exclusiva — nenhum outro vê o lead.',
+                  cleaners: '1 exclusive',
+                  desc: 'Top 1 in the ranking. Exclusive window — no one else sees the lead.',
                   chipBg: '#EFF6FF',
                   chipColor: '#1A7FA0',
                 },
                 {
                   wave: 'Wave 2',
                   time: '180 segundos',
-                  cleaners: '2 simultâneos',
-                  desc: 'Se Wave 1 expirar: 2 profissionais concorrem. Primeiro a aceitar vence. O perdedor não paga.',
+                  cleaners: '2 simultaneous',
+                  desc: 'If Wave 1 expires: 2 cleaners compete. First to accept wins. The other is not charged.',
                   chipBg: '#F5F3FF',
                   chipColor: '#7C3AED',
                 },
@@ -403,9 +403,9 @@ export default function PlanPage() {
             <Box bg="white" border="1px solid #E2E8F0" p={5}>
               <Flex justify="space-between" align="center">
                 <Box>
-                  <Text fontWeight="bold" color="slate.800">Gerenciar assinatura</Text>
+                  <Text fontWeight="bold" color="slate.800">Manage subscription</Text>
                   <Text fontSize="sm" color="slate.500" mt={0.5}>
-                    Atualize seu cartão, veja faturas ou cancele pelo portal do Stripe.
+                    Update your card, view invoices, or cancel via the Stripe portal.
                   </Text>
                 </Box>
                 <Button
@@ -415,7 +415,7 @@ export default function PlanPage() {
                   onClick={handleManageSubscription}
                   loading={redirecting}>
                   <Icon as={LucideSettings} w={4} h={4} mr={1.5} />
-                  Gerenciar
+                  Manage
                 </Button>
               </Flex>
             </Box>

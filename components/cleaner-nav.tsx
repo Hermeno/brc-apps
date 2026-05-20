@@ -16,11 +16,11 @@ import { AnimatePresence, motion } from 'motion/react';
 const NAV_ITEMS = [
   { name: 'Dashboard',  icon: LucideLayoutDashboard, href: '/dashboard/cleaner' },
   { name: 'Marketplace', icon: LucideCompass,         href: '/dashboard/marketplace' },
-  { name: 'Agenda',     icon: LucideCalendar,         href: '/dashboard/schedule' },
-  { name: 'Finanças',   icon: LucideWallet,           href: '/dashboard/finances' },
-  { name: 'Plano',      icon: LucideCrown,            href: '/dashboard/plan' },
-  { name: 'Perfil',     icon: LucideUser,             href: '/dashboard/profile' },
-  { name: 'Pagamentos', icon: LucideCreditCard,       href: '/dashboard/payment-methods' },
+  { name: 'Schedule',   icon: LucideCalendar,         href: '/dashboard/schedule' },
+  { name: 'Finances',   icon: LucideWallet,           href: '/dashboard/finances' },
+  { name: 'Plan',       icon: LucideCrown,            href: '/dashboard/plan' },
+  { name: 'Profile',    icon: LucideUser,             href: '/dashboard/profile' },
+  { name: 'Payments',   icon: LucideCreditCard,       href: '/dashboard/payment-methods' },
 ];
 
 const NAV_BG = '#0B1120';
@@ -29,7 +29,7 @@ export default function CleanerNav() {
   const { data: session } = useSession();
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
-  const firstName = session?.user?.name?.split(' ')[0] ?? 'Profissional';
+  const firstName = session?.user?.name?.split(' ')[0] ?? 'Cleaner';
   const initial = firstName[0]?.toUpperCase() ?? 'P';
 
   return (
@@ -198,7 +198,7 @@ export default function CleanerNav() {
                   </Box>
                   <Box>
                     <Text fontSize="13px" fontWeight="600" color="white" fontFamily="heading">{firstName}</Text>
-                    <Text fontSize="11px" color="#475569">Profissional</Text>
+                    <Text fontSize="11px" color="#475569">Cleaner</Text>
                   </Box>
                 </HStack>
                 <Button size="sm" variant="ghost" color="#6B7280" px={2}

@@ -108,7 +108,7 @@ export default function SchedulePage() {
                           fontWeight: 700,
                           color: job.status === 'COMPLETED' ? '#15803D' : '#1E40AF',
                         }}>
-                        {job.status === 'COMPLETED' ? '✓ Concluído' : 'Confirmado'}
+                        {job.status === 'COMPLETED' ? '✓ Completed' : 'Confirmed'}
                       </Text>
                       <Text fontWeight="bold" color="slate.900" fontFamily="heading">{job.serviceType}</Text>
                     </HStack>
@@ -121,7 +121,7 @@ export default function SchedulePage() {
                       <HStack gap={1.5} color="slate.500" fontSize="sm">
                         <Icon as={LucideCalendar} w={4} h={4} color="#1A7FA0" />
                         <Text fontWeight="semibold" color={isPast ? 'orange.600' : 'slate.700'}>
-                          {dt.toLocaleString('pt-BR', { dateStyle: 'full', timeStyle: 'short' })}
+                          {dt.toLocaleString('en-US', { dateStyle: 'full', timeStyle: 'short' })}
                         </Text>
                       </HStack>
                     </HStack>
@@ -130,10 +130,10 @@ export default function SchedulePage() {
                     {(job.bedrooms || job.bathrooms || (job.squareMeters ?? 0) > 0 || job.estimatedHours) && (
                       <HStack gap={3} flexWrap="wrap">
                         {job.bedrooms && (
-                          <Text fontSize="xs" color="slate.500">🛏 {job.bedrooms}q</Text>
+                          <Text fontSize="xs" color="slate.500">🛏 {job.bedrooms}bd</Text>
                         )}
                         {job.bathrooms && (
-                          <Text fontSize="xs" color="slate.500">🚿 {job.bathrooms}ban.</Text>
+                          <Text fontSize="xs" color="slate.500">🚿 {job.bathrooms}ba</Text>
                         )}
                         {(job.squareMeters ?? 0) > 0 && (
                           <Text fontSize="xs" color="slate.500">📐 {job.squareMeters}m²</Text>
@@ -181,11 +181,11 @@ export default function SchedulePage() {
                   <Box textAlign="right" flexShrink={0}>
                     {job.estimatedMinPrice && (
                       <Text fontWeight="black" fontSize="lg" color="green.600" fontFamily="heading">
-                        R$ {job.estimatedMinPrice}–{job.estimatedMaxPrice}
+                        ${job.estimatedMinPrice}–${job.estimatedMaxPrice}
                       </Text>
                     )}
                     <Text fontSize="xs" color="slate.400" mt={0.5}>
-                      {dt.toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' })}
+                      {dt.toLocaleDateString('en-US', { day: '2-digit', month: 'short' })}
                     </Text>
                   </Box>
                 </Flex>
@@ -198,9 +198,9 @@ export default function SchedulePage() {
 
   // StatStrip counts
   const statItems = [
-    { label: 'HOJE', value: today.length, color: '#F97316' },
-    { label: 'PRÓXIMOS', value: upcoming.length, color: '#1A7FA0' },
-    { label: 'CONCLUÍDOS', value: completed.length, color: '#22C55E' },
+    { label: 'TODAY', value: today.length, color: '#F97316' },
+    { label: 'UPCOMING', value: upcoming.length, color: '#1A7FA0' },
+    { label: 'COMPLETED', value: completed.length, color: '#22C55E' },
   ];
 
   return (
@@ -209,7 +209,7 @@ export default function SchedulePage() {
       <Box p={6} maxW="1200px" mx="auto">
 
         <HStack gap={2.5} mb={6}>
-          <Heading size="md" fontWeight="bold" color="slate.900" fontFamily="heading">Minha Agenda</Heading>
+          <Heading size="md" fontWeight="bold" color="slate.900" fontFamily="heading">My Schedule</Heading>
         </HStack>
 
         <VStack gap={6} align="stretch">
@@ -250,21 +250,21 @@ export default function SchedulePage() {
 
           {loading ? (
             <Box textAlign="center" py={16}>
-              <Text color="slate.400">Carregando agenda…</Text>
+              <Text color="slate.400">Loading schedule…</Text>
             </Box>
           ) : jobs.length === 0 ? (
             <Box border="1px solid #E2E8F0" p={16} textAlign="center" bg="white">
               <Icon as={LucideCalendarDays} w={14} h={14} color="slate.300" mb={4} />
-              <Text color="slate.600" fontWeight="bold" fontSize="lg" fontFamily="heading">Nenhum trabalho agendado</Text>
+              <Text color="slate.600" fontWeight="bold" fontSize="lg" fontFamily="heading">No jobs scheduled</Text>
               <Text color="slate.400" fontSize="sm" mt={1}>
-                Aceite leads no Marketplace para ver seus trabalhos aqui.
+                Accept leads in the Marketplace to see your jobs here.
               </Text>
             </Box>
           ) : (
             <>
-              <SectionPanel label="HOJE" items={today} accentBg="#F97316" />
-              <SectionPanel label="PRÓXIMOS TRABALHOS" items={upcoming} accentBg="#1A7FA0" />
-              <SectionPanel label="HISTÓRICO" items={completed} accentBg="#22C55E" />
+              <SectionPanel label="TODAY" items={today} accentBg="#F97316" />
+              <SectionPanel label="UPCOMING JOBS" items={upcoming} accentBg="#1A7FA0" />
+              <SectionPanel label="HISTORY" items={completed} accentBg="#22C55E" />
             </>
           )}
 

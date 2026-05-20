@@ -134,8 +134,8 @@ export default function CleanerDashboard() {
           router.push(`/dashboard/chat/${data.conversationId}`);
         } else {
           toaster.create({
-            title: `Lead aceito! Taxa R$ ${data.leadFee} cobrada.`,
-            description: 'Agora você pode conversar com o cliente.',
+            title: `Lead accepted! Fee $${data.leadFee} charged.`,
+            description: 'You can now chat with the client.',
             type: 'success',
           });
           router.push(`/dashboard/chat/${data.conversationId}`);
@@ -169,10 +169,10 @@ export default function CleanerDashboard() {
                 <Icon as={LucideAlertCircle} w={4} h={4} color="#D97706" flexShrink={0} />
                 <Box>
                   <Text fontWeight="700" color="#92400E" fontSize="13px" fontFamily="heading">
-                    Verifique sua conta para receber mais leads
+                    Verify your account to get more leads
                   </Text>
                   <Text fontSize="11.5px" color="#B45309" mt={0.5}>
-                    Profissionais verificados têm prioridade e aparecem com destaque.
+                    Verified cleaners get priority and a trusted badge.
                   </Text>
                 </Box>
               </HStack>
@@ -182,7 +182,7 @@ export default function CleanerDashboard() {
                 _hover={{ bg: '#B45309' }}
                 onClick={() => router.push('/dashboard/cleaner/verify')}
               >
-                <Icon as={LucideShield} w={3.5} h={3.5} mr={1.5} />Verificar agora
+                <Icon as={LucideShield} w={3.5} h={3.5} mr={1.5} />Verify now
               </Button>
             </Flex>
           </Box>
@@ -192,7 +192,7 @@ export default function CleanerDashboard() {
             <HStack gap={3}>
               <Icon as={LucideClock} w={4} h={4} color="#3B82F6" flexShrink={0} />
               <Text fontSize="13px" color="#1E40AF" fontWeight="600" fontFamily="heading">
-                Verificação em análise — responderemos em até 48h.
+                Verification under review — we'll respond within 48h.
               </Text>
             </HStack>
           </Box>
@@ -213,7 +213,7 @@ export default function CleanerDashboard() {
               <HStack gap={3}>
                 <Icon as={LucideAlertCircle} w={4} h={4} color="#E11D48" flexShrink={0} />
                 <Text fontSize="13px" color="#9F1239" fontWeight="600" fontFamily="heading">
-                  Verificação recusada — corrija e reenvie os documentos.
+                  Verification rejected — fix and resubmit your documents.
                 </Text>
               </HStack>
               <Button
@@ -222,7 +222,7 @@ export default function CleanerDashboard() {
                 _hover={{ bg: '#BE123C' }}
                 onClick={() => router.push('/dashboard/cleaner/verify')}
               >
-                Reenviar documentos
+                Resubmit documents
               </Button>
             </Flex>
           </Box>
@@ -230,7 +230,7 @@ export default function CleanerDashboard() {
 
         {/* ── Pedidos Disponíveis ── */}
         <SectionPanel
-          title="Pedidos Disponíveis"
+          title="Available Leads"
           count={available.length}
           accentColor="#F59E0B"
           extra={
@@ -239,21 +239,21 @@ export default function CleanerDashboard() {
               _hover={{ color: '#1A7FA0', bg: 'rgba(26,127,160,0.06)' }}
               onClick={fetchLeads} loading={loading}
             >
-              <Icon as={LucideRefreshCw} w={3} h={3} mr={1.5} />Atualizar
+              <Icon as={LucideRefreshCw} w={3} h={3} mr={1.5} />Refresh
             </Button>
           }
         >
           {loading ? (
             <Box px={6} py={8} textAlign="center">
-              <Text fontSize="13px" color="#94A3B8" fontFamily="heading">Carregando…</Text>
+              <Text fontSize="13px" color="#94A3B8" fontFamily="heading">Loading…</Text>
             </Box>
           ) : available.length === 0 ? (
             <Box px={6} py={10} textAlign="center">
               <Text fontSize="13px" color="#CBD5E1" fontFamily="heading" fontWeight="500">
-                Nenhum pedido disponível no momento
+                No leads available right now
               </Text>
               <Text fontSize="12px" color="#94A3B8" mt={1}>
-                Novos pedidos aparecerão aqui automaticamente.
+                New leads will appear here automatically.
               </Text>
             </Box>
           ) : (
@@ -278,7 +278,7 @@ export default function CleanerDashboard() {
                         >
                           {lead.serviceType}
                         </Text>
-                        <Chip label="NOVO" bg="#FEF3C7" color="#92400E" />
+                        <Chip label="NEW" bg="#FEF3C7" color="#92400E" />
                         {lead.client?.name && (
                           <HStack gap={1}>
                             <Icon as={LucideUser} w="10px" h="10px" color="#94A3B8" />
@@ -297,15 +297,15 @@ export default function CleanerDashboard() {
                         <HStack gap={1}>
                           <Icon as={LucideCalendar} w="11px" h="11px" color="#94A3B8" />
                           <Text fontSize="12px" color="#64748B">
-                            {new Date(lead.dateTime).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' })}
+                            {new Date(lead.dateTime).toLocaleString('en-US', { dateStyle: 'short', timeStyle: 'short' })}
                           </Text>
                         </HStack>
                       </HStack>
 
                       {(lead.bedrooms || lead.squareMeters || freqLabel) && (
                         <HStack gap={4} mb={1.5} flexWrap="wrap">
-                          {lead.bedrooms   && <Text fontSize="12px" color="#475569">🛏 {lead.bedrooms}q</Text>}
-                          {lead.bathrooms  && <Text fontSize="12px" color="#475569">🚿 {lead.bathrooms}ban.</Text>}
+                          {lead.bedrooms   && <Text fontSize="12px" color="#475569">🛏 {lead.bedrooms}bd</Text>}
+                          {lead.bathrooms  && <Text fontSize="12px" color="#475569">🚿 {lead.bathrooms}ba</Text>}
                           {(lead.squareMeters ?? 0) > 0 && <Text fontSize="12px" color="#475569">📐 {lead.squareMeters}m²</Text>}
                           {freqLabel       && (
                             <Text fontSize="12px" color="#1A7FA0" fontWeight="600" fontFamily="heading">↻ {freqLabel}</Text>
@@ -318,7 +318,7 @@ export default function CleanerDashboard() {
                           {lead.extras.map(exId => {
                             const ex = EXTRAS.find(e => e.id === exId);
                             return ex
-                              ? <Text key={exId} fontSize="12px" color="#64748B">{ex.icon} {ex.label}</Text>
+                              ? <Text key={exId} fontSize="12px" color="#64748B">{ex.icon} {ex.labelEn}</Text>
                               : null;
                           })}
                         </HStack>
@@ -332,7 +332,7 @@ export default function CleanerDashboard() {
                               fontSize="15px" fontWeight="800" color="#047857"
                               fontFamily="heading" letterSpacing="-0.02em"
                             >
-                              R$ {lead.estimatedMinPrice}–{lead.estimatedMaxPrice}
+                              ${lead.estimatedMinPrice}–${lead.estimatedMaxPrice}
                             </Text>
                           </HStack>
                           {lead.estimatedHours && (
@@ -363,7 +363,7 @@ export default function CleanerDashboard() {
                       loadingText="…"
                     >
                       <Icon as={LucideBanknote} w={3.5} h={3.5} mr={1.5} />
-                      Quero este lead
+                      Accept lead
                     </Button>
                   </Flex>
                 </Box>
@@ -375,7 +375,7 @@ export default function CleanerDashboard() {
         {/* ── Aguardando Resposta ── */}
         {pendingConversations.length > 0 && (
           <SectionPanel
-            title="Aguardando Resposta do Cliente"
+            title="Awaiting Client Response"
             count={pendingConversations.length}
             accentColor="#60A5FA"
           >
@@ -394,7 +394,7 @@ export default function CleanerDashboard() {
                 <Flex px={6} pl={8} py={3.5} gap={6} align="center" justify="space-between">
                   <Box>
                     <HStack gap={2.5} mb={1} flexWrap="wrap">
-                      <Chip label="Proposta enviada" bg="#EFF6FF" color="#1E40AF" />
+                      <Chip label="Proposal sent" bg="#EFF6FF" color="#1E40AF" />
                       <Text fontSize="14px" fontWeight="700" color="#0F172A" fontFamily="heading" letterSpacing="-0.01em">
                         {conv.lead.serviceType}
                       </Text>
@@ -407,7 +407,7 @@ export default function CleanerDashboard() {
                       <HStack gap={1}>
                         <Icon as={LucideCalendar} w="11px" h="11px" color="#94A3B8" />
                         <Text fontSize="12px" color="#64748B">
-                          {new Date(conv.lead.dateTime).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' })}
+                          {new Date(conv.lead.dateTime).toLocaleString('en-US', { dateStyle: 'short', timeStyle: 'short' })}
                         </Text>
                       </HStack>
                       {conv.lead.client && (
@@ -436,7 +436,7 @@ export default function CleanerDashboard() {
         {/* ── Trabalhos Aceitos ── */}
         {activeJobs.length > 0 && (
           <SectionPanel
-            title="Trabalhos Aceitos"
+            title="Accepted Jobs"
             count={activeJobs.length}
             accentColor="#10B981"
           >
@@ -451,7 +451,7 @@ export default function CleanerDashboard() {
                 <Flex px={6} pl={8} py={3.5} gap={6} align="flex-start">
                   <Box flex={1}>
                     <HStack gap={2.5} mb={1} flexWrap="wrap">
-                      <Chip label="Aceito" bg="#F0FDF4" color="#047857" />
+                      <Chip label="Accepted" bg="#F0FDF4" color="#047857" />
                       <Text fontSize="14px" fontWeight="700" color="#0F172A" fontFamily="heading" letterSpacing="-0.01em">
                         {lead.serviceType}
                       </Text>
@@ -464,14 +464,14 @@ export default function CleanerDashboard() {
                       <HStack gap={1}>
                         <Icon as={LucideCalendar} w="11px" h="11px" color="#94A3B8" />
                         <Text fontSize="12px" color="#64748B">
-                          {new Date(lead.dateTime).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' })}
+                          {new Date(lead.dateTime).toLocaleString('en-US', { dateStyle: 'short', timeStyle: 'short' })}
                         </Text>
                       </HStack>
                       {lead.client && (
                         <HStack gap={1}>
                           <Icon as={LucideUser} w="11px" h="11px" color="#94A3B8" />
                           <Text fontSize="12px" color="#64748B">
-                            Cliente:{' '}
+                            Client:{' '}
                             <Text as="span" fontWeight="600" color="#475569">{lead.client.name}</Text>
                           </Text>
                         </HStack>
@@ -520,7 +520,7 @@ export default function CleanerDashboard() {
                     fontSize="10.5px" fontWeight="700" color="#94A3B8"
                     fontFamily="heading" textTransform="uppercase" letterSpacing="0.07em"
                   >
-                    Histórico concluídos
+                    Completed history
                   </Text>
                   <Box
                     bg="#475569" color="white" px={2} h="16px" minW="16px"
@@ -555,7 +555,7 @@ export default function CleanerDashboard() {
                       <Flex px={6} pl={8} py={3.5} gap={6} align="flex-start">
                         <Box flex={1}>
                           <HStack gap={2.5} mb={1} flexWrap="wrap">
-                            <Chip label="Concluído" bg="#F1F5F9" color="#475569" />
+                            <Chip label="Completed" bg="#F1F5F9" color="#475569" />
                             <Text fontSize="14px" fontWeight="600" color="#475569" fontFamily="heading" letterSpacing="-0.01em">
                               {lead.serviceType}
                             </Text>
@@ -568,7 +568,7 @@ export default function CleanerDashboard() {
                             <HStack gap={1}>
                               <Icon as={LucideCalendar} w="11px" h="11px" color="#CBD5E1" />
                               <Text fontSize="12px" color="#94A3B8">
-                                {new Date(lead.dateTime).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' })}
+                                {new Date(lead.dateTime).toLocaleString('en-US', { dateStyle: 'short', timeStyle: 'short' })}
                               </Text>
                             </HStack>
                             {lead.client && (

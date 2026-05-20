@@ -11,7 +11,7 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const validation = schema.safeParse(body);
     if (!validation.success) {
-      return NextResponse.json({ error: 'Email inválido' }, { status: 400 });
+      return NextResponse.json({ error: 'Invalid email' }, { status: 400 });
     }
 
     const { email } = validation.data;
@@ -19,18 +19,18 @@ export async function POST(request: NextRequest) {
 
     // always return success to avoid user enumeration
     if (!user || user.isVerified) {
-      return NextResponse.json({ message: 'Se o email existir, um novo código foi enviado.' });
+      return NextResponse.json({ message: 'A new code was sent if that email exists.' });
     }
 
     const code = await createVerificationCode(user.id, email, 'EMAIL_VERIFICATION');
 
     await sendMail({
       to: email,
-      subject: 'Novo código de verificação — BrazilianClean',
-      html: emailVerificationHtml(code, user.name ?? 'usuário'),
+      subject: 'Verification code — BrazilianClean',
+      html: emailVerificationHtml(code, user.name ?? 'there'),
     });
 
-    return NextResponse.json({ message: 'Novo código enviado para seu email.' });
+    return NextResponse.json({ message: 'New code sent to your email.' });
   } catch {
     return NextResponse.json({ error: 'Erro interno' }, { status: 500 });
   }

@@ -35,14 +35,14 @@ export async function sendMail({ to, subject, html }: MailOptions) {
 export function emailVerificationHtml(code: string, name: string) {
   return `
     <div style="font-family:sans-serif;max-width:480px;margin:auto">
-      <h2 style="color:#2563eb">Verificação de email — BrazilianClean</h2>
-      <p>Olá <strong>${name}</strong>,</p>
-      <p>Use o código abaixo para confirmar seu endereço de email. Ele expira em <strong>10 minutos</strong>.</p>
+      <h2 style="color:#2563eb">Email verification — BrazilianClean</h2>
+      <p>Hi <strong>${name}</strong>,</p>
+      <p>Use the code below to confirm your email address. It expires in <strong>10 minutes</strong>.</p>
       <div style="font-size:36px;font-weight:bold;letter-spacing:8px;text-align:center;
                   padding:20px;background:#f1f5f9;border-radius:12px;margin:24px 0">
         ${code}
       </div>
-      <p style="color:#64748b;font-size:13px">Se você não criou uma conta, ignore este email.</p>
+      <p style="color:#64748b;font-size:13px">If you did not create an account, please ignore this email.</p>
     </div>
   `;
 }
@@ -50,14 +50,14 @@ export function emailVerificationHtml(code: string, name: string) {
 export function passwordResetHtml(code: string, name: string) {
   return `
     <div style="font-family:sans-serif;max-width:480px;margin:auto">
-      <h2 style="color:#2563eb">Redefinição de senha — BrazilianClean</h2>
-      <p>Olá <strong>${name}</strong>,</p>
-      <p>Use o código abaixo para redefinir sua senha. Ele expira em <strong>10 minutos</strong>.</p>
+      <h2 style="color:#2563eb">Password reset — BrazilianClean</h2>
+      <p>Hi <strong>${name}</strong>,</p>
+      <p>Use the code below to reset your password. It expires in <strong>10 minutes</strong>.</p>
       <div style="font-size:36px;font-weight:bold;letter-spacing:8px;text-align:center;
                   padding:20px;background:#f1f5f9;border-radius:12px;margin:24px 0">
         ${code}
       </div>
-      <p style="color:#64748b;font-size:13px">Se você não solicitou isso, ignore este email.</p>
+      <p style="color:#64748b;font-size:13px">If you did not request this, please ignore this email.</p>
     </div>
   `;
 }

@@ -7,7 +7,7 @@ import { sendMail, emailVerificationHtml } from '@/lib/email';
 
 const registerSchema = z.object({
   name: z.string().min(2, 'Nome deve ter ao menos 2 caracteres'),
-  email: z.string().email('Email inválido'),
+  email: z.string().email('Invalid email'),
   password: z.string().min(6, 'Senha deve ter ao menos 6 caracteres'),
   role: z.enum(['CLIENT', 'CLEANER']).default('CLIENT'),
 });
@@ -29,7 +29,7 @@ export async function POST(request: NextRequest) {
     const existingUser = await prisma.user.findUnique({ where: { email } });
     if (existingUser) {
       return NextResponse.json(
-        { error: 'Email já cadastrado' },
+        { error: 'Email already registered' },
         { status: 409 },
       );
     }

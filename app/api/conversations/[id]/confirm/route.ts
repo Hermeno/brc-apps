@@ -42,8 +42,8 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
     createNotification({
       userId: conversation.cleanerId,
       type:   'client_accepted',
-      title:  'Cliente aceitou você!',
-      body:   'Você foi aceito. Acesse o chat para continuar.',
+      title:  'Client accepted you!',
+      body:   'You were accepted. Open the chat to continue.',
       link:   `/dashboard/chat/${id}`,
     }).catch(() => {});
     return NextResponse.json({ ok: true, conversationId: id });
@@ -92,8 +92,8 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
         createNotification({
           userId: conversation.cleanerId,
           type:   'client_accepted',
-          title:  'Cliente aceitou você!',
-          body:   'Você foi aceito. O pagamento do lead foi processado. Acesse o chat.',
+          title:  'Client accepted you!',
+          body:   'You were accepted. Lead fee processed. Open the chat.',
           link:   `/dashboard/chat/${id}`,
         }).catch(() => {});
         return NextResponse.json({ ok: true, conversationId: id, charged: true });
@@ -120,8 +120,8 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
     createNotification({
       userId: conversation.cleanerId,
       type:   'client_accepted',
-      title:  'Cliente aceitou você!',
-      body:   'Você foi aceito. Complete o pagamento do lead para acessar o chat.',
+      title:  'Client accepted you!',
+      body:   'You were accepted. Complete the lead payment to access the chat.',
       link:   `/dashboard/chat/${id}`,
     }).catch(() => {});
     return NextResponse.json({ ok: true, conversationId: id, cleanerCheckoutUrl: checkoutSession.url });
@@ -130,8 +130,8 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
     createNotification({
       userId: conversation.cleanerId,
       type:   'client_accepted',
-      title:  'Cliente aceitou você!',
-      body:   'Você foi aceito. Acesse o chat para continuar.',
+      title:  'Client accepted you!',
+      body:   'You were accepted. Open the chat to continue.',
       link:   `/dashboard/chat/${id}`,
     }).catch(() => {});
     // Payment failed but acceptance still happened — allow chat

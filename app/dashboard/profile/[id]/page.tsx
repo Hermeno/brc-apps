@@ -87,10 +87,10 @@ export default function PublicProfilePage() {
       <Box minH="100vh" bg="slate.50" display="flex" alignItems="center" justifyContent="center">
         <VStack gap={4} textAlign="center">
           <Text fontSize="4xl">🔍</Text>
-          <Heading size="md" color="slate.700">Profissional não encontrado</Heading>
+          <Heading size="md" color="slate.700">Cleaner not found</Heading>
           <Box as="button" onClick={() => router.back()}
             color="brand.500" fontWeight="semibold" fontSize="sm" cursor="pointer">
-            ← Voltar
+            ← Back
           </Box>
         </VStack>
       </Box>
@@ -115,7 +115,7 @@ export default function PublicProfilePage() {
             color="slate.500" fontWeight="semibold" fontSize="sm" cursor="pointer"
             _hover={{ color: 'brand.600' }} transition="color 0.15s">
             <Icon as={LucideArrowLeft} w={4} h={4} />
-            Voltar
+            Back
           </Box>
         </Box>
       </Box>
@@ -221,7 +221,7 @@ export default function PublicProfilePage() {
                     borderRadius="xl" px={4} py={3}>
                     <Icon as={LucideMapPin} w={4} h={4} color="slate.400" />
                     <Text fontSize="xs" color="slate.400">
-                      Contato visível após aceitar o profissional
+                      Contact visible after accepting the cleaner
                     </Text>
                   </HStack>
                 )}
@@ -229,9 +229,9 @@ export default function PublicProfilePage() {
                 {/* Member since */}
                 <HStack gap={1.5} mt={4} color="slate.400" fontSize="xs">
                   <Icon as={LucideCalendar} w={3.5} h={3.5} />
-                  <Text>Membro desde {joinedDate.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' })}</Text>
+                  <Text>Member since {joinedDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}</Text>
                   {monthsOnPlatform >= 1 && (
-                    <Text>· {monthsOnPlatform} {monthsOnPlatform === 1 ? 'mês' : 'meses'} na plataforma</Text>
+                    <Text>· {monthsOnPlatform} {monthsOnPlatform === 1 ? 'month' : 'months'} on the platform</Text>
                   )}
                 </HStack>
               </Box>
@@ -245,9 +245,9 @@ export default function PublicProfilePage() {
                 p={6} boxShadow="0 2px 12px rgba(0,0,0,0.04)">
                 <HStack gap={2} mb={5}>
                   <Icon as={LucideCamera} w={5} h={5} color="brand.500" />
-                  <Heading size="sm" fontWeight="bold" color="slate.800">Galeria de trabalhos</Heading>
+                  <Heading size="sm" fontWeight="bold" color="slate.800">Work gallery</Heading>
                   <Badge bg="slate.100" color="slate.500" borderRadius="full" px={2} fontSize="xs">
-                    {cleaner.workPhotos.length} foto{cleaner.workPhotos.length !== 1 ? 's' : ''}
+                    {cleaner.workPhotos.length} photo{cleaner.workPhotos.length !== 1 ? 's' : ''}
                   </Badge>
                 </HStack>
                 <SimpleGrid columns={{ base: 2, sm: 3, md: 4 }} gap={3}>
@@ -294,7 +294,7 @@ export default function PublicProfilePage() {
                 p={6} boxShadow="0 2px 12px rgba(0,0,0,0.04)">
                 <HStack gap={2} mb={5}>
                   <Icon as={LucideAward} w={5} h={5} color="yellow.500" />
-                  <Heading size="sm" fontWeight="bold" color="slate.800">Avaliações dos clientes</Heading>
+                  <Heading size="sm" fontWeight="bold" color="slate.800">Client reviews</Heading>
                   {ratingAvg > 0 && (
                     <HStack gap={1.5}>
                       <Stars value={Math.round(ratingAvg)} size={3.5} />
@@ -320,7 +320,7 @@ export default function PublicProfilePage() {
                             <VStack align="start" gap={1}>
                               <HStack gap={2}>
                                 <Text fontSize="sm" fontWeight="bold" color="slate.800">
-                                  {review.client.name ?? 'Cliente'}
+                                  {review.client.name ?? 'Client'}
                                 </Text>
                                 <Stars value={review.rating} size={3.5} />
                               </HStack>
@@ -335,7 +335,7 @@ export default function PublicProfilePage() {
                             </VStack>
                           </HStack>
                           <Text fontSize="xs" color="slate.400" whiteSpace="nowrap">
-                            {new Date(review.createdAt).toLocaleDateString('pt-BR')}
+                            {new Date(review.createdAt).toLocaleDateString('en-US')}
                           </Text>
                         </Flex>
                       </Box>
@@ -348,7 +348,7 @@ export default function PublicProfilePage() {
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}>
               <Box bg="white" border="1px solid" borderColor="slate.200" borderRadius="2xl" p={8} textAlign="center">
                 <Text fontSize="2xl" mb={2}>⭐</Text>
-                <Text color="slate.500" fontSize="sm">Ainda sem avaliações — seja o primeiro!</Text>
+                <Text color="slate.500" fontSize="sm">No reviews yet — be the first!</Text>
               </Box>
             </motion.div>
           )}

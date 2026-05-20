@@ -21,7 +21,7 @@ export async function DELETE(
   // Verify the PM belongs to this customer before detaching
   const pm = await stripe.paymentMethods.retrieve(id);
   if (pm.customer !== user.stripeCustomerId) {
-    return NextResponse.json({ error: 'Não autorizado' }, { status: 403 });
+    return NextResponse.json({ error: 'Not authorized' }, { status: 403 });
   }
 
   await stripe.paymentMethods.detach(id);
@@ -46,7 +46,7 @@ export async function POST(
 
   const pm = await stripe.paymentMethods.retrieve(id);
   if (pm.customer !== user.stripeCustomerId) {
-    return NextResponse.json({ error: 'Não autorizado' }, { status: 403 });
+    return NextResponse.json({ error: 'Not authorized' }, { status: 403 });
   }
 
   await stripe.customers.update(user.stripeCustomerId, {

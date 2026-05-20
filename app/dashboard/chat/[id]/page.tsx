@@ -84,11 +84,11 @@ export default function ChatPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ content: text.trim() }),
       });
-      if (!res.ok) throw new Error('Falha ao enviar');
+      if (!res.ok) throw new Error('Failed to send');
       setText('');
       await fetchMessages();
     } catch {
-      toaster.create({ title: 'Erro ao enviar mensagem', type: 'error' });
+      toaster.create({ title: 'Failed to send message', type: 'error' });
     } finally {
       setSending(false);
     }
@@ -99,7 +99,7 @@ export default function ChatPage() {
     try {
       const res = await fetch(`/api/conversations/${id}/confirm`, { method: 'POST' });
       if (res.ok) {
-        toaster.create({ title: 'Profissional confirmado!', description: 'O trabalho foi marcado como aceito.', type: 'success' });
+        toaster.create({ title: 'Cleaner confirmed!', description: 'The job has been marked as accepted.', type: 'success' });
         await fetchMessages();
       }
     } finally {
@@ -160,7 +160,7 @@ export default function ChatPage() {
                 <Badge bg="green.100" color="green.700" borderRadius="full" px={2} fontSize="xs"
                   border="1px solid" borderColor="green.200">
                   <Icon as={LucideCheckCircle} w={3} h={3} mr={1} />
-                  Confirmado
+                  Confirmed
                 </Badge>
               )}
             </HStack>
@@ -173,10 +173,10 @@ export default function ChatPage() {
               size="sm" bg="green.500" color="white" borderRadius="xl" fontWeight="bold"
               _hover={{ bg: 'green.600' }}
               onClick={confirmCleaner} loading={confirming}
-              loadingText="Confirmando..."
+              loadingText="Confirming..."
             >
               <Icon as={LucideCheckCircle} w={4} h={4} mr={1} />
-              Confirmar
+              Confirm
             </Button>
           )}
         </Flex>
@@ -189,7 +189,7 @@ export default function ChatPage() {
             <HStack gap={2}>
               <Icon as={LucidePhone} w={4} h={4} color="green.600" />
               <Text fontSize="sm" fontWeight="bold" color="green.800">
-                Contacto do cliente:
+                Client contact:
               </Text>
               <Text fontSize="sm" color="green.700" fontWeight="semibold">
                 {conv.client.phone || conv.lead.clientPhone}
@@ -210,14 +210,14 @@ export default function ChatPage() {
             <HStack gap={1.5} color="slate.500" fontSize="sm">
               <Icon as={LucideCalendar} w={4} h={4} color="brand.400" />
               <Text>
-                {new Date(conv.lead.dateTime).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' })}
+                {new Date(conv.lead.dateTime).toLocaleString('en-US', { dateStyle: 'short', timeStyle: 'short' })}
               </Text>
             </HStack>
             {conv.lead.estimatedMinPrice && (
               <HStack gap={1.5}>
                 <Icon as={LucideBanknote} w={4} h={4} color="green.500" />
                 <Text fontSize="sm" fontWeight="bold" color="green.700">
-                  R$ {conv.lead.estimatedMinPrice} – R$ {conv.lead.estimatedMaxPrice}
+                  ${conv.lead.estimatedMinPrice} – ${conv.lead.estimatedMaxPrice}
                 </Text>
               </HStack>
             )}
@@ -238,7 +238,7 @@ export default function ChatPage() {
                 border="1px solid"
                 borderColor={conv.feeStatus === 'charged' ? 'red.200' : 'slate.200'}
               >
-                Lead fee: R$ {conv.leadFee} — {conv.feeStatus === 'charged' ? 'cobrado' : 'pendente'}
+                Lead fee: ${conv.leadFee} — {conv.feeStatus === 'charged' ? 'charged' : 'pending'}
               </Badge>
             )}
           </Flex>
@@ -252,12 +252,12 @@ export default function ChatPage() {
             <Box textAlign="center" py={12}>
               <Text fontSize="3xl" mb={2}>💬</Text>
               <Text color="slate.500" fontWeight="medium">
-                {isClient ? `Inicie a conversa com ${otherName}` : `Apresente-se para ${otherName}`}
+                {isClient ? `Start the conversation with ${otherName}` : `Introduce yourself to ${otherName}`}
               </Text>
               <Text color="slate.400" fontSize="sm" mt={1}>
                 {!isClient && conv.feeStatus === 'charged'
-                  ? `Lead fee de R$ ${conv.leadFee} foi cobrado.`
-                  : 'Seja educado e profissional.'}
+                  ? `Lead fee of $${conv.leadFee} has been charged.`
+                  : 'Be professional and friendly.'}
               </Text>
             </Box>
           ) : (
@@ -278,7 +278,7 @@ export default function ChatPage() {
                           {(i === 0 || conv.messages[i - 1].senderId !== msg.senderId) && (
                             <Text fontSize="xs" color="slate.400" mb={1}
                               textAlign={isMine ? 'right' : 'left'} px={1}>
-                              {isMine ? 'Você' : msg.sender.name}
+                              {isMine ? 'You' : msg.sender.name}
                             </Text>
                           )}
                           <Box
@@ -296,7 +296,7 @@ export default function ChatPage() {
                               color={isMine ? 'brand.100' : 'slate.400'}
                               textAlign="right" mt={1}
                             >
-                              {new Date(msg.createdAt).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
+                              {new Date(msg.createdAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
                             </Text>
                           </Box>
                         </Box>
@@ -319,7 +319,7 @@ export default function ChatPage() {
         <Container maxW="760px">
           <HStack gap={3}>
             <Input
-              placeholder="Digite sua mensagem..."
+              placeholder="Type your message..."
               value={text}
               onChange={e => setText(e.target.value)}
               onKeyDown={e => e.key === 'Enter' && !e.shiftKey && sendMessage()}

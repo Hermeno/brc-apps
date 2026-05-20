@@ -14,21 +14,21 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   const lead = await prisma.lead.findUnique({ where: { id }, include: { review: true } });
 
   if (!lead || lead.clientId !== user.id)
-    return NextResponse.json({ error: 'Não encontrado' }, { status: 404 });
+    return NextResponse.json({ error: 'Not found' }, { status: 404 });
 
   if (lead.status !== 'COMPLETED')
-    return NextResponse.json({ error: 'Pedido ainda não foi concluído' }, { status: 409 });
+    return NextResponse.json({ error: 'Booking has not been completed yet' }, { status: 409 });
 
   if (!lead.cleanerId)
     return NextResponse.json({ error: 'Nenhum profissional para avaliar' }, { status: 409 });
 
   if (lead.review)
-    return NextResponse.json({ error: 'Avaliação já enviada' }, { status: 409 });
+    return NextResponse.json({ error: 'Review already submitted' }, { status: 409 });
 
   const { rating, comment } = await req.json();
 
   if (!rating || rating < 1 || rating > 5)
-    return NextResponse.json({ error: 'Avaliação deve ser entre 1 e 5' }, { status: 400 });
+    return NextResponse.json({ error: 'Rating must be between 1 and 5' }, { status: 400 });
 
   const review = await prisma.$transaction(async tx => {
     const r = await tx.review.create({
@@ -48,7 +48,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   createNotification({
     userId: lead.cleanerId!,
     type:   'review_received',
-    title:  'Nova avaliação recebida!',
+    title:  'New review received!',
     body:   `${rating} estrelas${comment ? ` — "${comment}"` : ''}`,
     link:   '/dashboard/cleaner',
   }).catch(() => {});

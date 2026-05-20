@@ -19,6 +19,8 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
         avatarUrl: true,
         latitude: true,
         longitude: true,
+        zipCode: true,
+        serviceRadiusMiles: true,
         phone: true,
         createdAt: true,
         stats: { select: { ratingAvg: true, totalLeads: true } },
@@ -26,7 +28,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
     });
 
     if (!user || user.role !== 'CLEANER') {
-      return NextResponse.json({ error: 'Profissional não encontrado' }, { status: 404 });
+      return NextResponse.json({ error: 'Cleaner not found' }, { status: 404 });
     }
 
     // Step 2: work photos

@@ -32,7 +32,7 @@ export default function HomePage() {
                 _hover={{ bg: 'rgba(255,255,255,0.08)', borderColor: 'rgba(255,255,255,0.35)' }}
                 h="34px" px={4}
               >
-                I'm a professional
+                Become a cleaner
               </Button>
             </NextLink>
             <NextLink href="/auth/login">
@@ -71,7 +71,7 @@ export default function HomePage() {
               color="#1A7FA0" textTransform="uppercase" fontFamily="heading"
               style={{ borderLeft: '2px solid #1A7FA0', paddingLeft: 10 }}
             >
-              Verified cleaning platform
+              The trusted cleaning platform
             </Text>
 
             <Text
@@ -80,16 +80,16 @@ export default function HomePage() {
               fontWeight="800" lineHeight="1.08" letterSpacing="-0.03em"
               color="white" fontFamily="heading" mb={6}
             >
-              Professional cleaning{' '}
-              <Text as="span" color="#1A7FA0">at your door</Text>
+              A spotless home,{' '}
+              <Text as="span" color="#1A7FA0">on your schedule</Text>
             </Text>
 
             <Text
               fontSize={{ base: '16px', md: '18px' }} color="rgba(255,255,255,0.72)"
               lineHeight="1.65" mb={10} maxW="520px" fontFamily="heading"
             >
-              We connect you with the best verified professionals in your area.
-              Fast, safe, and satisfaction guaranteed.
+              Connect with background-checked cleaners near you.
+              Book in minutes, relax all day.
             </Text>
 
             <HStack gap={3} flexWrap="wrap" mb={14}>
@@ -99,7 +99,7 @@ export default function HomePage() {
                   borderRadius="4px" fontWeight="700" fontSize="14px" fontFamily="heading"
                   _hover={{ bg: '#15698A' }} transition="background 0.15s"
                 >
-                  Request cleaning
+                  Book a cleaning
                   <Icon as={LucideArrowRight} w={4} h={4} ml={2} />
                 </Button>
               </NextLink>
@@ -108,7 +108,7 @@ export default function HomePage() {
             <HStack gap={0} divideX="1px" divideColor="rgba(255,255,255,0.15)" flexWrap="wrap">
               {[
                 { icon: LucideStar,        color: '#FCD34D', text: '4.9 average rating' },
-                { icon: LucideCheckCircle, color: '#34D399', text: 'Verified professionals' },
+                { icon: LucideCheckCircle, color: '#34D399', text: 'Vetted cleaners' },
                 { icon: LucideShield,      color: '#60A5FA', text: 'Secure payment' },
               ].map(item => (
                 <HStack key={item.text} gap={1.5} px={4} py={1} _first={{ pl: 0 }}>
@@ -133,7 +133,7 @@ export default function HomePage() {
             </Text>
             <Text fontSize={{ base: '26px', md: '32px' }} fontWeight="800" color="#0B1120"
               fontFamily="heading" letterSpacing="-0.025em">
-              Simple, fast, guaranteed
+              Book a cleaner in under 2 minutes
             </Text>
           </Box>
 
@@ -141,18 +141,18 @@ export default function HomePage() {
             {[
               {
                 n: '01', icon: LucideCalendar, color: '#1A7FA0',
-                title: 'Make a request',
-                desc: 'Describe the service, provide your address, and choose a date and time. Takes less than 2 minutes.',
+                title: 'Book in minutes',
+                desc: 'Choose your cleaning type, enter your address, and pick a date. Takes less than 2 minutes.',
               },
               {
                 n: '02', icon: LucideMessageCircle, color: '#7C3AED',
-                title: 'Receive proposals',
-                desc: 'Verified professionals in your area respond to your request. You choose and confirm.',
+                title: 'Get matched',
+                desc: 'Background-checked cleaners in your area respond. You review, choose, and confirm.',
               },
               {
                 n: '03', icon: LucideCheckCircle, color: '#059669',
-                title: 'Job complete',
-                desc: 'Track via chat, rate the professional, and book again anytime.',
+                title: 'Enjoy your clean home',
+                desc: 'Your cleaner handles everything. Rate the job and rebook with one tap.',
               },
             ].map((step, i) => (
               <Box
@@ -188,11 +188,11 @@ export default function HomePage() {
           <Box mb={12}>
             <Text fontSize="10.5px" fontWeight="700" letterSpacing="0.12em" color="#1A7FA0"
               textTransform="uppercase" fontFamily="heading" mb={2}>
-              Why choose us
+              Why homeowners love us
             </Text>
             <Text fontSize={{ base: '26px', md: '32px' }} fontWeight="800" color="#0B1120"
               fontFamily="heading" letterSpacing="-0.025em">
-              Technology at the service of cleaning
+              Built for trust. Built for results.
             </Text>
           </Box>
 
@@ -200,18 +200,18 @@ export default function HomePage() {
             {[
               {
                 icon: LucideTrendingUp, color: '#1A7FA0',
-                title: 'Wave Distribution',
-                desc: 'Our CFS system ensures the best professionals receive requests first, based on ratings and history.',
+                title: 'Smart Matching',
+                desc: 'Our system connects you with top-rated cleaners first — based on proximity, ratings, and availability.',
               },
               {
                 icon: LucideShield, color: '#7C3AED',
-                title: 'Identity Verification',
-                desc: 'All professionals submit documents and a selfie for manual review before appearing on the platform.',
+                title: 'Background Checks',
+                desc: 'Every cleaner is ID-verified and background-checked before they can accept bookings on BrazilianClean.',
               },
               {
                 icon: LucideMapPin, color: '#059669',
-                title: 'Regional Matching',
-                desc: 'Leads directed by proximity. Professionals and clients find matches in the same area.',
+                title: 'Local Cleaners',
+                desc: "You're matched with cleaners in your zip code — faster response times and better local knowledge.",
               },
             ].map((item, i) => (
               <Box
@@ -246,10 +246,10 @@ export default function HomePage() {
           <Box>
             <Text fontSize={{ base: '22px', md: '28px' }} fontWeight="800" color="white"
               fontFamily="heading" letterSpacing="-0.025em" mb={1.5}>
-              Ready to get started?
+              Ready for a spotless home?
             </Text>
             <Text fontSize="14px" color="rgba(255,255,255,0.5)" fontFamily="heading">
-              Create your account and request your first cleaning in minutes.
+              Join thousands of happy homeowners. Book your first cleaning today.
             </Text>
           </Box>
           <NextLink href="/request">
@@ -258,7 +258,7 @@ export default function HomePage() {
               borderRadius="4px" fontWeight="700" fontSize="14px" fontFamily="heading"
               _hover={{ bg: '#15698A' }} transition="background 0.15s" flexShrink={0}
             >
-              Request cleaning now
+              Book a cleaning
               <Icon as={LucideArrowRight} w={4} h={4} ml={2} />
             </Button>
           </NextLink>

@@ -13,10 +13,10 @@ export async function POST(req: NextRequest) {
   if (!user || user.role !== 'CLEANER') return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
 
   const { url, caption } = await req.json();
-  if (!url?.trim()) return NextResponse.json({ error: 'URL obrigatória' }, { status: 400 });
+  if (!url?.trim()) return NextResponse.json({ error: 'URL is required' }, { status: 400 });
 
   const count = await prisma.workPhoto.count({ where: { cleanerId: user.id } });
-  if (count >= 20) return NextResponse.json({ error: 'Máximo de 20 fotos atingido' }, { status: 400 });
+  if (count >= 20) return NextResponse.json({ error: 'Maximum of 20 photos reached' }, { status: 400 });
 
   const photo = await prisma.workPhoto.create({
     data: { cleanerId: user.id, url: url.trim(), caption: caption?.trim() || null },

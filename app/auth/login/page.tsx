@@ -75,17 +75,17 @@ export default function LoginPage() {
               color="#1A7FA0" textTransform="uppercase" fontFamily="heading" mb={4}
               style={{ borderLeft: '2px solid #1A7FA0', paddingLeft: 10 }}
             >
-              Verified platform
+              Trusted by homeowners
             </Text>
             <Text fontSize="26px" fontWeight="800" color="white" fontFamily="heading"
               letterSpacing="-0.03em" lineHeight="1.15" mb={6}>
-              Cleaning professionals<br />you can trust.
+              Your home,<br />in trusted hands.
             </Text>
             <VStack align="stretch" gap={2.5}>
               {[
-                'Identity-verified professionals',
-                'Secure and guaranteed payments',
-                '4.9 average star rating',
+                'Background-checked cleaners',
+                'Secure payments & satisfaction guarantee',
+                '4.9 stars across 1,000+ reviews',
               ].map(t => (
                 <HStack key={t} gap={2}>
                   <Icon as={LucideCheckCircle} w="14px" h="14px" color="#1A7FA0" flexShrink={0} />

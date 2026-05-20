@@ -33,16 +33,16 @@ export async function POST(
     include: { distributions: { where: { cleanerId: cleaner.id } } },
   });
 
-  if (!lead) return NextResponse.json({ error: 'Lead não encontrado' }, { status: 404 });
+  if (!lead) return NextResponse.json({ error: 'Lead not found' }, { status: 404 });
 
   const openStatuses = ['NEW', 'WAVE1', 'WAVE2', 'WAVE3', 'IN_REVIEW'];
   if (!openStatuses.includes(lead.status)) {
-    return NextResponse.json({ error: 'Este lead não está mais disponível' }, { status: 409 });
+    return NextResponse.json({ error: 'This lead is no longer available' }, { status: 409 });
   }
 
   const dist = lead.distributions[0];
   if (!dist || dist.status === 'EXPIRED' || dist.status === 'LOST') {
-    return NextResponse.json({ error: 'Você não foi convidado para este lead ou o tempo expirou' }, { status: 409 });
+    return NextResponse.json({ error: 'You were not invited to this lead or the time has expired' }, { status: 409 });
   }
 
   const leadPrice = lead.leadPrice ?? 15;
@@ -54,7 +54,7 @@ export async function POST(
 
       await prisma.$transaction(async tx => {
         const fresh = await tx.lead.findUnique({ where: { id: leadId } });
-        if (!fresh) throw new Error('Lead não encontrado');
+        if (!fresh) throw new Error('Lead not found');
 
         // Another cleaner already locked this lead
         if (fresh.status === 'ACCEPTED' || (fresh.status === 'IN_REVIEW' && fresh.cleanerId)) {
@@ -97,7 +97,7 @@ export async function POST(
       if (!result.won) {
         return NextResponse.json({
           won: false,
-          message: 'Outro profissional foi mais rápido. Você não foi cobrado.',
+          message: 'Another cleaner was faster. You were not charged.',
         }, { status: 409 });
       }
 
@@ -105,7 +105,7 @@ export async function POST(
       createNotification({
         userId: lead.clientId,
         type:   'cleaner_responded',
-        title:  'Profissional disponível!',
+        title:  'Cleaner available!',
         body:   'Um profissional respondeu ao seu pedido. Aceite ou recuse.',
         link:   '/dashboard/client',
       }).catch(() => {});
@@ -137,7 +137,7 @@ export async function POST(
     createNotification({
       userId: lead.clientId,
       type:   'cleaner_responded',
-      title:  'Profissional disponível!',
+      title:  'Cleaner available!',
       body:   'Um profissional respondeu ao seu pedido. Aceite ou recuse.',
       link:   '/dashboard/client',
     }).catch(() => {});

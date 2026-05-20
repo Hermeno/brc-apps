@@ -25,11 +25,11 @@ export async function POST(
   const lead = await prisma.lead.findUnique({ where: { id } });
 
   if (!lead) {
-    return NextResponse.json({ error: 'Pedido não encontrado' }, { status: 404 });
+    return NextResponse.json({ error: 'Booking not found' }, { status: 404 });
   }
 
   if (lead.status !== 'NEW') {
-    return NextResponse.json({ error: 'Pedido já foi aceito por outro profissional' }, { status: 409 });
+    return NextResponse.json({ error: 'This booking was already accepted by another cleaner' }, { status: 409 });
   }
 
   try {

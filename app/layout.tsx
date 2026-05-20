@@ -17,13 +17,18 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: 'BrazilianClean — Limpeza Profissional',
-  description: 'A plataforma número 1 para encontrar profissionais de limpeza verificados.',
+  title: 'BrazilianClean — Professional Cleaning Services',
+  description: 'The #1 platform to find background-checked cleaners near you. Book in minutes, relax all day.',
+  openGraph: {
+    title: 'BrazilianClean — Professional Cleaning Services',
+    description: 'Connect with vetted, background-checked cleaners in your area. Secure booking, satisfaction guaranteed.',
+    type: 'website',
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="pt-BR" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning>
       <body
         className={`${dmSans.variable} ${inter.variable}`}
         suppressHydrationWarning

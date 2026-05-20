@@ -15,7 +15,7 @@ export async function DELETE(_req: NextRequest, { params }: { params: Promise<{ 
   const { id } = await params;
   const photo = await prisma.workPhoto.findUnique({ where: { id } });
   if (!photo || photo.cleanerId !== user.id) {
-    return NextResponse.json({ error: 'Não encontrado' }, { status: 404 });
+    return NextResponse.json({ error: 'Not found' }, { status: 404 });
   }
 
   await prisma.workPhoto.delete({ where: { id } });

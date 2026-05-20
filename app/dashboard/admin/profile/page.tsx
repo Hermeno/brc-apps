@@ -28,10 +28,10 @@ export default function AdminProfilePage() {
 
   const handleSave = async () => {
     if (newPassword && newPassword !== confirm) {
-      toaster.create({ title: 'As senhas não coincidem', type: 'error' }); return;
+      toaster.create({ title: 'Passwords do not match', type: 'error' }); return;
     }
     if (newPassword && newPassword.length < 6) {
-      toaster.create({ title: 'Senha mínima 6 caracteres', type: 'error' }); return;
+      toaster.create({ title: 'Password must be at least 6 characters', type: 'error' }); return;
     }
     setLoading(true);
     try {
@@ -40,8 +40,8 @@ export default function AdminProfilePage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, email, phone, newPassword: newPassword || undefined }),
       });
-      if (!res.ok) throw new Error('Erro ao salvar');
-      toaster.create({ title: 'Perfil atualizado!', type: 'success' });
+      if (!res.ok) throw new Error('Error saving');
+      toaster.create({ title: 'Profile updated!', type: 'success' });
       setNewPass(''); setConfirm('');
     } catch (e: any) {
       toaster.create({ title: e.message, type: 'error' });
@@ -55,24 +55,24 @@ export default function AdminProfilePage() {
       <Box bg="white" borderBottom="1px solid" borderColor="slate.100" position="sticky" top={0} zIndex={50}>
         <Container maxW="2xl" py={4}>
           <Flex align="center" gap={3}>
-            <Button variant="ghost" size="sm" onClick={() => router.push('/dashboard/admin')} borderRadius="xl">
-              <Icon as={LucideArrowLeft} w={4} h={4} mr={1} /> Painel Admin
+            <Button variant="ghost" size="sm" onClick={() => router.push('/dashboard/admin')} borderRadius="4px">
+              <Icon as={LucideArrowLeft} w={4} h={4} mr={1} /> Admin panel
             </Button>
-            <Text fontWeight="black" color="slate.900">Meu perfil</Text>
+            <Text fontWeight="black" color="slate.900">My profile</Text>
           </Flex>
         </Container>
       </Box>
 
       <Container maxW="2xl" py={10}>
-        <Box bg="white" borderRadius="2xl" border="1px solid" borderColor="slate.200" p={8}>
+        <Box bg="white" border="1px solid" borderColor="slate.200" p={8}>
           <VStack gap={6} align="stretch">
-            <Heading size="md" fontWeight="black" color="slate.900">Dados pessoais</Heading>
+            <Heading size="md" fontWeight="black" color="slate.900">Personal information</Heading>
 
             <Box>
-              <Text fontSize="xs" fontWeight="bold" color="slate.500" textTransform="uppercase" mb={2}>Nome</Text>
+              <Text fontSize="xs" fontWeight="bold" color="slate.500" textTransform="uppercase" mb={2}>Name</Text>
               <HStack><Icon as={LucideUser} w={4} h={4} color="slate.400" />
                 <Input value={name} onChange={e => setName(e.target.value)} bg="slate.50"
-                  border="1px solid" borderColor="slate.200" h="11" borderRadius="xl"
+                  border="1px solid" borderColor="slate.200" h="11" borderRadius="4px"
                   _focus={{ bg: 'white', borderColor: 'brand.300' }} />
               </HStack>
             </Box>
@@ -81,48 +81,48 @@ export default function AdminProfilePage() {
               <Text fontSize="xs" fontWeight="bold" color="slate.500" textTransform="uppercase" mb={2}>Email</Text>
               <HStack><Icon as={LucideMail} w={4} h={4} color="slate.400" />
                 <Input value={email} onChange={e => setEmail(e.target.value)} type="email" bg="slate.50"
-                  border="1px solid" borderColor="slate.200" h="11" borderRadius="xl"
+                  border="1px solid" borderColor="slate.200" h="11" borderRadius="4px"
                   _focus={{ bg: 'white', borderColor: 'brand.300' }} />
               </HStack>
             </Box>
 
             <Box>
-              <Text fontSize="xs" fontWeight="bold" color="slate.500" textTransform="uppercase" mb={2}>Telefone</Text>
+              <Text fontSize="xs" fontWeight="bold" color="slate.500" textTransform="uppercase" mb={2}>Phone</Text>
               <HStack><Icon as={LucidePhone} w={4} h={4} color="slate.400" />
                 <Input value={phone} onChange={e => setPhone(e.target.value)} bg="slate.50"
-                  border="1px solid" borderColor="slate.200" h="11" borderRadius="xl"
+                  border="1px solid" borderColor="slate.200" h="11" borderRadius="4px"
                   _focus={{ bg: 'white', borderColor: 'brand.300' }} />
               </HStack>
             </Box>
 
             <Box borderTop="1px solid" borderColor="slate.100" pt={5}>
-              <Heading size="sm" fontWeight="black" color="slate.900" mb={4}>Alterar senha</Heading>
+              <Heading size="sm" fontWeight="black" color="slate.900" mb={4}>Change password</Heading>
               <VStack gap={3} align="stretch">
                 <Box>
-                  <Text fontSize="xs" fontWeight="bold" color="slate.500" textTransform="uppercase" mb={2}>Nova senha</Text>
+                  <Text fontSize="xs" fontWeight="bold" color="slate.500" textTransform="uppercase" mb={2}>New password</Text>
                   <HStack><Icon as={LucideLock} w={4} h={4} color="slate.400" />
                     <Input type="password" value={newPassword} onChange={e => setNewPass(e.target.value)}
-                      placeholder="Deixe em branco para não alterar"
-                      bg="slate.50" border="1px solid" borderColor="slate.200" h="11" borderRadius="xl"
+                      placeholder="Leave blank to keep current password"
+                      bg="slate.50" border="1px solid" borderColor="slate.200" h="11" borderRadius="4px"
                       _focus={{ bg: 'white', borderColor: 'brand.300' }} />
                   </HStack>
                 </Box>
                 <Box>
-                  <Text fontSize="xs" fontWeight="bold" color="slate.500" textTransform="uppercase" mb={2}>Confirmar senha</Text>
+                  <Text fontSize="xs" fontWeight="bold" color="slate.500" textTransform="uppercase" mb={2}>Confirm password</Text>
                   <HStack><Icon as={LucideLock} w={4} h={4} color="slate.400" />
                     <Input type="password" value={confirm} onChange={e => setConfirm(e.target.value)}
-                      placeholder="Repita a nova senha"
-                      bg="slate.50" border="1px solid" borderColor="slate.200" h="11" borderRadius="xl"
+                      placeholder="Repeat new password"
+                      bg="slate.50" border="1px solid" borderColor="slate.200" h="11" borderRadius="4px"
                       _focus={{ bg: 'white', borderColor: 'brand.300' }} />
                   </HStack>
                 </Box>
               </VStack>
             </Box>
 
-            <Button onClick={handleSave} loading={loading} loadingText="Salvando…"
-              bg="brand.500" color="white" h="11" borderRadius="xl" fontWeight="bold"
+            <Button onClick={handleSave} loading={loading} loadingText="Saving…"
+              bg="brand.500" color="white" h="11" borderRadius="4px" fontWeight="bold"
               _hover={{ bg: 'brand.600' }}>
-              <Icon as={LucideSave} mr={2} /> Salvar alterações
+              <Icon as={LucideSave} mr={2} /> Save changes
             </Button>
           </VStack>
         </Box>

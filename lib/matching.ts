@@ -1,28 +1,25 @@
 import { prisma } from './prisma';
-import { calculateLeadPrice, detectServiceKey } from './pricing';
+import { calculateLeadPrice, detectServiceKey, getLeadPriceConfig } from './pricing';
 import { createNotificationMany } from './notifications';
+import { haversineDistance, resolveCoords, ensureRadiusColumn } from './geo';
 
 // ─── advanceWaves rate-limiter ────────────────────────────────────────────────
-// Prevents the expensive wave-check from running more than once per 60 seconds
-// across all concurrent requests on the same server process.
 let lastAdvanceAt = 0;
 const ADVANCE_COOLDOWN_MS = 60_000;
 
 // ─── CFS (Cleaner Ranking Score) ─────────────────────────────────────────────
-// Max 100 points: Plan(30) + Service(40) + Rating(20) + ZIP(10)
+// Max 100 points: Plan(30) + Service(40) + Rating(20) + Proximity(10)
 
 const PLAN_BONUS: Record<string, number> = {
   FREE: 0, BASIC: 10, PREMIUM: 20, PRO: 30,
 };
 
-function scoreCFS(cleaner: any, lead: any): number {
+function scoreCFS(cleaner: any, lead: any, distanceMiles: number | null): number {
   const leadKey = detectServiceKey(lead.serviceType);
 
   // Hard filter — cleaner must offer this service (or accept all).
-  // Normalise stored service types using the same detectServiceKey so that
-  // legacy values like "residential_cleaning" / "deep_cleaning" map correctly.
   if (cleaner.serviceTypes?.length > 0) {
-    const cleanerKeys = (cleaner.serviceTypes as string[]).map(t => detectServiceKey(t));
+    const cleanerKeys = (cleaner.serviceTypes as string[]).map((t: string) => detectServiceKey(t));
     if (!cleanerKeys.includes(leadKey)) return 0;
   }
 
@@ -38,12 +35,33 @@ function scoreCFS(cleaner: any, lead: any): number {
   const rating: number = cleaner.stats?.ratingAvg ?? 0;
   score += (rating / 5) * 20;
 
-  // ZIP proximity (0–10)
-  if (cleaner.zipCode && lead.zipCode && cleaner.zipCode === lead.zipCode) {
-    score += 10;
+  // Proximity bonus (0–10): closer = more points
+  // 0 miles → 10 pts, 10 miles → 8 pts, 25 miles → 5 pts, 50+ miles → 0 pts
+  if (distanceMiles !== null) {
+    const proximityPts = Math.max(0, 10 - (distanceMiles / 5));
+    score += Math.round(proximityPts);
   }
 
   return Math.round(Math.min(100, score));
+}
+
+// Filter cleaners by their configured service radius and return enriched list
+function filterByRadius(cleaners: any[], leadCoords: { lat: number; lng: number } | null) {
+  return cleaners
+    .map(c => {
+      const cleanerCoords = resolveCoords(c.latitude, c.longitude, c.zipCode);
+      const distanceMiles = (leadCoords && cleanerCoords)
+        ? haversineDistance(cleanerCoords.lat, cleanerCoords.lng, leadCoords.lat, leadCoords.lng)
+        : null;
+
+      const radiusMiles: number = c.serviceRadiusMiles ?? 25;
+
+      // Hard distance filter — only skip if BOTH have coordinates AND distance exceeds radius
+      if (distanceMiles !== null && distanceMiles > radiusMiles) return null;
+
+      return { cleaner: c, distanceMiles };
+    })
+    .filter(Boolean) as { cleaner: any; distanceMiles: number | null }[];
 }
 
 // ─── Wave timing constants ────────────────────────────────────────────────────
@@ -54,13 +72,22 @@ const WAVE2_WINDOW_MS = 180 * 1000;  // 180 seconds
 // ─── Main matching engine ─────────────────────────────────────────────────────
 
 export async function runMatching(leadId: string) {
+  await ensureRadiusColumn();
+
   const lead = await prisma.lead.findUnique({ where: { id: leadId } });
   if (!lead) return { type: 'error' };
+
+  // Resolve lead coordinates from stored lat/lng or ZIP centroid
+  const leadCoords = resolveCoords(
+    lead.latitude !== 0 ? lead.latitude : null,
+    lead.longitude !== 0 ? lead.longitude : null,
+    lead.zipCode,
+  );
 
   const cleaners = await prisma.user.findMany({
     where: { role: 'CLEANER', isAvailable: true, isVerified: true },
     include: { stats: true },
-    take: 100,
+    take: 200,
   });
 
   if (cleaners.length === 0) {
@@ -68,8 +95,14 @@ export async function runMatching(leadId: string) {
     return { type: 'unmatched' };
   }
 
-  const scored = cleaners
-    .map(c => ({ cleaner: c, score: scoreCFS(c, lead) }))
+  const inRadius = filterByRadius(cleaners, leadCoords);
+
+  const scored = inRadius
+    .map(({ cleaner, distanceMiles }) => ({
+      cleaner,
+      score: scoreCFS(cleaner, lead, distanceMiles),
+      distanceMiles,
+    }))
     .filter(s => s.score > 0)
     .sort((a, b) => b.score - a.score);
 
@@ -78,7 +111,11 @@ export async function runMatching(leadId: string) {
     return { type: 'unmatched' };
   }
 
-  const leadPrice = calculateLeadPrice(lead.serviceType, lead.dateTime, lead.frequency);
+  // Use stored price (set at lead creation) or recalculate
+  const priceConfig = lead.leadPrice == null ? await getLeadPriceConfig() : null;
+  const leadPrice = lead.leadPrice ?? calculateLeadPrice(
+    lead.serviceType, lead.dateTime, lead.frequency, priceConfig ?? undefined,
+  );
 
   // ── Instant Book: top cleaner scores ≥ 85 ──────────────────────────────────
   const top = scored[0];
@@ -105,17 +142,17 @@ export async function runMatching(leadId: string) {
 
   // ── Wave 1: top 2 cleaners, 90-second exclusive window ──────────────────────
   const wave1Cleaners = scored.slice(0, 2);
-  const wave1Expires = new Date(Date.now() + WAVE1_WINDOW_MS);
+  const wave1Expires  = new Date(Date.now() + WAVE1_WINDOW_MS);
 
   await prisma.lead.update({ where: { id: leadId }, data: { status: 'WAVE1', leadPrice } });
   await prisma.leadDistribution.createMany({
     data: wave1Cleaners.map(({ cleaner }) => ({
       leadId,
-      cleanerId: cleaner.id,
-      wave: 1,
-      status: 'INVITED',
+      cleanerId:  cleaner.id,
+      wave:       1,
+      status:     'INVITED',
       notifiedAt: new Date(),
-      expiresAt: wave1Expires,
+      expiresAt:  wave1Expires,
     })),
     skipDuplicates: true,
   });
@@ -123,21 +160,22 @@ export async function runMatching(leadId: string) {
   createNotificationMany(wave1Cleaners.map(({ cleaner }) => ({
     userId: cleaner.id,
     type:   'lead_received',
-    title:  'Novo lead disponível!',
-    body:   `${lead.serviceType} em ${lead.address}. Você tem 90 segundos.`,
+    title:  'New lead available!',
+    body:   `${lead.serviceType} at ${lead.address}. You have 90 seconds.`,
     link:   '/dashboard/marketplace',
   }))).catch(() => {});
 
   return { type: 'wave1', cleanerIds: wave1Cleaners.map(c => c.cleaner.id) };
 }
 
-// ─── Wave advancement (lazy — called on every available leads fetch) ──────────
+// ─── Wave advancement ─────────────────────────────────────────────────────────
 
 export async function advanceWaves() {
   const now = Date.now();
-  if (now - lastAdvanceAt < ADVANCE_COOLDOWN_MS) return; // skip if ran recently
+  if (now - lastAdvanceAt < ADVANCE_COOLDOWN_MS) return;
   lastAdvanceAt = now;
 
+  await ensureRadiusColumn();
   const nowDate = new Date();
 
   // ── Wave 1 → Wave 2 ────────────────────────────────────────────────────────
@@ -155,18 +193,28 @@ export async function advanceWaves() {
 
     await prisma.leadDistribution.updateMany({
       where: { leadId: lead.id, wave: 1, status: 'INVITED' },
-      data: { status: 'EXPIRED' },
+      data:  { status: 'EXPIRED' },
     });
 
-    const usedIds = lead.distributions.map(d => d.cleanerId);
+    const leadCoords = resolveCoords(
+      lead.latitude !== 0 ? lead.latitude : null,
+      lead.longitude !== 0 ? lead.longitude : null,
+      lead.zipCode,
+    );
+
+    const usedIds       = lead.distributions.map(d => d.cleanerId);
     const wave2Candidates = await prisma.user.findMany({
-      where: { role: 'CLEANER', isAvailable: true, isVerified: true, id: { notIn: usedIds } },
+      where:   { role: 'CLEANER', isAvailable: true, isVerified: true, id: { notIn: usedIds } },
       include: { stats: true },
-      take: 20,
+      take:    50,
     });
 
-    const scored = wave2Candidates
-      .map(c => ({ cleaner: c, score: scoreCFS(c, lead) }))
+    const inRadius = filterByRadius(wave2Candidates, leadCoords);
+    const scored = inRadius
+      .map(({ cleaner, distanceMiles }) => ({
+        cleaner,
+        score: scoreCFS(cleaner, lead, distanceMiles),
+      }))
       .filter(s => s.score > 0)
       .sort((a, b) => b.score - a.score)
       .slice(0, 2);
@@ -180,11 +228,11 @@ export async function advanceWaves() {
     await prisma.lead.update({ where: { id: lead.id }, data: { status: 'WAVE2' } });
     await prisma.leadDistribution.createMany({
       data: scored.map(({ cleaner }) => ({
-        leadId: lead.id,
-        cleanerId: cleaner.id,
-        wave: 2,
-        status: 'INVITED',
-        expiresAt: wave2Expires,
+        leadId:     lead.id,
+        cleanerId:  cleaner.id,
+        wave:       2,
+        status:     'INVITED',
+        expiresAt:  wave2Expires,
         notifiedAt: nowDate,
       })),
       skipDuplicates: true,
@@ -193,8 +241,8 @@ export async function advanceWaves() {
     createNotificationMany(scored.map(({ cleaner }) => ({
       userId: cleaner.id,
       type:   'lead_received',
-      title:  'Novo lead disponível!',
-      body:   `${lead.serviceType} em ${lead.address}. Seja o primeiro a aceitar!`,
+      title:  'New lead available!',
+      body:   `${lead.serviceType} at ${lead.address}. Be the first to accept!`,
       link:   '/dashboard/marketplace',
     }))).catch(() => {});
   }
@@ -213,7 +261,7 @@ export async function advanceWaves() {
 
     await prisma.leadDistribution.updateMany({
       where: { leadId: lead.id, wave: 2, status: 'INVITED' },
-      data: { status: 'EXPIRED' },
+      data:  { status: 'EXPIRED' },
     });
     await prisma.lead.update({ where: { id: lead.id }, data: { status: 'UNMATCHED' } });
   }

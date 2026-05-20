@@ -13,7 +13,7 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
   const conv = await prisma.conversation.findUnique({ where: { id } });
 
   if (!conv || conv.clientId !== user.id)
-    return NextResponse.json({ error: 'Não encontrado' }, { status: 404 });
+    return NextResponse.json({ error: 'Not found' }, { status: 404 });
 
   await prisma.conversation.update({ where: { id }, data: { status: 'declined' } });
 

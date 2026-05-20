@@ -31,17 +31,17 @@ export async function POST(req: NextRequest) {
 
   const existing = await prisma.cleanerVerification.findUnique({ where: { cleanerId: user.id } });
   if (existing && existing.status === 'PENDING') {
-    return NextResponse.json({ error: 'Verificação já enviada e aguardando análise.' }, { status: 409 });
+    return NextResponse.json({ error: 'Verification already submitted and under review.' }, { status: 409 });
   }
   if (existing && existing.status === 'APPROVED') {
-    return NextResponse.json({ error: 'Conta já verificada.' }, { status: 409 });
+    return NextResponse.json({ error: 'Account already verified.' }, { status: 409 });
   }
 
   const body = await req.json();
   const { fullName, idNumber, address, frontDocUrl, backDocUrl, selfieUrl } = body;
 
   if (!fullName || !idNumber || !address || !frontDocUrl || !backDocUrl || !selfieUrl) {
-    return NextResponse.json({ error: 'Todos os campos são obrigatórios.' }, { status: 400 });
+    return NextResponse.json({ error: 'All fields are required.' }, { status: 400 });
   }
 
   const verification = await prisma.cleanerVerification.upsert({

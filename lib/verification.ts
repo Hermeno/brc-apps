@@ -31,10 +31,10 @@ export async function verifyCode(
     where: { email, code, type },
   });
 
-  if (!record) return { valid: false, reason: 'Código inválido.' };
+  if (!record) return { valid: false, reason: 'Invalid code.' };
   if (record.expiresAt < new Date()) {
     await prisma.verificationToken.delete({ where: { id: record.id } });
-    return { valid: false, reason: 'Código expirado. Solicite um novo.' };
+    return { valid: false, reason: 'Code expired. Please request a new one.' };
   }
 
   await prisma.verificationToken.delete({ where: { id: record.id } });

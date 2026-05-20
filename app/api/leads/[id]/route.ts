@@ -16,17 +16,17 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
   const lead = await prisma.lead.findUnique({ where: { id } });
 
   if (!lead || lead.clientId !== user.id)
-    return NextResponse.json({ error: 'Não encontrado' }, { status: 404 });
+    return NextResponse.json({ error: 'Not found' }, { status: 404 });
 
   if (!EDITABLE_STATUSES.includes(lead.status))
-    return NextResponse.json({ error: 'Pedido não pode ser editado no estado atual' }, { status: 409 });
+    return NextResponse.json({ error: 'Booking cannot be edited in its current state' }, { status: 409 });
 
   const body = await req.json();
   const { serviceType, address, dateTime, notes, bedrooms, bathrooms, squareMeters, extras, frequency,
     estimatedMinPrice, estimatedMaxPrice, estimatedHours } = body;
 
   const parsedDate = dateTime ? new Date(dateTime) : lead.dateTime;
-  if (isNaN(parsedDate.getTime())) return NextResponse.json({ error: 'Data inválida' }, { status: 400 });
+  if (isNaN(parsedDate.getTime())) return NextResponse.json({ error: 'Invalid date' }, { status: 400 });
 
   const updated = await prisma.lead.update({
     where: { id },

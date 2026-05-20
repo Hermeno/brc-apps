@@ -29,11 +29,11 @@ const TYPE_ICONS: Record<string, string> = {
 function timeAgo(dateStr: string) {
   const diff = Date.now() - new Date(dateStr).getTime();
   const mins = Math.floor(diff / 60000);
-  if (mins < 1)  return 'agora';
-  if (mins < 60) return `${mins}m atrás`;
+  if (mins < 1)  return 'just now';
+  if (mins < 60) return `${mins}m ago`;
   const hrs = Math.floor(mins / 60);
-  if (hrs < 24)  return `${hrs}h atrás`;
-  return `${Math.floor(hrs / 24)}d atrás`;
+  if (hrs < 24)  return `${hrs}h ago`;
+  return `${Math.floor(hrs / 24)}d ago`;
 }
 
 export default function NotificationBell({ dark = false }: { dark?: boolean }) {
@@ -201,7 +201,7 @@ export default function NotificationBell({ dark = false }: { dark?: boolean }) {
                     fontWeight="700" fontSize="13.5px" color="slate.900"
                     fontFamily="heading" letterSpacing="-0.01em"
                   >
-                    Notificações
+                    Notifications
                   </Text>
                   {unread > 0 && (
                     <Badge
@@ -209,7 +209,7 @@ export default function NotificationBell({ dark = false }: { dark?: boolean }) {
                       borderRadius="full" px={2} fontSize="9px" fontWeight="700"
                       fontFamily="heading"
                     >
-                      {unread} {unread === 1 ? 'nova' : 'novas'}
+                      {unread} {unread === 1 ? 'new' : 'new'}
                     </Badge>
                   )}
                 </HStack>
@@ -225,7 +225,7 @@ export default function NotificationBell({ dark = false }: { dark?: boolean }) {
                       _hover={{ bg: 'brand.50' }} transition="background 0.12s"
                     >
                       <Icon as={LucideCheck} w={3} h={3} />
-                      Marcar lidas
+                      Mark all read
                     </Box>
                   )}
                   {notifications.length > 0 && (
@@ -255,7 +255,7 @@ export default function NotificationBell({ dark = false }: { dark?: boolean }) {
                   <VStack py={10} gap={2} textAlign="center">
                     <Text fontSize="2xl">🔕</Text>
                     <Text color="slate.400" fontSize="13px" fontFamily="heading" fontWeight="500">
-                      Nenhuma notificação
+                      No notifications
                     </Text>
                   </VStack>
                 ) : (

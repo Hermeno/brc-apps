@@ -168,14 +168,14 @@ export default function RequestPage() {
             color="#1A7FA0" textTransform="uppercase" fontFamily="heading" mb={2}
             style={{ borderLeft: '2px solid #1A7FA0', paddingLeft: 10 }}
           >
-            New request
+            New booking
           </Text>
           <Text fontSize={{ base: '26px', md: '32px' }} fontWeight="800" color="#0B1120"
             fontFamily="heading" letterSpacing="-0.025em">
             Request Cleaning
           </Text>
           <Text fontSize="14px" color="#64748B" fontFamily="heading" mt={1}>
-            Fill in the details and receive proposals from verified professionals.
+            Fill in the details and get matched with vetted cleaners near you.
           </Text>
         </Box>
 
@@ -205,8 +205,8 @@ export default function RequestPage() {
                         <Text fontSize="xl">{s.icon}</Text>
                         <Box>
                           <Text fontSize="13px" fontWeight="700" fontFamily="heading"
-                            color={serviceType === s.id ? '#1A7FA0' : '#0B1120'}>{s.label}</Text>
-                          <Text fontSize="12px" color="#94A3B8" fontFamily="heading">{s.desc}</Text>
+                            color={serviceType === s.id ? '#1A7FA0' : '#0B1120'}>{s.labelEn}</Text>
+                          <Text fontSize="12px" color="#94A3B8" fontFamily="heading">{s.descEn}</Text>
                         </Box>
                       </HStack>
                     </Box>
@@ -220,7 +220,7 @@ export default function RequestPage() {
                 <HStack>
                   <Icon as={LucideMapPin} color="#E53E3E" w="15px" h="15px" flexShrink={0} />
                   <Input value={address} onChange={e => setAddress(e.target.value)}
-                    placeholder="Rua, número, bairro, cidade" {...inputStyle} />
+                    placeholder="Street, city, state, ZIP" {...inputStyle} />
                 </HStack>
               </Box>
 
@@ -306,7 +306,7 @@ export default function RequestPage() {
                       _hover={{ borderColor: '#0B1120' }}
                       transition="all 0.15s"
                     >
-                      {f.label}
+                      {f.labelEn}
                       {f.tag && (
                         <Box
                           as="span" ml={1.5}
@@ -342,8 +342,8 @@ export default function RequestPage() {
                         <Text fontSize="lg" lineHeight={1}>{ex.icon}</Text>
                         <Box flex={1}>
                           <Text fontSize="12px" fontWeight="700" fontFamily="heading"
-                            color={extras.includes(ex.id) ? '#92400E' : '#0B1120'}>{ex.label}</Text>
-                          <Text fontSize="11px" color="#94A3B8" fontFamily="heading">+R${ex.price}</Text>
+                            color={extras.includes(ex.id) ? '#92400E' : '#0B1120'}>{ex.labelEn}</Text>
+                          <Text fontSize="11px" color="#94A3B8" fontFamily="heading">+${ex.price}</Text>
                         </Box>
                         {extras.includes(ex.id) && (
                           <Icon as={LucideCheckCircle} w="14px" h="14px" color="#D97706" />
@@ -358,7 +358,7 @@ export default function RequestPage() {
               <Box>
                 <Text {...LABEL_STYLE}>Notes (optional)</Text>
                 <Textarea value={notes} onChange={e => setNotes(e.target.value)}
-                  placeholder="Ex: Tenho pets, acesso pelo portão lateral…"
+                  placeholder="E.g., I have pets, gate access on the side…"
                   bg="#F8FAFC" border="1px solid" borderColor="#E2E8F0" borderRadius="4px"
                   fontFamily="heading" fontSize="14px" rows={3}
                   _focus={{ bg: 'white', borderColor: '#1A7FA0' }} />
@@ -373,7 +373,7 @@ export default function RequestPage() {
                   _hover={{ bg: '#15698A' }} transition="background 0.15s"
                   loading={loading}
                 >
-                  Request now
+                  Book now
                   <Icon as={LucideArrowRight} w={4} h={4} ml={2} />
                 </Button>
               )}
@@ -400,7 +400,7 @@ export default function RequestPage() {
                   </Text>
                   {estimate.discountPct > 0 && (
                     <Text fontSize="11px" fontWeight="700" color="#16A34A" fontFamily="heading" mt={1}>
-                      {estimate.discountPct}% desconto frequência
+                      {estimate.discountPct}% frequency discount
                     </Text>
                   )}
                 </Box>
@@ -415,7 +415,7 @@ export default function RequestPage() {
 
                 <Box bg="#F8FAFC" border="1px solid #E2E8F0" p={3}>
                   <Text fontSize="12px" color="#94A3B8" fontFamily="heading" lineHeight="1.6">
-                    Final price is agreed with the professional. Estimate is based on the information provided.
+                    Final price is agreed with your cleaner. Estimate is based on the details provided.
                   </Text>
                 </Box>
 
@@ -460,7 +460,7 @@ export default function RequestPage() {
                     <HStack>
                       <Icon as={LucideMail} w="14px" h="14px" color="#94A3B8" flexShrink={0} />
                       <Input type="email" value={email} onChange={e => setEmail(e.target.value)}
-                        placeholder="seu@email.com" {...inputStyle} />
+                        placeholder="your@email.com" {...inputStyle} />
                     </HStack>
                   </Box>
                   <Box>
@@ -481,7 +481,7 @@ export default function RequestPage() {
                   loading={loading} loadingText="Creating account and submitting…"
                 >
                   <Icon as={LucideCheckCircle} w={4} h={4} mr={2} />
-                  Create account and confirm request
+                  Create account & book now
                 </Button>
 
                 <Text fontSize="12px" color="#94A3B8" fontFamily="heading" mt={4}>

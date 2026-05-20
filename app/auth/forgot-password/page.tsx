@@ -1,13 +1,13 @@
 'use client';
 
 import {
-  Box, Heading, Text, VStack, HStack, Input, Button, Container,
+  Box, Text, VStack, HStack, Input, Button, Icon,
 } from '@chakra-ui/react';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { toaster } from '@/lib/toaster';
 import NextLink from 'next/link';
-import { motion } from 'motion/react';
+import { LucideArrowRight, LucideMail } from 'lucide-react';
 
 export default function ForgotPasswordPage() {
   const router              = useRouter();
@@ -36,71 +36,92 @@ export default function ForgotPasswordPage() {
   };
 
   return (
-    <Box minH="100vh" display="flex" alignItems="center" justifyContent="center"
-      px={4} position="relative" overflow="hidden">
-      <Box position="fixed" top="-120px" left="-120px" w="500px" h="500px"
-        bg="brand.50" borderRadius="full" filter="blur(80px)" opacity={0.6} zIndex={0} />
-      <Box position="fixed" bottom="-80px" right="-80px" w="400px" h="400px"
-        bg="yellow.50" borderRadius="full" filter="blur(80px)" opacity={0.7} zIndex={0} />
+    <Box minH="100vh" bg="#F8FAFC" display="flex" alignItems="center" justifyContent="center" px={5}>
+      <Box w="full" maxW="400px">
 
-      <Container maxW="md" position="relative" zIndex={1}>
-        <motion.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, ease: 'easeOut' }}>
-          <VStack gap={8} align="stretch">
+        {/* Logo */}
+        <HStack gap={2.5} mb={10} justify="center">
+          <Box w="32px" h="32px" bg="#1A7FA0" style={{ borderRadius: 4 }}
+            display="flex" alignItems="center" justifyContent="center">
+            <Text color="white" fontWeight="800" fontSize="11px" letterSpacing="-0.02em" fontFamily="heading">BC</Text>
+          </Box>
+          <Text fontWeight="700" fontSize="15px" letterSpacing="-0.02em" color="#0B1120" fontFamily="heading">
+            Brazilian<Text as="span" color="#1A7FA0">Clean</Text>
+          </Text>
+        </HStack>
 
-            <VStack gap={3} textAlign="center">
-              <HStack justify="center" gap={3}>
-                <Box w="44px" h="44px" bgGradient="to-br" gradientFrom="brand.500"
-                  gradientTo="brand.700" borderRadius="xl"
-                  display="flex" alignItems="center" justifyContent="center"
-                  boxShadow="0 6px 20px rgba(37,99,235,0.35)">
-                  <Text color="white" fontWeight="black" fontSize="md">BC</Text>
-                </Box>
-                <Text fontWeight="black" fontSize="xl" letterSpacing="tight" color="slate.900">
-                  Brazilian<Text as="span" color="brand.500">Clean</Text>
-                </Text>
-              </HStack>
-              <Heading size="xl" fontWeight="black" letterSpacing="tight" color="slate.900">
-                Forgot your password?
-              </Heading>
-              <Text color="slate.500" fontSize="sm">
-                Enter your email and we&apos;ll send you a reset code.
-              </Text>
-            </VStack>
+        {/* Card */}
+        <Box bg="white" border="1px solid #E2E8F0" p={8}>
 
-            <Box bg="white" p={8} borderRadius="3xl"
-              boxShadow="0 4px 40px rgba(0,0,0,0.08)" border="1px solid" borderColor="slate.100">
-              <form onSubmit={handleSubmit}>
-                <VStack gap={5} align="stretch">
-                  <Box>
-                    <Text fontSize="xs" fontWeight="bold" color="slate.500"
-                      textTransform="uppercase" mb={2} letterSpacing="wider">Email</Text>
-                    <Input type="email" placeholder="name@email.com" value={email}
-                      onChange={e => setEmail(e.target.value)}
-                      bg="slate.50" border="1px solid" borderColor="slate.200" h="12" borderRadius="xl"
-                      _focus={{ bg: 'white', borderColor: 'brand.300', boxShadow: '0 0 0 3px rgba(37,99,235,0.1)' }}
-                      transition="all 0.2s" required />
-                  </Box>
-                  <Button type="submit" bg="brand.500" color="white" h="12" borderRadius="xl" fontWeight="bold"
-                    _hover={{ bg: 'brand.600', transform: 'translateY(-1px)', boxShadow: '0 6px 20px rgba(37,99,235,0.4)' }}
-                    transition="all 0.2s" loading={loading} loadingText="Sending…">
-                    Send reset code
-                  </Button>
-                </VStack>
-              </form>
-            </Box>
-
-            <Text textAlign="center" fontSize="sm" color="slate.500">
-              Remembered your password?{' '}
-              <NextLink href="/auth/login">
-                <Text as="span" color="brand.500" fontWeight="bold" cursor="pointer"
-                  _hover={{ color: 'brand.600' }}>Back to sign in</Text>
-              </NextLink>
+          <Box mb={7}>
+            <Text fontSize="22px" fontWeight="800" color="#0B1120" fontFamily="heading"
+              letterSpacing="-0.025em" mb={1}>
+              Forgot your password?
             </Text>
+            <Text fontSize="14px" color="#64748B" fontFamily="heading">
+              Enter your email and we&apos;ll send you a reset code.
+            </Text>
+          </Box>
 
-          </VStack>
-        </motion.div>
-      </Container>
+          <form onSubmit={handleSubmit}>
+            <VStack gap={5} align="stretch">
+
+              <Box>
+                <Text fontSize="11px" fontWeight="700" color="#64748B" textTransform="uppercase"
+                  letterSpacing="0.1em" fontFamily="heading" mb={1.5}>Email</Text>
+                <HStack gap={2}>
+                  <Icon as={LucideMail} w="14px" h="14px" color="#94A3B8" flexShrink={0} />
+                  <Input
+                    type="email"
+                    placeholder="name@email.com"
+                    value={email}
+                    onChange={e => setEmail(e.target.value)}
+                    bg="#F8FAFC"
+                    border="1px solid"
+                    borderColor="#E2E8F0"
+                    h="44px"
+                    borderRadius="4px"
+                    fontFamily="heading"
+                    fontSize="14px"
+                    _focus={{ bg: 'white', borderColor: '#1A7FA0' }}
+                    required
+                  />
+                </HStack>
+              </Box>
+
+              <Button
+                type="submit"
+                bg="#1A7FA0"
+                color="white"
+                h="44px"
+                borderRadius="4px"
+                fontWeight="700"
+                fontSize="14px"
+                fontFamily="heading"
+                _hover={{ bg: '#15698A' }}
+                transition="background 0.15s"
+                loading={loading}
+                loadingText="Sending…"
+              >
+                Send reset code
+                <Icon as={LucideArrowRight} w={4} h={4} ml={2} />
+              </Button>
+
+            </VStack>
+          </form>
+        </Box>
+
+        <Box mt={6} textAlign="center">
+          <Text fontSize="13px" color="#64748B" fontFamily="heading">
+            Remembered your password?{' '}
+            <NextLink href="/auth/login">
+              <Text as="span" color="#1A7FA0" fontWeight="700" cursor="pointer"
+                _hover={{ color: '#15698A' }}>Back to sign in</Text>
+            </NextLink>
+          </Text>
+        </Box>
+
+      </Box>
     </Box>
   );
 }

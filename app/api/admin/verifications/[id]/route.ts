@@ -16,7 +16,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   const { action, note } = await req.json(); // action: 'approve' | 'reject'
 
   if (action !== 'approve' && action !== 'reject') {
-    return NextResponse.json({ error: 'Ação inválida' }, { status: 400 });
+    return NextResponse.json({ error: 'Invalid action' }, { status: 400 });
   }
 
   const status = action === 'approve' ? 'APPROVED' : 'REJECTED';

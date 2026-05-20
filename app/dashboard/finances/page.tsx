@@ -49,22 +49,22 @@ export default function FinancesPage() {
 
   const statItems = [
     {
-      label: 'TAXAS PAGAS',
-      value: data ? `R$ ${data.totalFeesPaid.toFixed(2)}` : '—',
+      label: 'FEES PAID',
+      value: data ? `$${data.totalFeesPaid.toFixed(2)}` : '—',
       color: '#EF4444',
     },
     {
-      label: 'TRABALHOS',
+      label: 'JOBS',
       value: data ? String(data.totalJobsCompleted) : '—',
       color: '#22C55E',
     },
     {
-      label: 'GANHOS EST.',
-      value: data ? `R$ ${data.estimatedEarnings.toFixed(2)}` : '—',
+      label: 'EST. EARNINGS',
+      value: data ? `$${data.estimatedEarnings.toFixed(2)}` : '—',
       color: '#1A7FA0',
     },
     {
-      label: 'AVALIAÇÃO',
+      label: 'RATING',
       value: data?.ratingAvg ? `${data.ratingAvg.toFixed(1)} ⭐` : '—',
       color: '#F59E0B',
     },
@@ -75,7 +75,7 @@ export default function FinancesPage() {
       <CleanerNav />
       <Box p={6} maxW="1200px" mx="auto">
         <HStack gap={2.5} mb={6}>
-          <Heading size="md" fontWeight="bold" color="slate.900" fontFamily="heading">Finanças</Heading>
+          <Heading size="md" fontWeight="bold" color="slate.900" fontFamily="heading">Finances</Heading>
         </HStack>
 
         <VStack gap={6} align="stretch">
@@ -127,14 +127,14 @@ export default function FinancesPage() {
                   <Icon as={LucideTrendingUp} w={5} h={5} color="green.500" />
                 </Box>
                 <Box>
-                  <Text fontWeight="bold" color="slate.800" fontSize="sm">Retorno sobre investimento</Text>
+                  <Text fontWeight="bold" color="slate.800" fontSize="sm">Return on investment</Text>
                   <Text color="slate.500" fontSize="sm">
-                    Para cada <Text as="span" fontWeight="bold" color="red.600">R$ {data.totalFeesPaid.toFixed(0)}</Text> investido em leads,
-                    você gerou aproximadamente{' '}
-                    <Text as="span" fontWeight="black" color="green.600">R$ {data.estimatedEarnings.toFixed(0)}</Text> em trabalhos.
+                    For every <Text as="span" fontWeight="bold" color="red.600">${data.totalFeesPaid.toFixed(0)}</Text> invested in leads,
+                    you generated approximately{' '}
+                    <Text as="span" fontWeight="black" color="green.600">${data.estimatedEarnings.toFixed(0)}</Text> in jobs.
                     {data.totalFeesPaid > 0 && data.estimatedEarnings > 0 && (
                       <Text as="span" fontWeight="bold" color="#1A7FA0">
-                        {' '}({Math.round((data.estimatedEarnings / data.totalFeesPaid) * 100)}% de retorno)
+                        {' '}({Math.round((data.estimatedEarnings / data.totalFeesPaid) * 100)}% return)
                       </Text>
                     )}
                   </Text>
@@ -155,7 +155,7 @@ export default function FinancesPage() {
                   textTransform="uppercase"
                   fontFamily="heading"
                   letterSpacing="0.07em">
-                  HISTÓRICO DE TRANSAÇÕES
+                  TRANSACTION HISTORY
                 </Text>
                 {data && (
                   <Text
@@ -168,14 +168,14 @@ export default function FinancesPage() {
 
             {loading ? (
               <Box textAlign="center" py={12} bg="white">
-                <Text color="slate.400">Carregando…</Text>
+                <Text color="slate.400">Loading…</Text>
               </Box>
             ) : !data || data.transactions.length === 0 ? (
               <Box bg="white" p={12} textAlign="center">
                 <Icon as={LucideBanknote} w={12} h={12} color="slate.300" mb={3} />
-                <Text color="slate.600" fontWeight="bold">Nenhuma transação ainda</Text>
+                <Text color="slate.600" fontWeight="bold">No transactions yet</Text>
                 <Text color="slate.400" fontSize="sm" mt={1}>
-                  Taxas de lead aparecerão aqui quando você aceitar leads.
+                  Lead fees will appear here when you accept leads.
                 </Text>
               </Box>
             ) : (
@@ -208,7 +208,7 @@ export default function FinancesPage() {
                             <HStack gap={2} color="slate.400" fontSize="xs">
                               <Icon as={LucideCalendar} w={3} h={3} />
                               <Text>
-                                {new Date(tx.lead.dateTime).toLocaleDateString('pt-BR', { dateStyle: 'medium' })}
+                                {new Date(tx.lead.dateTime).toLocaleDateString('en-US', { dateStyle: 'medium' })}
                               </Text>
                               <Text>·</Text>
                               <Text>{tx.lead.address}</Text>
@@ -218,7 +218,7 @@ export default function FinancesPage() {
 
                         <VStack align="end" gap={0.5} flexShrink={0}>
                           <Text fontWeight="black" color="red.600" fontSize="sm">
-                            − R$ {tx.leadFee.toFixed(2)}
+                            − ${tx.leadFee.toFixed(2)}
                           </Text>
                           <Text
                             style={{
@@ -229,8 +229,8 @@ export default function FinancesPage() {
                               fontWeight: 700,
                               color: tx.lead.status === 'COMPLETED' ? '#15803D' : '#64748B',
                             }}>
-                            {tx.lead.status === 'COMPLETED' ? 'Concluído' :
-                             tx.lead.status === 'ACCEPTED' ? 'Em andamento' : tx.lead.status}
+                            {tx.lead.status === 'COMPLETED' ? 'Completed' :
+                             tx.lead.status === 'ACCEPTED' ? 'In progress' : tx.lead.status}
                           </Text>
                         </VStack>
                       </Flex>

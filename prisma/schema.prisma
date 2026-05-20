@@ -55,7 +55,8 @@ model User {
   bio             String?
   pricePerHour    Float?
   plan            Plan          @default(FREE)
-  zipCode         String?
+  zipCode              String?
+  serviceRadiusMiles   Float    @default(25)
 
   suspendedUntil  DateTime?
 

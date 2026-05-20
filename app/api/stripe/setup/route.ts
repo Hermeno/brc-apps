@@ -11,7 +11,7 @@ export async function POST() {
     where: { email: session.user.email },
     select: { id: true, name: true, email: true, stripeCustomerId: true },
   });
-  if (!user) return NextResponse.json({ error: 'Usuário não encontrado' }, { status: 401 });
+  if (!user) return NextResponse.json({ error: 'User not found' }, { status: 401 });
 
   // Find or create Stripe customer
   let customerId = user.stripeCustomerId;

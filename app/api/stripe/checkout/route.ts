@@ -16,7 +16,7 @@ export async function POST(req: NextRequest) {
 
   const { planId } = await req.json();
   if (!['BASIC', 'PREMIUM', 'PRO'].includes(planId)) {
-    return NextResponse.json({ error: 'Plano inválido' }, { status: 400 });
+    return NextResponse.json({ error: 'Invalid plan' }, { status: 400 });
   }
 
   // Fetch price from DB (falls back to lib/pricing.ts defaults)
@@ -24,7 +24,7 @@ export async function POST(req: NextRequest) {
   const dbConfig = await prisma.planConfig.findUnique({ where: { id: planId } });
   const price = dbConfig?.price ?? planDef?.price ?? 0;
 
-  if (price <= 0) return NextResponse.json({ error: 'Preço inválido' }, { status: 400 });
+  if (price <= 0) return NextResponse.json({ error: 'Invalid price' }, { status: 400 });
 
   // Find or create Stripe customer
   let customerId = user.stripeCustomerId;

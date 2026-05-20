@@ -15,9 +15,9 @@ import { AnimatePresence, motion } from 'motion/react';
 const NAV_ITEMS = [
   { name: 'Dashboard',   icon: LucideLayoutDashboard, href: '/dashboard' },
   { name: 'Marketplace', icon: LucideCompass,          href: '/dashboard/marketplace' },
-  { name: 'Agenda',      icon: LucideCalendar,         href: '/dashboard/schedule' },
-  { name: 'Finanças',    icon: LucideWallet,           href: '/dashboard/finances' },
-  { name: 'Plano',       icon: LucideCrown,            href: '/dashboard/plan' },
+  { name: 'Schedule',    icon: LucideCalendar,         href: '/dashboard/schedule' },
+  { name: 'Finances',    icon: LucideWallet,           href: '/dashboard/finances' },
+  { name: 'Plan',        icon: LucideCrown,            href: '/dashboard/plan' },
 ];
 
 const NAV_BG = '#0B1120';
@@ -26,7 +26,7 @@ export default function Sidebar() {
   const { data: session } = useSession();
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
-  const firstName = session?.user?.name?.split(' ')[0] ?? 'Usuário';
+  const firstName = session?.user?.name?.split(' ')[0] ?? 'User';
   const initial = firstName[0]?.toUpperCase() ?? 'U';
 
   return (
@@ -195,7 +195,7 @@ export default function Sidebar() {
                   </Box>
                   <Box>
                     <Text fontSize="13px" fontWeight="600" color="white" fontFamily="heading">{firstName}</Text>
-                    <Text fontSize="11px" color="#475569">Cliente</Text>
+                    <Text fontSize="11px" color="#475569">Client</Text>
                   </Box>
                 </HStack>
                 <Button size="sm" variant="ghost" color="#6B7280" px={2}

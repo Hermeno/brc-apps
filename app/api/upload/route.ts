@@ -24,10 +24,10 @@ export async function POST(req: NextRequest) {
 
   if (!file) return NextResponse.json({ error: 'Nenhum arquivo enviado' }, { status: 400 });
   if (!ALLOWED.includes(file.type)) {
-    return NextResponse.json({ error: 'Tipo não suportado. Use JPG, PNG, WEBP ou GIF.' }, { status: 400 });
+    return NextResponse.json({ error: 'Unsupported file type. Use JPG, PNG, WEBP or GIF.' }, { status: 400 });
   }
   if (file.size > MAX_SIZE) {
-    return NextResponse.json({ error: 'Arquivo muito grande. Máximo 8 MB.' }, { status: 400 });
+    return NextResponse.json({ error: 'File too large. Maximum 8 MB.' }, { status: 400 });
   }
 
   const buffer = Buffer.from(await file.arrayBuffer());

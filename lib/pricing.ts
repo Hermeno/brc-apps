@@ -1,12 +1,14 @@
 // ─── OP (Opportunity Price) — lead price charged to the winning cleaner ──────
 
+import { prisma } from './prisma';
+
 type ServiceKey = 'standard' | 'deep' | 'post-work' | 'moving';
 
 const BASE_PRICE: Record<ServiceKey, number> = {
-  standard: 10,
-  deep:     20,
-  'post-work': 30,
-  moving:   30,
+  standard:    10,
+  deep:        20,
+  'post-work': 32,
+  moving:      32,
 };
 
 export function detectServiceKey(serviceType: string): ServiceKey {
@@ -17,21 +19,51 @@ export function detectServiceKey(serviceType: string): ServiceKey {
   return 'standard';
 }
 
+// Config shape returned by getLeadPriceConfig()
+export type LeadPriceConfig = {
+  priceMap:       Record<string, number>;
+  sameDayMult:    number;
+  recurringMult:  number;
+  coverageZips:   string[];
+};
+
+// Fetch admin-configured pricing from DB; falls back to defaults on any error
+export async function getLeadPriceConfig(): Promise<LeadPriceConfig> {
+  try {
+    const [prices, platform] = await Promise.all([
+      prisma.$queryRaw<{ id: string; price: number }[]>`SELECT id, price FROM "LeadPriceConfig"`.catch(() => []),
+      prisma.$queryRaw<{ id: string; value: string }[]>`SELECT id, value FROM "LeadPlatformConfig"`.catch(() => []),
+    ]);
+
+    const priceMap: Record<string, number> = {};
+    for (const p of prices) priceMap[p.id] = p.price;
+
+    const plat = Object.fromEntries(platform.map(p => [p.id, p.value]));
+    const sameDayMult   = parseFloat(plat.same_day_multiplier  ?? '1.5');
+    const recurringMult = parseFloat(plat.recurring_multiplier ?? '1.3');
+    const coverageZips: string[] = JSON.parse(plat.coverage_zips ?? '[]');
+
+    return { priceMap, sameDayMult, recurringMult, coverageZips };
+  } catch {
+    return { priceMap: {}, sameDayMult: 1.5, recurringMult: 1.3, coverageZips: [] };
+  }
+}
+
 export function calculateLeadPrice(
   serviceType: string,
   dateTime: Date,
   frequency = 'once',
+  config?: Pick<LeadPriceConfig, 'priceMap' | 'sameDayMult' | 'recurringMult'>,
 ): number {
-  let price = BASE_PRICE[detectServiceKey(serviceType)];
+  const key = detectServiceKey(serviceType);
+  let price = config?.priceMap?.[key] ?? BASE_PRICE[key];
 
-  // Same-day urgency multiplier
+  const sameDayMult   = config?.sameDayMult   ?? 1.5;
+  const recurringMult = config?.recurringMult ?? 1.3;
+
   const hoursUntil = (dateTime.getTime() - Date.now()) / 3_600_000;
-  if (hoursUntil < 24) price = Math.round(price * 1.5);
-
-  // Recurring premium
-  if (frequency === 'weekly' || frequency === 'biweekly') {
-    price = Math.round(price * 1.3);
-  }
+  if (hoursUntil < 24) price = Math.round(price * sameDayMult);
+  if (frequency === 'weekly' || frequency === 'biweekly') price = Math.round(price * recurringMult);
 
   return price;
 }
@@ -41,7 +73,7 @@ export function calculateLeadPrice(
 export const PLANS = [
   {
     id:       'FREE',
-    name:     'Grátis',
+    name:     'Free',
     price:    0,
     color:    'slate',
     badge:    '',
@@ -75,7 +107,7 @@ export const PLANS = [
       'Wave 1 + Wave 2 (prioridade)',
       '+20 pontos no ranking CFS',
       'Badge Premium no perfil',
-      'Suporte prioritário',
+      'Priority support',
     ],
     rankingBonus: 20,
   },
@@ -84,13 +116,13 @@ export const PLANS = [
     name:     'Pro',
     price:    79,
     color:    'yellow',
-    badge:    'Máximo',
+    badge:    'Max',
     perks: [
       'Topo do ranking CFS',
       '+30 pontos garantidos',
-      'Instant Book elegível',
+      'Instant Book eligible',
       'Badge Pro exclusivo',
-      'Analytics avançado',
+      'Advanced analytics',
     ],
     rankingBonus: 30,
   },
