@@ -24,14 +24,18 @@ export async function POST(request: NextRequest) {
 
     const code = await createVerificationCode(user.id, email, 'PASSWORD_RESET');
 
-    await sendMail({
-      to: email,
-      subject: 'Password reset — BrazilianClean',
-      html: passwordResetHtml(code, user.name ?? 'there'),
-    });
+    try {
+      await sendMail({
+        to:      email,
+        subject: 'Password reset — BrazilianClean',
+        html:    passwordResetHtml(code, user.name ?? 'there'),
+      });
+    } catch (mailErr: any) {
+      console.error('[forgot-password] email send failed:', mailErr?.message ?? mailErr);
+    }
 
     return NextResponse.json({ message: 'Password reset code sent to your email.' });
   } catch {
-    return NextResponse.json({ error: 'Erro interno' }, { status: 500 });
+    return NextResponse.json({ error: 'Internal error' }, { status: 500 });
   }
 }

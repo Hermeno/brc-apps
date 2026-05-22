@@ -24,14 +24,18 @@ export async function POST(request: NextRequest) {
 
     const code = await createVerificationCode(user.id, email, 'EMAIL_VERIFICATION');
 
-    await sendMail({
-      to: email,
-      subject: 'Verification code — BrazilianClean',
-      html: emailVerificationHtml(code, user.name ?? 'there'),
-    });
+    try {
+      await sendMail({
+        to:      email,
+        subject: 'Verification code — BrazilianClean',
+        html:    emailVerificationHtml(code, user.name ?? 'there'),
+      });
+    } catch (mailErr: any) {
+      console.error('[resend-verification] email send failed:', mailErr?.message ?? mailErr);
+    }
 
     return NextResponse.json({ message: 'New code sent to your email.' });
   } catch {
-    return NextResponse.json({ error: 'Erro interno' }, { status: 500 });
+    return NextResponse.json({ error: 'Internal error' }, { status: 500 });
   }
 }

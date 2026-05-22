@@ -2,14 +2,15 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import {
-  Box, Flex, VStack, HStack, Text, Heading, Badge, Button,
+  Box, Flex, VStack, HStack, Text, Badge, Button,
   Input, Icon, Container,
 } from '@chakra-ui/react';
 import {
   LucideSend, LucideArrowLeft, LucideCheckCircle, LucideZap,
   LucideBanknote, LucideClock, LucideMapPin, LucideCalendar, LucidePhone,
+  LucideLock, LucideLoader,
 } from 'lucide-react';
-import { useRouter, useParams } from 'next/navigation';
+import { useRouter, useParams, useSearchParams } from 'next/navigation';
 import { motion, AnimatePresence } from 'motion/react';
 import { toaster } from '@/lib/toaster';
 
@@ -47,12 +48,15 @@ type ConversationData = {
 export default function ChatPage() {
   const { id } = useParams<{ id: string }>();
   const router = useRouter();
+  const searchParams = useSearchParams();
 
-  const [conv, setConv]     = useState<ConversationData | null>(null);
-  const [userId, setUserId] = useState<string>('');
-  const [text, setText]     = useState('');
-  const [sending, setSending] = useState(false);
+  const [conv, setConv]           = useState<ConversationData | null>(null);
+  const [userId, setUserId]       = useState<string>('');
+  const [paymentRequired, setPaymentRequired] = useState(false);
+  const [text, setText]           = useState('');
+  const [sending, setSending]     = useState(false);
   const [confirming, setConfirming] = useState(false);
+  const [paying, setPaying]       = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
 
   const fetchMessages = useCallback(async () => {
@@ -61,16 +65,20 @@ export default function ChatPage() {
     const data = await res.json();
     setConv(data.conversation);
     setUserId(data.userId);
+    setPaymentRequired(!!data.paymentRequired);
   }, [id, router]);
 
   useEffect(() => {
     fetchMessages();
-    // Poll every 4 seconds
     const interval = setInterval(fetchMessages, 6000);
     return () => clearInterval(interval);
   }, [fetchMessages]);
 
-  // Auto-scroll to bottom on new messages
+  // Re-check payment status when returning from Stripe checkout
+  useEffect(() => {
+    if (searchParams.get('paid') === '1') fetchMessages();
+  }, [searchParams, fetchMessages]);
+
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [conv?.messages.length]);
@@ -107,6 +115,23 @@ export default function ChatPage() {
     }
   };
 
+  const handlePayLeadFee = async () => {
+    setPaying(true);
+    try {
+      const res = await fetch(`/api/conversations/${id}/payment`);
+      const data = await res.json();
+      if (data.alreadyPaid) {
+        await fetchMessages();
+      } else if (data.checkoutUrl) {
+        window.location.href = data.checkoutUrl;
+      }
+    } catch {
+      toaster.create({ title: 'Payment error, please try again', type: 'error' });
+    } finally {
+      setPaying(false);
+    }
+  };
+
   if (!conv) {
     return (
       <Flex h="100vh" align="center" justify="center" bg="slate.50">
@@ -121,6 +146,91 @@ export default function ChatPage() {
   const isInstant  = conv.lead.isInstantBook;
   const otherName  = isClient ? conv.cleaner.name : conv.client.name;
   const isAccepted = conv.status === 'active' && conv.lead.status === 'ACCEPTED';
+  const feePaid    = conv.feeStatus === 'charged' || conv.feeStatus === 'waived';
+
+  // ── Payment wall for cleaner ────────────────────────────────────────────────
+  if (!isClient && paymentRequired) {
+    const isWaitingForClient = conv.lead.status === 'IN_REVIEW';
+
+    return (
+      <Flex h="100vh" bg="slate.50" direction="column">
+        {/* Top bar */}
+        <Box bg="white" borderBottom="1px solid" borderColor="slate.100" px={4} py={3} flexShrink={0}>
+          <Flex align="center" gap={3} maxW="760px" mx="auto">
+            <Button size="sm" variant="ghost" color="slate.500" _hover={{ bg: 'slate.100' }} onClick={() => router.back()} px={2}>
+              <Icon as={LucideArrowLeft} w={5} h={5} />
+            </Button>
+            <Box
+              w="40px" h="40px" borderRadius="full" bg="brand.500"
+              display="flex" alignItems="center" justifyContent="center"
+              fontWeight="black" color="white" fontSize="md" flexShrink={0}>
+              {otherName[0].toUpperCase()}
+            </Box>
+            <Box flex={1}>
+              <Text fontWeight="bold" fontSize="md" color="slate.900">{otherName}</Text>
+              <Text fontSize="xs" color="slate.400">{conv.lead.serviceType} · {conv.lead.address}</Text>
+            </Box>
+          </Flex>
+        </Box>
+
+        {/* Wall content */}
+        <Flex flex={1} align="center" justify="center" px={6}>
+          <Box bg="white" border="1px solid" borderColor="slate.200" p={10} maxW="440px" w="full" textAlign="center">
+            <Box
+              w="56px" h="56px" borderRadius="full" bg={isWaitingForClient ? '#EBF5FE' : '#FEF3C7'}
+              display="flex" alignItems="center" justifyContent="center" mx="auto" mb={5}>
+              <Icon as={isWaitingForClient ? LucideLoader : LucideLock} w={6} h={6}
+                color={isWaitingForClient ? '#0A80DB' : '#D97706'} />
+            </Box>
+
+            {isWaitingForClient ? (
+              <>
+                <Text fontWeight="black" fontSize="xl" color="slate.900" mb={2}>
+                  Waiting for client confirmation
+                </Text>
+                <Text color="slate.500" fontSize="sm" lineHeight="1.7">
+                  Your interest has been submitted. The client is reviewing cleaners and will confirm their choice shortly.
+                  You'll be notified as soon as they confirm.
+                </Text>
+                <Box mt={6} bg="#F8FAFC" border="1px solid" borderColor="#E2E8F0" px={4} py={3}>
+                  <HStack gap={2} justify="center">
+                    <Icon as={LucideBanknote} w={4} h={4} color="#0A80DB" />
+                    <Text fontSize="sm" color="slate.600">
+                      Lead fee: <Text as="span" fontWeight="black" color="#0A80DB">${conv.leadFee}</Text>
+                      {' '}— charged only after confirmation
+                    </Text>
+                  </HStack>
+                </Box>
+              </>
+            ) : (
+              <>
+                <Text fontWeight="black" fontSize="xl" color="slate.900" mb={2}>
+                  Payment required to access chat
+                </Text>
+                <Text color="slate.500" fontSize="sm" lineHeight="1.7" mb={6}>
+                  The client has selected you. Pay the lead fee to unlock the chat and the client's contact information.
+                </Text>
+                <Box bg="#EBF5FE" border="1px solid" borderColor="#A2D3F9" px={5} py={4} mb={6}>
+                  <Text fontSize="2xl" fontWeight="black" color="#0A80DB">${conv.leadFee}</Text>
+                  <Text fontSize="xs" color="#065594" mt={0.5}>Lead fee — {conv.lead.serviceType}</Text>
+                </Box>
+                <Button
+                  w="full" bg="#0A80DB" color="white" h="44px" borderRadius="4px"
+                  fontWeight="bold" fontSize="sm"
+                  _hover={{ bg: '#0870C2' }}
+                  loading={paying} loadingText="Redirecting…"
+                  onClick={handlePayLeadFee}>
+                  <Icon as={LucideBanknote} w={4} h={4} mr={2} />
+                  Pay ${conv.leadFee} to unlock chat
+                </Button>
+                <Text fontSize="xs" color="slate.400" mt={3}>Secure payment via Stripe · USD</Text>
+              </>
+            )}
+          </Box>
+        </Flex>
+      </Flex>
+    );
+  }
 
   return (
     <Flex h="100vh" bg="slate.50" direction="column">
@@ -182,15 +292,13 @@ export default function ChatPage() {
         </Flex>
       </Box>
 
-      {/* ── Client contact card (visible to cleaner when accepted) ── */}
-      {!isClient && isAccepted && (conv.client.phone || conv.lead.clientPhone) && (
+      {/* ── Client contact card (visible to cleaner after fee paid + accepted) ── */}
+      {!isClient && feePaid && isAccepted && (conv.client.phone || conv.lead.clientPhone) && (
         <Box bg="#F8FAFC" borderBottom="1px solid" borderColor="#E2E8F0" px={4} py={2.5} flexShrink={0}>
           <Container maxW="760px">
             <HStack gap={2}>
               <Icon as={LucidePhone} w={4} h={4} color="#0A80DB" />
-              <Text fontSize="sm" fontWeight="bold" color="#064882">
-                Client contact:
-              </Text>
+              <Text fontSize="sm" fontWeight="bold" color="#064882">Client contact:</Text>
               <Text fontSize="sm" color="#0A80DB" fontWeight="semibold">
                 {conv.client.phone || conv.lead.clientPhone}
               </Text>
@@ -229,16 +337,15 @@ export default function ChatPage() {
                 </Text>
               </HStack>
             )}
-            {/* Charge info for cleaner */}
             {!isClient && (
               <Badge
-                bg={conv.feeStatus === 'charged' ? 'red.50' : 'slate.100'}
-                color={conv.feeStatus === 'charged' ? 'red.600' : 'slate.500'}
+                bg={feePaid ? '#ECFDF5' : '#F8FAFC'}
+                color={feePaid ? '#059669' : '#64748B'}
                 borderRadius="full" px={3} py={1} fontSize="xs" fontWeight="bold"
                 border="1px solid"
-                borderColor={conv.feeStatus === 'charged' ? 'red.200' : 'slate.200'}
+                borderColor={feePaid ? '#A7F3D0' : '#E2E8F0'}
               >
-                Lead fee: ${conv.leadFee} — {conv.feeStatus === 'charged' ? 'charged' : 'pending'}
+                Lead fee: ${conv.leadFee} — {feePaid ? 'paid ✓' : 'pending'}
               </Badge>
             )}
           </Flex>
@@ -255,8 +362,8 @@ export default function ChatPage() {
                 {isClient ? `Start the conversation with ${otherName}` : `Introduce yourself to ${otherName}`}
               </Text>
               <Text color="slate.400" fontSize="sm" mt={1}>
-                {!isClient && conv.feeStatus === 'charged'
-                  ? `Lead fee of $${conv.leadFee} has been charged.`
+                {!isClient && feePaid
+                  ? `Lead fee of $${conv.leadFee} has been paid.`
                   : 'Be professional and friendly.'}
               </Text>
             </Box>
@@ -274,7 +381,6 @@ export default function ChatPage() {
                     >
                       <Flex justify={isMine ? 'flex-end' : 'flex-start'}>
                         <Box maxW="72%">
-                          {/* Name above first msg in a group */}
                           {(i === 0 || conv.messages[i - 1].senderId !== msg.senderId) && (
                             <Text fontSize="xs" color="slate.400" mb={1}
                               textAlign={isMine ? 'right' : 'left'} px={1}>

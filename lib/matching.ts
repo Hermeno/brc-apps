@@ -3,10 +3,6 @@ import { calculateLeadPrice, detectServiceKey, getLeadPriceConfig } from './pric
 import { createNotificationMany } from './notifications';
 import { haversineDistance, resolveCoords, ensureRadiusColumn } from './geo';
 
-// ─── advanceWaves rate-limiter ────────────────────────────────────────────────
-let lastAdvanceAt = 0;
-const ADVANCE_COOLDOWN_MS = 60_000;
-
 // ─── CFS (Cleaner Ranking Score) ─────────────────────────────────────────────
 // Max 100 points: Plan(30) + Service(40) + Rating(20) + Proximity(10)
 
@@ -171,10 +167,6 @@ export async function runMatching(leadId: string) {
 // ─── Wave advancement ─────────────────────────────────────────────────────────
 
 export async function advanceWaves() {
-  const now = Date.now();
-  if (now - lastAdvanceAt < ADVANCE_COOLDOWN_MS) return;
-  lastAdvanceAt = now;
-
   await ensureRadiusColumn();
   const nowDate = new Date();
 

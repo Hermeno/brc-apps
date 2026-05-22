@@ -38,7 +38,20 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
 
   // ── Charge the cleaner the lead fee ──────────────────────────────────────
   const leadFee = conversation.leadFee;
-  if (!leadFee || leadFee <= 0 || conversation.feeStatus === 'charged') {
+  if (conversation.feeStatus === 'charged') {
+    createNotification({
+      userId: conversation.cleanerId,
+      type:   'client_accepted',
+      title:  'Client accepted you!',
+      body:   'You were accepted. Open the chat to continue.',
+      link:   `/dashboard/chat/${id}`,
+    }).catch(() => {});
+    return NextResponse.json({ ok: true, conversationId: id });
+  }
+
+  // Free lead — waive immediately so the chat opens without payment
+  if (!leadFee || leadFee <= 0) {
+    await prisma.conversation.update({ where: { id }, data: { feeStatus: 'waived' } });
     createNotification({
       userId: conversation.cleanerId,
       type:   'client_accepted',
@@ -78,12 +91,12 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
     if (defaultPM) {
       const pi = await stripe.paymentIntents.create({
         amount:         Math.round(leadFee * 100),
-        currency:       'brl',
+        currency:       'usd',
         customer:       customerId,
         payment_method: defaultPM,
         confirm:        true,
         off_session:    true,
-        description:    `Taxa do lead — ${conversation.lead.serviceType}`,
+        description:    `Lead fee — ${conversation.lead.serviceType}`,
         metadata:       { type: 'lead_payment', conversationId: id, cleanerId: cleaner.id },
       });
 
@@ -106,9 +119,9 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
       mode:        'payment',
       line_items:  [{
         price_data: {
-          currency:     'brl',
+          currency:     'usd',
           unit_amount:  Math.round(leadFee * 100),
-          product_data: { name: `Taxa do lead — ${conversation.lead.serviceType}`, description: conversation.lead.address },
+          product_data: { name: `Lead fee — ${conversation.lead.serviceType}`, description: conversation.lead.address },
         },
         quantity: 1,
       }],

@@ -43,10 +43,10 @@ export async function POST(req: NextRequest) {
     mode: 'subscription',
     line_items: [{
       price_data: {
-        currency:   'brl',
+        currency:   'usd',
         unit_amount: Math.round(price * 100),
         recurring:  { interval: 'month' },
-        product_data: { name: `Plano ${planDef?.name ?? planId}` },
+        product_data: { name: `${planDef?.name ?? planId} Plan` },
       },
       quantity: 1,
     }],

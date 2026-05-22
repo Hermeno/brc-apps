@@ -38,7 +38,25 @@ export async function GET(_req: NextRequest, { params }: Params) {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
   }
 
-  return NextResponse.json({ conversation, userId: user.id });
+  const isCleaner = conversation.cleanerId === user.id;
+  const feePaid   = conversation.feeStatus === 'charged' || conversation.feeStatus === 'waived';
+
+  // Return the conversation but signal payment status to the cleaner
+  // Strip client contact until fee is paid
+  const safeConversation = isCleaner && !feePaid
+    ? {
+        ...conversation,
+        client: { id: conversation.client.id, name: conversation.client.name, phone: null },
+        lead:   { ...conversation.lead, clientPhone: null },
+        messages: [],
+      }
+    : conversation;
+
+  return NextResponse.json({
+    conversation: safeConversation,
+    userId: user.id,
+    paymentRequired: isCleaner && !feePaid,
+  });
 }
 
 // POST /api/conversations/[id]/messages — send a message
@@ -61,6 +79,13 @@ export async function POST(req: NextRequest, { params }: Params) {
   if (!conversation) return NextResponse.json({ error: 'Not found' }, { status: 404 });
   if (conversation.clientId !== user.id && conversation.cleanerId !== user.id) {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+  }
+
+  // Cleaner cannot send messages until the lead fee is paid
+  const isCleaner = conversation.cleanerId === user.id;
+  const feePaid   = conversation.feeStatus === 'charged' || conversation.feeStatus === 'waived';
+  if (isCleaner && !feePaid) {
+    return NextResponse.json({ error: 'payment_required', leadFee: conversation.leadFee }, { status: 402 });
   }
 
   const message = await prisma.message.create({
