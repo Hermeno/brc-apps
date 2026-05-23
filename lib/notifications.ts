@@ -7,7 +7,9 @@ export type NotificationType =
   | 'message_received'
   | 'job_completed'
   | 'review_received'
-  | 'lead_unmatched';
+  | 'lead_unmatched'
+  | 'verification_approved'
+  | 'verification_rejected';
 
 interface CreateNotificationInput {
   userId: string;

@@ -1,6 +1,8 @@
 import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { NextRequest, NextResponse } from 'next/server';
+import { createNotification } from '@/lib/notifications';
+import { sendMail, verificationApprovedHtml, verificationRejectedHtml } from '@/lib/email';
 
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const session = await auth();
@@ -31,16 +33,40 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     },
   });
 
+  const cleaner = await prisma.user.update({
+    where: { id: verification.cleanerId },
+    data: { isVerified: status === 'APPROVED' },
+    select: { id: true, name: true, email: true },
+  });
+
+  const cleanerName = cleaner.name?.split(' ')[0] ?? 'there';
+
   if (status === 'APPROVED') {
-    await prisma.user.update({
-      where: { id: verification.cleanerId },
-      data: { isVerified: true },
+    await createNotification({
+      userId: cleaner.id,
+      type: 'verification_approved',
+      title: 'Documents approved!',
+      body: 'Your identity documents have been verified. Your account is now fully active.',
+      link: '/dashboard/cleaner',
     });
+    sendMail({
+      to: cleaner.email,
+      subject: 'Your documents have been approved — BrazilianClean',
+      html: verificationApprovedHtml(cleanerName),
+    }).catch(e => console.error('[mail] verification approved:', e));
   } else {
-    await prisma.user.update({
-      where: { id: verification.cleanerId },
-      data: { isVerified: false },
+    await createNotification({
+      userId: cleaner.id,
+      type: 'verification_rejected',
+      title: 'Documents not approved',
+      body: note ? `Reason: ${note}` : 'Your documents could not be verified. Please resubmit.',
+      link: '/dashboard/cleaner/verify',
     });
+    sendMail({
+      to: cleaner.email,
+      subject: 'Document verification update — BrazilianClean',
+      html: verificationRejectedHtml(cleanerName, note),
+    }).catch(e => console.error('[mail] verification rejected:', e));
   }
 
   return NextResponse.json({ verification });
