@@ -52,7 +52,8 @@ export default function LoginPage() {
         <Box
           position="absolute" inset={0}
           style={{
-            backgroundImage: "url('https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=1200&q=80')",
+            backgroundImage: "url('/abc.png')",
+            // backgroundImage: "url('https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=1200&q=80')",
             backgroundSize: 'cover',
             backgroundPosition: 'center',
           }}
