@@ -7,6 +7,7 @@ import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { toaster } from '@/lib/toaster';
 import { LucideArrowRight, LucideRefreshCw } from 'lucide-react';
+import Image from 'next/image';
 
 function VerifyEmailForm() {
   const router       = useRouter();
@@ -64,32 +65,29 @@ function VerifyEmailForm() {
   };
 
   return (
-    <Box minH="100vh" bg="#F8FAFC" display="flex" alignItems="center" justifyContent="center" px={5}>
+    <Box minH="100vh" bg="white" display="flex" alignItems="center" justifyContent="center" px={5}>
       <Box w="full" maxW="400px">
 
         {/* Logo */}
         <HStack gap={2.5} mb={10} justify="center">
-          <Box w="32px" h="32px" bg="#0A80DB" style={{ borderRadius: 4 }}
-            display="flex" alignItems="center" justifyContent="center">
-            <Text color="white" fontWeight="800" fontSize="11px" letterSpacing="-0.02em" fontFamily="heading">BC</Text>
-          </Box>
-          <Text fontWeight="700" fontSize="15px" letterSpacing="-0.02em" color="#0B1120" fontFamily="heading">
+          <Image src="/2.png" alt="BrazilianClean" width={32} height={32} style={{ borderRadius: "50%", objectFit: "cover", flexShrink: 0 }} />
+          <Text fontWeight="700" fontSize="15px" letterSpacing="-0.02em" color="#0A2540" fontFamily="heading">
             Brazilian<Text as="span" color="#0A80DB">Clean</Text>
           </Text>
         </HStack>
 
         {/* Card */}
-        <Box bg="white" border="1px solid #E2E8F0" p={8}>
+        <Box bg="white" border="1px solid #E3E8EE" p={8} style={{ borderRadius: 8 }}>
 
           <Box mb={7} textAlign="center">
-            <Text fontSize="22px" fontWeight="800" color="#0B1120" fontFamily="heading"
+            <Text fontSize="22px" fontWeight="800" color="#0A2540" fontFamily="heading"
               letterSpacing="-0.025em" mb={1}>
               Verify your email
             </Text>
-            <Text fontSize="14px" color="#64748B" fontFamily="heading">
+            <Text fontSize="14px" color="#425466" fontFamily="heading">
               We sent a 6-digit code to
             </Text>
-            <Text fontSize="14px" fontWeight="700" color="#0B1120" fontFamily="heading">
+            <Text fontSize="14px" fontWeight="700" color="#0A2540" fontFamily="heading">
               {email}
             </Text>
           </Box>
@@ -98,7 +96,7 @@ function VerifyEmailForm() {
             <VStack gap={5} align="stretch">
 
               <Box>
-                <Text fontSize="11px" fontWeight="700" color="#64748B" textTransform="uppercase"
+                <Text fontSize="11px" fontWeight="700" color="#425466" textTransform="uppercase"
                   letterSpacing="0.1em" fontFamily="heading" mb={1.5} textAlign="center">
                   Verification code
                 </Text>
@@ -111,15 +109,15 @@ function VerifyEmailForm() {
                   fontWeight="800"
                   letterSpacing="10px"
                   fontFamily="heading"
-                  bg="#F8FAFC"
+                  bg="#F6F9FC"
                   border="1px solid"
-                  borderColor="#E2E8F0"
+                  borderColor="#E3E8EE"
                   h="64px"
                   borderRadius="4px"
                   _focus={{ bg: 'white', borderColor: '#0A80DB' }}
                   maxLength={6}
                 />
-                <Text fontSize="12px" color="#94A3B8" textAlign="center" mt={2} fontFamily="heading">
+                <Text fontSize="12px" color="#697386" textAlign="center" mt={2} fontFamily="heading">
                   Code expires in 10 minutes
                 </Text>
               </Box>
@@ -145,7 +143,7 @@ function VerifyEmailForm() {
 
               <Button
                 variant="ghost"
-                color="#64748B"
+                color="#425466"
                 h="40px"
                 borderRadius="4px"
                 fontWeight="600"

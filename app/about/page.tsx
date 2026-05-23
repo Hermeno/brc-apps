@@ -4,6 +4,7 @@ import { Box, Text, Flex, HStack, VStack, SimpleGrid, Icon } from '@chakra-ui/re
 import { LucideHeart, LucideShield, LucideUsers, LucideStar, LucideArrowRight, LucideCheckCircle, LucideMapPin } from 'lucide-react';
 import NextLink from 'next/link';
 import { Button } from '@chakra-ui/react';
+import Image from 'next/image';
 
 export default function AboutPage() {
   return (
@@ -16,15 +17,7 @@ export default function AboutPage() {
       >
         <Flex align="center" h="full" px={{ base: 5, md: 10, lg: 16 }} maxW="1440px" mx="auto" justify="space-between">
           <NextLink href="/">
-            <HStack gap={2.5} cursor="pointer">
-              <Box w="32px" h="32px" bg="#0A80DB" style={{ borderRadius: 6 }}
-                display="flex" alignItems="center" justifyContent="center">
-                <Text color="white" fontWeight="800" fontSize="11px" letterSpacing="-0.02em" fontFamily="heading">BC</Text>
-              </Box>
-              <Text fontWeight="700" fontSize="15px" letterSpacing="-0.02em" color="white" fontFamily="heading">
-                Brazilian<Text as="span" color="#0A80DB">Clean</Text>
-              </Text>
-            </HStack>
+            <Image src="/2.png" alt="BrazilianClean" width={32} height={32} style={{ borderRadius: "50%", objectFit: "cover", flexShrink: 0 }} />
           </NextLink>
           <HStack gap={2}>
             <NextLink href="/auth/login">
@@ -66,7 +59,7 @@ export default function AboutPage() {
                 textTransform="uppercase" fontFamily="heading" mb={3}>
                 How it started
               </Text>
-              <Text fontSize={{ base: '22px', md: '28px' }} fontWeight="800" color="#0B1120"
+              <Text fontSize={{ base: '22px', md: '28px' }} fontWeight="800" color="#0A2540"
                 fontFamily="heading" letterSpacing="-0.025em" mb={5} lineHeight={1.2}>
                 A bridge between two worlds
               </Text>
@@ -91,25 +84,25 @@ export default function AboutPage() {
             </Box>
 
             <Box w={{ base: 'full', md: '280px' }} flexShrink={0}>
-              <Box border="1px solid #E2E8F0" p={6} mb={4}>
-                <Text fontSize="36px" fontWeight="800" color="#0B1120" fontFamily="heading"
+              <Box border="1px solid #E3E8EE" p={6} mb={4}>
+                <Text fontSize="36px" fontWeight="800" color="#0A2540" fontFamily="heading"
                   letterSpacing="-0.04em" lineHeight={1}>500+</Text>
-                <Text fontSize="12px" color="#94A3B8" fontFamily="heading" mt={1}>Verified cleaners</Text>
+                <Text fontSize="12px" color="#697386" fontFamily="heading" mt={1}>Verified cleaners</Text>
               </Box>
-              <Box border="1px solid #E2E8F0" p={6} mb={4}>
-                <Text fontSize="36px" fontWeight="800" color="#0B1120" fontFamily="heading"
+              <Box border="1px solid #E3E8EE" p={6} mb={4}>
+                <Text fontSize="36px" fontWeight="800" color="#0A2540" fontFamily="heading"
                   letterSpacing="-0.04em" lineHeight={1}>2,400+</Text>
-                <Text fontSize="12px" color="#94A3B8" fontFamily="heading" mt={1}>Bookings completed</Text>
+                <Text fontSize="12px" color="#697386" fontFamily="heading" mt={1}>Bookings completed</Text>
               </Box>
-              <Box border="1px solid #E2E8F0" p={6} mb={4}>
-                <Text fontSize="36px" fontWeight="800" color="#0B1120" fontFamily="heading"
+              <Box border="1px solid #E3E8EE" p={6} mb={4}>
+                <Text fontSize="36px" fontWeight="800" color="#0A2540" fontFamily="heading"
                   letterSpacing="-0.04em" lineHeight={1}>4.9★</Text>
-                <Text fontSize="12px" color="#94A3B8" fontFamily="heading" mt={1}>Average client rating</Text>
+                <Text fontSize="12px" color="#697386" fontFamily="heading" mt={1}>Average client rating</Text>
               </Box>
-              <Box border="1px solid #E2E8F0" p={6}>
-                <Text fontSize="36px" fontWeight="800" color="#0B1120" fontFamily="heading"
+              <Box border="1px solid #E3E8EE" p={6}>
+                <Text fontSize="36px" fontWeight="800" color="#0A2540" fontFamily="heading"
                   letterSpacing="-0.04em" lineHeight={1}>12</Text>
-                <Text fontSize="12px" color="#94A3B8" fontFamily="heading" mt={1}>Cities covered</Text>
+                <Text fontSize="12px" color="#697386" fontFamily="heading" mt={1}>Cities covered</Text>
               </Box>
             </Box>
           </Flex>
@@ -117,7 +110,7 @@ export default function AboutPage() {
       </Box>
 
       {/* Mission & Values */}
-      <Box bg="#F8FAFC" borderTop="1px solid #E2E8F0" borderBottom="1px solid #E2E8F0"
+      <Box bg="#F6F9FC" borderTop="1px solid #E3E8EE" borderBottom="1px solid #E3E8EE"
         px={{ base: 5, md: 10, lg: 16 }} py={20}>
         <Box maxW="1100px" mx="auto">
           <Box mb={12} textAlign="center">
@@ -125,13 +118,13 @@ export default function AboutPage() {
               textTransform="uppercase" fontFamily="heading" mb={2}>
               Our values
             </Text>
-            <Text fontSize={{ base: '26px', md: '32px' }} fontWeight="800" color="#0B1120"
+            <Text fontSize={{ base: '26px', md: '32px' }} fontWeight="800" color="#0A2540"
               fontFamily="heading" letterSpacing="-0.025em">
               What we stand for
             </Text>
           </Box>
 
-          <SimpleGrid columns={{ base: 1, md: 2 }} gap={0} border="1px solid #E2E8F0">
+          <SimpleGrid columns={{ base: 1, md: 2 }} gap={0} border="1px solid #E3E8EE">
             {[
               {
                 icon: LucideShield,
@@ -155,15 +148,15 @@ export default function AboutPage() {
               },
             ].map((v, i) => (
               <Box key={v.title} p={8} bg="white"
-                borderRight={{ md: i % 2 === 0 ? '1px solid #E2E8F0' : 'none' }}
-                borderBottom={{ base: i < 3 ? '1px solid #E2E8F0' : 'none', md: i < 2 ? '1px solid #E2E8F0' : 'none' }}
+                borderRight={{ md: i % 2 === 0 ? '1px solid #E3E8EE' : 'none' }}
+                borderBottom={{ base: i < 3 ? '1px solid #E3E8EE' : 'none', md: i < 2 ? '1px solid #E3E8EE' : 'none' }}
                 position="relative">
                 <Box w="40px" h="40px" mb={4} display="flex" alignItems="center" justifyContent="center"
                   style={{ background: '#F1F5F9', borderRadius: 4 }}>
                   <Icon as={v.icon} w="18px" h="18px" color="#0A80DB" />
                 </Box>
-                <Text fontSize="15px" fontWeight="700" color="#0B1120" fontFamily="heading" mb={2.5}>{v.title}</Text>
-                <Text fontSize="13.5px" color="#64748B" lineHeight="1.75" fontFamily="heading">{v.desc}</Text>
+                <Text fontSize="15px" fontWeight="700" color="#0A2540" fontFamily="heading" mb={2.5}>{v.title}</Text>
+                <Text fontSize="13.5px" color="#425466" lineHeight="1.75" fontFamily="heading">{v.desc}</Text>
               </Box>
             ))}
           </SimpleGrid>
@@ -177,11 +170,11 @@ export default function AboutPage() {
             textTransform="uppercase" fontFamily="heading" mb={4}>
             Our mission
           </Text>
-          <Text fontSize={{ base: '22px', md: '30px' }} fontWeight="800" color="#0B1120"
+          <Text fontSize={{ base: '22px', md: '30px' }} fontWeight="800" color="#0A2540"
             fontFamily="heading" letterSpacing="-0.025em" lineHeight={1.25} mb={6}>
             "To create the most trusted cleaning marketplace in the United States — where skilled professionals thrive and every homeowner feels genuinely cared for."
           </Text>
-          <Text fontSize="14.5px" color="#64748B" lineHeight="1.8" fontFamily="heading" maxW="580px" mx="auto">
+          <Text fontSize="14.5px" color="#425466" lineHeight="1.8" fontFamily="heading" maxW="580px" mx="auto">
             We measure our success not just by bookings or revenue, but by whether the people on both sides of our platform
             feel respected, protected, and proud to be part of BrazilianClean.
           </Text>
@@ -189,7 +182,7 @@ export default function AboutPage() {
       </Box>
 
       {/* How we verify */}
-      <Box bg="#F8FAFC" borderTop="1px solid #E2E8F0" borderBottom="1px solid #E2E8F0"
+      <Box bg="#F6F9FC" borderTop="1px solid #E3E8EE" borderBottom="1px solid #E3E8EE"
         px={{ base: 5, md: 10, lg: 16 }} py={20}>
         <Box maxW="1100px" mx="auto">
           <Box mb={12}>
@@ -197,7 +190,7 @@ export default function AboutPage() {
               textTransform="uppercase" fontFamily="heading" mb={2}>
               How we verify cleaners
             </Text>
-            <Text fontSize={{ base: '24px', md: '30px' }} fontWeight="800" color="#0B1120"
+            <Text fontSize={{ base: '24px', md: '30px' }} fontWeight="800" color="#0A2540"
               fontFamily="heading" letterSpacing="-0.025em">
               Safety is non-negotiable
             </Text>
@@ -222,15 +215,15 @@ export default function AboutPage() {
               },
             ].map((s, i) => (
               <Box key={s.n} px={8} py={8}
-                borderRight={{ md: i < 2 ? '1px solid #E2E8F0' : 'none' }}
-                borderBottom={{ base: i < 2 ? '1px solid #E2E8F0' : 'none', md: 'none' }}
+                borderRight={{ md: i < 2 ? '1px solid #E3E8EE' : 'none' }}
+                borderBottom={{ base: i < 2 ? '1px solid #E3E8EE' : 'none', md: 'none' }}
                 position="relative">
                 <Text fontSize="42px" fontWeight="800" fontFamily="heading" letterSpacing="-0.05em"
-                  color="#E2E8F0" lineHeight={1} mb={4} style={{ userSelect: 'none' }}>
+                  color="#E3E8EE" lineHeight={1} mb={4} style={{ userSelect: 'none' }}>
                   {s.n}
                 </Text>
-                <Text fontSize="14px" fontWeight="700" color="#0B1120" fontFamily="heading" mb={2}>{s.title}</Text>
-                <Text fontSize="13.5px" color="#64748B" lineHeight="1.65" fontFamily="heading">{s.desc}</Text>
+                <Text fontSize="14px" fontWeight="700" color="#0A2540" fontFamily="heading" mb={2}>{s.title}</Text>
+                <Text fontSize="13.5px" color="#425466" lineHeight="1.65" fontFamily="heading">{s.desc}</Text>
               </Box>
             ))}
           </SimpleGrid>
@@ -245,11 +238,11 @@ export default function AboutPage() {
               textTransform="uppercase" fontFamily="heading" mb={2}>
               Where we operate
             </Text>
-            <Text fontSize={{ base: '24px', md: '30px' }} fontWeight="800" color="#0B1120"
+            <Text fontSize={{ base: '24px', md: '30px' }} fontWeight="800" color="#0A2540"
               fontFamily="heading" letterSpacing="-0.025em" mb={4}>
               Currently serving 12 cities
             </Text>
-            <Text fontSize="14px" color="#64748B" lineHeight="1.7" fontFamily="heading">
+            <Text fontSize="14px" color="#425466" lineHeight="1.7" fontFamily="heading">
               We are actively expanding. If your city is not listed, enter your ZIP code when booking — we may already have cleaners in your area.
             </Text>
           </Box>
@@ -260,7 +253,7 @@ export default function AboutPage() {
               'Hartford, CT', 'Stamford, CT', 'Bridgeport, CT', 'New Haven, CT',
               'Boston, MA', 'New York, NY', 'Newark, NJ', 'Providence, RI',
             ].map(city => (
-              <HStack key={city} gap={2} p={3} border="1px solid #E2E8F0" bg="#F8FAFC">
+              <HStack key={city} gap={2} p={3} border="1px solid #E3E8EE" bg="#F6F9FC">
                 <Icon as={LucideMapPin} w="12px" h="12px" color="#0A80DB" flexShrink={0} />
                 <Text fontSize="12.5px" color="#475569" fontFamily="heading" fontWeight="600">{city}</Text>
               </HStack>
@@ -308,10 +301,7 @@ export default function AboutPage() {
         <Flex px={{ base: 5, md: 10, lg: 16 }} maxW="1440px" mx="auto"
           align="center" justify="space-between" flexWrap="wrap" gap={4}>
           <HStack gap={2}>
-            <Box w="24px" h="24px" bg="#0A80DB" style={{ borderRadius: 4 }}
-              display="flex" alignItems="center" justifyContent="center">
-              <Text color="white" fontWeight="800" fontSize="9px" fontFamily="heading">BC</Text>
-            </Box>
+            <Image src="/2.png" alt="BrazilianClean" width={28} height={28} style={{ borderRadius: "50%", objectFit: "cover", flexShrink: 0 }} />
             <Text fontSize="12px" color="rgba(255,255,255,0.35)" fontFamily="heading">
               © 2026 BrazilianClean. All rights reserved.
             </Text>

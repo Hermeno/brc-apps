@@ -48,12 +48,12 @@ function SectionPanel({ title, count, accentColor, extra, children }: {
   children: React.ReactNode;
 }) {
   return (
-    <Box border="1px solid #E2E8F0" mb={4} bg="white">
-      <Box px={5} py={3} bg="#F8FAFC" borderBottom="1px solid #E2E8F0">
+    <Box border="1px solid #E3E8EE" mb={4} bg="white" style={{ borderRadius: 8 }} overflow="hidden">
+      <Box px={5} py={3} bg="#F6F9FC" borderBottom="1px solid #E3E8EE">
         <Flex align="center" justify="space-between">
           <HStack gap={2.5}>
             <Text
-              fontSize="10.5px" fontWeight="700" color="#94A3B8"
+              fontSize="10.5px" fontWeight="700" color="#697386"
               fontFamily="heading" textTransform="uppercase" letterSpacing="0.07em"
             >
               {title}
@@ -156,14 +156,14 @@ export default function CleanerDashboard() {
   );
 
   return (
-    <Box minH="100vh" bg="#F8FAFC">
+    <Box minH="100vh" bg="white">
       <CleanerNav />
 
       <Box maxW="1080px" mx="auto" px={{ base: 4, md: 6 }} py={5}>
 
         {/* ── Verification banners ── */}
         {verifyStatus === 'NONE' && (
-          <Box mb={4} bg="#F8FAFC" border="1px solid #FDE68A" p={4}>
+          <Box mb={4} bg="#F6F9FC" border="1px solid #FDE68A" p={4}>
             <Flex align="center" justify="space-between" gap={3} flexWrap="wrap">
               <HStack gap={3}>
                 <Icon as={LucideAlertCircle} w={4} h={4} color="#0A80DB" flexShrink={0} />
@@ -188,7 +188,7 @@ export default function CleanerDashboard() {
           </Box>
         )}
         {verifyStatus === 'PENDING' && (
-          <Box mb={4} bg="#F8FAFC" border="1px solid #E2E8F0" p={4}>
+          <Box mb={4} bg="#F6F9FC" border="1px solid #E3E8EE" p={4}>
             <HStack gap={3}>
               <Icon as={LucideClock} w={4} h={4} color="#3B82F6" flexShrink={0} />
               <Text fontSize="13px" color="#0A80DB" fontWeight="600" fontFamily="heading">
@@ -235,7 +235,7 @@ export default function CleanerDashboard() {
           accentColor="#F59E0B"
           extra={
             <Button
-              size="xs" variant="ghost" color="#94A3B8" borderRadius="4px" fontFamily="heading"
+              size="xs" variant="ghost" color="#697386" borderRadius="4px" fontFamily="heading"
               _hover={{ color: '#0A80DB', bg: 'rgba(26,127,160,0.06)' }}
               onClick={fetchLeads} loading={loading}
             >
@@ -245,14 +245,14 @@ export default function CleanerDashboard() {
         >
           {loading ? (
             <Box px={6} py={8} textAlign="center">
-              <Text fontSize="13px" color="#94A3B8" fontFamily="heading">Loading…</Text>
+              <Text fontSize="13px" color="#697386" fontFamily="heading">Loading…</Text>
             </Box>
           ) : available.length === 0 ? (
             <Box px={6} py={10} textAlign="center">
               <Text fontSize="13px" color="#CBD5E1" fontFamily="heading" fontWeight="500">
                 No leads available right now
               </Text>
-              <Text fontSize="12px" color="#94A3B8" mt={1}>
+              <Text fontSize="12px" color="#697386" mt={1}>
                 New leads will appear here automatically.
               </Text>
             </Box>
@@ -281,8 +281,8 @@ export default function CleanerDashboard() {
                         <Chip label="NEW" bg="#FEF3C7" color="#92400E" />
                         {lead.client?.name && (
                           <HStack gap={1}>
-                            <Icon as={LucideUser} w="10px" h="10px" color="#94A3B8" />
-                            <Text fontSize="11.5px" color="#64748B" fontFamily="heading">
+                            <Icon as={LucideUser} w="10px" h="10px" color="#697386" />
+                            <Text fontSize="11.5px" color="#425466" fontFamily="heading">
                               {lead.client.name}
                             </Text>
                           </HStack>
@@ -291,12 +291,12 @@ export default function CleanerDashboard() {
 
                       <HStack gap={4} mb={1.5} flexWrap="wrap">
                         <HStack gap={1}>
-                          <Icon as={LucideMapPin} w="11px" h="11px" color="#94A3B8" />
-                          <Text fontSize="12px" color="#64748B">{lead.address}</Text>
+                          <Icon as={LucideMapPin} w="11px" h="11px" color="#697386" />
+                          <Text fontSize="12px" color="#425466">{lead.address}</Text>
                         </HStack>
                         <HStack gap={1}>
-                          <Icon as={LucideCalendar} w="11px" h="11px" color="#94A3B8" />
-                          <Text fontSize="12px" color="#64748B">
+                          <Icon as={LucideCalendar} w="11px" h="11px" color="#697386" />
+                          <Text fontSize="12px" color="#425466">
                             {new Date(lead.dateTime).toLocaleString('en-US', { dateStyle: 'short', timeStyle: 'short' })}
                           </Text>
                         </HStack>
@@ -318,7 +318,7 @@ export default function CleanerDashboard() {
                           {lead.extras.map(exId => {
                             const ex = EXTRAS.find(e => e.id === exId);
                             return ex
-                              ? <Text key={exId} fontSize="12px" color="#64748B">{ex.icon} {ex.labelEn}</Text>
+                              ? <Text key={exId} fontSize="12px" color="#425466">{ex.icon} {ex.labelEn}</Text>
                               : null;
                           })}
                         </HStack>
@@ -347,7 +347,7 @@ export default function CleanerDashboard() {
                       )}
 
                       {lead.notes && (
-                        <Text color="#94A3B8" fontSize="11.5px" fontStyle="italic" mt={1.5}>
+                        <Text color="#697386" fontSize="11.5px" fontStyle="italic" mt={1.5}>
                           {lead.notes}
                         </Text>
                       )}
@@ -394,26 +394,26 @@ export default function CleanerDashboard() {
                 <Flex px={6} pl={8} py={3.5} gap={6} align="center" justify="space-between">
                   <Box>
                     <HStack gap={2.5} mb={1} flexWrap="wrap">
-                      <Chip label="Proposal sent" bg="#F8FAFC" color="#0A80DB" />
+                      <Chip label="Proposal sent" bg="#F6F9FC" color="#0A80DB" />
                       <Text fontSize="14px" fontWeight="700" color="#0F172A" fontFamily="heading" letterSpacing="-0.01em">
                         {conv.lead.serviceType}
                       </Text>
                     </HStack>
                     <HStack gap={4} flexWrap="wrap">
                       <HStack gap={1}>
-                        <Icon as={LucideMapPin} w="11px" h="11px" color="#94A3B8" />
-                        <Text fontSize="12px" color="#64748B">{conv.lead.address}</Text>
+                        <Icon as={LucideMapPin} w="11px" h="11px" color="#697386" />
+                        <Text fontSize="12px" color="#425466">{conv.lead.address}</Text>
                       </HStack>
                       <HStack gap={1}>
-                        <Icon as={LucideCalendar} w="11px" h="11px" color="#94A3B8" />
-                        <Text fontSize="12px" color="#64748B">
+                        <Icon as={LucideCalendar} w="11px" h="11px" color="#697386" />
+                        <Text fontSize="12px" color="#425466">
                           {new Date(conv.lead.dateTime).toLocaleString('en-US', { dateStyle: 'short', timeStyle: 'short' })}
                         </Text>
                       </HStack>
                       {conv.lead.client && (
                         <HStack gap={1}>
-                          <Icon as={LucideUser} w="11px" h="11px" color="#94A3B8" />
-                          <Text fontSize="12px" color="#64748B">{conv.lead.client.name}</Text>
+                          <Icon as={LucideUser} w="11px" h="11px" color="#697386" />
+                          <Text fontSize="12px" color="#425466">{conv.lead.client.name}</Text>
                         </HStack>
                       )}
                     </HStack>
@@ -458,19 +458,19 @@ export default function CleanerDashboard() {
                     </HStack>
                     <HStack gap={4} flexWrap="wrap">
                       <HStack gap={1}>
-                        <Icon as={LucideMapPin} w="11px" h="11px" color="#94A3B8" />
-                        <Text fontSize="12px" color="#64748B">{lead.address}</Text>
+                        <Icon as={LucideMapPin} w="11px" h="11px" color="#697386" />
+                        <Text fontSize="12px" color="#425466">{lead.address}</Text>
                       </HStack>
                       <HStack gap={1}>
-                        <Icon as={LucideCalendar} w="11px" h="11px" color="#94A3B8" />
-                        <Text fontSize="12px" color="#64748B">
+                        <Icon as={LucideCalendar} w="11px" h="11px" color="#697386" />
+                        <Text fontSize="12px" color="#425466">
                           {new Date(lead.dateTime).toLocaleString('en-US', { dateStyle: 'short', timeStyle: 'short' })}
                         </Text>
                       </HStack>
                       {lead.client && (
                         <HStack gap={1}>
-                          <Icon as={LucideUser} w="11px" h="11px" color="#94A3B8" />
-                          <Text fontSize="12px" color="#64748B">
+                          <Icon as={LucideUser} w="11px" h="11px" color="#697386" />
+                          <Text fontSize="12px" color="#425466">
                             Client:{' '}
                             <Text as="span" fontWeight="600" color="#475569">{lead.client.name}</Text>
                           </Text>
@@ -478,7 +478,7 @@ export default function CleanerDashboard() {
                       )}
                     </HStack>
                     {lead.notes && (
-                      <Text color="#94A3B8" fontSize="11.5px" fontStyle="italic" mt={1.5}>{lead.notes}</Text>
+                      <Text color="#697386" fontSize="11.5px" fontStyle="italic" mt={1.5}>{lead.notes}</Text>
                     )}
                   </Box>
                   {(() => {
@@ -503,10 +503,10 @@ export default function CleanerDashboard() {
 
         {/* ── Histórico Concluídos ── */}
         {completedJobs.length > 0 && (
-          <Box border="1px solid #E2E8F0" mb={4}>
+          <Box border="1px solid #E3E8EE" mb={4} style={{ borderRadius: 8 }} overflow="hidden">
             <Box
               as="button" w="full" bg="white" px={5} py={3}
-              borderBottom={showHistory ? '1px solid #E2E8F0' : 'none'}
+              borderBottom={showHistory ? '1px solid #E3E8EE' : 'none'}
               cursor="pointer"
               onClick={() => setShowHistory(h => !h)}
               _hover={{ bg: '#F8FAFC' }}
@@ -515,9 +515,9 @@ export default function CleanerDashboard() {
             >
               <Flex align="center" justify="space-between">
                 <HStack gap={2.5}>
-                  <Icon as={LucideBriefcase} w="12px" h="12px" color="#94A3B8" />
+                  <Icon as={LucideBriefcase} w="12px" h="12px" color="#697386" />
                   <Text
-                    fontSize="10.5px" fontWeight="700" color="#94A3B8"
+                    fontSize="10.5px" fontWeight="700" color="#697386"
                     fontFamily="heading" textTransform="uppercase" letterSpacing="0.07em"
                   >
                     Completed history
@@ -531,7 +531,7 @@ export default function CleanerDashboard() {
                     {completedJobs.length}
                   </Box>
                 </HStack>
-                <Icon as={showHistory ? LucideChevronUp : LucideChevronDown} w="13px" h="13px" color="#94A3B8" />
+                <Icon as={showHistory ? LucideChevronUp : LucideChevronDown} w="13px" h="13px" color="#697386" />
               </Flex>
             </Box>
             <AnimatePresence>
@@ -563,18 +563,18 @@ export default function CleanerDashboard() {
                           <HStack gap={4} flexWrap="wrap">
                             <HStack gap={1}>
                               <Icon as={LucideMapPin} w="11px" h="11px" color="#CBD5E1" />
-                              <Text fontSize="12px" color="#94A3B8">{lead.address}</Text>
+                              <Text fontSize="12px" color="#697386">{lead.address}</Text>
                             </HStack>
                             <HStack gap={1}>
                               <Icon as={LucideCalendar} w="11px" h="11px" color="#CBD5E1" />
-                              <Text fontSize="12px" color="#94A3B8">
+                              <Text fontSize="12px" color="#697386">
                                 {new Date(lead.dateTime).toLocaleString('en-US', { dateStyle: 'short', timeStyle: 'short' })}
                               </Text>
                             </HStack>
                             {lead.client && (
                               <HStack gap={1}>
                                 <Icon as={LucideUser} w="11px" h="11px" color="#CBD5E1" />
-                                <Text fontSize="12px" color="#94A3B8">{lead.client.name}</Text>
+                                <Text fontSize="12px" color="#697386">{lead.client.name}</Text>
                               </HStack>
                             )}
                           </HStack>

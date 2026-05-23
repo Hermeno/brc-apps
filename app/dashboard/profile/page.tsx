@@ -210,7 +210,7 @@ export default function ProfilePage() {
     : null;
 
   return (
-    <Box minH="100vh" bg="#F8FAFC">
+    <Box minH="100vh" bg="white">
       <CleanerNav />
 
       <input ref={fileInputRef} type="file"
@@ -229,13 +229,13 @@ export default function ProfilePage() {
           </Box>
 
           {/* ── Avatar + About card ── */}
-          <Box bg="white" border="1px solid #E2E8F0" overflow="hidden">
+          <Box bg="white" border="1px solid #E3E8EE" style={{ borderRadius: 8 }} overflow="hidden">
             {/* Section header */}
-            <Box bg="#F8FAFC" px={5} py={3} borderBottom="1px solid #E2E8F0">
+            <Box bg="#F6F9FC" px={5} py={3} borderBottom="1px solid #E3E8EE">
               <HStack gap={2}>
                 <Icon as={LucideUser} w={4} h={4} color="brand.500" />
                 <Text
-                  fontSize="10.5px" fontWeight={700} color="#94A3B8"
+                  fontSize="10.5px" fontWeight={700} color="#697386"
                   textTransform="uppercase" letterSpacing="0.07em" fontFamily="heading">
                   About you
                 </Text>
@@ -290,7 +290,7 @@ export default function ProfilePage() {
                       const sel = serviceTypes.includes(s);
                       return (
                         <Box key={s} as="button" w="full" p={2.5} borderRadius="4px" textAlign="center"
-                          border={sel ? '2px solid #0A80DB' : '1px solid #E2E8F0'}
+                          border={sel ? '2px solid #0A80DB' : '1px solid #E3E8EE'}
                           bg={sel ? '#F0F9FF' : 'white'} cursor="pointer"
                           onClick={() => toggleService(s)} transition="all 0.15s">
                           <Text fontSize="xs" fontWeight={sel ? 'bold' : 'medium'}
@@ -316,13 +316,13 @@ export default function ProfilePage() {
           </Box>
 
           {/* ── Location card ── */}
-          <Box bg="white" border="1px solid #E2E8F0" overflow="hidden">
+          <Box bg="white" border="1px solid #E3E8EE" style={{ borderRadius: 8 }} overflow="hidden">
             {/* Section header */}
-            <Box bg="#F8FAFC" px={5} py={3} borderBottom="1px solid #E2E8F0">
+            <Box bg="#F6F9FC" px={5} py={3} borderBottom="1px solid #E3E8EE">
               <HStack gap={2}>
                 <Icon as={LucideMapPin} w={4} h={4} color="brand.500" />
                 <Text
-                  fontSize="10.5px" fontWeight={700} color="#94A3B8"
+                  fontSize="10.5px" fontWeight={700} color="#697386"
                   textTransform="uppercase" letterSpacing="0.07em" fontFamily="heading">
                   Location
                 </Text>
@@ -352,7 +352,7 @@ export default function ProfilePage() {
 
                 {/* Location label */}
                 {locationLabel && (
-                  <HStack gap={2} bg="#F8FAFC" border="1px solid" borderColor="#E2E8F0"
+                  <HStack gap={2} bg="#F6F9FC" border="1px solid" borderColor="#E3E8EE"
                     borderRadius="4px" px={4} py={3}>
                     <Icon as={LucideMapPin} w={4} h={4} color="#0A80DB" flexShrink={0} />
                     <Text fontSize="sm" color="#0A80DB" fontWeight="semibold">{locationLabel}</Text>
@@ -401,7 +401,7 @@ export default function ProfilePage() {
                         transition="all 0.12s"
                         bg={serviceRadiusMiles === miles ? '#0A80DB' : 'white'}
                         color={serviceRadiusMiles === miles ? 'white' : 'slate.600'}
-                        borderColor={serviceRadiusMiles === miles ? '#0A80DB' : '#E2E8F0'}
+                        borderColor={serviceRadiusMiles === miles ? '#0A80DB' : '#E3E8EE'}
                         _hover={{ borderColor: '#0A80DB', color: serviceRadiusMiles === miles ? 'white' : '#0A80DB' }}
                         onClick={() => setServiceRadius(miles)}
                       >
@@ -430,14 +430,14 @@ export default function ProfilePage() {
           </Box>
 
           {/* ── Photo Gallery card ── */}
-          <Box bg="white" border="1px solid #E2E8F0" overflow="hidden">
+          <Box bg="white" border="1px solid #E3E8EE" style={{ borderRadius: 8 }} overflow="hidden">
             {/* Section header */}
-            <Box bg="#F8FAFC" px={5} py={3} borderBottom="1px solid #E2E8F0">
+            <Box bg="#F6F9FC" px={5} py={3} borderBottom="1px solid #E3E8EE">
               <Flex justify="space-between" align="center">
                 <HStack gap={2}>
                   <Icon as={LucideCamera} w={4} h={4} color="brand.500" />
                   <Text
-                    fontSize="10.5px" fontWeight={700} color="#94A3B8"
+                    fontSize="10.5px" fontWeight={700} color="#697386"
                     textTransform="uppercase" letterSpacing="0.07em" fontFamily="heading">
                     Work gallery
                   </Text>

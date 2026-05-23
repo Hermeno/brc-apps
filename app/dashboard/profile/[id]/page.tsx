@@ -204,7 +204,7 @@ export default function PublicProfilePage() {
 
                 {/* Contact info — only shown after client accepts + cleaner pays */}
                 {cleaner.canSeeContact && cleaner.phone && (
-                  <HStack gap={2} mt={4} bg="#F8FAFC" border="1px solid" borderColor="#E2E8F0"
+                  <HStack gap={2} mt={4} bg="#F6F9FC" border="1px solid" borderColor="#E3E8EE"
                     borderRadius="4px" px={4} py={3}>
                     <Icon as={LucideMapPin} w={4} h={4} color="#0A80DB" />
                     <Text fontSize="sm" fontWeight="semibold" color="#0A80DB">

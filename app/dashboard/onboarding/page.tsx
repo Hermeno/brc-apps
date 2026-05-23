@@ -14,6 +14,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { toaster } from '@/lib/toaster';
 import { ImageUpload } from '@/components/image-upload';
 import NextLink from 'next/link';
+import Image from 'next/image';
 
 /* ─── Service options ─────────────────────────────────────────── */
 const SERVICES = [
@@ -45,7 +46,7 @@ function StepDots({ current }: { current: number }) {
             transition="all 0.3s"
           />
           {i < STEPS.length - 1 && (
-            <Box w="16px" h="1px" bg={i < current ? '#059669' : '#E2E8F0'} transition="background 0.3s" />
+            <Box w="16px" h="1px" bg={i < current ? '#059669' : '#E3E8EE'} transition="background 0.3s" />
           )}
         </HStack>
       ))}
@@ -226,21 +227,13 @@ export default function OnboardingPage() {
     true;
 
   return (
-    <Box minH="100vh" bg="#F8FAFC">
+    <Box minH="100vh" bg="white">
 
       {/* ── Top bar ── */}
       <Box bg="white" borderBottom="1px solid" borderColor="slate.100" px={6} py={4} position="sticky" top={0} zIndex={50}>
         <Flex align="center" justify="space-between" maxW="640px" mx="auto">
           <NextLink href="/">
-            <HStack gap={2.5} cursor="pointer">
-              <Box w="28px" h="28px" bg="#0A80DB" style={{ borderRadius: 4 }}
-                display="flex" alignItems="center" justifyContent="center">
-                <Text color="white" fontWeight="800" fontSize="10px" fontFamily="heading">BC</Text>
-              </Box>
-              <Text fontWeight="black" fontSize="sm" color="slate.900">
-                Brazilian<Text as="span" color="brand.500">Clean</Text>
-              </Text>
-            </HStack>
+            <Image src="/2.png" alt="BrazilianClean" width={28} height={28} style={{ borderRadius: "50%", objectFit: "cover", flexShrink: 0 }} />
           </NextLink>
 
           <Text fontSize="xs" color="slate.400" fontWeight="semibold">
@@ -288,7 +281,7 @@ export default function OnboardingPage() {
                           onClick={() => toggleService(s.id)}
                           bg={selected ? '#EBF5FE' : 'white'}
                           border="2px solid"
-                          borderColor={selected ? '#0A80DB' : '#E2E8F0'}
+                          borderColor={selected ? '#0A80DB' : '#E3E8EE'}
                           p={4} textAlign="left"
                           cursor="pointer"
                           transition="all 0.15s"
@@ -402,7 +395,7 @@ export default function OnboardingPage() {
                           bg={serviceRadiusMiles === r ? '#0A80DB' : '#F8FAFC'}
                           color={serviceRadiusMiles === r ? 'white' : '#64748B'}
                           border="1px solid"
-                          borderColor={serviceRadiusMiles === r ? '#0A80DB' : '#E2E8F0'}
+                          borderColor={serviceRadiusMiles === r ? '#0A80DB' : '#E3E8EE'}
                           borderRadius="4px"
                           fontSize="sm" fontWeight="bold"
                           cursor="pointer"

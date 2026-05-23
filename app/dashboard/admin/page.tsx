@@ -4,6 +4,7 @@ import {
   Box, VStack, HStack, Text, Button, Icon, Flex,
   Textarea, SimpleGrid, Input,
 } from '@chakra-ui/react';
+import Image from 'next/image';
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSession, signOut } from 'next-auth/react';
@@ -84,8 +85,8 @@ const TH: React.CSSProperties = {
   textTransform: 'uppercase',
   letterSpacing: '0.07em',
   color: '#94A3B8',
-  borderBottom: '1px solid #E2E8F0',
-  background: '#F8FAFC',
+  borderBottom: '1px solid #E3E8EE',
+  background: '#F6F9FC',
   fontFamily: 'var(--font-dm-sans, sans-serif)',
   whiteSpace: 'nowrap',
 };
@@ -108,7 +109,7 @@ function StatusDot({ status }: { status: string }) {
 }
 
 function Stars({ n }: { n: number }) {
-  return <span>{[1,2,3,4,5].map(i => <span key={i} style={{ color: i <= n ? '#F59E0B' : '#E2E8F0', fontSize: 13 }}>★</span>)}</span>;
+  return <span>{[1,2,3,4,5].map(i => <span key={i} style={{ color: i <= n ? '#F59E0B' : '#E3E8EE', fontSize: 13 }}>★</span>)}</span>;
 }
 
 function isSuspended(u: UserRow) { return !!u.suspendedUntil && new Date(u.suspendedUntil) > new Date(); }
@@ -137,24 +138,7 @@ function Sidebar({ tab, setTab, pendingVerifs, onRefresh, user }: {
     >
       {/* Logo */}
       <Box px={5} pt={6} pb={5} borderBottom="1px solid rgba(255,255,255,0.06)">
-        <HStack gap={2.5}>
-          <Box
-            w="30px" h="30px" borderRadius="6px"
-            bg="brand.500"
-            display="flex" alignItems="center" justifyContent="center"
-            flexShrink={0}
-          >
-            <Icon as={LucideShield} w={3.5} h={3.5} color="white" />
-          </Box>
-          <Box>
-            <Text fontWeight="700" fontSize="13.5px" color="white" fontFamily="heading" letterSpacing="-0.02em">
-              BrazilianClean
-            </Text>
-            <Text fontSize="9.5px" fontWeight="700" color="brand.400" letterSpacing="0.12em" fontFamily="heading">
-              ADMIN
-            </Text>
-          </Box>
-        </HStack>
+        <Image src="/2.png" alt="BrazilianClean" width={32} height={32} style={{ borderRadius: "50%", objectFit: "cover", flexShrink: 0 }} />
       </Box>
 
       {/* Nav */}
@@ -189,7 +173,7 @@ function Sidebar({ tab, setTab, pendingVerifs, onRefresh, user }: {
                 transition="all 0.12s"
                 textAlign="left"
                 borderRadius="0"
-                _hover={{ color: '#E2E8F0', bg: 'rgba(255,255,255,0.04)' }}
+                _hover={{ color: '#E3E8EE', bg: 'rgba(255,255,255,0.04)' }}
                 onClick={() => setTab(item.id)}
               >
                 <Icon as={item.icon} w="14px" h="14px" flexShrink={0} />
@@ -231,7 +215,7 @@ function Sidebar({ tab, setTab, pendingVerifs, onRefresh, user }: {
           transition="all 0.12s"
           color={tab === 'settings' ? 'white' : '#6B7280'}
           bg={tab === 'settings' ? 'rgba(26,127,160,0.15)' : 'transparent'}
-          _hover={{ color: '#E2E8F0', bg: 'rgba(255,255,255,0.04)' }}
+          _hover={{ color: '#E3E8EE', bg: 'rgba(255,255,255,0.04)' }}
           onClick={() => setTab('settings')}
         >
           <Icon as={LucideSettings} w={3} h={3} />
@@ -242,7 +226,7 @@ function Sidebar({ tab, setTab, pendingVerifs, onRefresh, user }: {
           px={3} py={2} cursor="pointer" color="#6B7280" fontSize="12px"
           fontFamily="heading" fontWeight="500" borderRadius="0"
           transition="color 0.12s"
-          _hover={{ color: '#E2E8F0' }}
+          _hover={{ color: '#E3E8EE' }}
           onClick={onRefresh}
         >
           <Icon as={LucideRefreshCw} w={3} h={3} />
@@ -277,7 +261,7 @@ function DeleteConfirmModal({ user, onConfirm, onCancel, loading }: {
       onClick={onCancel}
     >
       <Box
-        bg="white" border="1px solid #E2E8F0" w="400px" mx={4}
+        bg="white" border="1px solid #E3E8EE" w="400px" mx={4}
         onClick={e => e.stopPropagation()}
       >
         {/* Header */}
@@ -530,14 +514,14 @@ function VerifRow({ v, onAction }: { v: Verification; onAction: () => void }) {
         {open && (
           <motion.tr initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
             <td colSpan={5} style={{ padding: 0 }}>
-              <Box p={5} bg="slate.50" borderBottom="1px solid #E2E8F0">
+              <Box p={5} bg="slate.50" borderBottom="1px solid #E3E8EE">
                 <SimpleGrid columns={{ base: 1, md: 3 }} gap={3} mb={4}>
                   {[{ label: 'ID front', url: v.frontDocUrl }, { label: 'ID back', url: v.backDocUrl }, { label: 'Selfie with ID', url: v.selfieUrl }].map(img => (
                     <Box key={img.label}>
                       <Text fontSize="10.5px" fontWeight="700" color="slate.400" fontFamily="heading" mb={1.5} textTransform="uppercase" letterSpacing="0.06em">{img.label}</Text>
                       <a href={img.url} target="_blank" rel="noreferrer">
                         {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img src={img.url} alt={img.label} style={{ width: '100%', height: 130, objectFit: 'cover', border: '1px solid #E2E8F0' }} />
+                        <img src={img.url} alt={img.label} style={{ width: '100%', height: 130, objectFit: 'cover', border: '1px solid #E3E8EE' }} />
                       </a>
                     </Box>
                   ))}
@@ -610,7 +594,7 @@ function LeadDetailRow({ lead }: { lead: LeadRow }) {
             <Text fontSize="12px" fontWeight="600" color="slate.600">{convs.length}</Text>
             {lead.review && <Stars n={lead.review.rating} />}
             {convs.length > 0 && (
-              <Box as="button" onClick={() => setOpen(o => !o)} cursor="pointer" color="#94A3B8" _hover={{ color: '#475569' }}>
+              <Box as="button" onClick={() => setOpen(o => !o)} cursor="pointer" color="#697386" _hover={{ color: '#475569' }}>
                 <Icon as={LucideEye} w="13px" h="13px" />
               </Box>
             )}
@@ -621,11 +605,11 @@ function LeadDetailRow({ lead }: { lead: LeadRow }) {
         {open && (
           <motion.tr initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
             <td colSpan={8} style={{ padding: 0 }}>
-              <Box p={5} bg="#F8FAFC" borderBottom="1px solid #E2E8F0">
+              <Box p={5} bg="#F6F9FC" borderBottom="1px solid #E3E8EE">
                 <Text fontSize="10.5px" fontWeight="700" color="slate.400" fontFamily="heading" textTransform="uppercase" letterSpacing="0.07em" mb={2}>Conversas ({convs.length})</Text>
                 <VStack gap={1} align="stretch">
                   {convs.map(c => (
-                    <HStack key={c.id} gap={4} px={3} py={2} bg="white" border="1px solid #E2E8F0">
+                    <HStack key={c.id} gap={4} px={3} py={2} bg="white" border="1px solid #E3E8EE">
                       <Text fontSize="12.5px" fontWeight="600" color="slate.800" fontFamily="heading" flex={1}>{c.cleaner.name || '—'}</Text>
                       <Text fontSize="12px" color="slate.500" fontFamily="heading">{c.status === 'active' ? 'Active' : 'Closed'}</Text>
                       <Text fontSize="11px" color="slate.400">Lead fee $${c.leadFee}</Text>
@@ -654,7 +638,7 @@ function LeadDetailRow({ lead }: { lead: LeadRow }) {
 
 function PageHeader({ title, sub, children }: { title: string; sub?: string; children?: React.ReactNode }) {
   return (
-    <Box px={8} pt={7} pb={5} borderBottom="1px solid #E2E8F0" bg="white">
+    <Box px={8} pt={7} pb={5} borderBottom="1px solid #E3E8EE" bg="white">
       <Flex align="flex-end" justify="space-between">
         <Box>
           <Text fontSize="20px" fontWeight="800" color="slate.900" fontFamily="heading" letterSpacing="-0.025em">{title}</Text>
@@ -670,7 +654,7 @@ function PageHeader({ title, sub, children }: { title: string; sub?: string; chi
 
 function StatStrip({ items }: { items: { label: string; value: string | number; accent?: boolean; onClick?: () => void }[] }) {
   return (
-    <Box bg="white" borderBottom="1px solid #E2E8F0" px={8} py={0}>
+    <Box bg="white" borderBottom="1px solid #E3E8EE" px={8} py={0}>
       <HStack gap={0} divideX="1px" divideColor="slate.200" align="stretch">
         {items.map((item, i) => (
           <Box
@@ -802,7 +786,7 @@ export default function AdminPage() {
       />
 
       {/* ── Main ── */}
-      <Box flex={1} overflowY="auto" bg="#F8FAFC">
+      <Box flex={1} overflowY="auto" bg="#F6F9FC">
 
         {/* ══ VISÃO GERAL ══ */}
         {tab === 'overview' && (
@@ -823,11 +807,11 @@ export default function AdminPage() {
 
             {/* Detail rows */}
             <Box px={8} py={6}>
-              <SimpleGrid columns={{ base: 1, lg: 2 }} gap={0} border="1px solid #E2E8F0">
+              <SimpleGrid columns={{ base: 1, lg: 2 }} gap={0} border="1px solid #E3E8EE">
 
                 {/* Recent leads */}
-                <Box borderRight={{ lg: '1px solid #E2E8F0' }}>
-                  <Box px={5} py={3} borderBottom="1px solid #E2E8F0" bg="white">
+                <Box borderRight={{ lg: '1px solid #E3E8EE' }}>
+                  <Box px={5} py={3} borderBottom="1px solid #E3E8EE" bg="white">
                     <Text fontSize="11px" fontWeight="700" color="slate.400" fontFamily="heading" textTransform="uppercase" letterSpacing="0.07em">
                       Recent activity
                     </Text>
@@ -862,7 +846,7 @@ export default function AdminPage() {
 
                 {/* Top cleaners */}
                 <Box>
-                  <Box px={5} py={3} borderBottom="1px solid #E2E8F0" bg="white">
+                  <Box px={5} py={3} borderBottom="1px solid #E3E8EE" bg="white">
                     <Text fontSize="11px" fontWeight="700" color="slate.400" fontFamily="heading" textTransform="uppercase" letterSpacing="0.07em">
                       Top Cleaners
                     </Text>
@@ -904,8 +888,8 @@ export default function AdminPage() {
               </SimpleGrid>
 
               {/* Leads by status — horizontal bar */}
-              <Box mt={0} border="1px solid #E2E8F0" borderTop="none" bg="white">
-                <Box px={5} py={3} borderBottom="1px solid #E2E8F0">
+              <Box mt={0} border="1px solid #E3E8EE" borderTop="none" bg="white">
+                <Box px={5} py={3} borderBottom="1px solid #E3E8EE">
                   <Text fontSize="11px" fontWeight="700" color="slate.400" fontFamily="heading" textTransform="uppercase" letterSpacing="0.07em">
                     Bookings by status
                   </Text>
@@ -954,7 +938,7 @@ export default function AdminPage() {
             </PageHeader>
 
             {/* Status filter bar */}
-            <Box bg="white" borderBottom="1px solid #E2E8F0" px={8} py={0}>
+            <Box bg="white" borderBottom="1px solid #E3E8EE" px={8} py={0}>
               <HStack gap={0} overflowX="auto">
                 {[{ key: '', label: 'All', count: totalLeads }, ...Object.entries(LEAD_STATUS).map(([k, v]) => ({ key: k, label: v.label, count: stats?.leads?.[k] ?? 0, dot: v.dot }))].map(item => (
                   <Box
@@ -1004,7 +988,7 @@ export default function AdminPage() {
               )}
 
               {leadsTotal > PAGE_SIZE && (
-                <Flex align="center" justify="space-between" px={6} py={3} bg="white" borderTop="1px solid #E2E8F0">
+                <Flex align="center" justify="space-between" px={6} py={3} bg="white" borderTop="1px solid #E3E8EE">
                   <Text fontSize="12px" color="slate.400" fontFamily="heading">
                     {leadPage * PAGE_SIZE + 1}–{Math.min((leadPage + 1) * PAGE_SIZE, leadsTotal)} of {leadsTotal}
                   </Text>
@@ -1028,7 +1012,7 @@ export default function AdminPage() {
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.15 }}>
             <PageHeader title="Verifications" sub="Documents submitted by cleaners" />
 
-            <Box bg="white" borderBottom="1px solid #E2E8F0" px={8} py={0}>
+            <Box bg="white" borderBottom="1px solid #E3E8EE" px={8} py={0}>
               <HStack gap={0}>
                 {(['ALL', 'PENDING', 'APPROVED', 'REJECTED'] as const).map(f => {
                   const count = f === 'ALL' ? verifications.length : verifications.filter(v => v.status === f).length;
@@ -1081,7 +1065,7 @@ export default function AdminPage() {
               </Box>
             </PageHeader>
 
-            <Box bg="white" borderBottom="1px solid #E2E8F0" px={8} py={0}>
+            <Box bg="white" borderBottom="1px solid #E3E8EE" px={8} py={0}>
               <HStack gap={0}>
                 {(['ALL', 'CLIENT', 'CLEANER'] as const).map(r => (
                   <Box key={r} as="button" px={4} py={3} cursor="pointer" flexShrink={0}
@@ -1127,7 +1111,7 @@ export default function AdminPage() {
               sub={`${reviews.length} reviews · avg ${(reviews.length ? reviews.reduce((a, r) => a + r.rating, 0) / reviews.length : 0).toFixed(1)}★`}
             />
 
-            <Box bg="white" borderBottom="1px solid #E2E8F0" px={8} py={0}>
+            <Box bg="white" borderBottom="1px solid #E3E8EE" px={8} py={0}>
               <HStack gap={0}>
                 <Box as="button" px={4} py={3} cursor="pointer"
                   borderBottom="2px solid" borderBottomColor={revFilter === 0 ? 'brand.500' : 'transparent'}
@@ -1275,12 +1259,12 @@ function AdminSettingsForm() {
   };
 
   return (
-    <Box bg="white" border="1px solid #E2E8F0" overflow="hidden">
+    <Box bg="white" border="1px solid #E3E8EE" style={{ borderRadius: 8 }} overflow="hidden">
       {/* Section header */}
-      <Box bg="#F8FAFC" px={5} py={3} borderBottom="1px solid #E2E8F0">
+      <Box bg="#F6F9FC" px={5} py={3} borderBottom="1px solid #E3E8EE">
         <HStack gap={2}>
           <Icon as={LucideUser} w={4} h={4} color="brand.500" />
-          <Text fontSize="10.5px" fontWeight={700} color="#94A3B8"
+          <Text fontSize="10.5px" fontWeight={700} color="#697386"
             textTransform="uppercase" letterSpacing="0.07em" fontFamily="heading">
             Personal information
           </Text>
@@ -1317,8 +1301,8 @@ function AdminSettingsForm() {
           </Box>
 
           {/* Divider */}
-          <Box borderTop="1px solid #E2E8F0" pt={4}>
-            <Text fontSize="10.5px" fontWeight={700} color="#94A3B8"
+          <Box borderTop="1px solid #E3E8EE" pt={4}>
+            <Text fontSize="10.5px" fontWeight={700} color="#697386"
               textTransform="uppercase" letterSpacing="0.07em" fontFamily="heading" mb={4}>
               CHANGE PASSWORD (optional)
             </Text>
@@ -1428,7 +1412,7 @@ function PlanPricingPanel() {
 
   if (loading) {
     return (
-      <Box bg="white" border="1px solid #E2E8F0" p={12} textAlign="center">
+      <Box bg="white" border="1px solid #E3E8EE" p={12} textAlign="center">
         <Text fontSize="13px" color="slate.400" fontFamily="heading">Loading prices…</Text>
       </Box>
     );
@@ -1444,7 +1428,7 @@ function PlanPricingPanel() {
         const isEdit = editing === planId;
 
         return (
-          <Box key={planId} bg="white" border="1px solid #E2E8F0" overflow="hidden" position="relative">
+          <Box key={planId} bg="white" border="1px solid #E3E8EE" overflow="hidden" position="relative">
             {/* Left accent */}
             <Box position="absolute" left={0} top={0} bottom={0} w="3px" bg={meta.color} />
 
@@ -1530,7 +1514,7 @@ function PlanPricingPanel() {
       })}
 
       {/* Info callout */}
-      <Box p={4} bg="#F8FAFC" border="1px solid #E2E8F0">
+      <Box p={4} bg="#F6F9FC" border="1px solid #E3E8EE">
         <HStack gap={3} align="start">
           <Text fontSize="16px" flexShrink={0}>✅</Text>
           <VStack gap={1} align="start">
@@ -1817,7 +1801,7 @@ function LeadPricingPanel() {
               borderRadius="4px"
               fontFamily="heading"
               fontSize="13px"
-              bg="#F8FAFC"
+              bg="#F6F9FC"
             />
             <Text fontSize="11px" color="slate.400" fontFamily="heading">
               One ZIP code per line. Leave empty to accept all areas.
@@ -1861,7 +1845,7 @@ function LeadPricingPanel() {
       </Box>
 
       {/* Info callout */}
-      <Box p={4} bg="#F8FAFC" border="1px solid #E2E8F0">
+      <Box p={4} bg="#F6F9FC" border="1px solid #E3E8EE">
         <HStack gap={3} align="start">
           <Text fontSize="16px" flexShrink={0}>💡</Text>
           <VStack gap={1} align="start">

@@ -192,7 +192,7 @@ export default function ChatPage() {
                   Your interest has been submitted. The client is reviewing cleaners and will confirm their choice shortly.
                   You'll be notified as soon as they confirm.
                 </Text>
-                <Box mt={6} bg="#F8FAFC" border="1px solid" borderColor="#E2E8F0" px={4} py={3}>
+                <Box mt={6} bg="#F6F9FC" border="1px solid" borderColor="#E3E8EE" px={4} py={3}>
                   <HStack gap={2} justify="center">
                     <Icon as={LucideBanknote} w={4} h={4} color="#0A80DB" />
                     <Text fontSize="sm" color="slate.600">
@@ -294,7 +294,7 @@ export default function ChatPage() {
 
       {/* ── Client contact card (visible to cleaner after fee paid + accepted) ── */}
       {!isClient && feePaid && isAccepted && (conv.client.phone || conv.lead.clientPhone) && (
-        <Box bg="#F8FAFC" borderBottom="1px solid" borderColor="#E2E8F0" px={4} py={2.5} flexShrink={0}>
+        <Box bg="#F6F9FC" borderBottom="1px solid" borderColor="#E3E8EE" px={4} py={2.5} flexShrink={0}>
           <Container maxW="760px">
             <HStack gap={2}>
               <Icon as={LucidePhone} w={4} h={4} color="#0A80DB" />
@@ -343,7 +343,7 @@ export default function ChatPage() {
                 color={feePaid ? '#059669' : '#64748B'}
                 borderRadius="full" px={3} py={1} fontSize="xs" fontWeight="bold"
                 border="1px solid"
-                borderColor={feePaid ? '#A7F3D0' : '#E2E8F0'}
+                borderColor={feePaid ? '#A7F3D0' : '#E3E8EE'}
               >
                 Lead fee: ${conv.leadFee} — {feePaid ? 'paid ✓' : 'pending'}
               </Badge>

@@ -2,6 +2,7 @@
 
 import { Box, Text, Flex, HStack, VStack } from '@chakra-ui/react';
 import NextLink from 'next/link';
+import Image from 'next/image';
 
 const SECTIONS = [
   {
@@ -146,15 +147,7 @@ export default function TermsPage() {
       >
         <Flex align="center" h="full" px={{ base: 5, md: 10, lg: 16 }} maxW="1440px" mx="auto" justify="space-between">
           <NextLink href="/">
-            <HStack gap={2.5} cursor="pointer">
-              <Box w="32px" h="32px" bg="#0A80DB" style={{ borderRadius: 6 }}
-                display="flex" alignItems="center" justifyContent="center">
-                <Text color="white" fontWeight="800" fontSize="11px" letterSpacing="-0.02em" fontFamily="heading">BC</Text>
-              </Box>
-              <Text fontWeight="700" fontSize="15px" letterSpacing="-0.02em" color="white" fontFamily="heading">
-                Brazilian<Text as="span" color="#0A80DB">Clean</Text>
-              </Text>
-            </HStack>
+            <Image src="/2.png" alt="BrazilianClean" width={32} height={32} style={{ borderRadius: "50%", objectFit: "cover", flexShrink: 0 }} />
           </NextLink>
         </Flex>
       </Box>
@@ -187,7 +180,7 @@ export default function TermsPage() {
             position={{ base: 'static', lg: 'sticky' }}
             top="84px"
           >
-            <Text fontSize="10.5px" fontWeight="700" letterSpacing="0.12em" color="#94A3B8"
+            <Text fontSize="10.5px" fontWeight="700" letterSpacing="0.12em" color="#697386"
               textTransform="uppercase" fontFamily="heading" mb={3}>
               Contents
             </Text>
@@ -209,15 +202,15 @@ export default function TermsPage() {
             <VStack gap={10} align="stretch">
               {SECTIONS.map(s => (
                 <Box key={s.title} id={s.title.toLowerCase().replace(/[^a-z0-9]+/g, '-')}>
-                  <Text fontSize="17px" fontWeight="700" color="#0B1120" fontFamily="heading"
-                    mb={4} borderBottom="2px solid #E2E8F0" pb={2}>
+                  <Text fontSize="17px" fontWeight="700" color="#0A2540" fontFamily="heading"
+                    mb={4} borderBottom="2px solid #E3E8EE" pb={2}>
                     {s.title}
                   </Text>
                   <Box>
                     {s.content.split('\n\n').map((para, pi) => {
                       if (para.startsWith('**') && para.endsWith('**')) {
                         return (
-                          <Text key={pi} fontSize="13.5px" fontWeight="700" color="#0B1120"
+                          <Text key={pi} fontSize="13.5px" fontWeight="700" color="#0A2540"
                             fontFamily="heading" mt={4} mb={1}>
                             {para.replace(/\*\*/g, '')}
                           </Text>
@@ -258,10 +251,7 @@ export default function TermsPage() {
         <Flex px={{ base: 5, md: 10, lg: 16 }} maxW="1440px" mx="auto"
           align="center" justify="space-between" flexWrap="wrap" gap={4}>
           <HStack gap={2}>
-            <Box w="24px" h="24px" bg="#0A80DB" style={{ borderRadius: 4 }}
-              display="flex" alignItems="center" justifyContent="center">
-              <Text color="white" fontWeight="800" fontSize="9px" fontFamily="heading">BC</Text>
-            </Box>
+            <Image src="/2.png" alt="BrazilianClean" width={28} height={28} style={{ borderRadius: "50%", objectFit: "cover", flexShrink: 0 }} />
             <Text fontSize="12px" color="rgba(255,255,255,0.35)" fontFamily="heading">
               © 2026 BrazilianClean. All rights reserved.
             </Text>

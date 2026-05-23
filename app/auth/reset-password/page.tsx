@@ -8,6 +8,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { toaster } from '@/lib/toaster';
 import NextLink from 'next/link';
 import { LucideArrowRight, LucideLock } from 'lucide-react';
+import Image from 'next/image';
 
 function ResetPasswordForm() {
   const router   = useRouter();
@@ -45,31 +46,28 @@ function ResetPasswordForm() {
   };
 
   return (
-    <Box minH="100vh" bg="#F8FAFC" display="flex" alignItems="center" justifyContent="center" px={5}>
+    <Box minH="100vh" bg="white" display="flex" alignItems="center" justifyContent="center" px={5}>
       <Box w="full" maxW="400px">
 
         {/* Logo */}
         <HStack gap={2.5} mb={10} justify="center">
-          <Box w="32px" h="32px" bg="#0A80DB" style={{ borderRadius: 4 }}
-            display="flex" alignItems="center" justifyContent="center">
-            <Text color="white" fontWeight="800" fontSize="11px" letterSpacing="-0.02em" fontFamily="heading">BC</Text>
-          </Box>
-          <Text fontWeight="700" fontSize="15px" letterSpacing="-0.02em" color="#0B1120" fontFamily="heading">
+          <Image src="/2.png" alt="BrazilianClean" width={32} height={32} style={{ borderRadius: "50%", objectFit: "cover", flexShrink: 0 }} />
+          <Text fontWeight="700" fontSize="15px" letterSpacing="-0.02em" color="#0A2540" fontFamily="heading">
             Brazilian<Text as="span" color="#0A80DB">Clean</Text>
           </Text>
         </HStack>
 
         {/* Card */}
-        <Box bg="white" border="1px solid #E2E8F0" p={8}>
+        <Box bg="white" border="1px solid #E3E8EE" p={8} style={{ borderRadius: 8 }}>
 
           <Box mb={7}>
-            <Text fontSize="22px" fontWeight="800" color="#0B1120" fontFamily="heading"
+            <Text fontSize="22px" fontWeight="800" color="#0A2540" fontFamily="heading"
               letterSpacing="-0.025em" mb={1}>
               Reset your password
             </Text>
-            <Text fontSize="14px" color="#64748B" fontFamily="heading">
+            <Text fontSize="14px" color="#425466" fontFamily="heading">
               Enter the code sent to{' '}
-              <Text as="span" fontWeight="700" color="#0B1120">{email}</Text>
+              <Text as="span" fontWeight="700" color="#0A2540">{email}</Text>
             </Text>
           </Box>
 
@@ -78,7 +76,7 @@ function ResetPasswordForm() {
 
               {/* 6-digit code */}
               <Box>
-                <Text fontSize="11px" fontWeight="700" color="#64748B" textTransform="uppercase"
+                <Text fontSize="11px" fontWeight="700" color="#425466" textTransform="uppercase"
                   letterSpacing="0.1em" fontFamily="heading" mb={1.5} textAlign="center">
                   Verification code
                 </Text>
@@ -91,33 +89,33 @@ function ResetPasswordForm() {
                   fontWeight="800"
                   letterSpacing="10px"
                   fontFamily="heading"
-                  bg="#F8FAFC"
+                  bg="#F6F9FC"
                   border="1px solid"
-                  borderColor="#E2E8F0"
+                  borderColor="#E3E8EE"
                   h="64px"
                   borderRadius="4px"
                   _focus={{ bg: 'white', borderColor: '#0A80DB' }}
                   maxLength={6}
                 />
-                <Text fontSize="12px" color="#94A3B8" textAlign="center" mt={2} fontFamily="heading">
+                <Text fontSize="12px" color="#697386" textAlign="center" mt={2} fontFamily="heading">
                   Code expires in 10 minutes
                 </Text>
               </Box>
 
               {/* New password */}
               <Box>
-                <Text fontSize="11px" fontWeight="700" color="#64748B" textTransform="uppercase"
+                <Text fontSize="11px" fontWeight="700" color="#425466" textTransform="uppercase"
                   letterSpacing="0.1em" fontFamily="heading" mb={1.5}>New password</Text>
                 <HStack gap={2}>
-                  <Icon as={LucideLock} w="14px" h="14px" color="#94A3B8" flexShrink={0} />
+                  <Icon as={LucideLock} w="14px" h="14px" color="#697386" flexShrink={0} />
                   <Input
                     type="password"
                     placeholder="••••••••"
                     value={password}
                     onChange={e => setPassword(e.target.value)}
-                    bg="#F8FAFC"
+                    bg="#F6F9FC"
                     border="1px solid"
-                    borderColor="#E2E8F0"
+                    borderColor="#E3E8EE"
                     h="44px"
                     borderRadius="4px"
                     fontFamily="heading"
@@ -130,18 +128,18 @@ function ResetPasswordForm() {
 
               {/* Confirm password */}
               <Box>
-                <Text fontSize="11px" fontWeight="700" color="#64748B" textTransform="uppercase"
+                <Text fontSize="11px" fontWeight="700" color="#425466" textTransform="uppercase"
                   letterSpacing="0.1em" fontFamily="heading" mb={1.5}>Confirm new password</Text>
                 <HStack gap={2}>
-                  <Icon as={LucideLock} w="14px" h="14px" color="#94A3B8" flexShrink={0} />
+                  <Icon as={LucideLock} w="14px" h="14px" color="#697386" flexShrink={0} />
                   <Input
                     type="password"
                     placeholder="••••••••"
                     value={confirm}
                     onChange={e => setConfirm(e.target.value)}
-                    bg="#F8FAFC"
+                    bg="#F6F9FC"
                     border="1px solid"
-                    borderColor="#E2E8F0"
+                    borderColor="#E3E8EE"
                     h="44px"
                     borderRadius="4px"
                     fontFamily="heading"

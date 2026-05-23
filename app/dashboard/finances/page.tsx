@@ -71,7 +71,7 @@ export default function FinancesPage() {
   ];
 
   return (
-    <Box minH="100vh" bg="#F8FAFC">
+    <Box minH="100vh" bg="white">
       <CleanerNav />
       <Box p={6} maxW="1200px" mx="auto">
         <HStack gap={2.5} mb={6}>
@@ -81,7 +81,7 @@ export default function FinancesPage() {
         <VStack gap={6} align="stretch">
 
           {/* StatStrip — horizontal bar with 4 metrics and vertical dividers */}
-          <Box border="1px solid #E2E8F0" bg="white">
+          <Box border="1px solid #E3E8EE" bg="white" style={{ borderRadius: 8 }}>
             <Flex>
               {statItems.map((s, i) => (
                 <Box
@@ -89,7 +89,7 @@ export default function FinancesPage() {
                   flex={1}
                   px={5}
                   py={4}
-                  borderRight={i < statItems.length - 1 ? '1px solid #E2E8F0' : undefined}
+                  borderRight={i < statItems.length - 1 ? '1px solid #E3E8EE' : undefined}
                   textAlign="center">
                   <Text
                     fontSize="22px"
@@ -102,7 +102,7 @@ export default function FinancesPage() {
                   </Text>
                   <Text
                     fontSize="11px"
-                    color="#94A3B8"
+                    color="#697386"
                     textTransform="uppercase"
                     fontFamily="heading"
                     letterSpacing="0.07em"
@@ -116,12 +116,12 @@ export default function FinancesPage() {
 
           {/* ROI callout: flat panel, no gradient */}
           {data && data.totalFeesPaid > 0 && (
-            <Box bg="#F8FAFC" border="1px solid #E2E8F0" p={5}>
+            <Box bg="#F6F9FC" border="1px solid #E3E8EE" p={5} style={{ borderRadius: 8 }}>
               <HStack gap={3}>
                 <Box
                   w="40px" h="40px"
                   bg="white"
-                  border="1px solid #E2E8F0"
+                  border="1px solid #E3E8EE"
                   display="flex" alignItems="center" justifyContent="center"
                   flexShrink={0}>
                   <Icon as={LucideTrendingUp} w={5} h={5} color="#0A80DB" />
@@ -144,14 +144,14 @@ export default function FinancesPage() {
           )}
 
           {/* Transactions section panel */}
-          <Box border="1px solid #E2E8F0">
+          <Box border="1px solid #E3E8EE" style={{ borderRadius: 8 }} overflow="hidden">
             {/* Section header */}
-            <Box bg="#F8FAFC" px={5} py={3} borderBottom="1px solid #E2E8F0">
+            <Box bg="#F6F9FC" px={5} py={3} borderBottom="1px solid #E3E8EE">
               <HStack gap={2}>
                 <Text
                   fontSize="10.5px"
                   fontWeight={700}
-                  color="#94A3B8"
+                  color="#697386"
                   textTransform="uppercase"
                   fontFamily="heading"
                   letterSpacing="0.07em">
@@ -159,7 +159,7 @@ export default function FinancesPage() {
                 </Text>
                 {data && (
                   <Text
-                    style={{ borderRadius: 2, background: '#E2E8F0', padding: '2px 6px', fontSize: 9.5, fontWeight: 700, color: '#64748B' }}>
+                    style={{ borderRadius: 2, background: '#E3E8EE', padding: '2px 6px', fontSize: 9.5, fontWeight: 700, color: '#64748B' }}>
                     {data.transactions.length}
                   </Text>
                 )}

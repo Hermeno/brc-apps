@@ -57,14 +57,14 @@ export default function SchedulePage() {
 
   const SectionPanel = ({ label, items, accentBg }: { label: string; items: Job[]; accentBg: string }) =>
     items.length === 0 ? null : (
-      <Box border="1px solid #E2E8F0">
+      <Box border="1px solid #E3E8EE" style={{ borderRadius: 8 }} overflow="hidden">
         {/* Section header */}
-        <Box bg="#F8FAFC" px={5} py={3} borderBottom="1px solid #E2E8F0">
+        <Box bg="#F6F9FC" px={5} py={3} borderBottom="1px solid #E3E8EE">
           <HStack gap={2}>
             <Text
               fontSize="10.5px"
               fontWeight={700}
-              color="#94A3B8"
+              color="#697386"
               textTransform="uppercase"
               fontFamily="heading"
               letterSpacing="0.07em">
@@ -204,7 +204,7 @@ export default function SchedulePage() {
   ];
 
   return (
-    <Box minH="100vh" bg="#F8FAFC">
+    <Box minH="100vh" bg="white">
       <CleanerNav />
       <Box p={6} maxW="1200px" mx="auto">
 
@@ -215,7 +215,7 @@ export default function SchedulePage() {
         <VStack gap={6} align="stretch">
 
           {/* StatStrip */}
-          <Box border="1px solid #E2E8F0" bg="white">
+          <Box border="1px solid #E3E8EE" bg="white" style={{ borderRadius: 8 }}>
             <Flex>
               {statItems.map((s, i) => (
                 <Box
@@ -223,7 +223,7 @@ export default function SchedulePage() {
                   flex={1}
                   px={5}
                   py={4}
-                  borderRight={i < statItems.length - 1 ? '1px solid #E2E8F0' : undefined}
+                  borderRight={i < statItems.length - 1 ? '1px solid #E3E8EE' : undefined}
                   textAlign="center">
                   <Text
                     fontSize="22px"
@@ -236,7 +236,7 @@ export default function SchedulePage() {
                   </Text>
                   <Text
                     fontSize="11px"
-                    color="#94A3B8"
+                    color="#697386"
                     textTransform="uppercase"
                     fontFamily="heading"
                     letterSpacing="0.07em"
@@ -253,7 +253,7 @@ export default function SchedulePage() {
               <Text color="slate.400">Loading schedule…</Text>
             </Box>
           ) : jobs.length === 0 ? (
-            <Box border="1px solid #E2E8F0" p={16} textAlign="center" bg="white">
+            <Box border="1px solid #E3E8EE" p={16} textAlign="center" bg="white">
               <Icon as={LucideCalendarDays} w={14} h={14} color="slate.300" mb={4} />
               <Text color="slate.600" fontWeight="bold" fontSize="lg" fontFamily="heading">No jobs scheduled</Text>
               <Text color="slate.400" fontSize="sm" mt={1}>

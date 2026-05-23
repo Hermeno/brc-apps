@@ -24,13 +24,14 @@ import NotificationBell from '@/components/notification-bell';
 import { signOut } from 'next-auth/react';
 import { LucideLogOut } from 'lucide-react';
 import { AddressInput } from '@/components/address-input';
+import Image from 'next/image';
 
 /* ─── types ──────────────────────────────────────────────────── */
 const STATUS_MAP: Record<string, { label: string; bg: string; color: string; border: string }> = {
-  NEW:       { label: 'Pending',                bg: '#F8FAFC', color: '#64748B', border: '#E2E8F0' },
-  WAVE1:     { label: 'Searching…',             bg: '#F8FAFC', color: '#0A80DB', border: '#E2E8F0' },
-  WAVE2:     { label: 'Searching…',             bg: '#F8FAFC', color: '#0A80DB', border: '#E2E8F0' },
-  WAVE3:     { label: 'Searching…',             bg: '#F8FAFC', color: '#0A80DB', border: '#E2E8F0' },
+  NEW:       { label: 'Pending',                bg: '#F8FAFC', color: '#64748B', border: '#E3E8EE' },
+  WAVE1:     { label: 'Searching…',             bg: '#F8FAFC', color: '#0A80DB', border: '#E3E8EE' },
+  WAVE2:     { label: 'Searching…',             bg: '#F8FAFC', color: '#0A80DB', border: '#E3E8EE' },
+  WAVE3:     { label: 'Searching…',             bg: '#F8FAFC', color: '#0A80DB', border: '#E3E8EE' },
   IN_REVIEW: { label: 'Pros responded',         bg: '#ECFDF5', color: '#059669', border: '#A7F3D0' },
   ACCEPTED:  { label: 'Confirmed ✓',            bg: '#ECFDF5', color: '#059669', border: '#A7F3D0' },
   COMPLETED: { label: 'Completed ✓',            bg: '#ECFDF5', color: '#047857', border: '#A7F3D0' },
@@ -326,7 +327,7 @@ export default function ClientPage() {
   const firstName = session?.user?.name?.split(' ')[0] ?? 'there';
 
   return (
-    <Box minH="100vh" bg="#F8FAFC">
+    <Box minH="100vh" bg="white">
       {/* ── Client header ── */}
       <Box
         bg="#0B1120" borderBottom="1px solid rgba(255,255,255,0.06)"
@@ -335,16 +336,7 @@ export default function ClientPage() {
       >
         <Flex align="center" h="60px" px={{ base: 4, md: 6, lg: 8 }} maxW="1440px" mx="auto" justify="space-between">
           {/* Logo */}
-          <HStack gap={2.5}>
-            <Box w="32px" h="32px" bg="brand.500" borderRadius="6px"
-              display="flex" alignItems="center" justifyContent="center">
-              <Text color="white" fontWeight="800" fontSize="11px" letterSpacing="-0.02em" fontFamily="heading">BC</Text>
-            </Box>
-            <Text fontWeight="700" fontSize="15px" letterSpacing="-0.02em" color="white" fontFamily="heading"
-              display={{ base: 'none', sm: 'block' }}>
-              Brazilian<Text as="span" color="brand.400">Clean</Text>
-            </Text>
-          </HStack>
+          <Image src="/2.png" alt="BrazilianClean" width={32} height={32} style={{ borderRadius: "50%", objectFit: "cover", flexShrink: 0 }} />
 
           {/* Right side */}
           <HStack gap={1.5}>
@@ -374,7 +366,7 @@ export default function ClientPage() {
         <VStack gap={6} align="stretch">
 
           {/* ── Profile Card ── */}
-          <Box bg="white" border="1px solid #E2E8F0">
+          <Box bg="white" border="1px solid #E3E8EE">
             <Box px={5} py={4}>
               <Flex justify="space-between" align="center" mb={3}>
                 <Box w="44px" h="44px" borderRadius="full" overflow="hidden"
@@ -410,12 +402,12 @@ export default function ClientPage() {
                     <Text fontSize="xs" color="slate.500" mt={0.5}>📱 {profile.phone}</Text>
                   )}
                 </Box>
-                <HStack gap={0} borderLeft="1px solid #E2E8F0" flexShrink={0}>
+                <HStack gap={0} borderLeft="1px solid #E3E8EE" flexShrink={0}>
                   <Box textAlign="center" px={4}>
                     <Text fontWeight="black" fontSize="lg" color="brand.600" fontFamily="heading">{leads.length}</Text>
                     <Text fontSize="10px" color="slate.400" fontWeight="700" textTransform="uppercase" letterSpacing="wider" fontFamily="heading">bookings</Text>
                   </Box>
-                  <Box textAlign="center" px={4} borderLeft="1px solid #E2E8F0">
+                  <Box textAlign="center" px={4} borderLeft="1px solid #E3E8EE">
                     <Text fontWeight="black" fontSize="lg" color="#0A80DB" fontFamily="heading">
                       {leads.filter(l => l.status === 'COMPLETED').length}
                     </Text>
@@ -470,7 +462,7 @@ export default function ClientPage() {
             return (
               <>
                 {activeLeads.length === 0 ? (
-                  <Box border="1px solid #E2E8F0" p={16} textAlign="center" bg="white">
+                  <Box border="1px solid #E3E8EE" p={16} textAlign="center" bg="white">
                     <Text fontSize="4xl" mb={3}>🧹</Text>
                     <Text color="slate.600" fontWeight="bold" fontSize="lg">No active bookings</Text>
                     <Text color="slate.400" fontSize="sm" mt={1}>
@@ -501,7 +493,7 @@ export default function ClientPage() {
                           <Box
                             key={lead.id}
                             position="relative"
-                            bg="white" border="1px solid #E2E8F0"
+                            bg="white" border="1px solid #E3E8EE"
                             overflow="hidden"
                             transition="background 0.15s">
                             {/* Left accent strip */}
@@ -541,7 +533,7 @@ export default function ClientPage() {
                                       {lead.bathrooms && <Text fontSize="xs" color="slate.600">🚿 {lead.bathrooms}ba</Text>}
                                       {(lead.squareMeters ?? 0) > 0 && <Text fontSize="xs" color="slate.600">📐 {lead.squareMeters}m²</Text>}
                                       {freqLabel && freqLabel !== 'One-time' && (
-                                        <Text style={{ borderRadius: 2, background: '#F8FAFC', padding: '2px 6px', fontSize: '9.5px', fontWeight: 700, color: '#0A80DB' }}>
+                                        <Text style={{ borderRadius: 2, background: '#F6F9FC', padding: '2px 6px', fontSize: '9.5px', fontWeight: 700, color: '#0A80DB' }}>
                                           🔄 {freqLabel}
                                         </Text>
                                       )}
@@ -568,8 +560,8 @@ export default function ClientPage() {
                                     const acceptedConv = (lead.conversations ?? []).find(c => c.cleanerId === lead.cleanerId && c.status === 'active');
                                     return (
                                       <HStack gap={2} flexWrap="wrap">
-                                        <HStack gap={1.5} fontSize="sm" bg="#F8FAFC" px={3} py={1}
-                                          border="1px solid #E2E8F0" color="#0A80DB">
+                                        <HStack gap={1.5} fontSize="sm" bg="#F6F9FC" px={3} py={1}
+                                          border="1px solid #E3E8EE" color="#0A80DB">
                                           <Icon as={LucideCheckCircle} w={4} h={4} />
                                           <Text fontWeight="semibold">{lead.cleaner.name}</Text>
                                         </HStack>
@@ -602,8 +594,8 @@ export default function ClientPage() {
                                       </Text>
                                       <VStack align="start" gap={2}>
                                         {activeConvs.map(conv => (
-                                          <HStack key={conv.id} gap={2} bg="#F8FAFC" px={3} py={2}
-                                            border="1px solid #E2E8F0">
+                                          <HStack key={conv.id} gap={2} bg="#F6F9FC" px={3} py={2}
+                                            border="1px solid #E3E8EE">
                                             <Box w="28px" h="28px" borderRadius="full" flexShrink={0}
                                               overflow="hidden" bg="brand.500"
                                               display="flex" alignItems="center" justifyContent="center"
@@ -667,7 +659,7 @@ export default function ClientPage() {
 
                                   {/* Rating already submitted */}
                                   {lead.review && (
-                                    <HStack gap={1.5} bg="#F8FAFC" px={3} py={1.5}
+                                    <HStack gap={1.5} bg="#F6F9FC" px={3} py={1.5}
                                       border="1px solid #FDE68A">
                                       {[1,2,3,4,5].map(st => (
                                         <Icon key={st} as={LucideStar} w={4} h={4}
@@ -757,7 +749,7 @@ export default function ClientPage() {
 
                                   {/* Terminate confirmation */}
                                   {confirmComplete === lead.id && (
-                                    <HStack gap={2} bg="#F8FAFC" px={3} py={2} border="1px solid #E2E8F0">
+                                    <HStack gap={2} bg="#F6F9FC" px={3} py={2} border="1px solid #E3E8EE">
                                       <Text fontSize="sm" color="#0A80DB" fontWeight="semibold">Job completed?</Text>
                                       <Button size="xs" bg="#0A80DB" color="white" borderRadius="4px"
                                         loading={completing === lead.id}
@@ -790,12 +782,12 @@ export default function ClientPage() {
                                     <Input type="date" value={reactivateDate}
                                       onChange={e => setReactivateDate(e.target.value)}
                                       bg="white" borderRadius="4px" h="11" flex={1}
-                                      border="1px solid" borderColor="#E2E8F0"
+                                      border="1px solid" borderColor="#E3E8EE"
                                       min={new Date().toISOString().split('T')[0]} />
                                     <Input type="time" value={reactivateTime}
                                       onChange={e => setReactivateTime(e.target.value)}
                                       bg="white" borderRadius="4px" h="11" flex={1}
-                                      border="1px solid" borderColor="#E2E8F0" />
+                                      border="1px solid" borderColor="#E3E8EE" />
                                   </HStack>
                                   <HStack gap={3} justify="flex-end">
                                     <Button size="sm" variant="ghost" color="slate.500" onClick={() => setReactivateId(null)}>Cancel</Button>
@@ -812,7 +804,7 @@ export default function ClientPage() {
 
                             {/* ── Edit Form (inline) ── */}
                             {editingId === lead.id && (
-                              <Box borderTop="1px solid #E2E8F0" bg="#F8FAFC" p={5}>
+                              <Box borderTop="1px solid #E3E8EE" bg="#F6F9FC" p={5}>
                                 <Text fontSize="sm" fontWeight="bold" color="brand.700" mb={4}>✏️ Edit booking</Text>
                                 <VStack gap={4} align="stretch">
                                   <SimpleGrid columns={2} gap={3}>
@@ -865,19 +857,19 @@ export default function ClientPage() {
 
                 {/* ── History Section ── */}
                 {historyLeads.length > 0 && (
-                  <Box border="1px solid #E2E8F0">
+                  <Box border="1px solid #E3E8EE" style={{ borderRadius: 8 }} overflow="hidden">
                     {/* Section header / toggle */}
                     <Box
-                      as="button" w="full" bg="#F8FAFC" px={5} py={3}
-                      borderBottom={showHistory ? '1px solid #E2E8F0' : undefined}
+                      as="button" w="full" bg="#F6F9FC" px={5} py={3}
+                      borderBottom={showHistory ? '1px solid #E3E8EE' : undefined}
                       onClick={() => setShowHistory(v => !v)}
                       display="flex" alignItems="center" justifyContent="space-between"
                       cursor="pointer" _hover={{ bg: '#F1F5F9' }} transition="background 0.12s">
-                      <Text fontSize="10.5px" fontWeight={700} color="#94A3B8" textTransform="uppercase"
+                      <Text fontSize="10.5px" fontWeight={700} color="#697386" textTransform="uppercase"
                         fontFamily="heading" letterSpacing="0.07em">
                         HISTORY ({historyLeads.length})
                       </Text>
-                      <Icon as={showHistory ? LucideChevronUp : LucideChevronDown} w={4} h={4} color="#94A3B8" />
+                      <Icon as={showHistory ? LucideChevronUp : LucideChevronDown} w={4} h={4} color="#697386" />
                     </Box>
 
                     {showHistory && (
@@ -917,7 +909,7 @@ export default function ClientPage() {
                                         {lead.bedrooms && <Text fontSize="xs" color="slate.500">🛏 {lead.bedrooms}bd</Text>}
                                         {lead.bathrooms && <Text fontSize="xs" color="slate.500">🚿 {lead.bathrooms}ba</Text>}
                                         {(lead.squareMeters ?? 0) > 0 && <Text fontSize="xs" color="slate.500">📐 {lead.squareMeters}m²</Text>}
-                                        {freqLabel && freqLabel !== 'One-time' && <Text style={{ borderRadius: 2, background: '#F8FAFC', padding: '2px 6px', fontSize: '9.5px', fontWeight: 700, color: '#0A80DB' }}>🔄 {freqLabel}</Text>}
+                                        {freqLabel && freqLabel !== 'One-time' && <Text style={{ borderRadius: 2, background: '#F6F9FC', padding: '2px 6px', fontSize: '9.5px', fontWeight: 700, color: '#0A80DB' }}>🔄 {freqLabel}</Text>}
                                       </HStack>
                                     )}
                                     {lead.estimatedMinPrice && (
@@ -927,7 +919,7 @@ export default function ClientPage() {
                                       </HStack>
                                     )}
                                     {lead.review && (
-                                      <HStack gap={1} bg="#F8FAFC" px={2.5} py={1} border="1px solid #FDE68A">
+                                      <HStack gap={1} bg="#F6F9FC" px={2.5} py={1} border="1px solid #FDE68A">
                                         {[1,2,3,4,5].map(st => (
                                           <Icon key={st} as={LucideStar} w={3} h={3}
                                             color={lead.review!.rating >= st ? '#F59E0B' : '#E5E7EB'}
@@ -976,10 +968,10 @@ export default function ClientPage() {
               exit={{ opacity: 0, scale: 0.95, y: 12 }}
               transition={{ duration: 0.2, ease: 'easeOut' }}
               style={{ position: 'relative', zIndex: 1, width: '100%', maxWidth: '440px', margin: '0 16px' }}>
-              <Box bg="white" border="1px solid #E2E8F0" p={8}
+              <Box bg="white" border="1px solid #E3E8EE" p={8}
                 style={{ boxShadow: '0 16px 48px rgba(0,0,0,0.14)' }}>
                 <VStack gap={5} align="center" textAlign="center">
-                  <Box w="48px" h="48px" bg="#F8FAFC" border="1px solid #FDE68A"
+                  <Box w="48px" h="48px" bg="#F6F9FC" border="1px solid #FDE68A"
                     display="flex" alignItems="center" justifyContent="center">
                     <Text fontSize="2xl">⭐</Text>
                   </Box>
@@ -1029,11 +1021,11 @@ export default function ClientPage() {
 function OrderForm({ form, setField, toggleExtra, estimate, progress, onSubmit, submitting, onCancel }: any) {
   const serviceLabel = SERVICE_TYPES.find(s => s.id === form.serviceType)?.labelEn ?? '';
   return (
-    <Box bg="white" border="1px solid #E2E8F0">
+    <Box bg="white" border="1px solid #E3E8EE">
       {/* Form header */}
-      <Box bg="#F8FAFC" px={5} py={3} borderBottom="1px solid #E2E8F0">
+      <Box bg="#F6F9FC" px={5} py={3} borderBottom="1px solid #E3E8EE">
         <Flex justify="space-between" align="center">
-          <Text fontSize="10.5px" fontWeight={700} color="#94A3B8" textTransform="uppercase"
+          <Text fontSize="10.5px" fontWeight={700} color="#697386" textTransform="uppercase"
             letterSpacing="0.07em" fontFamily="heading">
             NEW REQUEST
           </Text>
@@ -1064,7 +1056,7 @@ function OrderForm({ form, setField, toggleExtra, estimate, progress, onSubmit, 
           <VStack gap={6} align="stretch">
             {/* Service type */}
             <Box>
-              <Text fontSize="10.5px" fontWeight={700} color="#94A3B8" textTransform="uppercase" mb={3}
+              <Text fontSize="10.5px" fontWeight={700} color="#697386" textTransform="uppercase" mb={3}
                 letterSpacing="0.07em" fontFamily="heading">Service type</Text>
               <SimpleGrid columns={2} gap={3}>
                 {SERVICE_TYPES.map(s => (
@@ -1086,7 +1078,7 @@ function OrderForm({ form, setField, toggleExtra, estimate, progress, onSubmit, 
 
             {/* Property size */}
             <Box>
-              <Text fontSize="10.5px" fontWeight={700} color="#94A3B8" textTransform="uppercase" mb={4}
+              <Text fontSize="10.5px" fontWeight={700} color="#697386" textTransform="uppercase" mb={4}
                 letterSpacing="0.07em" fontFamily="heading">Property size</Text>
               <SimpleGrid columns={{ base: 1, sm: 3 }} gap={4}>
                 <Box><Text fontSize="sm" color="slate.600" mb={2} fontWeight="medium">🛏 Bedrooms</Text><Stepper value={form.bedrooms} onChange={v => setField('bedrooms', v)} /></Box>
@@ -1105,7 +1097,7 @@ function OrderForm({ form, setField, toggleExtra, estimate, progress, onSubmit, 
             {/* Add-ons */}
             <Box>
               <HStack gap={2} mb={3}>
-                <Text fontSize="10.5px" fontWeight={700} color="#94A3B8" textTransform="uppercase"
+                <Text fontSize="10.5px" fontWeight={700} color="#697386" textTransform="uppercase"
                   letterSpacing="0.07em" fontFamily="heading">Add-ons</Text>
                 <Text fontSize="xs" color="slate.400">(optional)</Text>
               </HStack>
@@ -1131,7 +1123,7 @@ function OrderForm({ form, setField, toggleExtra, estimate, progress, onSubmit, 
 
             {/* Frequency */}
             <Box>
-              <Text fontSize="10.5px" fontWeight={700} color="#94A3B8" textTransform="uppercase" mb={3}
+              <Text fontSize="10.5px" fontWeight={700} color="#697386" textTransform="uppercase" mb={3}
                 letterSpacing="0.07em" fontFamily="heading">Frequency</Text>
               <SimpleGrid columns={3} gap={3}>
                 {FREQUENCY_OPTIONS.map(f => (
@@ -1148,7 +1140,7 @@ function OrderForm({ form, setField, toggleExtra, estimate, progress, onSubmit, 
 
             {/* Location & date */}
             <Box>
-              <Text fontSize="10.5px" fontWeight={700} color="#94A3B8" textTransform="uppercase" mb={4}
+              <Text fontSize="10.5px" fontWeight={700} color="#697386" textTransform="uppercase" mb={4}
                 letterSpacing="0.07em" fontFamily="heading">Location & date</Text>
               <VStack gap={4} align="stretch">
                 <AddressInput
@@ -1179,15 +1171,15 @@ function OrderForm({ form, setField, toggleExtra, estimate, progress, onSubmit, 
 
             {/* Estimate */}
             {estimate && (
-              <Box bg="#F8FAFC" border="1px solid #E2E8F0" p={5}>
+              <Box bg="#F6F9FC" border="1px solid #E3E8EE" p={5} style={{ borderRadius: 8 }}>
                 <HStack gap={2} mb={3}>
                   <Icon as={LucideSparkles} w={4} h={4} color="brand.500" />
-                  <Text fontSize="10.5px" fontWeight={700} color="#94A3B8" textTransform="uppercase"
+                  <Text fontSize="10.5px" fontWeight={700} color="#697386" textTransform="uppercase"
                     letterSpacing="0.07em" fontFamily="heading">
                     Estimate — {serviceLabel}
                   </Text>
                   {estimate.discountPct > 0 && (
-                    <Text style={{ borderRadius: 2, background: '#F8FAFC', padding: '2px 6px', fontSize: '9.5px', fontWeight: 700, color: '#0A80DB' }}>
+                    <Text style={{ borderRadius: 2, background: '#F6F9FC', padding: '2px 6px', fontSize: '9.5px', fontWeight: 700, color: '#0A80DB' }}>
                       -{estimate.discountPct}%
                     </Text>
                   )}

@@ -116,7 +116,7 @@ function PaymentMethodsContent() {
   };
 
   return (
-    <Box minH="100vh" bg="#F8FAFC">
+    <Box minH="100vh" bg="white">
       <CleanerNav />
 
       <Box p={6} maxW="600px" mx="auto">
@@ -143,7 +143,7 @@ function PaymentMethodsContent() {
           </Flex>
 
           {/* How it works: flat box, no radius, blue tint */}
-          <Box bg="#F8FAFC" border="1px solid #E2E8F0" p={5}>
+          <Box bg="#F6F9FC" border="1px solid #E3E8EE" p={5} style={{ borderRadius: 8 }}>
             <HStack gap={3} align="start">
               <Icon as={LucideShieldCheck} w={5} h={5} color="blue.600" flexShrink={0} mt={0.5} />
               <Box>
@@ -157,13 +157,13 @@ function PaymentMethodsContent() {
           </Box>
 
           {/* Cards list: section panel */}
-          <Box border="1px solid #E2E8F0">
+          <Box border="1px solid #E3E8EE" style={{ borderRadius: 8 }} overflow="hidden">
             {/* Section header */}
-            <Box bg="#F8FAFC" px={5} py={3} borderBottom="1px solid #E2E8F0">
+            <Box bg="#F6F9FC" px={5} py={3} borderBottom="1px solid #E3E8EE">
               <Text
                 fontSize="10.5px"
                 fontWeight={700}
-                color="#94A3B8"
+                color="#697386"
                 textTransform="uppercase"
                 fontFamily="heading"
                 letterSpacing="0.07em">
@@ -219,7 +219,7 @@ function PaymentMethodsContent() {
                           {/* Left accent strip */}
                           <Box
                             position="absolute" left={0} top={0} bottom={0} w="3px"
-                            bg={card.isDefault ? '#0A80DB' : '#E2E8F0'} />
+                            bg={card.isDefault ? '#0A80DB' : '#E3E8EE'} />
 
                           <Flex justify="space-between" align="center" gap={3}>
                             <HStack gap={3}>
@@ -250,7 +250,7 @@ function PaymentMethodsContent() {
                             </HStack>
                             <HStack gap={2}>
                               {!card.isDefault && (
-                                <Button size="xs" variant="outline" borderColor="#E2E8F0"
+                                <Button size="xs" variant="outline" borderColor="#E3E8EE"
                                   color="slate.500" borderRadius="4px" fontWeight="semibold"
                                   _hover={{ bg: '#F0F9FF', borderColor: '#0A80DB', color: '#0A80DB' }}
                                   loading={settingId === card.id}
@@ -275,7 +275,7 @@ function PaymentMethodsContent() {
 
                 <Box px={5} py={3} borderTop="1px solid #F1F5F9" bg="white">
                   <Button
-                    variant="outline" borderColor="#E2E8F0" color="slate.500"
+                    variant="outline" borderColor="#E3E8EE" color="slate.500"
                     borderRadius="4px" fontWeight="semibold" fontSize="sm"
                     _hover={{ borderColor: '#0A80DB', color: '#0A80DB', bg: '#F0F9FF' }}
                     loading={adding} loadingText="Please wait…"

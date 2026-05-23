@@ -9,6 +9,7 @@ import { useRouter } from 'next/navigation';
 import { toaster } from '@/lib/toaster';
 import NextLink from 'next/link';
 import { LucideArrowRight, LucideCheckCircle } from 'lucide-react';
+import Image from 'next/image';
 
 export default function LoginPage() {
   const [email, setEmail]       = useState('');
@@ -60,10 +61,7 @@ export default function LoginPage() {
 
         <Flex direction="column" justify="space-between" h="full" position="relative" p={10}>
           <HStack gap={2.5}>
-            <Box w="32px" h="32px" bg="#0A80DB" style={{ borderRadius: 4 }}
-              display="flex" alignItems="center" justifyContent="center">
-              <Text color="white" fontWeight="800" fontSize="11px" letterSpacing="-0.02em" fontFamily="heading">BC</Text>
-            </Box>
+            <Image src="/2.png" alt="BrazilianClean" width={32} height={32} style={{ borderRadius: "50%", objectFit: "cover", flexShrink: 0 }} />
             <Text fontWeight="700" fontSize="15px" letterSpacing="-0.02em" color="white" fontFamily="heading">
               Brazilian<Text as="span" color="#0A80DB">Clean</Text>
             </Text>
@@ -103,21 +101,18 @@ export default function LoginPage() {
 
           {/* Mobile logo */}
           <HStack gap={2.5} mb={10} display={{ base: 'flex', lg: 'none' }}>
-            <Box w="28px" h="28px" bg="#0A80DB" style={{ borderRadius: 4 }}
-              display="flex" alignItems="center" justifyContent="center">
-              <Text color="white" fontWeight="800" fontSize="10px" fontFamily="heading">BC</Text>
-            </Box>
-            <Text fontWeight="700" fontSize="14px" letterSpacing="-0.02em" color="#0B1120" fontFamily="heading">
+            <Image src="/2.png" alt="BrazilianClean" width={28} height={28} style={{ borderRadius: "50%", objectFit: "cover", flexShrink: 0 }} />
+            <Text fontWeight="700" fontSize="14px" letterSpacing="-0.02em" color="#0A2540" fontFamily="heading">
               Brazilian<Text as="span" color="#0A80DB">Clean</Text>
             </Text>
           </HStack>
 
           <Box mb={8}>
-            <Text fontSize="24px" fontWeight="800" color="#0B1120" fontFamily="heading"
+            <Text fontSize="24px" fontWeight="800" color="#0A2540" fontFamily="heading"
               letterSpacing="-0.025em" mb={1}>
               Welcome back
             </Text>
-            <Text fontSize="14px" color="#64748B" fontFamily="heading">
+            <Text fontSize="14px" color="#425466" fontFamily="heading">
               Sign in to your account to continue.
             </Text>
           </Box>
@@ -126,15 +121,15 @@ export default function LoginPage() {
             <VStack gap={5} align="stretch">
 
               <Box>
-                <Text fontSize="11px" fontWeight="700" color="#64748B" textTransform="uppercase"
+                <Text fontSize="11px" fontWeight="700" color="#425466" textTransform="uppercase"
                   letterSpacing="0.1em" fontFamily="heading" mb={1.5}>Email</Text>
                 <Input
                   placeholder="name@email.com"
                   value={email}
                   onChange={e => setEmail(e.target.value)}
-                  bg="#F8FAFC"
+                  bg="#F6F9FC"
                   border="1px solid"
-                  borderColor="#E2E8F0"
+                  borderColor="#E3E8EE"
                   h="44px"
                   borderRadius="4px"
                   fontFamily="heading"
@@ -147,7 +142,7 @@ export default function LoginPage() {
 
               <Box>
                 <Flex justify="space-between" align="center" mb={1.5}>
-                  <Text fontSize="11px" fontWeight="700" color="#64748B" textTransform="uppercase"
+                  <Text fontSize="11px" fontWeight="700" color="#425466" textTransform="uppercase"
                     letterSpacing="0.1em" fontFamily="heading">Password</Text>
                   <NextLink href="/auth/forgot-password">
                     <Text fontSize="12px" color="#0A80DB" fontWeight="600" cursor="pointer"
@@ -159,9 +154,9 @@ export default function LoginPage() {
                   placeholder="••••••••"
                   value={password}
                   onChange={e => setPassword(e.target.value)}
-                  bg="#F8FAFC"
+                  bg="#F6F9FC"
                   border="1px solid"
-                  borderColor="#E2E8F0"
+                  borderColor="#E3E8EE"
                   h="44px"
                   borderRadius="4px"
                   fontFamily="heading"
@@ -193,8 +188,8 @@ export default function LoginPage() {
             </VStack>
           </form>
 
-          <Box mt={7} pt={6} borderTop="1px solid #E2E8F0">
-            <Text fontSize="13px" color="#64748B" fontFamily="heading" textAlign="center">
+          <Box mt={7} pt={6} borderTop="1px solid #E3E8EE">
+            <Text fontSize="13px" color="#425466" fontFamily="heading" textAlign="center">
               Don&apos;t have an account?{' '}
               <NextLink href="/auth/register">
                 <Text as="span" color="#0A80DB" fontWeight="700" cursor="pointer"

@@ -9,6 +9,7 @@ import { signIn } from 'next-auth/react';
 import { toaster } from '@/lib/toaster';
 import NextLink from 'next/link';
 import { LucideArrowRight, LucideCheckCircle } from 'lucide-react';
+import Image from 'next/image';
 
 function RegisterForm() {
   const [name, setName]         = useState('');
@@ -78,10 +79,7 @@ function RegisterForm() {
 
         <Flex direction="column" justify="space-between" h="full" position="relative" p={10}>
           <HStack gap={2.5}>
-            <Box w="32px" h="32px" bg="#0A80DB" style={{ borderRadius: 4 }}
-              display="flex" alignItems="center" justifyContent="center">
-              <Text color="white" fontWeight="800" fontSize="11px" letterSpacing="-0.02em" fontFamily="heading">BC</Text>
-            </Box>
+            <Image src="/2.png" alt="BrazilianClean" width={32} height={32} style={{ borderRadius: "50%", objectFit: "cover", flexShrink: 0 }} />
             <Text fontWeight="700" fontSize="15px" letterSpacing="-0.02em" color="white" fontFamily="heading">
               Brazilian<Text as="span" color="#0A80DB">Clean</Text>
             </Text>
@@ -130,21 +128,18 @@ function RegisterForm() {
 
           {/* Mobile logo */}
           <HStack gap={2.5} mb={10} display={{ base: 'flex', lg: 'none' }}>
-            <Box w="28px" h="28px" bg="#0A80DB" style={{ borderRadius: 4 }}
-              display="flex" alignItems="center" justifyContent="center">
-              <Text color="white" fontWeight="800" fontSize="10px" fontFamily="heading">BC</Text>
-            </Box>
-            <Text fontWeight="700" fontSize="14px" letterSpacing="-0.02em" color="#0B1120" fontFamily="heading">
+            <Image src="/2.png" alt="BrazilianClean" width={28} height={28} style={{ borderRadius: "50%", objectFit: "cover", flexShrink: 0 }} />
+            <Text fontWeight="700" fontSize="14px" letterSpacing="-0.02em" color="#0A2540" fontFamily="heading">
               Brazilian<Text as="span" color="#0A80DB">Clean</Text>
             </Text>
           </HStack>
 
           <Box mb={8}>
-            <Text fontSize="24px" fontWeight="800" color="#0B1120" fontFamily="heading"
+            <Text fontSize="24px" fontWeight="800" color="#0A2540" fontFamily="heading"
               letterSpacing="-0.025em" mb={1}>
               {forcedRole ? 'Join as a cleaner' : 'Create free account'}
             </Text>
-            <Text fontSize="14px" color="#64748B" fontFamily="heading">
+            <Text fontSize="14px" color="#425466" fontFamily="heading">
               {forcedRole
                 ? 'Start earning. Set your own schedule.'
                 : 'Trusted by thousands of homeowners.'}
@@ -155,15 +150,15 @@ function RegisterForm() {
             <VStack gap={5} align="stretch">
 
               <Box>
-                <Text fontSize="11px" fontWeight="700" color="#64748B" textTransform="uppercase"
+                <Text fontSize="11px" fontWeight="700" color="#425466" textTransform="uppercase"
                   letterSpacing="0.1em" fontFamily="heading" mb={1.5}>Full name</Text>
                 <Input
                   placeholder="Jane Smith"
                   value={name}
                   onChange={e => setName(e.target.value)}
-                  bg="#F8FAFC"
+                  bg="#F6F9FC"
                   border="1px solid"
-                  borderColor="#E2E8F0"
+                  borderColor="#E3E8EE"
                   h="44px"
                   borderRadius="4px"
                   fontFamily="heading"
@@ -174,15 +169,15 @@ function RegisterForm() {
               </Box>
 
               <Box>
-                <Text fontSize="11px" fontWeight="700" color="#64748B" textTransform="uppercase"
+                <Text fontSize="11px" fontWeight="700" color="#425466" textTransform="uppercase"
                   letterSpacing="0.1em" fontFamily="heading" mb={1.5}>Email</Text>
                 <Input
                   placeholder="name@email.com"
                   value={email}
                   onChange={e => setEmail(e.target.value)}
-                  bg="#F8FAFC"
+                  bg="#F6F9FC"
                   border="1px solid"
-                  borderColor="#E2E8F0"
+                  borderColor="#E3E8EE"
                   h="44px"
                   borderRadius="4px"
                   fontFamily="heading"
@@ -194,16 +189,16 @@ function RegisterForm() {
               </Box>
 
               <Box>
-                <Text fontSize="11px" fontWeight="700" color="#64748B" textTransform="uppercase"
+                <Text fontSize="11px" fontWeight="700" color="#425466" textTransform="uppercase"
                   letterSpacing="0.1em" fontFamily="heading" mb={1.5}>Password</Text>
                 <Input
                   type="password"
                   placeholder="••••••••"
                   value={password}
                   onChange={e => setPassword(e.target.value)}
-                  bg="#F8FAFC"
+                  bg="#F6F9FC"
                   border="1px solid"
-                  borderColor="#E2E8F0"
+                  borderColor="#E3E8EE"
                   h="44px"
                   borderRadius="4px"
                   fontFamily="heading"
@@ -235,18 +230,18 @@ function RegisterForm() {
             </VStack>
           </form>
 
-          <Box mt={7} pt={6} borderTop="1px solid #E2E8F0" display="flex" flexDirection="column" gap={3}>
-            <Text fontSize="13px" color="#64748B" fontFamily="heading" textAlign="center">
+          <Box mt={7} pt={6} borderTop="1px solid #E3E8EE" display="flex" flexDirection="column" gap={3}>
+            <Text fontSize="13px" color="#425466" fontFamily="heading" textAlign="center">
               Already have an account?{' '}
               <NextLink href="/auth/login">
                 <Text as="span" color="#0A80DB" fontWeight="700" cursor="pointer"
                   _hover={{ color: '#0870C2' }}>Sign in</Text>
               </NextLink>
             </Text>
-            <Text fontSize="13px" color="#64748B" fontFamily="heading" textAlign="center">
+            <Text fontSize="13px" color="#425466" fontFamily="heading" textAlign="center">
               {forcedRole ? 'Need your home cleaned?' : 'Want to earn as a cleaner?'}{' '}
               <NextLink href={forcedRole ? '/auth/register' : '/auth/register?role=cleaner'}>
-                <Text as="span" color="#64748B" fontWeight="700" cursor="pointer"
+                <Text as="span" color="#425466" fontWeight="700" cursor="pointer"
                   textDecoration="underline" _hover={{ color: '#0B1120' }}>
                   {forcedRole ? 'Book as a homeowner' : 'Join as a cleaner'}
                 </Text>

@@ -11,6 +11,7 @@ import { usePathname } from 'next/navigation';
 import NotificationBell from '@/components/notification-bell';
 import { useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
+import Image from 'next/image';
 
 const NAV_ITEMS = [
   { name: 'Dashboard',   icon: LucideLayoutDashboard, href: '/dashboard' },
@@ -49,23 +50,7 @@ export default function Sidebar() {
       >
         {/* Logo */}
         <NextLink href="/dashboard" style={{ flexShrink: 0, textDecoration: 'none' }}>
-          <HStack gap={2.5} cursor="pointer" transition="opacity 0.15s" _hover={{ opacity: 0.8 }}>
-            <Box
-              w="32px" h="32px" bg="brand.500" borderRadius="6px"
-              display="flex" alignItems="center" justifyContent="center" flexShrink={0}
-            >
-              <Text color="white" fontWeight="800" fontSize="11px" letterSpacing="-0.02em" fontFamily="heading">
-                BC
-              </Text>
-            </Box>
-            <Text
-              fontWeight="700" fontSize="15px" letterSpacing="-0.02em"
-              color="white" fontFamily="heading"
-              display={{ base: 'none', sm: 'block' }}
-            >
-              Brazilian<Text as="span" color="brand.400">Clean</Text>
-            </Text>
-          </HStack>
+          <Image src="/2.png" alt="BrazilianClean" width={32} height={32} style={{ borderRadius: "50%", objectFit: "cover", flexShrink: 0 }} />
         </NextLink>
 
         <Box w="1px" h="22px" bg="rgba(255,255,255,0.1)" flexShrink={0} mx={2} display={{ base: 'none', md: 'block' }} />

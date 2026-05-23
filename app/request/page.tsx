@@ -16,6 +16,7 @@ import NextLink from 'next/link';
 import { SERVICE_TYPES, FREQUENCY_OPTIONS, EXTRAS, calculateEstimate } from '@/lib/estimate';
 import { toaster } from '@/lib/toaster';
 import { AddressInput } from '@/components/address-input';
+import Image from 'next/image';
 
 const LABEL_STYLE = {
   fontSize: '11px' as const,
@@ -125,7 +126,7 @@ export default function RequestPage() {
   const inputStyle = {
     bg: '#F8FAFC',
     border: '1px solid',
-    borderColor: '#E2E8F0',
+    borderColor: '#E3E8EE',
     h: '44px',
     borderRadius: '4px',
     fontFamily: 'heading',
@@ -134,7 +135,7 @@ export default function RequestPage() {
   } as const;
 
   return (
-    <Box minH="100vh" bg="#F8FAFC">
+    <Box minH="100vh" bg="white">
 
       {/* Navbar */}
       <Box
@@ -144,10 +145,7 @@ export default function RequestPage() {
         <Flex align="center" h="full" px={{ base: 5, md: 10, lg: 16 }} maxW="1440px" mx="auto" justify="space-between">
           <NextLink href="/">
             <HStack gap={2.5} cursor="pointer">
-              <Box w="28px" h="28px" bg="#0A80DB" style={{ borderRadius: 4 }}
-                display="flex" alignItems="center" justifyContent="center">
-                <Text color="white" fontWeight="800" fontSize="10px" letterSpacing="-0.02em" fontFamily="heading">BC</Text>
-              </Box>
+              <Image src="/2.png" alt="BrazilianClean" width={28} height={28} style={{ borderRadius: "50%", objectFit: "cover", flexShrink: 0 }} />
               <Text fontWeight="700" fontSize="14px" letterSpacing="-0.02em" color="white" fontFamily="heading">
                 Brazilian<Text as="span" color="#0A80DB">Clean</Text>
               </Text>
@@ -171,11 +169,11 @@ export default function RequestPage() {
           >
             New booking
           </Text>
-          <Text fontSize={{ base: '26px', md: '32px' }} fontWeight="800" color="#0B1120"
+          <Text fontSize={{ base: '26px', md: '32px' }} fontWeight="800" color="#0A2540"
             fontFamily="heading" letterSpacing="-0.025em">
             Request Cleaning
           </Text>
-          <Text fontSize="14px" color="#64748B" fontFamily="heading" mt={1}>
+          <Text fontSize="14px" color="#425466" fontFamily="heading" mt={1}>
             Fill in the details and get matched with vetted cleaners near you.
           </Text>
         </Box>
@@ -183,7 +181,7 @@ export default function RequestPage() {
         <Flex gap={8} align="start" direction={{ base: 'column', lg: 'row' }}>
 
           {/* ── Form card ── */}
-          <Box flex={1} bg="white" border="1px solid #E2E8F0" p={8}>
+          <Box flex={1} bg="white" border="1px solid #E3E8EE" p={8} style={{ borderRadius: 8 }}>
             <VStack gap={7} align="stretch">
 
               {/* Service type */}
@@ -197,7 +195,7 @@ export default function RequestPage() {
                       cursor="pointer"
                       bg={serviceType === s.id ? '#EFF8FB' : '#F8FAFC'}
                       border="1px solid"
-                      borderColor={serviceType === s.id ? '#0A80DB' : '#E2E8F0'}
+                      borderColor={serviceType === s.id ? '#0A80DB' : '#E3E8EE'}
                       borderLeft={serviceType === s.id ? '3px solid #0A80DB' : '3px solid transparent'}
                       p={3}
                       transition="all 0.15s"
@@ -207,7 +205,7 @@ export default function RequestPage() {
                         <Box>
                           <Text fontSize="13px" fontWeight="700" fontFamily="heading"
                             color={serviceType === s.id ? '#0A80DB' : '#0B1120'}>{s.labelEn}</Text>
-                          <Text fontSize="12px" color="#94A3B8" fontFamily="heading">{s.descEn}</Text>
+                          <Text fontSize="12px" color="#697386" fontFamily="heading">{s.descEn}</Text>
                         </Box>
                       </HStack>
                     </Box>
@@ -299,7 +297,7 @@ export default function RequestPage() {
                       color={frequency === f.id ? 'white' : '#64748B'}
                       borderRadius="4px"
                       border="1px solid"
-                      borderColor={frequency === f.id ? '#0B1120' : '#E2E8F0'}
+                      borderColor={frequency === f.id ? '#0B1120' : '#E3E8EE'}
                       fontWeight="600"
                       fontSize="13px"
                       fontFamily="heading"
@@ -335,7 +333,7 @@ export default function RequestPage() {
                       cursor="pointer"
                       bg={extras.includes(ex.id) ? '#FEFCE8' : '#F8FAFC'}
                       border="1px solid"
-                      borderColor={extras.includes(ex.id) ? '#FCD34D' : '#E2E8F0'}
+                      borderColor={extras.includes(ex.id) ? '#FCD34D' : '#E3E8EE'}
                       borderLeft={extras.includes(ex.id) ? '3px solid #FCD34D' : '3px solid transparent'}
                       px={3} py={2.5}
                       transition="all 0.15s"
@@ -345,7 +343,7 @@ export default function RequestPage() {
                         <Box flex={1}>
                           <Text fontSize="12px" fontWeight="700" fontFamily="heading"
                             color={extras.includes(ex.id) ? '#92400E' : '#0B1120'}>{ex.labelEn}</Text>
-                          <Text fontSize="11px" color="#94A3B8" fontFamily="heading">+${ex.price}</Text>
+                          <Text fontSize="11px" color="#697386" fontFamily="heading">+${ex.price}</Text>
                         </Box>
                         {extras.includes(ex.id) && (
                           <Icon as={LucideCheckCircle} w="14px" h="14px" color="#D97706" />
@@ -361,7 +359,7 @@ export default function RequestPage() {
                 <Text {...LABEL_STYLE}>Notes (optional)</Text>
                 <Textarea value={notes} onChange={e => setNotes(e.target.value)}
                   placeholder="E.g., I have pets, gate access on the side…"
-                  bg="#F8FAFC" border="1px solid" borderColor="#E2E8F0" borderRadius="4px"
+                  bg="#F6F9FC" border="1px solid" borderColor="#E3E8EE" borderRadius="4px"
                   fontFamily="heading" fontSize="14px" rows={3}
                   _focus={{ bg: 'white', borderColor: '#0A80DB' }} />
               </Box>
@@ -385,8 +383,8 @@ export default function RequestPage() {
 
           {/* ── Estimate sidebar ── */}
           <Box w={{ base: 'full', lg: '280px' }} position={{ lg: 'sticky' }} top="80px">
-            <Box bg="white" border="1px solid #E2E8F0" p={6}>
-              <Text fontSize="11px" fontWeight="700" color="#64748B" textTransform="uppercase"
+            <Box bg="white" border="1px solid #E3E8EE" p={6} style={{ borderRadius: 8 }}>
+              <Text fontSize="11px" fontWeight="700" color="#425466" textTransform="uppercase"
                 letterSpacing="0.1em" fontFamily="heading" mb={4}>
                 Price estimate
               </Text>
@@ -409,14 +407,14 @@ export default function RequestPage() {
 
                 <HStack gap={2}>
                   <Icon as={LucideClock} w="14px" h="14px" color="#0A80DB" />
-                  <Text fontSize="13px" color="#64748B" fontFamily="heading">
+                  <Text fontSize="13px" color="#425466" fontFamily="heading">
                     Estimated duration:{' '}
-                    <Text as="span" fontWeight="700" color="#0B1120">~{estimate.hours}h</Text>
+                    <Text as="span" fontWeight="700" color="#0A2540">~{estimate.hours}h</Text>
                   </Text>
                 </HStack>
 
-                <Box bg="#F8FAFC" border="1px solid #E2E8F0" p={3}>
-                  <Text fontSize="12px" color="#94A3B8" fontFamily="heading" lineHeight="1.6">
+                <Box bg="#F6F9FC" border="1px solid #E3E8EE" p={3}>
+                  <Text fontSize="12px" color="#697386" fontFamily="heading" lineHeight="1.6">
                     Final price is agreed with your cleaner. Estimate is based on the details provided.
                   </Text>
                 </Box>
@@ -437,13 +435,13 @@ export default function RequestPage() {
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.35 }}
             >
-              <Box mt={6} bg="white" border="1px solid #E2E8F0" borderTop="3px solid #0A80DB" p={8}>
+              <Box mt={6} bg="white" border="1px solid #E3E8EE" borderTop="3px solid #0A80DB" p={8} style={{ borderRadius: 8 }}>
                 <Box mb={6}>
-                  <Text fontSize="18px" fontWeight="800" color="#0B1120" fontFamily="heading"
+                  <Text fontSize="18px" fontWeight="800" color="#0A2540" fontFamily="heading"
                     letterSpacing="-0.02em" mb={1}>
                     Create account to confirm
                   </Text>
-                  <Text fontSize="13px" color="#64748B" fontFamily="heading">
+                  <Text fontSize="13px" color="#425466" fontFamily="heading">
                     It's free and takes less than 30 seconds. No email verification required.
                   </Text>
                 </Box>
@@ -452,7 +450,7 @@ export default function RequestPage() {
                   <Box>
                     <Text {...LABEL_STYLE}>Name</Text>
                     <HStack>
-                      <Icon as={LucideUser} w="14px" h="14px" color="#94A3B8" flexShrink={0} />
+                      <Icon as={LucideUser} w="14px" h="14px" color="#697386" flexShrink={0} />
                       <Input value={name} onChange={e => setName(e.target.value)}
                         placeholder="Your name" {...inputStyle} />
                     </HStack>
@@ -460,7 +458,7 @@ export default function RequestPage() {
                   <Box>
                     <Text {...LABEL_STYLE}>Email</Text>
                     <HStack>
-                      <Icon as={LucideMail} w="14px" h="14px" color="#94A3B8" flexShrink={0} />
+                      <Icon as={LucideMail} w="14px" h="14px" color="#697386" flexShrink={0} />
                       <Input type="email" value={email} onChange={e => setEmail(e.target.value)}
                         placeholder="your@email.com" {...inputStyle} />
                     </HStack>
@@ -468,7 +466,7 @@ export default function RequestPage() {
                   <Box>
                     <Text {...LABEL_STYLE}>Password</Text>
                     <HStack>
-                      <Icon as={LucideLock} w="14px" h="14px" color="#94A3B8" flexShrink={0} />
+                      <Icon as={LucideLock} w="14px" h="14px" color="#697386" flexShrink={0} />
                       <Input type="password" value={password} onChange={e => setPassword(e.target.value)}
                         placeholder="••••••••" {...inputStyle} />
                     </HStack>
@@ -486,7 +484,7 @@ export default function RequestPage() {
                   Create account & book now
                 </Button>
 
-                <Text fontSize="12px" color="#94A3B8" fontFamily="heading" mt={4}>
+                <Text fontSize="12px" color="#697386" fontFamily="heading" mt={4}>
                   Already have an account?{' '}
                   <NextLink href="/auth/login">
                     <Text as="span" color="#0A80DB" fontWeight="700" cursor="pointer"

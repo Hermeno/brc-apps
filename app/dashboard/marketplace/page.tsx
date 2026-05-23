@@ -143,7 +143,7 @@ export default function MarketplacePage() {
   const w2Count = leads.filter(l => l.distributions?.[0]?.wave === 2).length;
 
   return (
-    <Box minH="100vh" bg="#F8FAFC">
+    <Box minH="100vh" bg="white">
       <CleanerNav />
       <Box p={6} maxW="1200px" mx="auto">
         <Flex justify="space-between" align="center" mb={6}>
@@ -157,11 +157,11 @@ export default function MarketplacePage() {
         </Flex>
 
         {/* Stats horizontal strip */}
-        <Box bg="white" border="1px solid #E2E8F0" mb={6}>
+        <Box bg="white" border="1px solid #E3E8EE" mb={6} style={{ borderRadius: 8 }}>
           <HStack gap={0} divideX="1px">
             <Box px={6} py={4} flex={1}>
               <Text
-                fontSize="10.5px" fontWeight={700} color="#94A3B8"
+                fontSize="10.5px" fontWeight={700} color="#697386"
                 textTransform="uppercase" letterSpacing="0.06em" fontFamily="heading" mb={1}>
                 Available
               </Text>
@@ -171,7 +171,7 @@ export default function MarketplacePage() {
             </Box>
             <Box px={6} py={4} flex={1}>
               <Text
-                fontSize="10.5px" fontWeight={700} color="#94A3B8"
+                fontSize="10.5px" fontWeight={700} color="#697386"
                 textTransform="uppercase" letterSpacing="0.06em" fontFamily="heading" mb={1}>
                 Wave 1 Exclusive
               </Text>
@@ -181,7 +181,7 @@ export default function MarketplacePage() {
             </Box>
             <Box px={6} py={4} flex={1}>
               <Text
-                fontSize="10.5px" fontWeight={700} color="#94A3B8"
+                fontSize="10.5px" fontWeight={700} color="#697386"
                 textTransform="uppercase" letterSpacing="0.06em" fontFamily="heading" mb={1}>
                 Wave 2 Competitive
               </Text>
@@ -193,9 +193,9 @@ export default function MarketplacePage() {
         </Box>
 
         {/* Section panel */}
-        <Box border="1px solid #E2E8F0">
-          <Box bg="#F8FAFC" px={5} py={3} borderBottom="1px solid #E2E8F0">
-            <Text fontSize="10.5px" fontWeight={700} color="#94A3B8" textTransform="uppercase" letterSpacing="0.06em" fontFamily="heading">
+        <Box border="1px solid #E3E8EE" style={{ borderRadius: 8 }} overflow="hidden">
+          <Box bg="#F6F9FC" px={5} py={3} borderBottom="1px solid #E3E8EE">
+            <Text fontSize="10.5px" fontWeight={700} color="#697386" textTransform="uppercase" letterSpacing="0.06em" fontFamily="heading">
               Available leads
             </Text>
           </Box>
@@ -220,7 +220,7 @@ export default function MarketplacePage() {
                   <Box
                     key={lead.id}
                     position="relative"
-                    borderBottom={i < leads.length - 1 ? '1px solid #E2E8F0' : undefined}
+                    borderBottom={i < leads.length - 1 ? '1px solid #E3E8EE' : undefined}
                     bg="white"
                     _hover={{ bg: '#FAFBFD' }}
                     transition="background 0.15s">
@@ -269,7 +269,7 @@ export default function MarketplacePage() {
                                   fontSize="xs"
                                   style={{
                                     borderRadius: 2,
-                                    background: '#F8FAFC',
+                                    background: '#F6F9FC',
                                     padding: '2px 6px',
                                     fontSize: '9.5px',
                                     fontWeight: 700,

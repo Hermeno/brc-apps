@@ -12,6 +12,7 @@ import { useRouter } from 'next/navigation';
 import { toaster } from '@/lib/toaster';
 import { motion } from 'motion/react';
 import { ImageUpload } from '@/components/image-upload';
+import Image from 'next/image';
 
 export default function ClientProfilePage() {
   const router = useRouter();
@@ -73,10 +74,7 @@ export default function ClientProfilePage() {
           </Box>
           <Box w="1px" h="20px" bg="slate.200" />
           <HStack gap={2.5}>
-            <Box w="28px" h="28px" bg="#0A80DB" style={{ borderRadius: 4 }}
-              display="flex" alignItems="center" justifyContent="center">
-              <Text color="white" fontWeight="800" fontSize="10px" fontFamily="heading">BC</Text>
-            </Box>
+            <Image src="/2.png" alt="BrazilianClean" width={28} height={28} style={{ borderRadius: "50%", objectFit: "cover", flexShrink: 0 }} />
             <Text fontWeight="black" fontSize="sm" color="slate.900">
               Brazilian<Text as="span" color="brand.500">Clean</Text>
             </Text>

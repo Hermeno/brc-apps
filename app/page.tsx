@@ -3,6 +3,25 @@
 import { Box, Text, Button, HStack, VStack, Flex, Icon, SimpleGrid } from '@chakra-ui/react';
 import { LucideArrowRight, LucideCheckCircle, LucideShield, LucideTrendingUp, LucideStar, LucideMapPin, LucideCalendar, LucideMessageCircle } from 'lucide-react';
 import NextLink from 'next/link';
+import Image from 'next/image';
+
+/* Stripe-derived tokens (blue kept as #0A80DB per brand) */
+const C = {
+  heading:   '#0A2540',   // Stripe's darkest heading color
+  body:      '#425466',   // Stripe's body text
+  muted:     '#697386',   // Stripe's secondary / caption text
+  border:    '#E3E8EE',   // Stripe's card border
+  sectionBg: '#F6F9FC',   // Stripe's "Black Squeeze" section bg
+  cardShadow: '0 1px 3px rgba(60,66,87,0.04)',
+  blue:      '#0A80DB',
+  blueHover: '#0870C2',
+  dark:      '#0B1120',
+};
+
+const CARD: React.CSSProperties = {
+  borderRadius: 8,
+  boxShadow: C.cardShadow,
+};
 
 export default function HomePage() {
   return (
@@ -11,16 +30,13 @@ export default function HomePage() {
       {/* ── Navbar ── */}
       <Box
         position="fixed" top={0} left={0} right={0} zIndex={100} h="64px"
-        style={{ background: 'rgba(11,17,32,0.92)', backdropFilter: 'blur(10px)', borderBottom: '1px solid rgba(255,255,255,0.06)' }}
+        style={{ background: 'rgba(11,17,32,0.93)', backdropFilter: 'blur(12px)', borderBottom: '1px solid rgba(255,255,255,0.06)' }}
       >
         <Flex align="center" h="full" px={{ base: 5, md: 10, lg: 16 }} maxW="1440px" mx="auto" justify="space-between">
           <HStack gap={2.5}>
-            <Box w="32px" h="32px" bg="#0A80DB" style={{ borderRadius: 6 }}
-              display="flex" alignItems="center" justifyContent="center">
-              <Text color="white" fontWeight="800" fontSize="11px" letterSpacing="-0.02em" fontFamily="heading">BC</Text>
-            </Box>
+            <Image src="/2.png" alt="BrazilianClean" width={32} height={32} style={{ borderRadius: "50%", objectFit: "cover", flexShrink: 0 }} />
             <Text fontWeight="700" fontSize="15px" letterSpacing="-0.02em" color="white" fontFamily="heading">
-              Brazilian<Text as="span" color="#0A80DB">Clean</Text>
+              Brazilian<Text as="span" color={C.blue}>Clean</Text>
             </Text>
           </HStack>
 
@@ -28,7 +44,7 @@ export default function HomePage() {
             <NextLink href="/auth/register?role=cleaner">
               <Button
                 size="sm" variant="outline" borderColor="rgba(255,255,255,0.18)" color="white"
-                borderRadius="4px" fontWeight="600" fontSize="13px" fontFamily="heading"
+                style={{ borderRadius: 4 }} fontWeight="600" fontSize="13px" fontFamily="heading"
                 _hover={{ bg: 'rgba(255,255,255,0.08)', borderColor: 'rgba(255,255,255,0.35)' }}
                 h="34px" px={4}
               >
@@ -37,9 +53,9 @@ export default function HomePage() {
             </NextLink>
             <NextLink href="/auth/login">
               <Button
-                size="sm" bg="#0A80DB" color="white"
-                borderRadius="4px" fontWeight="600" fontSize="13px" fontFamily="heading"
-                _hover={{ bg: '#0870C2' }} h="34px" px={4}
+                size="sm" bg={C.blue} color="white"
+                style={{ borderRadius: 4 }} fontWeight="600" fontSize="13px" fontFamily="heading"
+                _hover={{ bg: C.blueHover }} h="34px" px={4}
               >
                 Sign in
               </Button>
@@ -59,17 +75,17 @@ export default function HomePage() {
           }}
         />
         <Box position="absolute" inset={0} style={{
-          background: 'linear-gradient(180deg, rgba(11,17,32,0.82) 0%, rgba(11,17,32,0.65) 50%, rgba(11,17,32,0.78) 100%)',
+          background: 'linear-gradient(180deg, rgba(10,16,30,0.84) 0%, rgba(10,16,30,0.64) 50%, rgba(10,16,30,0.80) 100%)',
         }} />
 
-        <Box position="relative" w="full" px={{ base: 5, md: 10, lg: 16 }} maxW="1440px" mx="auto" pt="120px" pb="80px">
+        <Box position="relative" w="full" px={{ base: 5, md: 10, lg: 16 }} maxW="1440px" mx="auto" pt="120px" pb="96px">
           <Box maxW="640px">
 
             <Text
               display="inline-block" mb={5}
               fontSize="10.5px" fontWeight="700" letterSpacing="0.14em"
-              color="#0A80DB" textTransform="uppercase" fontFamily="heading"
-              style={{ borderLeft: '2px solid #0A80DB', paddingLeft: 10 }}
+              color={C.blue} textTransform="uppercase" fontFamily="heading"
+              style={{ borderLeft: `2px solid ${C.blue}`, paddingLeft: 10 }}
             >
               The trusted cleaning platform
             </Text>
@@ -77,16 +93,16 @@ export default function HomePage() {
             <Text
               as="h1"
               fontSize={{ base: '38px', md: '52px', lg: '60px' }}
-              fontWeight="800" lineHeight="1.08" letterSpacing="-0.03em"
+              fontWeight="800" lineHeight="1.07" letterSpacing="-0.03em"
               color="white" fontFamily="heading" mb={6}
             >
               A spotless home,{' '}
-              <Text as="span" color="#0A80DB">on your schedule</Text>
+              <Text as="span" color={C.blue}>on your schedule</Text>
             </Text>
 
             <Text
-              fontSize={{ base: '16px', md: '18px' }} color="rgba(255,255,255,0.72)"
-              lineHeight="1.65" mb={10} maxW="520px" fontFamily="heading"
+              fontSize={{ base: '16px', md: '18px' }} color="rgba(255,255,255,0.68)"
+              lineHeight="1.68" fontWeight="300" mb={10} maxW="500px" fontFamily="heading"
             >
               Connect with background-checked cleaners near you.
               Book in minutes, relax all day.
@@ -95,9 +111,9 @@ export default function HomePage() {
             <HStack gap={3} flexWrap="wrap" mb={14}>
               <NextLink href="/request">
                 <Button
-                  bg="#0A80DB" color="white" h="48px" px={7}
-                  borderRadius="4px" fontWeight="700" fontSize="14px" fontFamily="heading"
-                  _hover={{ bg: '#0870C2' }} transition="background 0.15s"
+                  bg={C.blue} color="white" h="48px" px={7}
+                  style={{ borderRadius: 4 }} fontWeight="600" fontSize="14px" fontFamily="heading"
+                  _hover={{ bg: C.blueHover }} transition="background 0.15s"
                 >
                   Book a cleaning
                   <Icon as={LucideArrowRight} w={4} h={4} ml={2} />
@@ -105,15 +121,15 @@ export default function HomePage() {
               </NextLink>
             </HStack>
 
-            <HStack gap={0} divideX="1px" divideColor="rgba(255,255,255,0.15)" flexWrap="wrap">
+            <HStack gap={0} divideX="1px" divideColor="rgba(255,255,255,0.14)" flexWrap="wrap">
               {[
                 { icon: LucideStar,        text: '4.9 average rating' },
                 { icon: LucideCheckCircle, text: 'Vetted cleaners' },
                 { icon: LucideShield,      text: 'Secure payment' },
               ].map(item => (
                 <HStack key={item.text} gap={1.5} px={4} py={1} _first={{ pl: 0 }}>
-                  <Icon as={item.icon} w="13px" h="13px" color="#0A80DB" />
-                  <Text fontSize="12.5px" color="rgba(255,255,255,0.65)" fontFamily="heading">{item.text}</Text>
+                  <Icon as={item.icon} w="13px" h="13px" color={C.blue} />
+                  <Text fontSize="12.5px" color="rgba(255,255,255,0.60)" fontFamily="heading">{item.text}</Text>
                 </HStack>
               ))}
             </HStack>
@@ -123,21 +139,24 @@ export default function HomePage() {
       </Box>
 
       {/* ── How it works ── */}
-      <Box bg="#F8FAFC" borderTop="1px solid #E2E8F0" borderBottom="1px solid #E2E8F0">
-        <Box px={{ base: 5, md: 10, lg: 16 }} py={20} maxW="1440px" mx="auto">
+      <Box bg={C.sectionBg}>
+        <Box px={{ base: 5, md: 10, lg: 16 }} py={24} maxW="1440px" mx="auto">
 
-          <Box mb={12}>
-            <Text fontSize="10.5px" fontWeight="700" letterSpacing="0.12em" color="#0A80DB"
-              textTransform="uppercase" fontFamily="heading" mb={2}>
+          <Box mb={14} maxW="560px">
+            <Text fontSize="10.5px" fontWeight="700" letterSpacing="0.12em" color={C.blue}
+              textTransform="uppercase" fontFamily="heading" mb={3}>
               How it works
             </Text>
-            <Text fontSize={{ base: '26px', md: '32px' }} fontWeight="800" color="#0B1120"
-              fontFamily="heading" letterSpacing="-0.025em">
+            <Text fontSize={{ base: '26px', md: '34px' }} fontWeight="700" color={C.heading}
+              fontFamily="heading" letterSpacing="-0.025em" lineHeight="1.2" mb={3}>
               Book a cleaner in under 2 minutes
+            </Text>
+            <Text fontSize="16px" color={C.body} lineHeight="1.7" fontWeight="400" fontFamily="heading">
+              No calls, no hassle. Tell us what you need and we handle the rest.
             </Text>
           </Box>
 
-          <SimpleGrid columns={{ base: 1, md: 3 }} gap={0}>
+          <SimpleGrid columns={{ base: 1, md: 3 }} gap={5}>
             {[
               {
                 n: '01', icon: LucideCalendar,
@@ -154,26 +173,30 @@ export default function HomePage() {
                 title: 'Enjoy your clean home',
                 desc: 'Your cleaner handles everything. Rate the job and rebook with one tap.',
               },
-            ].map((step, i) => (
+            ].map((step) => (
               <Box
                 key={step.n}
-                px={8} py={8}
-                borderRight={{ md: i < 2 ? '1px solid #E2E8F0' : 'none' }}
-                borderBottom={{ base: i < 2 ? '1px solid #E2E8F0' : 'none', md: 'none' }}
-                position="relative"
+                bg="white"
+                border={`1px solid ${C.border}`}
+                p={8}
+                style={CARD}
               >
                 <Text
-                  fontSize="42px" fontWeight="800" fontFamily="heading"
-                  letterSpacing="-0.05em" color="#E2E8F0" lineHeight={1} mb={4}
+                  fontSize="40px" fontWeight="800" fontFamily="heading"
+                  letterSpacing="-0.05em" color="#E3E8EE" lineHeight={1} mb={5}
                   style={{ userSelect: 'none' }}
                 >
                   {step.n}
                 </Text>
-                <HStack gap={2} mb={3}>
-                  <Icon as={step.icon} w="16px" h="16px" color="#0A80DB" />
-                  <Text fontSize="14px" fontWeight="700" color="#0B1120" fontFamily="heading">{step.title}</Text>
-                </HStack>
-                <Text fontSize="13.5px" color="#64748B" lineHeight="1.65" fontFamily="heading">{step.desc}</Text>
+                <Box
+                  w="40px" h="40px" mb={4}
+                  display="flex" alignItems="center" justifyContent="center"
+                  style={{ background: C.sectionBg, borderRadius: 8 }}
+                >
+                  <Icon as={step.icon} w="18px" h="18px" color={C.blue} />
+                </Box>
+                <Text fontSize="14px" fontWeight="600" color={C.heading} fontFamily="heading" mb={2}>{step.title}</Text>
+                <Text fontSize="13.5px" color={C.body} lineHeight="1.7" fontFamily="heading" fontWeight="400">{step.desc}</Text>
               </Box>
             ))}
           </SimpleGrid>
@@ -182,19 +205,23 @@ export default function HomePage() {
 
       {/* ── Why BrazilianClean ── */}
       <Box bg="white">
-        <Box px={{ base: 5, md: 10, lg: 16 }} py={20} maxW="1440px" mx="auto">
-          <Box mb={12}>
-            <Text fontSize="10.5px" fontWeight="700" letterSpacing="0.12em" color="#0A80DB"
-              textTransform="uppercase" fontFamily="heading" mb={2}>
+        <Box px={{ base: 5, md: 10, lg: 16 }} py={24} maxW="1440px" mx="auto">
+
+          <Box mb={14} maxW="560px">
+            <Text fontSize="10.5px" fontWeight="700" letterSpacing="0.12em" color={C.blue}
+              textTransform="uppercase" fontFamily="heading" mb={3}>
               Why homeowners love us
             </Text>
-            <Text fontSize={{ base: '26px', md: '32px' }} fontWeight="800" color="#0B1120"
-              fontFamily="heading" letterSpacing="-0.025em">
+            <Text fontSize={{ base: '26px', md: '34px' }} fontWeight="700" color={C.heading}
+              fontFamily="heading" letterSpacing="-0.025em" lineHeight="1.2" mb={3}>
               Built for trust. Built for results.
+            </Text>
+            <Text fontSize="16px" color={C.body} lineHeight="1.7" fontWeight="400" fontFamily="heading">
+              Every cleaner on our platform is vetted, rated, and ready to deliver.
             </Text>
           </Box>
 
-          <SimpleGrid columns={{ base: 1, md: 3 }} gap={0} border="1px solid #E2E8F0">
+          <SimpleGrid columns={{ base: 1, md: 3 }} gap={5}>
             {[
               {
                 icon: LucideTrendingUp,
@@ -211,23 +238,23 @@ export default function HomePage() {
                 title: 'Local Cleaners',
                 desc: "You're matched with cleaners in your zip code — faster response times and better local knowledge.",
               },
-            ].map((item, i) => (
+            ].map((item) => (
               <Box
                 key={item.title}
+                bg="white"
+                border={`1px solid ${C.border}`}
                 p={8}
-                borderRight={{ md: i < 2 ? '1px solid #E2E8F0' : 'none' }}
-                borderBottom={{ base: i < 2 ? '1px solid #E2E8F0' : 'none', md: 'none' }}
-                position="relative" overflow="hidden"
+                style={CARD}
               >
                 <Box
-                  w="40px" h="40px" mb={4}
+                  w="44px" h="44px" mb={5}
                   display="flex" alignItems="center" justifyContent="center"
-                  style={{ background: '#F1F5F9', borderRadius: 4 }}
+                  style={{ background: C.sectionBg, borderRadius: 8 }}
                 >
-                  <Icon as={item.icon} w="18px" h="18px" color="#0A80DB" />
+                  <Icon as={item.icon} w="20px" h="20px" color={C.blue} />
                 </Box>
-                <Text fontSize="14px" fontWeight="700" color="#0B1120" fontFamily="heading" mb={2.5}>{item.title}</Text>
-                <Text fontSize="13px" color="#64748B" lineHeight="1.7" fontFamily="heading">{item.desc}</Text>
+                <Text fontSize="14px" fontWeight="600" color={C.heading} fontFamily="heading" mb={2.5}>{item.title}</Text>
+                <Text fontSize="13.5px" color={C.body} lineHeight="1.7" fontFamily="heading" fontWeight="400">{item.desc}</Text>
               </Box>
             ))}
           </SimpleGrid>
@@ -235,21 +262,24 @@ export default function HomePage() {
       </Box>
 
       {/* ── Testimonials ── */}
-      <Box bg="#F8FAFC" borderTop="1px solid #E2E8F0" borderBottom="1px solid #E2E8F0">
-        <Box px={{ base: 5, md: 10, lg: 16 }} py={20} maxW="1440px" mx="auto">
+      <Box bg={C.sectionBg}>
+        <Box px={{ base: 5, md: 10, lg: 16 }} py={24} maxW="1440px" mx="auto">
 
-          <Box mb={12}>
-            <Text fontSize="10.5px" fontWeight="700" letterSpacing="0.12em" color="#0A80DB"
-              textTransform="uppercase" fontFamily="heading" mb={2}>
+          <Box mb={14} maxW="560px">
+            <Text fontSize="10.5px" fontWeight="700" letterSpacing="0.12em" color={C.blue}
+              textTransform="uppercase" fontFamily="heading" mb={3}>
               Client reviews
             </Text>
-            <Text fontSize={{ base: '26px', md: '32px' }} fontWeight="800" color="#0B1120"
-              fontFamily="heading" letterSpacing="-0.025em">
+            <Text fontSize={{ base: '26px', md: '34px' }} fontWeight="700" color={C.heading}
+              fontFamily="heading" letterSpacing="-0.025em" lineHeight="1.2" mb={3}>
               Thousands of happy homes
+            </Text>
+            <Text fontSize="16px" color={C.body} lineHeight="1.7" fontWeight="400" fontFamily="heading">
+              Homeowners across the US trust BrazilianClean to keep their homes spotless.
             </Text>
           </Box>
 
-          <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} gap={0} border="1px solid #E2E8F0">
+          <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} gap={5}>
             {[
               {
                 name: 'Sarah M.',
@@ -293,75 +323,74 @@ export default function HomePage() {
                 text: "We've had the same cleaner for 4 months now through BrazilianClean. Consistent quality, always communicates if there's a schedule change. Exactly what we needed.",
                 initials: 'CB',
               },
-            ].map((t, i) => (
+            ].map((t) => (
               <Box
                 key={t.name}
-                p={7}
                 bg="white"
-                borderRight={{ md: i % 3 < 2 ? '1px solid #E2E8F0' : 'none', base: 'none' }}
-                borderBottom={i < 3 ? '1px solid #E2E8F0' : 'none'}
-                position="relative"
+                border={`1px solid ${C.border}`}
+                p={7}
+                style={CARD}
               >
-                {/* Stars */}
                 <HStack gap={0.5} mb={4}>
                   {[1,2,3,4,5].map(s => (
-                    <Text key={s} color="#0A80DB" fontSize="13px">★</Text>
+                    <Text key={s} color={C.blue} fontSize="13px">★</Text>
                   ))}
                 </HStack>
 
-                {/* Quote */}
-                <Text fontSize="13.5px" color="#475569" lineHeight="1.75" fontFamily="heading" mb={5}>
+                <Text fontSize="13.5px" color={C.body} lineHeight="1.75" fontFamily="heading"
+                  fontWeight="400" mb={5}>
                   "{t.text}"
                 </Text>
 
-                {/* Author */}
                 <HStack gap={3}>
                   <Box
                     w="36px" h="36px" flexShrink={0}
                     display="flex" alignItems="center" justifyContent="center"
-                    style={{ background: '#0A80DB18', borderRadius: 4 }}
+                    style={{ background: `${C.blue}18`, borderRadius: 6 }}
                   >
-                    <Text fontSize="11px" fontWeight="800" color="#0A80DB" fontFamily="heading">{t.initials}</Text>
+                    <Text fontSize="11px" fontWeight="700" color={C.blue} fontFamily="heading">{t.initials}</Text>
                   </Box>
                   <Box>
-                    <Text fontSize="13px" fontWeight="700" color="#0B1120" fontFamily="heading">{t.name}</Text>
-                    <Text fontSize="11.5px" color="#94A3B8" fontFamily="heading">{t.location} · {t.service}</Text>
+                    <Text fontSize="13px" fontWeight="600" color={C.heading} fontFamily="heading">{t.name}</Text>
+                    <Text fontSize="11.5px" color={C.muted} fontFamily="heading">{t.location} · {t.service}</Text>
                   </Box>
                 </HStack>
               </Box>
             ))}
           </SimpleGrid>
 
-          {/* Overall rating bar */}
-          <Box mt={8} p={6} border="1px solid #E2E8F0" bg="white">
+          {/* Rating bar */}
+          <Box mt={6} p={7} bg="white" border={`1px solid ${C.border}`} style={CARD}>
             <Flex align="center" justify="space-between" flexWrap="wrap" gap={6}>
-              <HStack gap={5}>
+              <HStack gap={6}>
                 <Box textAlign="center">
-                  <Text fontSize="42px" fontWeight="800" color="#0B1120" fontFamily="heading" letterSpacing="-0.04em" lineHeight={1}>4.9</Text>
-                  <HStack gap={0.5} justify="center" mt={1}>
-                    {[1,2,3,4,5].map(s => <Text key={s} color="#0A80DB" fontSize="14px">★</Text>)}
+                  <Text fontSize="44px" fontWeight="700" color={C.heading} fontFamily="heading"
+                    letterSpacing="-0.04em" lineHeight={1}>4.9</Text>
+                  <HStack gap={0.5} justify="center" mt={1.5}>
+                    {[1,2,3,4,5].map(s => <Text key={s} color={C.blue} fontSize="13px">★</Text>)}
                   </HStack>
-                  <Text fontSize="11px" color="#94A3B8" fontFamily="heading" mt={1}>Average rating</Text>
+                  <Text fontSize="11px" color={C.muted} fontFamily="heading" mt={1}>Average rating</Text>
                 </Box>
-                <Box w="1px" h="60px" bg="#E2E8F0" display={{ base: 'none', md: 'block' }} />
-                <SimpleGrid columns={3} gap={6} display={{ base: 'none', md: 'grid' }}>
+                <Box w="1px" h="60px" bg={C.border} display={{ base: 'none', md: 'block' }} />
+                <SimpleGrid columns={3} gap={8} display={{ base: 'none', md: 'grid' }}>
                   {[
                     { label: 'Bookings completed', value: '2,400+' },
-                    { label: 'Active cleaners', value: '500+' },
-                    { label: 'Cities covered', value: '12' },
+                    { label: 'Active cleaners',    value: '500+' },
+                    { label: 'Cities covered',     value: '12' },
                   ].map(stat => (
                     <Box key={stat.label} textAlign="center">
-                      <Text fontSize="22px" fontWeight="800" color="#0B1120" fontFamily="heading" letterSpacing="-0.03em">{stat.value}</Text>
-                      <Text fontSize="11px" color="#94A3B8" fontFamily="heading" mt={0.5}>{stat.label}</Text>
+                      <Text fontSize="24px" fontWeight="700" color={C.heading} fontFamily="heading"
+                        letterSpacing="-0.03em">{stat.value}</Text>
+                      <Text fontSize="11px" color={C.muted} fontFamily="heading" mt={0.5}>{stat.label}</Text>
                     </Box>
                   ))}
                 </SimpleGrid>
               </HStack>
               <NextLink href="/request">
                 <Button
-                  bg="#0A80DB" color="white" h="44px" px={6}
-                  borderRadius="4px" fontWeight="700" fontSize="13px" fontFamily="heading"
-                  _hover={{ bg: '#0870C2' }} transition="background 0.15s"
+                  bg={C.blue} color="white" h="44px" px={6}
+                  style={{ borderRadius: 4 }} fontWeight="600" fontSize="13px" fontFamily="heading"
+                  _hover={{ bg: C.blueHover }} transition="background 0.15s"
                 >
                   Join them — book now
                   <Icon as={LucideArrowRight} w={4} h={4} ml={2} />
@@ -374,25 +403,25 @@ export default function HomePage() {
       </Box>
 
       {/* ── CTA band ── */}
-      <Box bg="#0B1120" borderTop="1px solid rgba(255,255,255,0.06)">
+      <Box bg={C.dark} borderTop="1px solid rgba(255,255,255,0.06)">
         <Flex
           px={{ base: 5, md: 10, lg: 16 }} py={16} maxW="1440px" mx="auto"
           align="center" justify="space-between" gap={8} flexWrap="wrap"
         >
           <Box>
-            <Text fontSize={{ base: '22px', md: '28px' }} fontWeight="800" color="white"
-              fontFamily="heading" letterSpacing="-0.025em" mb={1.5}>
+            <Text fontSize={{ base: '22px', md: '30px' }} fontWeight="700" color="white"
+              fontFamily="heading" letterSpacing="-0.025em" mb={2}>
               Ready for a spotless home?
             </Text>
-            <Text fontSize="14px" color="rgba(255,255,255,0.5)" fontFamily="heading">
+            <Text fontSize="15px" color="rgba(255,255,255,0.48)" fontFamily="heading" fontWeight="400">
               Join thousands of happy homeowners. Book your first cleaning today.
             </Text>
           </Box>
           <NextLink href="/request">
             <Button
-              bg="#0A80DB" color="white" h="46px" px={7}
-              borderRadius="4px" fontWeight="700" fontSize="14px" fontFamily="heading"
-              _hover={{ bg: '#0870C2' }} transition="background 0.15s" flexShrink={0}
+              bg={C.blue} color="white" h="46px" px={7}
+              style={{ borderRadius: 4 }} fontWeight="600" fontSize="14px" fontFamily="heading"
+              _hover={{ bg: C.blueHover }} transition="background 0.15s" flexShrink={0}
             >
               Book a cleaning
               <Icon as={LucideArrowRight} w={4} h={4} ml={2} />
@@ -402,41 +431,37 @@ export default function HomePage() {
       </Box>
 
       {/* ── Footer ── */}
-      <Box bg="#0B1120" borderTop="1px solid rgba(255,255,255,0.06)" py={10}>
+      <Box bg={C.dark} borderTop="1px solid rgba(255,255,255,0.06)" py={10}>
         <Box px={{ base: 5, md: 10, lg: 16 }} maxW="1440px" mx="auto">
           <Flex justify="space-between" align="start" flexWrap="wrap" gap={8} mb={8}>
 
-            {/* Brand */}
             <Box maxW="260px">
               <HStack gap={2.5} mb={3}>
-                <Box w="28px" h="28px" bg="#0A80DB" style={{ borderRadius: 4 }}
-                  display="flex" alignItems="center" justifyContent="center">
-                  <Text color="white" fontWeight="800" fontSize="10px" fontFamily="heading">BC</Text>
-                </Box>
+                <Image src="/2.png" alt="BrazilianClean" width={28} height={28} style={{ borderRadius: "50%", objectFit: "cover", flexShrink: 0 }} />
                 <Text fontWeight="700" fontSize="14px" letterSpacing="-0.02em" color="white" fontFamily="heading">
-                  Brazilian<Text as="span" color="#0A80DB">Clean</Text>
+                  Brazilian<Text as="span" color={C.blue}>Clean</Text>
                 </Text>
               </HStack>
-              <Text fontSize="12px" color="rgba(255,255,255,0.35)" fontFamily="heading" lineHeight="1.7">
+              <Text fontSize="12px" color="rgba(255,255,255,0.32)" fontFamily="heading"
+                lineHeight="1.7" fontWeight="400">
                 The trusted cleaning marketplace connecting homeowners with vetted Brazilian cleaning professionals across the US.
               </Text>
             </Box>
 
-            {/* Links */}
             <Flex gap={12} flexWrap="wrap">
               <Box>
-                <Text fontSize="10.5px" fontWeight="700" letterSpacing="0.12em" color="rgba(255,255,255,0.25)"
+                <Text fontSize="10.5px" fontWeight="700" letterSpacing="0.12em" color="rgba(255,255,255,0.22)"
                   textTransform="uppercase" fontFamily="heading" mb={3}>
                   Company
                 </Text>
                 <VStack gap={2} align="start">
                   {[
-                    { label: 'About Us', href: '/about' },
+                    { label: 'About Us',     href: '/about' },
                     { label: 'How it works', href: '/#how-it-works' },
                   ].map(l => (
                     <NextLink key={l.label} href={l.href}>
-                      <Text fontSize="12.5px" color="rgba(255,255,255,0.4)" fontFamily="heading"
-                        _hover={{ color: 'rgba(255,255,255,0.75)' }} transition="color 0.15s" cursor="pointer">
+                      <Text fontSize="12.5px" color="rgba(255,255,255,0.38)" fontFamily="heading" fontWeight="400"
+                        _hover={{ color: 'rgba(255,255,255,0.72)' }} transition="color 0.15s" cursor="pointer">
                         {l.label}
                       </Text>
                     </NextLink>
@@ -445,19 +470,19 @@ export default function HomePage() {
               </Box>
 
               <Box>
-                <Text fontSize="10.5px" fontWeight="700" letterSpacing="0.12em" color="rgba(255,255,255,0.25)"
+                <Text fontSize="10.5px" fontWeight="700" letterSpacing="0.12em" color="rgba(255,255,255,0.22)"
                   textTransform="uppercase" fontFamily="heading" mb={3}>
                   Platform
                 </Text>
                 <VStack gap={2} align="start">
                   {[
-                    { label: 'Book a cleaning', href: '/request' },
-                    { label: 'Become a cleaner', href: '/auth/register?role=cleaner' },
-                    { label: 'Sign in', href: '/auth/login' },
+                    { label: 'Book a cleaning',    href: '/request' },
+                    { label: 'Become a cleaner',   href: '/auth/register?role=cleaner' },
+                    { label: 'Sign in',            href: '/auth/login' },
                   ].map(l => (
                     <NextLink key={l.label} href={l.href}>
-                      <Text fontSize="12.5px" color="rgba(255,255,255,0.4)" fontFamily="heading"
-                        _hover={{ color: 'rgba(255,255,255,0.75)' }} transition="color 0.15s" cursor="pointer">
+                      <Text fontSize="12.5px" color="rgba(255,255,255,0.38)" fontFamily="heading" fontWeight="400"
+                        _hover={{ color: 'rgba(255,255,255,0.72)' }} transition="color 0.15s" cursor="pointer">
                         {l.label}
                       </Text>
                     </NextLink>
@@ -466,24 +491,24 @@ export default function HomePage() {
               </Box>
 
               <Box>
-                <Text fontSize="10.5px" fontWeight="700" letterSpacing="0.12em" color="rgba(255,255,255,0.25)"
+                <Text fontSize="10.5px" fontWeight="700" letterSpacing="0.12em" color="rgba(255,255,255,0.22)"
                   textTransform="uppercase" fontFamily="heading" mb={3}>
                   Legal & support
                 </Text>
                 <VStack gap={2} align="start">
                   {[
-                    { label: 'Privacy Policy', href: '/privacy' },
+                    { label: 'Privacy Policy',   href: '/privacy' },
                     { label: 'Terms of Service', href: '/terms' },
                   ].map(l => (
                     <NextLink key={l.label} href={l.href}>
-                      <Text fontSize="12.5px" color="rgba(255,255,255,0.4)" fontFamily="heading"
-                        _hover={{ color: 'rgba(255,255,255,0.75)' }} transition="color 0.15s" cursor="pointer">
+                      <Text fontSize="12.5px" color="rgba(255,255,255,0.38)" fontFamily="heading" fontWeight="400"
+                        _hover={{ color: 'rgba(255,255,255,0.72)' }} transition="color 0.15s" cursor="pointer">
                         {l.label}
                       </Text>
                     </NextLink>
                   ))}
                   <a href="mailto:support@brazilianclean.com"
-                    style={{ fontSize: '12.5px', color: 'rgba(255,255,255,0.4)', transition: 'color 0.15s', textDecoration: 'none' }}>
+                    style={{ fontSize: '12.5px', color: 'rgba(255,255,255,0.38)', transition: 'color 0.15s', textDecoration: 'none', fontWeight: 400 }}>
                     support@brazilianclean.com
                   </a>
                 </VStack>
@@ -492,7 +517,7 @@ export default function HomePage() {
           </Flex>
 
           <Box borderTop="1px solid rgba(255,255,255,0.06)" pt={6}>
-            <Text fontSize="11.5px" color="rgba(255,255,255,0.25)" fontFamily="heading">
+            <Text fontSize="11.5px" color="rgba(255,255,255,0.22)" fontFamily="heading" fontWeight="400">
               © 2026 BrazilianClean. All rights reserved. Background checks provided by third-party partners.
             </Text>
           </Box>

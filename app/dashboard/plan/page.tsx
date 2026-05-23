@@ -139,7 +139,7 @@ export default function PlanPage() {
   };
 
   return (
-    <Box minH="100vh" bg="#F8FAFC">
+    <Box minH="100vh" bg="white">
       <CleanerNav />
       <Box p={6} maxW="960px" mx="auto">
         <Heading size="md" fontWeight="bold" color="slate.900" fontFamily="heading" mb={6}>
@@ -149,12 +149,12 @@ export default function PlanPage() {
         <VStack gap={8} align="stretch">
 
           {/* CFS explainer — flat section panel */}
-          <Box border="1px solid #E2E8F0">
-            <Box bg="#F8FAFC" px={5} py={3} borderBottom="1px solid #E2E8F0">
+          <Box border="1px solid #E3E8EE" style={{ borderRadius: 8 }} overflow="hidden">
+            <Box bg="#F6F9FC" px={5} py={3} borderBottom="1px solid #E3E8EE">
               <HStack gap={3}>
                 <Icon as={LucideTrendingUp} w={4} h={4} color="brand.500" />
                 <Box>
-                  <Text fontSize="10.5px" fontWeight={700} color="#94A3B8" textTransform="uppercase" letterSpacing="0.06em" fontFamily="heading">
+                  <Text fontSize="10.5px" fontWeight={700} color="#697386" textTransform="uppercase" letterSpacing="0.06em" fontFamily="heading">
                     How the CFS Ranking works
                   </Text>
                   <Text fontSize="xs" color="slate.500">Cleaner Fit Score — determines who gets leads first</Text>
@@ -169,7 +169,7 @@ export default function PlanPage() {
                   { label: 'Rating', max: '20 pts', icon: '⭐', desc: 'Avg. rating' },
                   { label: 'Area', max: '10 pts', icon: '📍', desc: 'Same ZIP' },
                 ].map(item => (
-                  <Box key={item.label} border="1px solid #E2E8F0" p={3} textAlign="center">
+                  <Box key={item.label} border="1px solid #E3E8EE" p={3} textAlign="center">
                     <Text fontSize="lg" mb={1}>{item.icon}</Text>
                     <Text fontSize="xs" fontWeight="bold" color="slate.700">{item.label}</Text>
                     <Text fontSize="xs" color="brand.600" fontWeight="black">{item.max}</Text>
@@ -181,17 +181,17 @@ export default function PlanPage() {
           </Box>
 
           {/* ZIP Code — flat panel */}
-          <Box border="1px solid #E2E8F0">
-            <Box bg="#F8FAFC" px={5} py={3} borderBottom="1px solid #E2E8F0">
+          <Box border="1px solid #E3E8EE" style={{ borderRadius: 8 }} overflow="hidden">
+            <Box bg="#F6F9FC" px={5} py={3} borderBottom="1px solid #E3E8EE">
               <HStack gap={2}>
                 <Icon as={LucideMapPin} w={4} h={4} color="red.500" />
-                <Text fontSize="10.5px" fontWeight={700} color="#94A3B8" textTransform="uppercase" letterSpacing="0.06em" fontFamily="heading">
+                <Text fontSize="10.5px" fontWeight={700} color="#697386" textTransform="uppercase" letterSpacing="0.06em" fontFamily="heading">
                   My Area (ZIP code)
                 </Text>
                 <Text
                   style={{
                     borderRadius: 2,
-                    background: '#F8FAFC',
+                    background: '#F6F9FC',
                     padding: '2px 6px',
                     fontSize: '9.5px',
                     fontWeight: 700,
@@ -246,12 +246,13 @@ export default function PlanPage() {
                     key={plan.id}
                     bg={isActive ? c.bg : 'white'}
                     border="1px solid"
-                    borderColor={isActive ? c.border : 'slate.200'}
+                    borderColor={isActive ? c.border : '#E3E8EE'}
                     p={5}
                     h="full"
                     display="flex" flexDirection="column"
                     position="relative"
                     overflow="hidden"
+                    style={{ borderRadius: 8 }}
                     transition="background 0.15s">
 
                     {/* Active left accent strip */}
@@ -331,9 +332,9 @@ export default function PlanPage() {
           </Box>
 
           {/* Wave info — flat section panel */}
-          <Box border="1px solid #E2E8F0">
-            <Box bg="#F8FAFC" px={5} py={3} borderBottom="1px solid #E2E8F0">
-              <Text fontSize="10.5px" fontWeight={700} color="#94A3B8" textTransform="uppercase" letterSpacing="0.06em" fontFamily="heading">
+          <Box border="1px solid #E3E8EE" style={{ borderRadius: 8 }} overflow="hidden">
+            <Box bg="#F6F9FC" px={5} py={3} borderBottom="1px solid #E3E8EE">
+              <Text fontSize="10.5px" fontWeight={700} color="#697386" textTransform="uppercase" letterSpacing="0.06em" fontFamily="heading">
                 How leads are distributed
               </Text>
             </Box>
@@ -367,7 +368,7 @@ export default function PlanPage() {
                 <HStack
                   key={w.wave}
                   gap={4}
-                  border="1px solid #E2E8F0"
+                  border="1px solid #E3E8EE"
                   borderTop={i > 0 ? 'none' : undefined}
                   borderLeft="none"
                   borderRight="none"
@@ -400,7 +401,7 @@ export default function PlanPage() {
 
           {/* Manage subscription — flat panel */}
           {hasSubscription && (
-            <Box bg="white" border="1px solid #E2E8F0" p={5}>
+            <Box bg="white" border="1px solid #E3E8EE" p={5} style={{ borderRadius: 8 }}>
               <Flex justify="space-between" align="center">
                 <Box>
                   <Text fontWeight="bold" color="slate.800">Manage subscription</Text>

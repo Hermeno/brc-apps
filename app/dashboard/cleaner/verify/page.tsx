@@ -162,7 +162,7 @@ export default function CleanerVerifyPage() {
       </HStack>
     </Box>
   ) : existing?.status === 'PENDING' ? (
-    <Box bg="#F8FAFC" border="1px solid" borderColor="#E2E8F0" borderRadius="4px" p={6}>
+    <Box bg="#F6F9FC" border="1px solid" borderColor="#E3E8EE" borderRadius="4px" p={6}>
       <HStack gap={3}>
         <Icon as={LucideClock} w={7} h={7} color="#0A80DB" />
         <Box>
@@ -294,7 +294,7 @@ export default function CleanerVerifyPage() {
                 <VStack gap={5} align="stretch">
                   <HStack justify="space-between">
                     <Text fontWeight="black" color="slate.900" fontSize="lg">Document photos</Text>
-                    <Badge bg="#F8FAFC" color="#0A80DB" borderRadius="4px" px={3}>
+                    <Badge bg="#F6F9FC" color="#0A80DB" borderRadius="4px" px={3}>
                       <Icon as={LucideCamera} w={3} h={3} mr={1} />All required
                     </Badge>
                   </HStack>
