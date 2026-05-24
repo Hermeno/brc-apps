@@ -5,6 +5,8 @@ export async function register() {
     await prisma.$executeRawUnsafe(`
       ALTER TABLE "User"
       ADD COLUMN IF NOT EXISTS "serviceRadiusMiles" DOUBLE PRECISION DEFAULT 25
-    `).catch((e: unknown) => console.error('[instrumentation] migration error:', e));
+    `).catch(() => {
+      // DB may be sleeping on startup (Neon free tier) — non-fatal, runs on next boot
+    });
   }
 }

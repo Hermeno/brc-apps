@@ -35,7 +35,8 @@ export default function HomePage() {
         <Flex align="center" h="full" px={{ base: 5, md: 10, lg: 16 }} maxW="1440px" mx="auto" justify="space-between">
           <HStack gap={2.5}>
             <Image src="/2.png" alt="BrazilianClean" width={32} height={32} style={{ borderRadius: "50%", objectFit: "cover", flexShrink: 0 }} />
-            <Text fontWeight="700" fontSize="15px" letterSpacing="-0.02em" color="white" fontFamily="heading">
+            <Text fontWeight="700" fontSize="15px" letterSpacing="-0.02em" color="white" fontFamily="heading"
+              display={{ base: 'none', sm: 'block' }}>
               Brazilian<Text as="span" color={C.blue}>Clean</Text>
             </Text>
           </HStack>
