@@ -10,6 +10,7 @@ const registerSchema = z.object({
   email:    z.string().email('Invalid email'),
   password: z.string().min(6, 'Password must be at least 6 characters'),
   role:     z.enum(['CLIENT', 'CLEANER']).default('CLIENT'),
+  phone:    z.string().optional(),
 });
 
 export async function POST(request: NextRequest) {
@@ -21,7 +22,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: validation.error.errors[0].message }, { status: 400 });
     }
 
-    const { name, email, password, role } = validation.data;
+    const { name, email, password, role, phone } = validation.data;
 
     const existingUser = await prisma.user.findUnique({ where: { email } });
     if (existingUser) {
@@ -35,6 +36,7 @@ export async function POST(request: NextRequest) {
         name, email, password: hashedPassword,
         role: role as 'CLIENT' | 'CLEANER',
         isVerified: role === 'CLIENT',
+        ...(phone ? { phone } : {}),
       },
     });
 

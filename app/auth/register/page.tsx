@@ -11,10 +11,18 @@ import NextLink from 'next/link';
 import { LucideArrowRight, LucideCheckCircle } from 'lucide-react';
 import Image from 'next/image';
 
+function formatUSPhone(raw: string) {
+  const digits = raw.replace(/\D/g, '').slice(0, 10);
+  if (digits.length < 4)  return digits;
+  if (digits.length < 7)  return `(${digits.slice(0,3)}) ${digits.slice(3)}`;
+  return `(${digits.slice(0,3)}) ${digits.slice(3,6)}-${digits.slice(6)}`;
+}
+
 function RegisterForm() {
   const [name, setName]         = useState('');
   const [email, setEmail]       = useState('');
   const [password, setPassword] = useState('');
+  const [phone, setPhone]       = useState('');
   const [role, setRole]         = useState<'CLIENT' | 'CLEANER'>('CLIENT');
   const [loading, setLoading]   = useState(false);
   const router = useRouter();
@@ -25,14 +33,27 @@ function RegisterForm() {
     if (forcedRole) setRole('CLEANER');
   }, [forcedRole]);
 
+  const handlePhone = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setPhone(formatUSPhone(e.target.value));
+  };
+
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    const phoneDigits = phone.replace(/\D/g, '');
+    if (role === 'CLEANER' && phoneDigits.length !== 10) {
+      toaster.create({ title: 'Invalid phone', description: 'Enter a 10-digit US phone number.', type: 'error' });
+      setLoading(false);
+      return;
+    }
     try {
       const res = await fetch('/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, email, password, role }),
+        body: JSON.stringify({
+          name, email, password, role,
+          phone: role === 'CLEANER' ? `+1${phoneDigits}` : undefined,
+        }),
       });
       if (res.ok) {
         if (role === 'CLIENT') {
@@ -252,6 +273,29 @@ function RegisterForm() {
                   required
                 />
               </Box>
+
+              {isCleaner && (
+                <Box>
+                  <Text fontSize="12px" fontWeight="500" color="#425466" letterSpacing="-0.01em"
+                    fontFamily="heading" mb={1.5}>Phone number</Text>
+                  <Flex align="center" border="1px solid" borderColor="#E3E8EE" borderRadius="9999px"
+                    h="38px" px={4} bg="white" _focusWithin={{ borderColor: '#0A80DB' }} gap={2}>
+                    <Text fontSize="13.5px" color="#425466" fontFamily="heading" flexShrink={0}
+                      borderRight="1px solid #E3E8EE" pr={2}>+1</Text>
+                    <input
+                      type="tel"
+                      placeholder="(555) 123-4567"
+                      value={phone}
+                      onChange={handlePhone}
+                      required
+                      style={{
+                        flex: 1, border: 'none', outline: 'none', background: 'transparent',
+                        fontSize: '13.5px', fontFamily: 'inherit', color: '#0A2540',
+                      }}
+                    />
+                  </Flex>
+                </Box>
+              )}
 
               <Button
                 type="submit"
