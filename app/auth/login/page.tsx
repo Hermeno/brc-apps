@@ -98,7 +98,7 @@ export default function LoginPage() {
 
       {/* ── Right panel — form ── */}
       <Flex flex={1} bg="white" alignItems="center" justifyContent="center" px={{ base: 5, md: 12 }} py={12}>
-        <Box w="full" maxW="400px">
+        <Box w="full" maxW="340px">
 
           {/* Mobile logo */}
           <HStack gap={2.5} mb={10} display={{ base: 'flex', lg: 'none' }}>
@@ -122,20 +122,23 @@ export default function LoginPage() {
             <VStack gap={5} align="stretch">
 
               <Box>
-                <Text fontSize="11px" fontWeight="700" color="#425466" textTransform="uppercase"
-                  letterSpacing="0.1em" fontFamily="heading" mb={1.5}>Email</Text>
+                <Text fontSize="12px" fontWeight="500" color="#425466" letterSpacing="-0.01em"
+                  fontFamily="heading" mb={1.5}>Email</Text>
                 <Input
                   placeholder="name@email.com"
                   value={email}
                   onChange={e => setEmail(e.target.value)}
-                  bg="#F6F9FC"
-                  border="1px solid"
+                  bg="white"
+                  border="1.5px solid"
                   borderColor="#E3E8EE"
-                  h="44px"
-                  borderRadius="4px"
+                  h="38px"
+                  borderRadius="8px"
                   fontFamily="heading"
-                  fontSize="14px"
-                  _focus={{ bg: 'white', borderColor: '#0A80DB' }}
+                  fontSize="13.5px"
+                  color="#0A2540"
+                  px={4}
+                  _placeholder={{ color: '#B0BAC9' }}
+                  _focus={{ borderColor: '#0A80DB', boxShadow: 'none', outline: 'none' }}
                   type="email"
                   required
                 />
@@ -143,10 +146,10 @@ export default function LoginPage() {
 
               <Box>
                 <Flex justify="space-between" align="center" mb={1.5}>
-                  <Text fontSize="11px" fontWeight="700" color="#425466" textTransform="uppercase"
-                    letterSpacing="0.1em" fontFamily="heading">Password</Text>
+                  <Text fontSize="12px" fontWeight="500" color="#425466" letterSpacing="-0.01em"
+                    fontFamily="heading">Password</Text>
                   <NextLink href="/auth/forgot-password">
-                    <Text fontSize="12px" color="#0A80DB" fontWeight="600" cursor="pointer"
+                    <Text fontSize="12px" color="#0A80DB" fontWeight="500" cursor="pointer"
                       fontFamily="heading" _hover={{ color: '#0870C2' }}>Forgot password?</Text>
                   </NextLink>
                 </Flex>
@@ -155,14 +158,17 @@ export default function LoginPage() {
                   placeholder="••••••••"
                   value={password}
                   onChange={e => setPassword(e.target.value)}
-                  bg="#F6F9FC"
-                  border="1px solid"
+                  bg="white"
+                  border="1.5px solid"
                   borderColor="#E3E8EE"
-                  h="44px"
-                  borderRadius="4px"
+                  h="38px"
+                  borderRadius="8px"
                   fontFamily="heading"
-                  fontSize="14px"
-                  _focus={{ bg: 'white', borderColor: '#0A80DB' }}
+                  fontSize="13.5px"
+                  color="#0A2540"
+                  px={4}
+                  _placeholder={{ color: '#B0BAC9' }}
+                  _focus={{ borderColor: '#0A80DB', boxShadow: 'none', outline: 'none' }}
                   required
                 />
               </Box>
@@ -171,10 +177,11 @@ export default function LoginPage() {
                 type="submit"
                 bg="#0A80DB"
                 color="white"
-                h="44px"
-                borderRadius="4px"
-                fontWeight="700"
-                fontSize="14px"
+                h="40px"
+                borderRadius="9999px"
+                fontWeight="600"
+                fontSize="13.5px"
+                letterSpacing="-0.01em"
                 fontFamily="heading"
                 _hover={{ bg: '#0870C2' }}
                 transition="background 0.15s"
@@ -183,7 +190,7 @@ export default function LoginPage() {
                 mt={1}
               >
                 Sign in to BrazilianClean
-                <Icon as={LucideArrowRight} w={4} h={4} ml={2} />
+                <Icon as={LucideArrowRight} w={3.5} h={3.5} ml={1.5} />
               </Button>
 
             </VStack>
