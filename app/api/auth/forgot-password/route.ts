@@ -17,9 +17,8 @@ export async function POST(request: NextRequest) {
     const { email } = validation.data;
     const user = await prisma.user.findUnique({ where: { email } });
 
-    // always return success to avoid user enumeration
     if (!user) {
-      return NextResponse.json({ message: 'A reset code was sent if that email exists.' });
+      return NextResponse.json({ error: 'No account found with that email address.' }, { status: 404 });
     }
 
     const code = await createVerificationCode(user.id, email, 'PASSWORD_RESET');

@@ -26,10 +26,14 @@ export default function ForgotPasswordPage() {
       });
       const data = await res.json();
       if (res.ok) {
-        toaster.create({ title: 'Code sent!', description: data.message, type: 'success' });
+        toaster.create({ title: 'Code sent!', description: 'Check your email for the reset code.', type: 'success' });
         router.push(`/auth/reset-password?email=${encodeURIComponent(email)}`);
       } else {
-        toaster.create({ title: 'Error', description: data.error, type: 'error' });
+        toaster.create({
+          title: res.status === 404 ? 'Email not found' : 'Error',
+          description: data.error,
+          type: 'error',
+        });
       }
     } finally {
       setLoading(false);
