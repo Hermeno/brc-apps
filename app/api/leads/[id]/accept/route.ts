@@ -28,22 +28,20 @@ export async function POST(
     return NextResponse.json({ error: 'Booking not found' }, { status: 404 });
   }
 
-  if (lead.status !== 'NEW') {
-    return NextResponse.json({ error: 'This booking was already accepted by another cleaner' }, { status: 409 });
-  }
-
   try {
+    // Atomic check-and-update: the where clause includes status: 'NEW' so if another
+    // cleaner already accepted between our read and this write, Prisma throws P2025.
     const updated = await prisma.lead.update({
-      where: { id },
-      data: {
-        status: 'ACCEPTED',
-        cleanerId: dbUser.id,
-      },
+      where: { id, status: 'NEW' },
+      data:  { status: 'ACCEPTED', cleanerId: dbUser.id },
     });
 
     return NextResponse.json({ lead: updated });
   } catch (err: any) {
+    if (err.code === 'P2025') {
+      return NextResponse.json({ error: 'This booking was already accepted by another cleaner' }, { status: 409 });
+    }
     console.error('[POST /api/leads/accept] error:', err);
-    return NextResponse.json({ error: err.message ?? 'Erro interno' }, { status: 500 });
+    return NextResponse.json({ error: err.message ?? 'Internal error' }, { status: 500 });
   }
 }

@@ -28,27 +28,28 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
   const parsedDate = dateTime ? new Date(dateTime) : lead.dateTime;
   if (isNaN(parsedDate.getTime())) return NextResponse.json({ error: 'Invalid date' }, { status: 400 });
 
-  const updated = await prisma.lead.update({
-    where: { id },
-    data: {
-      ...(serviceType      && { serviceType }),
-      ...(address          && { address }),
-      dateTime: parsedDate,
-      notes: notes ?? lead.notes,
-      ...(bedrooms    !== undefined && { bedrooms }),
-      ...(bathrooms   !== undefined && { bathrooms }),
-      ...(squareMeters !== undefined && { squareMeters }),
-      ...(extras       !== undefined && { extras }),
-      ...(frequency    !== undefined && { frequency }),
-      ...(estimatedMinPrice !== undefined && { estimatedMinPrice }),
-      ...(estimatedMaxPrice !== undefined && { estimatedMaxPrice }),
-      ...(estimatedHours    !== undefined && { estimatedHours }),
-      status: 'NEW',
-    },
-  });
+  const [updated] = await prisma.$transaction([
+    prisma.lead.update({
+      where: { id },
+      data: {
+        ...(serviceType      && { serviceType }),
+        ...(address          && { address }),
+        dateTime: parsedDate,
+        notes: notes ?? lead.notes,
+        ...(bedrooms    !== undefined && { bedrooms }),
+        ...(bathrooms   !== undefined && { bathrooms }),
+        ...(squareMeters !== undefined && { squareMeters }),
+        ...(extras       !== undefined && { extras }),
+        ...(frequency    !== undefined && { frequency }),
+        ...(estimatedMinPrice !== undefined && { estimatedMinPrice }),
+        ...(estimatedMaxPrice !== undefined && { estimatedMaxPrice }),
+        ...(estimatedHours    !== undefined && { estimatedHours }),
+        status: 'NEW',
+      },
+    }),
+    prisma.leadDistribution.deleteMany({ where: { leadId: id } }),
+  ]);
 
-  // Delete old distributions and re-run matching
-  await prisma.leadDistribution.deleteMany({ where: { leadId: id } });
   runMatching(id).catch(e => console.error('[re-match]', e));
 
   return NextResponse.json({ lead: updated });

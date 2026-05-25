@@ -39,6 +39,9 @@ export async function POST(req: NextRequest) {
           }
 
         } else if (meta.type === 'subscription') {
+          if (!meta.userId || !meta.planId) break;
+          const validPlans = ['FREE', 'BASIC', 'PREMIUM', 'PRO'];
+          if (!validPlans.includes(meta.planId)) break;
           await prisma.user.update({
             where: { id: meta.userId },
             data: {
