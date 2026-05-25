@@ -50,58 +50,64 @@ export async function DELETE(_req: NextRequest, { params }: { params: Promise<{ 
   const target = await prisma.user.findUnique({ where: { id }, select: { role: true } });
   if (!target) return NextResponse.json({ error: 'User not found' }, { status: 404 });
 
-  // Gather IDs needed for cascade deletes (parallel round trips)
-  const [convRows, leadRows] = await Promise.all([
-    prisma.conversation.findMany({
-      where: { OR: [{ clientId: id }, { cleanerId: id }] },
-      select: { id: true },
-    }),
-    target.role === 'CLIENT'
-      ? prisma.lead.findMany({ where: { clientId: id }, select: { id: true } })
-      : Promise.resolve([] as { id: string }[]),
-  ]);
-
-  const convIds = convRows.map(c => c.id);
-  const leadIds = leadRows.map(l => l.id);
-
   await prisma.$transaction(async tx => {
-    // Step 1: delete messages (children of conversations)
-    if (convIds.length > 0) {
-      await tx.message.deleteMany({ where: { conversationId: { in: convIds } } });
+    // ── 1. Collect IDs inside the transaction (no stale-data races) ────────────
+    const clientLeadIds = await tx.lead
+      .findMany({ where: { clientId: id }, select: { id: true } })
+      .then(rows => rows.map(r => r.id));
+
+    // All conversations directly involving this user
+    const directConvIds = await tx.conversation
+      .findMany({
+        where: { OR: [{ clientId: id }, { cleanerId: id }] },
+        select: { id: true },
+      })
+      .then(rows => rows.map(r => r.id));
+
+    // Any conversations that reference this user's client-leads (even if conv's
+    // clientId/cleanerId is different — these block the lead delete via leadId FK)
+    const leadConvIds = clientLeadIds.length > 0
+      ? await tx.conversation
+          .findMany({ where: { leadId: { in: clientLeadIds } }, select: { id: true } })
+          .then(rows => rows.map(r => r.id))
+      : [];
+
+    const allConvIds = [...new Set([...directConvIds, ...leadConvIds])];
+
+    // ── 2. Messages (children of conversations) ─────────────────────────────────
+    if (allConvIds.length > 0) {
+      await tx.message.deleteMany({ where: { conversationId: { in: allConvIds } } });
     }
 
-    // Step 2: delete lead children and profile records in parallel
-    await Promise.all([
-      target.role === 'CLIENT'
-        ? leadIds.length > 0
-          ? Promise.all([
-              tx.leadDistribution.deleteMany({ where: { leadId: { in: leadIds } } }),
-              tx.review.deleteMany({ where: { leadId: { in: leadIds } } }),
-            ])
-          : Promise.resolve()
-        : Promise.all([
-            tx.lead.updateMany({ where: { cleanerId: id }, data: { cleanerId: null } }),
-            tx.leadDistribution.deleteMany({ where: { cleanerId: id } }),
-            tx.review.deleteMany({ where: { cleanerId: id } }),
-          ]),
-      tx.notification.deleteMany({ where: { userId: id } }),
-      tx.workPhoto.deleteMany({ where: { cleanerId: id } }),
-      tx.cleanerVerification.deleteMany({ where: { cleanerId: id } }),
-      tx.cleanerStats.deleteMany({ where: { cleanerId: id } }),
-      tx.verificationToken.deleteMany({ where: { userId: id } }),
-    ]);
-
-    // Step 3: delete conversations — MUST happen before leads (Conversation.leadId → Lead FK)
-    if (convIds.length > 0) {
-      await tx.conversation.deleteMany({ where: { OR: [{ clientId: id }, { cleanerId: id }] } });
+    // ── 3. Children of client-owned leads ──────────────────────────────────────
+    if (clientLeadIds.length > 0) {
+      await tx.leadDistribution.deleteMany({ where: { leadId: { in: clientLeadIds } } });
+      await tx.review.deleteMany({ where: { leadId: { in: clientLeadIds } } });
     }
 
-    // Step 4: delete leads — safe now that conversations referencing them are gone
-    if (target.role === 'CLIENT' && leadIds.length > 0) {
+    // ── 4. Cleaner-side references on other users' leads ───────────────────────
+    await tx.lead.updateMany({ where: { cleanerId: id }, data: { cleanerId: null } });
+    await tx.leadDistribution.deleteMany({ where: { cleanerId: id } });
+    await tx.review.deleteMany({ where: { cleanerId: id } });
+
+    // ── 5. Standalone profile / account records ────────────────────────────────
+    await tx.notification.deleteMany({ where: { userId: id } });
+    await tx.workPhoto.deleteMany({ where: { cleanerId: id } });
+    await tx.cleanerVerification.deleteMany({ where: { cleanerId: id } });
+    await tx.cleanerStats.deleteMany({ where: { cleanerId: id } });
+    await tx.verificationToken.deleteMany({ where: { userId: id } });
+
+    // ── 6. Conversations — MUST come before leads (Conversation.leadId → Lead) ─
+    if (allConvIds.length > 0) {
+      await tx.conversation.deleteMany({ where: { id: { in: allConvIds } } });
+    }
+
+    // ── 7. Client-owned leads — safe now that all conversations are gone ────────
+    if (clientLeadIds.length > 0) {
       await tx.lead.deleteMany({ where: { clientId: id } });
     }
 
-    // Step 5: delete the user
+    // ── 8. Delete the user ──────────────────────────────────────────────────────
     await tx.user.delete({ where: { id } });
   }, { timeout: 30000 });
 
