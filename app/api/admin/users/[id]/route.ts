@@ -65,14 +65,13 @@ export async function DELETE(_req: NextRequest, { params }: { params: Promise<{ 
   const leadIds = leadRows.map(l => l.id);
 
   await prisma.$transaction(async tx => {
-    // Phase 1: delete all leaf-level records in parallel
-    await Promise.all([
-      // Messages in every conversation this user was part of
-      convIds.length > 0
-        ? tx.message.deleteMany({ where: { conversationId: { in: convIds } } })
-        : Promise.resolve(),
+    // Step 1: delete messages (children of conversations)
+    if (convIds.length > 0) {
+      await tx.message.deleteMany({ where: { conversationId: { in: convIds } } });
+    }
 
-      // Lead children
+    // Step 2: delete lead children and profile records in parallel
+    await Promise.all([
       target.role === 'CLIENT'
         ? leadIds.length > 0
           ? Promise.all([
@@ -85,8 +84,6 @@ export async function DELETE(_req: NextRequest, { params }: { params: Promise<{ 
             tx.leadDistribution.deleteMany({ where: { cleanerId: id } }),
             tx.review.deleteMany({ where: { cleanerId: id } }),
           ]),
-
-      // Profile-level records (independent of each other)
       tx.notification.deleteMany({ where: { userId: id } }),
       tx.workPhoto.deleteMany({ where: { cleanerId: id } }),
       tx.cleanerVerification.deleteMany({ where: { cleanerId: id } }),
@@ -94,17 +91,17 @@ export async function DELETE(_req: NextRequest, { params }: { params: Promise<{ 
       tx.verificationToken.deleteMany({ where: { userId: id } }),
     ]);
 
-    // Phase 2: delete parent records (conversations and leads, now that children are gone)
-    await Promise.all([
-      convIds.length > 0
-        ? tx.conversation.deleteMany({ where: { OR: [{ clientId: id }, { cleanerId: id }] } })
-        : Promise.resolve(),
-      target.role === 'CLIENT' && leadIds.length > 0
-        ? tx.lead.deleteMany({ where: { clientId: id } })
-        : Promise.resolve(),
-    ]);
+    // Step 3: delete conversations — MUST happen before leads (Conversation.leadId → Lead FK)
+    if (convIds.length > 0) {
+      await tx.conversation.deleteMany({ where: { OR: [{ clientId: id }, { cleanerId: id }] } });
+    }
 
-    // Phase 3: delete the user
+    // Step 4: delete leads — safe now that conversations referencing them are gone
+    if (target.role === 'CLIENT' && leadIds.length > 0) {
+      await tx.lead.deleteMany({ where: { clientId: id } });
+    }
+
+    // Step 5: delete the user
     await tx.user.delete({ where: { id } });
   }, { timeout: 30000 });
 
