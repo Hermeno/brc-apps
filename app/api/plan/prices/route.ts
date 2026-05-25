@@ -2,9 +2,8 @@ import { prisma } from '@/lib/prisma';
 import { NextResponse } from 'next/server';
 
 const DEFAULTS = [
-  { id: 'BASIC',   price: 29 },
-  { id: 'PREMIUM', price: 49 },
-  { id: 'PRO',     price: 79 },
+  { id: 'BASIC', price: 39.99 },
+  { id: 'PRO',   price: 68.99 },
 ];
 
 export async function GET() {

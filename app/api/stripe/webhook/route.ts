@@ -40,7 +40,7 @@ export async function POST(req: NextRequest) {
 
         } else if (meta.type === 'subscription') {
           if (!meta.userId || !meta.planId) break;
-          const validPlans = ['FREE', 'BASIC', 'PREMIUM', 'PRO'];
+          const validPlans = ['FREE', 'BASIC', 'PRO', 'PREMIUM'];
           if (!validPlans.includes(meta.planId)) break;
           await prisma.user.update({
             where: { id: meta.userId },

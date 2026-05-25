@@ -10,9 +10,8 @@ async function requireAdmin() {
 }
 
 const DEFAULTS = [
-  { id: 'BASIC',   price: 29 },
-  { id: 'PREMIUM', price: 49 },
-  { id: 'PRO',     price: 79 },
+  { id: 'BASIC', price: 39.99 },
+  { id: 'PRO',   price: 68.99 },
 ];
 
 // Create table + seed rows if they don't exist yet
@@ -52,7 +51,7 @@ export async function PATCH(req: NextRequest) {
   if (!admin) return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
 
   const { id, price } = await req.json();
-  if (!['BASIC', 'PREMIUM', 'PRO'].includes(id)) {
+  if (!['BASIC', 'PRO'].includes(id)) {
     return NextResponse.json({ error: 'Invalid plan' }, { status: 400 });
   }
   if (typeof price !== 'number' || price < 1) {

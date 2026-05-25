@@ -8,5 +8,10 @@ export async function register() {
     `).catch(() => {
       // DB may be sleeping on startup (Neon free tier) — non-fatal, runs on next boot
     });
+
+    // Migrate any legacy PREMIUM users → PRO (one-time, idempotent)
+    await prisma.$executeRawUnsafe(`
+      UPDATE "User" SET plan = 'PRO' WHERE plan = 'PREMIUM'
+    `).catch(() => {});
   }
 }

@@ -33,8 +33,8 @@ type Cleaner = {
 const PLAN_COLORS: Record<string, { bg: string; color: string; label: string }> = {
   FREE:    { bg: '#F3F4F6', color: '#6B7280', label: 'Free' },
   BASIC:   { bg: '#EBF5FE', color: '#0A80DB', label: 'Basic' },
-  PREMIUM: { bg: '#EBF5FE', color: '#0A80DB', label: 'Premium ⭐' },
-  PRO:     { bg: '#EBF5FE', color: '#0A80DB', label: 'Pro ⭐' },
+  PRO:     { bg: '#FFFBEB', color: '#D97706', label: 'Pro ⭐' },
+  PREMIUM: { bg: '#FFFBEB', color: '#D97706', label: 'Pro ⭐' }, // legacy alias
 };
 
 function Stars({ value, size = 4 }: { value: number; size?: number }) {

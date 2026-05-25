@@ -1356,15 +1356,11 @@ interface PlanConfigRow { id: string; price: number; updatedAt?: string }
 const PLAN_META: Record<string, { name: string; color: string; badge: string; perks: string[] }> = {
   BASIC: {
     name: 'Basic', color: '#0A80DB', badge: 'Popular',
-    perks: ['Wave 1 + Wave 2', '+10 CFS ranking points', 'Featured profile'],
-  },
-  PREMIUM: {
-    name: 'Premium', color: '#0A80DB', badge: 'Recommended',
-    perks: ['Wave 1 + Wave 2 (priority)', '+20 CFS ranking points', 'Premium badge on profile', 'Priority support'],
+    perks: ['Wave 1 + Wave 2', '+15 CFS ranking points', '40 mi radius', 'Verified profile badge'],
   },
   PRO: {
-    name: 'Pro', color: '#0A80DB', badge: 'Max',
-    perks: ['Top of CFS ranking', '+30 guaranteed points', 'Instant Book eligible', 'Exclusive Pro badge', 'Advanced analytics'],
+    name: 'Pro', color: '#D97706', badge: 'Max',
+    perks: ['Top of CFS ranking', '+30 guaranteed points', 'Instant Book eligible', '60 mi radius', 'Top Cleaner badge'],
   },
 };
 
@@ -1422,7 +1418,7 @@ function PlanPricingPanel() {
     <VStack gap={4} align="stretch">
 
       {/* Plan cards */}
-      {(['BASIC', 'PREMIUM', 'PRO'] as const).map(planId => {
+      {(['BASIC', 'PRO'] as const).map(planId => {
         const meta = PLAN_META[planId];
         const row  = configs.find(c => c.id === planId);
         const isEdit = editing === planId;

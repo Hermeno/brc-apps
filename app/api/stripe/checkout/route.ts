@@ -15,7 +15,7 @@ export async function POST(req: NextRequest) {
   if (!user || user.role !== 'CLEANER') return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
 
   const { planId } = await req.json();
-  if (!['BASIC', 'PREMIUM', 'PRO'].includes(planId)) {
+  if (!['BASIC', 'PRO'].includes(planId)) {
     return NextResponse.json({ error: 'Invalid plan' }, { status: 400 });
   }
 

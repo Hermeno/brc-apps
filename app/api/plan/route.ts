@@ -29,7 +29,7 @@ export async function PUT(req: NextRequest) {
 
   const { plan, zipCode } = await req.json();
 
-  const validPlans = ['FREE', 'BASIC', 'PREMIUM', 'PRO'];
+  const validPlans = ['FREE', 'BASIC', 'PRO'];
   if (plan && !validPlans.includes(plan)) {
     return NextResponse.json({ error: 'Invalid plan' }, { status: 400 });
   }

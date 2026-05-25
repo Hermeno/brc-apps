@@ -12,20 +12,18 @@ import CleanerNav from '@/components/cleaner-nav';
 import { toaster } from '@/lib/toaster';
 import { PLANS } from '@/lib/pricing';
 
-type PlanId = 'FREE' | 'BASIC' | 'PREMIUM' | 'PRO';
+type PlanId = 'FREE' | 'BASIC' | 'PRO';
 
 const PLAN_ICONS: Record<PlanId, any> = {
-  FREE:    LucideShield,
-  BASIC:   LucideStar,
-  PREMIUM: LucideTrendingUp,
-  PRO:     LucideCrown,
+  FREE:  LucideShield,
+  BASIC: LucideStar,
+  PRO:   LucideCrown,
 };
 
 const PLAN_COLORS: Record<PlanId, { bg: string; border: string; text: string; btn: string; btnHover: string }> = {
-  FREE:    { bg: 'slate.50',   border: 'slate.200',  text: 'slate.600',  btn: 'slate.600',  btnHover: 'slate.700' },
-  BASIC:   { bg: 'brand.50',   border: 'brand.300',  text: 'brand.700',  btn: 'brand.500',  btnHover: 'brand.600' },
-  PREMIUM: { bg: '#F5F3FF',    border: '#C4B5FD',    text: '#0A80DB',    btn: '#0A80DB',    btnHover: '#6D28D9' },
-  PRO:     { bg: 'slate.50',  border: 'slate.300', text: 'slate.700', btn: '#0A80DB',    btnHover: '#0870C2' },
+  FREE:  { bg: 'slate.50',  border: 'slate.200', text: 'slate.600', btn: 'slate.600', btnHover: 'slate.700' },
+  BASIC: { bg: 'brand.50',  border: 'brand.300', text: 'brand.700', btn: 'brand.500', btnHover: 'brand.600' },
+  PRO:   { bg: '#FFFBEB',   border: '#FDE68A',   text: '#92400E',   btn: '#D97706',   btnHover: '#B45309'   },
 };
 
 export default function PlanPage() {
@@ -239,7 +237,7 @@ export default function PlanPage() {
                 const c = PLAN_COLORS[pid];
                 const isActive = currentPlan === pid;
                 const PlanIcon = PLAN_ICONS[pid];
-                const accentColor = pid === 'FREE' ? '#64748B' : pid === 'BASIC' ? '#0A80DB' : pid === 'PREMIUM' ? '#0A80DB' : '#0A80DB';
+                const accentColor = pid === 'FREE' ? '#64748B' : pid === 'PRO' ? '#D97706' : '#0A80DB';
 
                 return (
                   <Box
