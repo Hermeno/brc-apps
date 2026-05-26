@@ -1,21 +1,29 @@
 import { prisma } from '@/lib/prisma';
+import { PLANS } from '@/lib/pricing';
 import { NextResponse } from 'next/server';
 
-const DEFAULTS = [
-  { id: 'BASIC', price: 39 },
-  { id: 'PRO',   price: 79 },
-];
+// Build defaults from the single source of truth in lib/pricing.ts
+const PAID_PLANS = PLANS.filter(p => p.price > 0);
 
 export async function GET() {
   try {
+    // Auto-seed rows that don't exist yet
+    for (const plan of PAID_PLANS) {
+      await prisma.planConfig.upsert({
+        where:  { id: plan.id },
+        create: { id: plan.id, price: plan.price },
+        update: {},  // never overwrite an admin-set price
+      });
+    }
+
     const configs = await prisma.planConfig.findMany();
-    const result = DEFAULTS.map(d => {
-      const db = configs.find(c => c.id === d.id);
-      return { id: d.id, price: db?.price ?? d.price };
+    const result = PAID_PLANS.map(p => {
+      const db = configs.find(c => c.id === p.id);
+      return { id: p.id, price: db?.price ?? p.price };
     });
     return NextResponse.json(result);
   } catch {
-    // Table doesn't exist yet — return defaults
-    return NextResponse.json(DEFAULTS);
+    // DB unreachable — return defaults from lib/pricing.ts
+    return NextResponse.json(PAID_PLANS.map(p => ({ id: p.id, price: p.price })));
   }
 }
