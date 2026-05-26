@@ -33,9 +33,9 @@ export default function HomePage() {
         style={{ background: 'rgba(11,17,32,0.93)', backdropFilter: 'blur(12px)', borderBottom: '1px solid rgba(255,255,255,0.06)' }}
       >
         <Flex align="center" h="full" px={{ base: 5, md: 10, lg: 16 }} maxW="1440px" mx="auto" justify="space-between">
-          <HStack gap={2.5}>
-            <Image src="/2.png" alt="BrazilianClean" width={32} height={32} style={{ borderRadius: "50%", objectFit: "cover", flexShrink: 0 }} />
-            <Text fontWeight="700" fontSize={{ base: '13px', sm: '15px' }} letterSpacing="-0.02em" color="white" fontFamily="heading">
+          <HStack gap={2}>
+            <Image src="/2.png" alt="BrazilianClean" width={28} height={28} style={{ borderRadius: "50%", objectFit: "cover", flexShrink: 0 }} />
+            <Text fontWeight="700" fontSize={{ base: '12px', sm: '15px' }} letterSpacing="-0.02em" color="white" fontFamily="heading">
               Brazilian<Text as="span" color={C.blue}>Clean</Text>
             </Text>
           </HStack>
@@ -46,17 +46,19 @@ export default function HomePage() {
                 size="sm" variant="outline" borderColor="rgba(255,255,255,0.18)" color="white"
                 style={{ borderRadius: 4 }} fontWeight="600" fontFamily="heading"
                 _hover={{ bg: 'rgba(255,255,255,0.08)', borderColor: 'rgba(255,255,255,0.35)' }}
-                h="34px" px={{ base: 3, sm: 4 }} fontSize={{ base: '12px', sm: '13px' }}
+                h={{ base: '30px', sm: '34px' }} px={{ base: 2, sm: 4 }}
+                fontSize={{ base: '11px', sm: '13px' }}
               >
-                <Text display={{ base: 'none', sm: 'inline' }}>Become a cleaner</Text>
-                <Text display={{ base: 'inline', sm: 'none' }}>Join</Text>
+                Become a cleaner
               </Button>
             </NextLink>
             <NextLink href="/auth/login">
               <Button
                 size="sm" bg={C.blue} color="white"
                 style={{ borderRadius: 4 }} fontWeight="600" fontFamily="heading"
-                _hover={{ bg: C.blueHover }} h="34px" px={{ base: 3, sm: 4 }} fontSize={{ base: '12px', sm: '13px' }}
+                _hover={{ bg: C.blueHover }}
+                h={{ base: '30px', sm: '34px' }} px={{ base: 2, sm: 4 }}
+                fontSize={{ base: '11px', sm: '13px' }}
               >
                 Sign in
               </Button>
