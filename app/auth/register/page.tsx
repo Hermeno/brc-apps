@@ -59,10 +59,10 @@ export default function RegisterPage() {
 
   const inputStyle = {
     bg: 'white' as const,
-    border: '1px solid',
+    border: '1.5px solid',
     borderColor: '#E3E8EE',
     h: '38px',
-    borderRadius: '9999px',
+    borderRadius: '8px',
     fontFamily: 'heading',
     fontSize: '13.5px',
     color: '#0A2540',
