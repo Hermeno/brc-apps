@@ -45,7 +45,7 @@ export default function ProfilePage() {
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const PLAN_MAX: Record<string, number> = { FREE: 25, BASIC: 40, PRO: 60, PREMIUM: 60 };
+  const PLAN_MAX: Record<string, number> = { FREE: 25, BASIC: 60, PRO: 110, PREMIUM: 110 };
 
   useEffect(() => {
     fetch('/api/plan')
@@ -405,7 +405,7 @@ export default function ProfilePage() {
                     </Text>
                   </HStack>
                   <Box display="flex" gap={2} flexWrap="wrap">
-                    {[15, 25, 40, 60].map(miles => {
+                    {[15, 25, 40, 60, 80, 110].map(miles => {
                       const locked = miles > planMaxRadius;
                       const active = serviceRadiusMiles === miles;
                       return (
@@ -432,7 +432,7 @@ export default function ProfilePage() {
                   </Box>
                   <Text fontSize="11px" color="slate.400" mt={1.5}>
                     You will only receive leads within this distance.
-                    {planMaxRadius < 60 && (
+                    {planMaxRadius < 110 && (
                       <> Upgrade your plan to unlock a wider radius.</>
                     )}
                   </Text>

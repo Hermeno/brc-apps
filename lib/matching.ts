@@ -7,9 +7,9 @@ import { haversineDistance, resolveCoords, ensureRadiusColumn } from './geo';
 // Max 100 points: Plan(30) + Service(40) + Rating(20) + Proximity(10)
 //
 // Plan tiers:
-//   FREE  →  0 pts  | Wave 2 only       | max radius 25 mi
-//   BASIC → 15 pts  | Wave 1 + Wave 2   | max radius 40 mi
-//   PRO   → 30 pts  | Wave 1 priority + Instant Book | max radius 60 mi
+//   FREE  →  0 pts  | Wave 2 only       | max radius  25 mi
+//   BASIC → 15 pts  | Wave 1 + Wave 2   | max radius  60 mi
+//   PRO   → 30 pts  | Wave 1 priority + Instant Book | max radius 110 mi
 
 const PLAN_BONUS: Record<string, number> = {
   FREE: 0, BASIC: 15, PRO: 30,
@@ -18,7 +18,7 @@ const PLAN_BONUS: Record<string, number> = {
 };
 
 const PLAN_MAX_RADIUS: Record<string, number> = {
-  FREE: 25, BASIC: 40, PRO: 60, PREMIUM: 60,
+  FREE: 25, BASIC: 60, PRO: 110, PREMIUM: 110,
 };
 
 // Only BASIC and PRO cleaners are eligible for Wave 1

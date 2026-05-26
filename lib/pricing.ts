@@ -99,11 +99,11 @@ export const PLANS = [
       'Acesso ao Express Match',
       'Wave 1 + Wave 2',
       '+15 pontos no ranking CFS',
-      'Raio ampliado (40 mi)',
+      'Raio ampliado (60 mi)',
       'Perfil verificado',
     ],
     rankingBonus: 15,
-    maxRadiusMiles: 40,
+    maxRadiusMiles: 60,
   },
   {
     id:    'PRO',
@@ -115,12 +115,12 @@ export const PLANS = [
       'Prioridade máxima no ranking',
       'Wave 1 frequente + Instant Book',
       '+30 pontos garantidos',
-      'Raio máximo (60 mi)',
+      'Raio máximo (110 mi)',
       'Badge "Top Cleaner" no perfil',
       'Acesso a leads recorrentes',
     ],
     rankingBonus: 30,
-    maxRadiusMiles: 60,
+    maxRadiusMiles: 110,
   },
 ] as const;
 

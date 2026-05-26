@@ -29,7 +29,7 @@ const SERVICES = [
 ];
 
 /* ─── Radius options ──────────────────────────────────────────── */
-const RADIUS_OPTIONS = [5, 10, 15, 20, 25, 35, 50, 75];
+const RADIUS_OPTIONS = [5, 10, 15, 20, 25, 35, 50, 75, 110];
 
 /* ─── Step progress indicator ────────────────────────────────── */
 const STEPS = ['Services', 'Location', 'About you', 'All set'];
