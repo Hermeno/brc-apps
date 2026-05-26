@@ -336,7 +336,12 @@ export default function ClientPage() {
       >
         <Flex align="center" h="60px" px={{ base: 4, md: 6, lg: 8 }} maxW="1440px" mx="auto" justify="space-between">
           {/* Logo */}
-          <Image src="/2.png" alt="BrazilianClean" width={32} height={32} style={{ borderRadius: "50%", objectFit: "cover", flexShrink: 0 }} />
+          <HStack gap={2}>
+            <Image src="/2.png" alt="BrazilianClean" width={32} height={32} style={{ borderRadius: "50%", objectFit: "cover", flexShrink: 0 }} />
+            <Text fontWeight="700" fontSize={{ base: '13px', sm: '15px' }} letterSpacing="-0.02em" color="white" fontFamily="heading">
+              Brazilian<Text as="span" color="brand.400">Clean</Text>
+            </Text>
+          </HStack>
 
           {/* Right side */}
           <HStack gap={1.5}>

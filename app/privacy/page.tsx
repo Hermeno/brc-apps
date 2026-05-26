@@ -173,8 +173,13 @@ export default function PrivacyPage() {
         style={{ background: 'rgba(11,17,32,0.92)', backdropFilter: 'blur(10px)', borderBottom: '1px solid rgba(255,255,255,0.06)' }}
       >
         <Flex align="center" h="full" px={{ base: 5, md: 10, lg: 16 }} maxW="1440px" mx="auto" justify="space-between">
-          <NextLink href="/">
-            <Image src="/2.png" alt="BrazilianClean" width={32} height={32} style={{ borderRadius: "50%", objectFit: "cover", flexShrink: 0 }} />
+          <NextLink href="/" style={{ textDecoration: 'none' }}>
+            <HStack gap={2.5}>
+              <Image src="/2.png" alt="BrazilianClean" width={32} height={32} style={{ borderRadius: "50%", objectFit: "cover", flexShrink: 0 }} />
+              <Text fontWeight="700" fontSize="15px" letterSpacing="-0.02em" color="white" fontFamily="heading">
+                Brazilian<Text as="span" color="#0A80DB">Clean</Text>
+              </Text>
+            </HStack>
           </NextLink>
         </Flex>
       </Box>

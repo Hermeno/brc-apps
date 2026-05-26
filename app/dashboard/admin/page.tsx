@@ -138,7 +138,12 @@ function Sidebar({ tab, setTab, pendingVerifs, onRefresh, user }: {
     >
       {/* Logo */}
       <Box px={5} pt={6} pb={5} borderBottom="1px solid rgba(255,255,255,0.06)">
-        <Image src="/2.png" alt="BrazilianClean" width={32} height={32} style={{ borderRadius: "50%", objectFit: "cover", flexShrink: 0 }} />
+        <HStack gap={2.5}>
+          <Image src="/2.png" alt="BrazilianClean" width={32} height={32} style={{ borderRadius: "50%", objectFit: "cover", flexShrink: 0 }} />
+          <Text fontWeight="700" fontSize="14px" letterSpacing="-0.02em" color="white" fontFamily="heading">
+            Brazilian<Text as="span" color="#60A5FA">Clean</Text>
+          </Text>
+        </HStack>
       </Box>
 
       {/* Nav */}

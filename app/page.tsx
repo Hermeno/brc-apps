@@ -35,28 +35,28 @@ export default function HomePage() {
         <Flex align="center" h="full" px={{ base: 5, md: 10, lg: 16 }} maxW="1440px" mx="auto" justify="space-between">
           <HStack gap={2.5}>
             <Image src="/2.png" alt="BrazilianClean" width={32} height={32} style={{ borderRadius: "50%", objectFit: "cover", flexShrink: 0 }} />
-            <Text fontWeight="700" fontSize="15px" letterSpacing="-0.02em" color="white" fontFamily="heading"
-              display={{ base: 'none', sm: 'block' }}>
+            <Text fontWeight="700" fontSize={{ base: '13px', sm: '15px' }} letterSpacing="-0.02em" color="white" fontFamily="heading">
               Brazilian<Text as="span" color={C.blue}>Clean</Text>
             </Text>
           </HStack>
 
-          <HStack gap={2}>
+          <HStack gap={1.5}>
             <NextLink href="/auth/register?role=cleaner">
               <Button
                 size="sm" variant="outline" borderColor="rgba(255,255,255,0.18)" color="white"
-                style={{ borderRadius: 4 }} fontWeight="600" fontSize="13px" fontFamily="heading"
+                style={{ borderRadius: 4 }} fontWeight="600" fontFamily="heading"
                 _hover={{ bg: 'rgba(255,255,255,0.08)', borderColor: 'rgba(255,255,255,0.35)' }}
-                h="34px" px={4}
+                h="34px" px={{ base: 3, sm: 4 }} fontSize={{ base: '12px', sm: '13px' }}
               >
-                Become a cleaner
+                <Text display={{ base: 'none', sm: 'inline' }}>Become a cleaner</Text>
+                <Text display={{ base: 'inline', sm: 'none' }}>Join</Text>
               </Button>
             </NextLink>
             <NextLink href="/auth/login">
               <Button
                 size="sm" bg={C.blue} color="white"
-                style={{ borderRadius: 4 }} fontWeight="600" fontSize="13px" fontFamily="heading"
-                _hover={{ bg: C.blueHover }} h="34px" px={4}
+                style={{ borderRadius: 4 }} fontWeight="600" fontFamily="heading"
+                _hover={{ bg: C.blueHover }} h="34px" px={{ base: 3, sm: 4 }} fontSize={{ base: '12px', sm: '13px' }}
               >
                 Sign in
               </Button>

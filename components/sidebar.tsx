@@ -50,7 +50,13 @@ export default function Sidebar() {
       >
         {/* Logo */}
         <NextLink href="/dashboard" style={{ flexShrink: 0, textDecoration: 'none' }}>
-          <Image src="/2.png" alt="BrazilianClean" width={32} height={32} style={{ borderRadius: "50%", objectFit: "cover", flexShrink: 0 }} />
+          <HStack gap={2}>
+            <Image src="/2.png" alt="BrazilianClean" width={32} height={32} style={{ borderRadius: "50%", objectFit: "cover", flexShrink: 0 }} />
+            <Text fontWeight="700" fontSize="15px" letterSpacing="-0.02em" color="white" fontFamily="heading"
+              display={{ base: 'none', sm: 'block' }}>
+              Brazilian<Text as="span" color="brand.400">Clean</Text>
+            </Text>
+          </HStack>
         </NextLink>
 
         <Box w="1px" h="22px" bg="rgba(255,255,255,0.1)" flexShrink={0} mx={2} display={{ base: 'none', md: 'block' }} />
