@@ -1,6 +1,5 @@
 import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
-import { stripe, BASE_URL } from '@/lib/stripe';
 import { createNotification } from '@/lib/notifications';
 import { NextRequest, NextResponse } from 'next/server';
 
@@ -15,10 +14,7 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
   if (!user || user.role !== 'CLIENT') return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
 
   const { id } = await params;
-  const conversation = await prisma.conversation.findUnique({
-    where: { id },
-    include: { lead: { select: { serviceType: true, address: true } } },
-  });
+  const conversation = await prisma.conversation.findUnique({ where: { id } });
   if (!conversation || conversation.clientId !== user.id) {
     return NextResponse.json({ error: 'Not found' }, { status: 404 });
   }
@@ -36,118 +32,18 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
     prisma.conversation.update({ where: { id }, data: { status: 'active' } }),
   ]);
 
-  // ── Charge the cleaner the lead fee ──────────────────────────────────────
-  const leadFee = conversation.leadFee;
-  if (conversation.feeStatus === 'charged') {
-    createNotification({
-      userId: conversation.cleanerId,
-      type:   'client_accepted',
-      title:  'Client accepted you!',
-      body:   'You were accepted. Open the chat to continue.',
-      link:   `/dashboard/chat/${id}`,
-    }).catch(() => {});
-    return NextResponse.json({ ok: true, conversationId: id });
-  }
-
-  // Free lead — waive immediately so the chat opens without payment
-  if (!leadFee || leadFee <= 0) {
+  // For legacy conversations created before the pay-first model, waive the fee
+  if (conversation.feeStatus === 'pending' && (conversation.leadFee ?? 0) > 0) {
     await prisma.conversation.update({ where: { id }, data: { feeStatus: 'waived' } });
-    createNotification({
-      userId: conversation.cleanerId,
-      type:   'client_accepted',
-      title:  'Client accepted you!',
-      body:   'You were accepted. Open the chat to continue.',
-      link:   `/dashboard/chat/${id}`,
-    }).catch(() => {});
-    return NextResponse.json({ ok: true, conversationId: id });
   }
 
-  try {
-    const cleaner = await prisma.user.findUnique({
-      where: { id: conversation.cleanerId },
-      select: { id: true, name: true, email: true, stripeCustomerId: true },
-    });
-    if (!cleaner) return NextResponse.json({ ok: true, conversationId: id });
+  createNotification({
+    userId: conversation.cleanerId,
+    type:   'client_accepted',
+    title:  'Client accepted you!',
+    body:   'You were accepted. Open the chat to continue.',
+    link:   `/dashboard/chat/${id}`,
+  }).catch(() => {});
 
-    // Ensure Stripe customer
-    let customerId = cleaner.stripeCustomerId;
-    if (!customerId) {
-      const customer = await stripe.customers.create({
-        email: cleaner.email,
-        name:  cleaner.name ?? undefined,
-        metadata: { userId: cleaner.id },
-      });
-      customerId = customer.id;
-      await prisma.user.update({ where: { id: cleaner.id }, data: { stripeCustomerId: customerId } });
-    }
-
-    // Try auto-charge from saved default card
-    const customer = await stripe.customers.retrieve(customerId);
-    const defaultPM =
-      !('deleted' in customer) && typeof customer.invoice_settings?.default_payment_method === 'string'
-        ? customer.invoice_settings.default_payment_method
-        : null;
-
-    if (defaultPM) {
-      const pi = await stripe.paymentIntents.create({
-        amount:         Math.round(leadFee * 100),
-        currency:       'usd',
-        customer:       customerId,
-        payment_method: defaultPM,
-        confirm:        true,
-        off_session:    true,
-        description:    `Lead fee — ${conversation.lead.serviceType}`,
-        metadata:       { type: 'lead_payment', conversationId: id, cleanerId: cleaner.id },
-      });
-
-      if (pi.status === 'succeeded') {
-        await prisma.conversation.update({ where: { id }, data: { feeStatus: 'charged' } });
-        createNotification({
-          userId: conversation.cleanerId,
-          type:   'client_accepted',
-          title:  'Client accepted you!',
-          body:   'You were accepted. Lead fee processed. Open the chat.',
-          link:   `/dashboard/chat/${id}`,
-        }).catch(() => {});
-        return NextResponse.json({ ok: true, conversationId: id, charged: true });
-      }
-    }
-
-    // No saved card — return checkout URL for the cleaner to pay
-    const checkoutSession = await stripe.checkout.sessions.create({
-      customer:    customerId,
-      mode:        'payment',
-      line_items:  [{
-        price_data: {
-          currency:     'usd',
-          unit_amount:  Math.round(leadFee * 100),
-          product_data: { name: `Lead fee — ${conversation.lead.serviceType}`, description: conversation.lead.address },
-        },
-        quantity: 1,
-      }],
-      success_url: `${BASE_URL}/dashboard/chat/${id}?paid=1`,
-      cancel_url:  `${BASE_URL}/dashboard/marketplace`,
-      metadata:    { type: 'lead_payment', conversationId: id, cleanerId: cleaner.id },
-    });
-
-    createNotification({
-      userId: conversation.cleanerId,
-      type:   'client_accepted',
-      title:  'Client accepted you!',
-      body:   'You were accepted. Complete the lead payment to access the chat.',
-      link:   `/dashboard/chat/${id}`,
-    }).catch(() => {});
-    return NextResponse.json({ ok: true, conversationId: id, cleanerCheckoutUrl: checkoutSession.url });
-  } catch (e: any) {
-    console.error('[confirm] payment error:', e?.message);
-    createNotification({
-      userId: conversation.cleanerId,
-      type:   'client_accepted',
-      title:  'Client accepted you!',
-      body:   'You were accepted. Open the chat to continue.',
-      link:   `/dashboard/chat/${id}`,
-    }).catch(() => {});
-    // Payment failed but acceptance still happened — allow chat
-    return NextResponse.json({ ok: true, conversationId: id });
-  }
+  return NextResponse.json({ ok: true, conversationId: id });
 }

@@ -85,8 +85,9 @@ function filterByRadius(cleaners: any[], leadCoords: { lat: number; lng: number 
 
 // ─── Wave timing constants ────────────────────────────────────────────────────
 
-const WAVE1_WINDOW_MS = 90 * 1000;   // 90 seconds
-const WAVE2_WINDOW_MS = 180 * 1000;  // 180 seconds
+const WAVE1_WINDOW_MS         = 90  * 1000;  // 90 seconds
+const WAVE2_WINDOW_MS         = 180 * 1000;  // 180 seconds
+const INSTANT_BOOK_WINDOW_MS  = 10  * 60 * 1000; // 10 minutes
 
 // ─── Main matching engine ─────────────────────────────────────────────────────
 
@@ -103,8 +104,12 @@ export async function runMatching(leadId: string) {
     lead.zipCode,
   );
 
+  const now = new Date();
   const cleaners = await prisma.user.findMany({
-    where: { role: 'CLEANER', isAvailable: true, isVerified: true },
+    where: {
+      role: 'CLEANER', isAvailable: true, isVerified: true,
+      OR: [{ suspendedUntil: null }, { suspendedUntil: { lt: now } }],
+    },
     include: { stats: true },
     take: 200,
   });
@@ -130,38 +135,44 @@ export async function runMatching(leadId: string) {
     return { type: 'unmatched' };
   }
 
-  // Use stored price (set at lead creation) or recalculate
+  // Use stored price (set at lead creation) or pick randomly within the service range
   const priceConfig = lead.leadPrice == null ? await getLeadPriceConfig() : null;
-  const leadPrice = lead.leadPrice ?? calculateLeadPrice(
-    lead.serviceType, lead.dateTime, lead.frequency, priceConfig ?? undefined,
-  );
+  const leadPrice = lead.leadPrice ?? calculateLeadPrice(lead.serviceType, undefined, undefined, priceConfig ?? undefined);
 
   // ── Instant Book: top PRO cleaner scores ≥ 85 ─────────────────────────────
+  // Set lead to IN_REVIEW (exclusive hold) and create an INVITED distribution.
+  // No conversation is created until the cleaner pays via Stripe Checkout.
   const top = scored[0];
   if (top.score >= 85 && isInstantBookEligible(top.cleaner.plan ?? 'FREE')) {
+    const instantExpiry = new Date(Date.now() + INSTANT_BOOK_WINDOW_MS);
     await prisma.$transaction([
       prisma.lead.update({
         where: { id: leadId },
-        data: { status: 'ACCEPTED', cleanerId: top.cleaner.id, isInstantBook: true, leadPrice },
-      }),
-      prisma.conversation.create({
-        data: { leadId, clientId: lead.clientId, cleanerId: top.cleaner.id, leadFee: leadPrice, feeStatus: 'charged' },
+        data: { status: 'IN_REVIEW', isInstantBook: true, leadPrice },
       }),
       prisma.leadDistribution.create({
-        data: { leadId, cleanerId: top.cleaner.id, wave: 0, status: 'ACCEPTED', notifiedAt: new Date(), respondedAt: new Date() },
-      }),
-      prisma.cleanerStats.upsert({
-        where: { cleanerId: top.cleaner.id },
-        create: { cleanerId: top.cleaner.id, totalLeads: 1 },
-        update: { totalLeads: { increment: 1 } },
+        data: {
+          leadId, cleanerId: top.cleaner.id,
+          wave: 0, status: 'INVITED',
+          notifiedAt: new Date(), expiresAt: instantExpiry,
+        },
       }),
     ]);
+
+    createNotificationMany([{
+      userId: top.cleaner.id,
+      type:   'lead_received',
+      title:  '⚡ Instant Book — you were matched!',
+      body:   `${lead.serviceType} at ${lead.address}. Accept and pay within 10 min.`,
+      link:   '/dashboard/cleaner',
+    }]).catch(() => {});
+
     return { type: 'instant', cleanerId: top.cleaner.id, score: top.score, leadPrice };
   }
 
   // ── Wave 1: top BASIC/PRO cleaner, 90-second exclusive window ─────────────
   // FREE cleaners are excluded from Wave 1 — they only enter Wave 2
-  const wave1Pool = scored.filter(s => isWave1Eligible(s.cleaner.plan ?? 'FREE'));
+  const wave1Pool     = scored.filter(s => isWave1Eligible(s.cleaner.plan ?? 'FREE'));
   const wave1Cleaners = wave1Pool.slice(0, 1); // 1 exclusive cleaner in Wave 1
 
   const wave1Expires = new Date(Date.now() + WAVE1_WINDOW_MS);
@@ -186,7 +197,7 @@ export async function runMatching(leadId: string) {
       type:   'lead_received',
       title:  'New lead — exclusive access!',
       body:   `${lead.serviceType} at ${lead.address}. You have 90 seconds.`,
-      link:   '/dashboard/marketplace',
+      link:   '/dashboard/cleaner',
     }))).catch(() => {});
   }
 
@@ -198,6 +209,26 @@ export async function runMatching(leadId: string) {
 export async function advanceWaves() {
   await ensureRadiusColumn();
   const nowDate = new Date();
+
+  // ── Instant Book expiry → UNMATCHED ───────────────────────────────────────
+  const expiredInstantBook = await prisma.lead.findMany({
+    where: {
+      status: 'IN_REVIEW',
+      isInstantBook: true,
+      distributions: { some: { wave: 0, status: 'INVITED', expiresAt: { lt: nowDate } } },
+      conversations: { none: {} },
+    },
+  });
+  for (const lead of expiredInstantBook) {
+    await prisma.leadDistribution.updateMany({
+      where: { leadId: lead.id, wave: 0, status: 'INVITED' },
+      data:  { status: 'EXPIRED' },
+    });
+    await prisma.lead.update({
+      where: { id: lead.id },
+      data:  { status: 'UNMATCHED', isInstantBook: false },
+    });
+  }
 
   // ── Wave 1 → Wave 2 ────────────────────────────────────────────────────────
   const expiredWave1 = await prisma.lead.findMany({
@@ -227,7 +258,11 @@ export async function advanceWaves() {
 
     // Wave 2: ALL cleaners (including FREE) compete — top 2 by CFS score
     const wave2Candidates = await prisma.user.findMany({
-      where:   { role: 'CLEANER', isAvailable: true, isVerified: true, id: { notIn: usedIds } },
+      where: {
+        role: 'CLEANER', isAvailable: true, isVerified: true,
+        id: { notIn: usedIds },
+        OR: [{ suspendedUntil: null }, { suspendedUntil: { lt: new Date() } }],
+      },
       include: { stats: true },
       take:    50,
     });
@@ -266,7 +301,7 @@ export async function advanceWaves() {
       type:   'lead_received',
       title:  'New lead available!',
       body:   `${lead.serviceType} at ${lead.address}. Be the first to accept!`,
-      link:   '/dashboard/marketplace',
+      link:   '/dashboard/cleaner',
     }))).catch(() => {});
   }
 

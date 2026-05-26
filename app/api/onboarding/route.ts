@@ -25,9 +25,11 @@ export async function POST(req: NextRequest) {
   const session = await auth();
   if (!session?.user?.email) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
+  const PLAN_MAX_RADIUS: Record<string, number> = { FREE: 25, BASIC: 40, PRO: 60, PREMIUM: 60 };
+
   const user = await prisma.user.findUnique({
     where: { email: session.user.email },
-    select: { id: true, role: true },
+    select: { id: true, role: true, plan: true },
   });
   if (!user || user.role !== 'CLEANER') return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
 
@@ -49,7 +51,10 @@ export async function POST(req: NextRequest) {
     if (data.latitude  != null) updates.latitude  = Number(data.latitude);
     if (data.longitude != null) updates.longitude = Number(data.longitude);
     if (data.zipCode   != null) updates.zipCode   = String(data.zipCode);
-    if (data.serviceRadiusMiles != null) updates.serviceRadiusMiles = Number(data.serviceRadiusMiles);
+    if (data.serviceRadiusMiles != null) {
+      const maxRadius = PLAN_MAX_RADIUS[user.plan ?? 'FREE'] ?? 25;
+      updates.serviceRadiusMiles = Math.min(Number(data.serviceRadiusMiles), maxRadius);
+    }
   }
 
   if (step === 'bio' && data) {

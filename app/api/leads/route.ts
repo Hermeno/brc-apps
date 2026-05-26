@@ -90,6 +90,27 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Invalid date/time' }, { status: 400 });
   }
 
+  // Booking must be within the next 90 days
+  const maxDate = new Date();
+  maxDate.setDate(maxDate.getDate() + 90);
+  if (parsedDate > maxDate) {
+    return NextResponse.json({ error: 'Booking date must be within the next 90 days.' }, { status: 400 });
+  }
+
+  // Rate limit: max 5 active bookings per client at once
+  const activeCount = await prisma.lead.count({
+    where: {
+      clientId: dbUser.id,
+      status: { in: ['NEW', 'WAVE1', 'WAVE2', 'WAVE3', 'IN_REVIEW', 'ACCEPTED'] },
+    },
+  });
+  if (activeCount >= 5) {
+    return NextResponse.json(
+      { error: 'You have too many active bookings. Please complete or cancel existing ones first.' },
+      { status: 429 },
+    );
+  }
+
   // Load DB-backed pricing config (multipliers + coverage)
   const priceConfig = await getLeadPriceConfig();
 

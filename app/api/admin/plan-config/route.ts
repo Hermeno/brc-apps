@@ -10,8 +10,8 @@ async function requireAdmin() {
 }
 
 const DEFAULTS = [
-  { id: 'BASIC', price: 39.99 },
-  { id: 'PRO',   price: 68.99 },
+  { id: 'BASIC', price: 39 },
+  { id: 'PRO',   price: 79 },
 ];
 
 // Create table + seed rows if they don't exist yet

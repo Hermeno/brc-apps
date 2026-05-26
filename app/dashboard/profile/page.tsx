@@ -31,6 +31,7 @@ export default function ProfilePage() {
   const [locationLabel,     setLocationLabel] = useState('');
   const [geoLoading,        setGeoLoading]   = useState(false);
   const [serviceRadiusMiles, setServiceRadius] = useState<number>(25);
+  const [planMaxRadius,      setPlanMaxRadius] = useState<number>(25);
   const [photos,            setPhotos]       = useState<Photo[]>([]);
   const [saving,            setSaving]       = useState(false);
 
@@ -44,10 +45,17 @@ export default function ProfilePage() {
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  const PLAN_MAX: Record<string, number> = { FREE: 25, BASIC: 40, PRO: 60, PREMIUM: 60 };
+
   useEffect(() => {
     fetch('/api/plan')
       .then(r => r.ok ? r.json() : null)
-      .then(d => { if (d?.id) fetchProfile(d.id); })
+      .then(d => {
+        if (!d) return;
+        const maxR = PLAN_MAX[d.plan ?? 'FREE'] ?? 25;
+        setPlanMaxRadius(maxR);
+        if (d.id) fetchProfile(d.id);
+      })
       .catch(() => {});
   }, []);
 
@@ -384,33 +392,49 @@ export default function ProfilePage() {
 
                 {/* Service radius selector */}
                 <Box>
-                  <Text fontSize="xs" fontWeight="700" color="slate.500"
-                    textTransform="uppercase" letterSpacing="0.07em" mb={2}>
-                    Service radius
-                  </Text>
+                  <HStack justify="space-between" mb={2}>
+                    <Text fontSize="xs" fontWeight="700" color="slate.500"
+                      textTransform="uppercase" letterSpacing="0.07em">
+                      Service radius
+                    </Text>
+                    <Text style={{
+                      fontSize: '9.5px', fontWeight: 700, padding: '2px 7px',
+                      background: '#EFF6FF', color: '#0A80DB', borderRadius: 2,
+                    }}>
+                      Your plan: max {planMaxRadius} mi
+                    </Text>
+                  </HStack>
                   <Box display="flex" gap={2} flexWrap="wrap">
-                    {[15, 25, 50, 75, 100].map(miles => (
-                      <Box
-                        key={miles}
-                        as="button"
-                        px={3} py={1.5}
-                        fontSize="13px" fontWeight="600" fontFamily="heading"
-                        border="1px solid"
-                        borderRadius="4px"
-                        cursor="pointer"
-                        transition="all 0.12s"
-                        bg={serviceRadiusMiles === miles ? '#0A80DB' : 'white'}
-                        color={serviceRadiusMiles === miles ? 'white' : 'slate.600'}
-                        borderColor={serviceRadiusMiles === miles ? '#0A80DB' : '#E3E8EE'}
-                        _hover={{ borderColor: '#0A80DB', color: serviceRadiusMiles === miles ? 'white' : '#0A80DB' }}
-                        onClick={() => setServiceRadius(miles)}
-                      >
-                        {miles} mi
-                      </Box>
-                    ))}
+                    {[15, 25, 40, 60].map(miles => {
+                      const locked = miles > planMaxRadius;
+                      const active = serviceRadiusMiles === miles;
+                      return (
+                        <Box
+                          key={miles}
+                          as="button"
+                          px={3} py={1.5}
+                          fontSize="13px" fontWeight="600" fontFamily="heading"
+                          border="1px solid"
+                          borderRadius="4px"
+                          cursor={locked ? 'not-allowed' : 'pointer'}
+                          opacity={locked ? 0.38 : 1}
+                          transition="all 0.12s"
+                          bg={active ? '#0A80DB' : 'white'}
+                          color={active ? 'white' : locked ? 'slate.400' : 'slate.600'}
+                          borderColor={active ? '#0A80DB' : '#E3E8EE'}
+                          _hover={locked ? {} : { borderColor: '#0A80DB', color: active ? 'white' : '#0A80DB' }}
+                          onClick={() => !locked && setServiceRadius(miles)}
+                        >
+                          {miles} mi{locked ? ' 🔒' : ''}
+                        </Box>
+                      );
+                    })}
                   </Box>
                   <Text fontSize="11px" color="slate.400" mt={1.5}>
-                    You will only receive leads within this distance from your location.
+                    You will only receive leads within this distance.
+                    {planMaxRadius < 60 && (
+                      <> Upgrade your plan to unlock a wider radius.</>
+                    )}
                   </Text>
                 </Box>
 

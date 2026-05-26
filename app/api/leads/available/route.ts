@@ -24,7 +24,7 @@ export async function GET() {
   const [available, accepted, myConversations] = await Promise.all([
     prisma.lead.findMany({
       where: {
-        status: { in: ['WAVE1', 'WAVE2', 'WAVE3', 'NEW'] },
+        status: { in: ['WAVE1', 'WAVE2', 'WAVE3', 'NEW', 'IN_REVIEW'] },
         distributions: { some: { cleanerId: dbUser.id, status: 'INVITED' } },
         conversations: { none: { cleanerId: dbUser.id } },
       },
@@ -45,6 +45,7 @@ export async function GET() {
         lead: { include: { client: { select: { name: true } } } },
       },
       orderBy: { id: 'desc' },
+      // feeStatus and leadFee included by default (not in select — full model)
     }),
   ]);
 

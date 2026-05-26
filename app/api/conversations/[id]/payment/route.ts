@@ -89,6 +89,9 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ id:
     success_url: `${BASE_URL}/dashboard/chat/${id}?paid=1`,
     cancel_url:  `${BASE_URL}/dashboard/chat/${id}`,
     metadata:    { type: 'lead_payment', conversationId: id, cleanerId: user.id },
+    payment_intent_data: {
+      metadata: { type: 'lead_payment', conversationId: id, cleanerId: user.id },
+    },
   });
 
   return NextResponse.json({ checkoutUrl: checkoutSession.url, leadFee });

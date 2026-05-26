@@ -55,8 +55,7 @@ export default function CleanerNav() {
         <NextLink href="/dashboard/cleaner" style={{ flexShrink: 0, textDecoration: 'none' }}>
           <HStack gap={2}>
             <Image src="/2.png" alt="BrazilianClean" width={32} height={32} style={{ borderRadius: "50%", objectFit: "cover", flexShrink: 0 }} />
-            <Text fontWeight="700" fontSize="15px" letterSpacing="-0.02em" color="white" fontFamily="heading"
-              display={{ base: 'none', sm: 'block' }}>
+            <Text fontWeight="700" fontSize={{ base: '13px', md: '15px' }} letterSpacing="-0.02em" color="white" fontFamily="heading">
               Brazilian<Text as="span" color="brand.400">Clean</Text>
             </Text>
           </HStack>

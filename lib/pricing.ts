@@ -4,12 +4,16 @@ import { prisma } from './prisma';
 
 type ServiceKey = 'standard' | 'deep' | 'post-work' | 'moving';
 
-const BASE_PRICE: Record<ServiceKey, number> = {
-  standard:    10,
-  deep:        20,
-  'post-work': 32,
-  moving:      32,
+const PRICE_RANGE: Record<ServiceKey, [number, number]> = {
+  standard:    [8,  12],
+  deep:        [15, 25],
+  'post-work': [25, 40],
+  moving:      [25, 40],
 };
+
+function randInRange(min: number, max: number): number {
+  return Math.round(min + Math.random() * (max - min));
+}
 
 export function detectServiceKey(serviceType: string): ServiceKey {
   const s = serviceType.toLowerCase();
@@ -21,51 +25,49 @@ export function detectServiceKey(serviceType: string): ServiceKey {
 
 // Config shape returned by getLeadPriceConfig()
 export type LeadPriceConfig = {
-  priceMap:       Record<string, number>;
-  sameDayMult:    number;
-  recurringMult:  number;
-  coverageZips:   string[];
+  priceMap:     Record<string, number>;
+  coverageZips: string[];
 };
 
-// Fetch admin-configured pricing from DB; falls back to defaults on any error
+// Fetch admin-configured lead price overrides + coverage ZIPs from DB
 export async function getLeadPriceConfig(): Promise<LeadPriceConfig> {
   try {
     const [prices, platform] = await Promise.all([
-      prisma.$queryRaw<{ id: string; price: number }[]>`SELECT id, price FROM "LeadPriceConfig"`.catch(() => []),
-      prisma.$queryRaw<{ id: string; value: string }[]>`SELECT id, value FROM "LeadPlatformConfig"`.catch(() => []),
+      prisma.$queryRaw<{ id: string; price: number }[]>`
+        SELECT id, price FROM "LeadPriceConfig"
+      `.catch(() => [] as { id: string; price: number }[]),
+      prisma.$queryRaw<{ id: string; value: string }[]>`
+        SELECT id, value FROM "LeadPlatformConfig"
+      `.catch(() => [] as { id: string; value: string }[]),
     ]);
 
     const priceMap: Record<string, number> = {};
     for (const p of prices) priceMap[p.id] = p.price;
 
     const plat = Object.fromEntries(platform.map(p => [p.id, p.value]));
-    const sameDayMult   = parseFloat(plat.same_day_multiplier  ?? '1.5');
-    const recurringMult = parseFloat(plat.recurring_multiplier ?? '1.3');
     const coverageZips: string[] = JSON.parse(plat.coverage_zips ?? '[]');
 
-    return { priceMap, sameDayMult, recurringMult, coverageZips };
+    return { priceMap, coverageZips };
   } catch {
-    return { priceMap: {}, sameDayMult: 1.5, recurringMult: 1.3, coverageZips: [] };
+    return { priceMap: {}, coverageZips: [] };
   }
 }
 
 export function calculateLeadPrice(
   serviceType: string,
-  dateTime: Date,
-  frequency = 'once',
-  config?: Pick<LeadPriceConfig, 'priceMap' | 'sameDayMult' | 'recurringMult'>,
+  _dateTime?: Date,
+  _frequency?: string,
+  config?: Pick<LeadPriceConfig, 'priceMap'>,
 ): number {
   const key = detectServiceKey(serviceType);
-  let price = config?.priceMap?.[key] ?? BASE_PRICE[key];
 
-  const sameDayMult   = config?.sameDayMult   ?? 1.5;
-  const recurringMult = config?.recurringMult ?? 1.3;
+  // If admin has set a fixed override for this key, use it; otherwise pick randomly in range
+  if (config?.priceMap?.[key] !== undefined) {
+    return config.priceMap[key];
+  }
 
-  const hoursUntil = (dateTime.getTime() - Date.now()) / 3_600_000;
-  if (hoursUntil < 24) price = Math.round(price * sameDayMult);
-  if (frequency === 'weekly' || frequency === 'biweekly') price = Math.round(price * recurringMult);
-
-  return price;
+  const [min, max] = PRICE_RANGE[key];
+  return randInRange(min, max);
 }
 
 // ─── Subscription plan details ────────────────────────────────────────────────
@@ -90,7 +92,7 @@ export const PLANS = [
   {
     id:    'BASIC',
     name:  'Basic',
-    price: 39.99,
+    price: 39,
     color: 'brand',
     badge: 'Popular',
     perks: [
@@ -106,7 +108,7 @@ export const PLANS = [
   {
     id:    'PRO',
     name:  'Pro',
-    price: 68.99,
+    price: 79,
     color: 'yellow',
     badge: 'Max',
     perks: [

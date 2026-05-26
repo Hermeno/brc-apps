@@ -1,5 +1,6 @@
 import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
+import { stripe } from '@/lib/stripe';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
@@ -26,6 +27,25 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
     prisma.lead.update({ where: { id }, data: { status: 'CANCELLED' } }),
     prisma.conversation.updateMany({ where: { leadId: id }, data: { status: 'closed' } }),
   ]);
+
+  // Refund any cleaners who paid for this lead
+  const paidConvs = await prisma.conversation.findMany({
+    where: { leadId: id, feeStatus: 'charged', leadFee: { gt: 0 } },
+    select: { cleanerId: true },
+  });
+  for (const conv of paidConvs) {
+    try {
+      const pis = await stripe.paymentIntents.search({
+        query: `metadata['leadId']:'${id}' AND metadata['cleanerId']:'${conv.cleanerId}' AND status:'succeeded'`,
+        limit: 1,
+      });
+      if (pis.data.length > 0) {
+        await stripe.refunds.create({ payment_intent: pis.data[0].id });
+      }
+    } catch (e) {
+      console.error('[cancel] refund error:', e);
+    }
+  }
 
   return NextResponse.json({ ok: true });
 }

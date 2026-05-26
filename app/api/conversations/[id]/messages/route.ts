@@ -73,7 +73,7 @@ export async function POST(req: NextRequest, { params }: Params) {
   const { id } = await params;
   const { content } = await req.json();
 
-  if (!content?.trim()) return NextResponse.json({ error: 'Mensagem vazia' }, { status: 400 });
+  if (!content?.trim()) return NextResponse.json({ error: 'Message is empty' }, { status: 400 });
 
   const conversation = await prisma.conversation.findUnique({ where: { id } });
   if (!conversation) return NextResponse.json({ error: 'Not found' }, { status: 404 });

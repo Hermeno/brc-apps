@@ -19,6 +19,7 @@ function ResetPasswordForm() {
   const [password, setPassword] = useState('');
   const [confirm, setConfirm]   = useState('');
   const [loading, setLoading]   = useState(false);
+  const [codeError, setCodeError] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -35,10 +36,11 @@ function ResetPasswordForm() {
       });
       const data = await res.json();
       if (res.ok) {
+        setCodeError('');
         toaster.create({ title: 'Password reset!', description: 'Sign in with your new password.', type: 'success' });
         router.push('/auth/login');
       } else {
-        toaster.create({ title: 'Error', description: data.error, type: 'error' });
+        setCodeError(data.error ?? 'Invalid or expired code.');
       }
     } finally {
       setLoading(false);
@@ -97,9 +99,23 @@ function ResetPasswordForm() {
                   _focus={{ bg: 'white', borderColor: '#0A80DB' }}
                   maxLength={6}
                 />
-                <Text fontSize="12px" color="#697386" textAlign="center" mt={2} fontFamily="heading">
-                  Code expires in 10 minutes
-                </Text>
+                {codeError ? (
+                  <Box mt={2} p={3} bg="#FEF2F2" border="1px solid #FECACA" borderRadius="4px">
+                    <Text fontSize="12px" color="#DC2626" fontFamily="heading" textAlign="center" mb={1.5}>
+                      {codeError}
+                    </Text>
+                    <NextLink href={`/auth/forgot-password`}>
+                      <Text fontSize="12px" color="#0A80DB" fontWeight="700" textAlign="center"
+                        cursor="pointer" fontFamily="heading" _hover={{ color: '#0870C2' }}>
+                        ← Request a new code
+                      </Text>
+                    </NextLink>
+                  </Box>
+                ) : (
+                  <Text fontSize="12px" color="#697386" textAlign="center" mt={2} fontFamily="heading">
+                    Code expires in 10 minutes
+                  </Text>
+                )}
               </Box>
 
               {/* New password */}

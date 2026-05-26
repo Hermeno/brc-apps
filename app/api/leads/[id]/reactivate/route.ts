@@ -30,6 +30,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   await prisma.$transaction([
     prisma.lead.update({ where: { id: lead.id }, data: { status: 'NEW', dateTime: parsedDate } }),
     prisma.leadDistribution.deleteMany({ where: { leadId: lead.id } }),
+    prisma.conversation.updateMany({ where: { leadId: lead.id }, data: { status: 'closed' } }),
   ]);
 
   runMatching(lead.id).catch(e => console.error('[reactivate matching]', e));

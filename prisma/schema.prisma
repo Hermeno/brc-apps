@@ -204,7 +204,7 @@ model Conversation {
 
   status      String    @default("active")   // active | closed
   leadFee     Float     @default(0)
-  feeStatus   String    @default("pending")  // pending | charged | waived
+  feeStatus   String    @default("pending")  // pending | charged | waived | refunded
 
   messages    Message[]
 
@@ -271,4 +271,12 @@ model PlanConfig {
   id        String   @id  // BASIC | PRO
   price     Float
   updatedAt DateTime @updatedAt
+}
+
+// Tracks every Stripe event ID we've processed — prevents double-execution on retries
+model StripeEvent {
+  id        String   @id  // Stripe event ID (evt_xxx)
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
 }

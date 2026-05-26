@@ -17,8 +17,12 @@ import {
   LucideLayoutDashboard, LucideClipboardList, LucideStar,
   LucideRefreshCw, LucideSearch, LucideChevronLeft, LucideChevronRight,
   LucideCheckCircle2, LucideMapPin, LucidePhone,
-  LucideSettings, LucideDollarSign,
+  LucideSettings, LucideDollarSign, LucideTrendingUp,
 } from 'lucide-react';
+import {
+  AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell,
+  XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend,
+} from 'recharts';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -31,6 +35,9 @@ interface StatsData {
   reviews:       { total: number; avgRating: number };
   recentLeads:   { id: string; serviceType: string; status: string; createdAt: string; client: { name: string | null }; cleaner: { name: string | null } | null }[];
   topCleaners:   { cleanerId: string; ratingAvg: number; totalLeads: number; cleaner: { name: string | null; email: string; isVerified: boolean } }[];
+  leadsTimeSeries:   { date: string; count: number }[];
+  revenueTimeSeries: { date: string; revenue: number }[];
+  totalRevenue:      number;
 }
 interface LeadRow {
   id: string; serviceType: string; address: string; dateTime: string;
@@ -793,137 +800,266 @@ export default function AdminPage() {
       {/* ── Main ── */}
       <Box flex={1} overflowY="auto" bg="#F6F9FC">
 
-        {/* ══ VISÃO GERAL ══ */}
+        {/* ══ OVERVIEW ══ */}
         {tab === 'overview' && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.15 }}>
             <PageHeader title="Overview" sub="Platform operational summary" />
 
-            {/* Stats strip */}
+            {/* KPI strip */}
             <StatStrip items={[
-              { label: 'Total users',        value: loadingStats ? '…' : stats?.users.total ?? 0 },
-              { label: 'Clients',              value: loadingStats ? '…' : stats?.users.totalClients ?? 0 },
-              { label: 'Cleaners',         value: loadingStats ? '…' : stats?.users.totalCleaners ?? 0 },
-              { label: 'Verified',           value: loadingStats ? '…' : stats?.users.verifiedCleaners ?? 0, accent: true },
-              { label: 'Total bookings',         value: loadingStats ? '…' : totalLeads,                          onClick: () => setTab('leads') },
-              { label: 'Completed',            value: loadingStats ? '…' : stats?.leads?.COMPLETED ?? 0,        accent: true, onClick: () => { setTab('leads'); setLeadStatus('COMPLETED'); } },
-              { label: 'Avg. rating',       value: loadingStats ? '…' : `${(stats?.reviews.avgRating ?? 0).toFixed(1)}★` },
-              { label: 'Pending verifs',      value: loadingStats ? '…' : stats?.verifications.pending ?? 0,   onClick: () => setTab('verifications') },
+              { label: 'Total users',    value: loadingStats ? '…' : stats?.users.total ?? 0 },
+              { label: 'Clients',        value: loadingStats ? '…' : stats?.users.totalClients ?? 0 },
+              { label: 'Cleaners',       value: loadingStats ? '…' : stats?.users.totalCleaners ?? 0 },
+              { label: 'Verified',       value: loadingStats ? '…' : stats?.users.verifiedCleaners ?? 0, accent: true },
+              { label: 'Total bookings', value: loadingStats ? '…' : totalLeads, onClick: () => setTab('leads') },
+              { label: 'Completed',      value: loadingStats ? '…' : stats?.leads?.COMPLETED ?? 0, accent: true, onClick: () => { setTab('leads'); setLeadStatus('COMPLETED'); } },
+              { label: 'Revenue',        value: loadingStats ? '…' : `$${((stats?.totalRevenue ?? 0)).toFixed(0)}`, accent: true },
+              { label: 'Avg. rating',    value: loadingStats ? '…' : `${(stats?.reviews.avgRating ?? 0).toFixed(1)}★` },
+              { label: 'Pending verifs', value: loadingStats ? '…' : stats?.verifications.pending ?? 0, onClick: () => setTab('verifications') },
             ]} />
 
-            {/* Detail rows */}
             <Box px={8} py={6}>
-              <SimpleGrid columns={{ base: 1, lg: 2 }} gap={0} border="1px solid #E3E8EE">
+
+              {/* Row 1 — Bookings & Revenue over 30 days */}
+              <SimpleGrid columns={{ base: 1, lg: 2 }} gap={4} mb={4}>
+
+                {/* Bookings per day */}
+                <Box bg="white" border="1px solid #E3E8EE" p={5}>
+                  <HStack justify="space-between" mb={4}>
+                    <Box>
+                      <Text fontSize="11px" fontWeight="700" color="#94A3B8" fontFamily="heading" textTransform="uppercase" letterSpacing="0.07em">New Bookings</Text>
+                      <Text fontSize="13px" color="#475569" fontFamily="heading" mt={0.5}>Last 30 days</Text>
+                    </Box>
+                    <Icon as={LucideClipboardList} w="18px" h="18px" color="#CBD5E1" />
+                  </HStack>
+                  {loadingStats ? (
+                    <Box h="180px" display="flex" alignItems="center" justifyContent="center">
+                      <Text color="#CBD5E1" fontSize="13px" fontFamily="heading">Loading…</Text>
+                    </Box>
+                  ) : (
+                    <ResponsiveContainer width="100%" height={180}>
+                      <AreaChart data={stats?.leadsTimeSeries ?? []} margin={{ top: 4, right: 4, left: -20, bottom: 0 }}>
+                        <defs>
+                          <linearGradient id="colorLeads" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="5%"  stopColor="#0A80DB" stopOpacity={0.15} />
+                            <stop offset="95%" stopColor="#0A80DB" stopOpacity={0} />
+                          </linearGradient>
+                        </defs>
+                        <CartesianGrid strokeDasharray="3 3" stroke="#F1F5F9" />
+                        <XAxis dataKey="date" tick={{ fontSize: 10, fill: '#94A3B8', fontFamily: 'var(--font-dm-sans,sans-serif)' }}
+                          tickFormatter={d => d.slice(5)} interval="preserveStartEnd" />
+                        <YAxis tick={{ fontSize: 10, fill: '#94A3B8', fontFamily: 'var(--font-dm-sans,sans-serif)' }} allowDecimals={false} />
+                        <Tooltip
+                          contentStyle={{ border: '1px solid #E3E8EE', borderRadius: 4, fontSize: 12, fontFamily: 'var(--font-dm-sans,sans-serif)' }}
+                          labelStyle={{ color: '#0A2540', fontWeight: 700 }}
+                          formatter={(v: any) => [v, 'Bookings']}
+                        />
+                        <Area type="monotone" dataKey="count" stroke="#0A80DB" strokeWidth={2} fill="url(#colorLeads)" dot={false} activeDot={{ r: 4 }} />
+                      </AreaChart>
+                    </ResponsiveContainer>
+                  )}
+                </Box>
+
+                {/* Revenue per day */}
+                <Box bg="white" border="1px solid #E3E8EE" p={5}>
+                  <HStack justify="space-between" mb={4}>
+                    <Box>
+                      <Text fontSize="11px" fontWeight="700" color="#94A3B8" fontFamily="heading" textTransform="uppercase" letterSpacing="0.07em">Revenue</Text>
+                      <Text fontSize="13px" color="#475569" fontFamily="heading" mt={0.5}>Last 30 days · lead fees</Text>
+                    </Box>
+                    <Icon as={LucideDollarSign} w="18px" h="18px" color="#CBD5E1" />
+                  </HStack>
+                  {loadingStats ? (
+                    <Box h="180px" display="flex" alignItems="center" justifyContent="center">
+                      <Text color="#CBD5E1" fontSize="13px" fontFamily="heading">Loading…</Text>
+                    </Box>
+                  ) : (
+                    <ResponsiveContainer width="100%" height={180}>
+                      <AreaChart data={stats?.revenueTimeSeries ?? []} margin={{ top: 4, right: 4, left: -8, bottom: 0 }}>
+                        <defs>
+                          <linearGradient id="colorRev" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="5%"  stopColor="#10B981" stopOpacity={0.15} />
+                            <stop offset="95%" stopColor="#10B981" stopOpacity={0} />
+                          </linearGradient>
+                        </defs>
+                        <CartesianGrid strokeDasharray="3 3" stroke="#F1F5F9" />
+                        <XAxis dataKey="date" tick={{ fontSize: 10, fill: '#94A3B8', fontFamily: 'var(--font-dm-sans,sans-serif)' }}
+                          tickFormatter={d => d.slice(5)} interval="preserveStartEnd" />
+                        <YAxis tick={{ fontSize: 10, fill: '#94A3B8', fontFamily: 'var(--font-dm-sans,sans-serif)' }}
+                          tickFormatter={v => `$${v}`} />
+                        <Tooltip
+                          contentStyle={{ border: '1px solid #E3E8EE', borderRadius: 4, fontSize: 12, fontFamily: 'var(--font-dm-sans,sans-serif)' }}
+                          labelStyle={{ color: '#0A2540', fontWeight: 700 }}
+                          formatter={(v: any) => [`$${Number(v).toFixed(2)}`, 'Revenue']}
+                        />
+                        <Area type="monotone" dataKey="revenue" stroke="#10B981" strokeWidth={2} fill="url(#colorRev)" dot={false} activeDot={{ r: 4 }} />
+                      </AreaChart>
+                    </ResponsiveContainer>
+                  )}
+                </Box>
+              </SimpleGrid>
+
+              {/* Row 2 — Bookings by status + User breakdown */}
+              <SimpleGrid columns={{ base: 1, lg: 2 }} gap={4} mb={4}>
+
+                {/* Bar chart: bookings by status */}
+                <Box bg="white" border="1px solid #E3E8EE" p={5}>
+                  <HStack justify="space-between" mb={4}>
+                    <Box>
+                      <Text fontSize="11px" fontWeight="700" color="#94A3B8" fontFamily="heading" textTransform="uppercase" letterSpacing="0.07em">Bookings by status</Text>
+                      <Text fontSize="13px" color="#475569" fontFamily="heading" mt={0.5}>{totalLeads} total</Text>
+                    </Box>
+                    <Icon as={LucideTrendingUp} w="18px" h="18px" color="#CBD5E1" />
+                  </HStack>
+                  {loadingStats ? (
+                    <Box h="180px" display="flex" alignItems="center" justifyContent="center">
+                      <Text color="#CBD5E1" fontSize="13px" fontFamily="heading">Loading…</Text>
+                    </Box>
+                  ) : (
+                    <ResponsiveContainer width="100%" height={180}>
+                      <BarChart
+                        data={Object.entries(LEAD_STATUS).map(([key, cfg]) => ({
+                          name: cfg.label, count: stats?.leads?.[key] ?? 0, fill: cfg.dot, key,
+                        }))}
+                        margin={{ top: 4, right: 4, left: -20, bottom: 0 }}
+                        barSize={20}
+                      >
+                        <CartesianGrid strokeDasharray="3 3" stroke="#F1F5F9" vertical={false} />
+                        <XAxis dataKey="name" tick={{ fontSize: 9, fill: '#94A3B8', fontFamily: 'var(--font-dm-sans,sans-serif)' }} />
+                        <YAxis tick={{ fontSize: 10, fill: '#94A3B8', fontFamily: 'var(--font-dm-sans,sans-serif)' }} allowDecimals={false} />
+                        <Tooltip
+                          contentStyle={{ border: '1px solid #E3E8EE', borderRadius: 4, fontSize: 12, fontFamily: 'var(--font-dm-sans,sans-serif)' }}
+                          cursor={{ fill: '#F6F9FC' }}
+                          formatter={(v: any) => [v, 'Bookings']}
+                        />
+                        <Bar dataKey="count" radius={[3, 3, 0, 0]}>
+                          {Object.entries(LEAD_STATUS).map(([key, cfg]) => (
+                            <Cell key={key} fill={cfg.dot} />
+                          ))}
+                        </Bar>
+                      </BarChart>
+                    </ResponsiveContainer>
+                  )}
+                </Box>
+
+                {/* Pie chart: users */}
+                <Box bg="white" border="1px solid #E3E8EE" p={5}>
+                  <HStack justify="space-between" mb={4}>
+                    <Box>
+                      <Text fontSize="11px" fontWeight="700" color="#94A3B8" fontFamily="heading" textTransform="uppercase" letterSpacing="0.07em">User breakdown</Text>
+                      <Text fontSize="13px" color="#475569" fontFamily="heading" mt={0.5}>{stats?.users.total ?? 0} registered</Text>
+                    </Box>
+                    <Icon as={LucideUsers} w="18px" h="18px" color="#CBD5E1" />
+                  </HStack>
+                  {loadingStats ? (
+                    <Box h="180px" display="flex" alignItems="center" justifyContent="center">
+                      <Text color="#CBD5E1" fontSize="13px" fontFamily="heading">Loading…</Text>
+                    </Box>
+                  ) : (
+                    <Flex align="center" justify="center" gap={8} h="180px">
+                      <PieChart width={140} height={140}>
+                        <Pie
+                          data={[
+                            { name: 'Clients',          value: stats?.users.totalClients ?? 0 },
+                            { name: 'Cleaners',         value: stats?.users.totalCleaners ?? 0 },
+                            { name: 'Unverified',       value: (stats?.users.totalCleaners ?? 0) - (stats?.users.verifiedCleaners ?? 0) },
+                          ].filter(d => d.value > 0)}
+                          cx={65} cy={65} innerRadius={40} outerRadius={60}
+                          dataKey="value" paddingAngle={3}
+                        >
+                          <Cell fill="#0A80DB" />
+                          <Cell fill="#10B981" />
+                          <Cell fill="#F59E0B" />
+                        </Pie>
+                        <Tooltip
+                          contentStyle={{ border: '1px solid #E3E8EE', borderRadius: 4, fontSize: 12, fontFamily: 'var(--font-dm-sans,sans-serif)' }}
+                        />
+                      </PieChart>
+                      <VStack gap={2} align="flex-start">
+                        {[
+                          { color: '#0A80DB', label: 'Clients',    value: stats?.users.totalClients ?? 0 },
+                          { color: '#10B981', label: 'Verified cleaners',  value: stats?.users.verifiedCleaners ?? 0 },
+                          { color: '#F59E0B', label: 'Unverified', value: (stats?.users.totalCleaners ?? 0) - (stats?.users.verifiedCleaners ?? 0) },
+                        ].map(item => (
+                          <HStack key={item.label} gap={2}>
+                            <Box w="8px" h="8px" borderRadius="full" bg={item.color} flexShrink={0} />
+                            <Text fontSize="12px" color="#475569" fontFamily="heading">{item.label}</Text>
+                            <Text fontSize="12px" fontWeight="700" color="#0A2540" fontFamily="heading">{item.value}</Text>
+                          </HStack>
+                        ))}
+                      </VStack>
+                    </Flex>
+                  )}
+                </Box>
+              </SimpleGrid>
+
+              {/* Row 3 — Recent activity + Top cleaners */}
+              <SimpleGrid columns={{ base: 1, lg: 2 }} gap={4}>
 
                 {/* Recent leads */}
-                <Box borderRight={{ lg: '1px solid #E3E8EE' }}>
-                  <Box px={5} py={3} borderBottom="1px solid #E3E8EE" bg="white">
-                    <Text fontSize="11px" fontWeight="700" color="slate.400" fontFamily="heading" textTransform="uppercase" letterSpacing="0.07em">
-                      Recent activity
-                    </Text>
+                <Box bg="white" border="1px solid #E3E8EE">
+                  <Box px={5} py={3} borderBottom="1px solid #E3E8EE">
+                    <Text fontSize="11px" fontWeight="700" color="#94A3B8" fontFamily="heading" textTransform="uppercase" letterSpacing="0.07em">Recent activity</Text>
                   </Box>
-                  <Box bg="white">
-                    {(stats?.recentLeads ?? []).map((l, i) => (
-                      <HStack
-                        key={l.id} px={5} py={3}
-                        borderBottom={i < (stats?.recentLeads.length ?? 1) - 1 ? '1px solid #F1F5F9' : 'none'}
-                        gap={3}
-                      >
-                        <Box
-                          w="6px" h="6px" borderRadius="full" flexShrink={0}
-                          bg={l.status === 'COMPLETED' ? '#10B981' : l.status === 'ACCEPTED' ? '#0A80DB' : l.status === 'CANCELLED' ? '#F43F5E' : '#F59E0B'}
-                        />
-                        <Box flex={1} minW={0}>
-                          <Text fontSize="13px" fontWeight="500" color="slate.800" fontFamily="heading" lineClamp={1}>
-                            {l.serviceType} — {l.client.name || '?'}
-                          </Text>
-                          <Text fontSize="11px" color="slate.400">
-                            {l.cleaner ? `Handled by ${l.cleaner.name}` : 'Awaiting a cleaner'}
-                          </Text>
-                        </Box>
-                        <StatusDot status={l.status} />
-                      </HStack>
-                    ))}
-                    {!stats?.recentLeads?.length && (
-                      <Box px={5} py={6}><Text fontSize="13px" color="slate.300" fontFamily="heading">No data</Text></Box>
-                    )}
-                  </Box>
+                  {(stats?.recentLeads ?? []).map((l, i) => (
+                    <HStack
+                      key={l.id} px={5} py={3}
+                      borderBottom={i < (stats?.recentLeads.length ?? 1) - 1 ? '1px solid #F1F5F9' : 'none'}
+                      gap={3}
+                    >
+                      <Box w="6px" h="6px" borderRadius="full" flexShrink={0}
+                        bg={l.status === 'COMPLETED' ? '#10B981' : l.status === 'ACCEPTED' ? '#0A80DB' : l.status === 'CANCELLED' ? '#F43F5E' : '#F59E0B'} />
+                      <Box flex={1} minW={0}>
+                        <Text fontSize="13px" fontWeight="500" color="#0A2540" fontFamily="heading" lineClamp={1}>
+                          {l.serviceType} — {l.client.name || '?'}
+                        </Text>
+                        <Text fontSize="11px" color="#697386">
+                          {l.cleaner ? `Handled by ${l.cleaner.name}` : 'Awaiting a cleaner'}
+                        </Text>
+                      </Box>
+                      <StatusDot status={l.status} />
+                    </HStack>
+                  ))}
+                  {!stats?.recentLeads?.length && (
+                    <Box px={5} py={6}><Text fontSize="13px" color="#CBD5E1" fontFamily="heading">No data</Text></Box>
+                  )}
                 </Box>
 
                 {/* Top cleaners */}
-                <Box>
-                  <Box px={5} py={3} borderBottom="1px solid #E3E8EE" bg="white">
-                    <Text fontSize="11px" fontWeight="700" color="slate.400" fontFamily="heading" textTransform="uppercase" letterSpacing="0.07em">
-                      Top Cleaners
-                    </Text>
+                <Box bg="white" border="1px solid #E3E8EE">
+                  <Box px={5} py={3} borderBottom="1px solid #E3E8EE">
+                    <Text fontSize="11px" fontWeight="700" color="#94A3B8" fontFamily="heading" textTransform="uppercase" letterSpacing="0.07em">Top cleaners</Text>
                   </Box>
-                  <Box bg="white">
-                    {(stats?.topCleaners ?? []).map((c, i) => (
-                      <HStack
-                        key={c.cleanerId} px={5} py={3}
-                        borderBottom={i < (stats?.topCleaners.length ?? 1) - 1 ? '1px solid #F1F5F9' : 'none'}
-                        gap={3}
-                      >
-                        <Text fontSize="11px" fontWeight="700" color="slate.300" fontFamily="heading" w="16px">{i + 1}</Text>
-                        <Box
-                          w="28px" h="28px" bg={SIDEBAR_BG} borderRadius="full" flexShrink={0}
-                          display="flex" alignItems="center" justifyContent="center"
-                          fontSize="10px" fontWeight="700" color="white"
-                        >
-                          {c.cleaner.name?.[0]?.toUpperCase() ?? 'P'}
-                        </Box>
-                        <Box flex={1} minW={0}>
-                          <HStack gap={1.5}>
-                            <Text fontSize="13px" fontWeight="500" color="slate.800" fontFamily="heading" lineClamp={1}>{c.cleaner.name || '—'}</Text>
-                            {c.cleaner.isVerified && <Icon as={LucideCheckCircle2} w="12px" h="12px" color="#059669" />}
-                          </HStack>
-                          <Text fontSize="11px" color="slate.400">{c.totalLeads} bookings</Text>
-                        </Box>
-                        <HStack gap={1}>
-                          <Text fontSize="13px" fontWeight="700" color="#F59E0B">★</Text>
-                          <Text fontSize="13px" fontWeight="700" color="slate.700" fontFamily="heading">{c.ratingAvg.toFixed(1)}</Text>
+                  {(stats?.topCleaners ?? []).map((c, i) => (
+                    <HStack
+                      key={c.cleanerId} px={5} py={3}
+                      borderBottom={i < (stats?.topCleaners.length ?? 1) - 1 ? '1px solid #F1F5F9' : 'none'}
+                      gap={3}
+                    >
+                      <Text fontSize="11px" fontWeight="700" color="#CBD5E1" fontFamily="heading" w="16px">{i + 1}</Text>
+                      <Box w="28px" h="28px" bg={SIDEBAR_BG} borderRadius="full" flexShrink={0}
+                        display="flex" alignItems="center" justifyContent="center" fontSize="10px" fontWeight="700" color="white">
+                        {c.cleaner.name?.[0]?.toUpperCase() ?? 'P'}
+                      </Box>
+                      <Box flex={1} minW={0}>
+                        <HStack gap={1.5}>
+                          <Text fontSize="13px" fontWeight="500" color="#0A2540" fontFamily="heading" lineClamp={1}>{c.cleaner.name || '—'}</Text>
+                          {c.cleaner.isVerified && <Icon as={LucideCheckCircle2} w="12px" h="12px" color="#059669" />}
                         </HStack>
+                        <Text fontSize="11px" color="#697386">{c.totalLeads} bookings</Text>
+                      </Box>
+                      <HStack gap={1}>
+                        <Text fontSize="13px" fontWeight="700" color="#F59E0B">★</Text>
+                        <Text fontSize="13px" fontWeight="700" color="#0A2540" fontFamily="heading">{c.ratingAvg.toFixed(1)}</Text>
                       </HStack>
-                    ))}
-                    {!stats?.topCleaners?.length && (
-                      <Box px={5} py={6}><Text fontSize="13px" color="slate.300" fontFamily="heading">No data</Text></Box>
-                    )}
-                  </Box>
+                    </HStack>
+                  ))}
+                  {!stats?.topCleaners?.length && (
+                    <Box px={5} py={6}><Text fontSize="13px" color="#CBD5E1" fontFamily="heading">No data</Text></Box>
+                  )}
                 </Box>
 
               </SimpleGrid>
-
-              {/* Leads by status — horizontal bar */}
-              <Box mt={0} border="1px solid #E3E8EE" borderTop="none" bg="white">
-                <Box px={5} py={3} borderBottom="1px solid #E3E8EE">
-                  <Text fontSize="11px" fontWeight="700" color="slate.400" fontFamily="heading" textTransform="uppercase" letterSpacing="0.07em">
-                    Bookings by status
-                  </Text>
-                </Box>
-                <HStack gap={0} px={5} py={4} flexWrap="wrap">
-                  {Object.entries(LEAD_STATUS).map(([key, cfg]) => {
-                    const count = stats?.leads?.[key] ?? 0;
-                    return (
-                      <Box
-                        key={key}
-                        as="button"
-                        px={4} py={3}
-                        cursor="pointer"
-                        transition="background 0.1s"
-                        _hover={{ bg: 'slate.50' }}
-                        onClick={() => { setTab('leads'); setLeadStatus(key); }}
-                        textAlign="left"
-                        borderRight="1px solid #F1F5F9"
-                      >
-                        <Text fontSize="18px" fontWeight="800" fontFamily="heading" color="slate.900" letterSpacing="-0.02em" lineHeight={1}>{count}</Text>
-                        <HStack gap={1.5} mt={1}>
-                          <Box w="6px" h="6px" bg={cfg.dot} borderRadius="full" flexShrink={0} />
-                          <Text fontSize="11px" fontWeight="500" color="slate.400" fontFamily="heading" whiteSpace="nowrap">{cfg.label}</Text>
-                        </HStack>
-                      </Box>
-                    );
-                  })}
-                </HStack>
-              </Box>
             </Box>
           </motion.div>
         )}
@@ -1552,10 +1688,6 @@ const SERVICE_META: { id: string; label: string; range: string }[] = [
   { id: 'moving',    label: 'Move In / Move Out',   range: '$25–$40' },
 ];
 
-const MULTIPLIER_META: { id: string; label: string; description: string }[] = [
-  { id: 'same_day_multiplier',  label: 'Same-day urgency',  description: 'Applied when booking is < 24 h away' },
-  { id: 'recurring_multiplier', label: 'Recurring premium', description: 'Applied for weekly / bi-weekly frequency' },
-];
 
 type LeadPriceRow      = { id: string; price: number };
 type LeadPlatformRow   = { id: string; value: string };
@@ -1699,72 +1831,6 @@ function LeadPricingPanel() {
         </VStack>
       </Box>
 
-      {/* ── Multipliers ── */}
-      <Box>
-        <Text fontSize="13px" fontWeight="700" color="slate.500" fontFamily="heading"
-          letterSpacing="0.08em" textTransform="uppercase" mb={3}>
-          Price Multipliers
-        </Text>
-        <VStack gap={0} align="stretch" border="1px solid" borderColor="slate.200">
-          {MULTIPLIER_META.map((m, i) => {
-            const current = getPlatformValue(m.id);
-            const isEditing = editId === m.id;
-            return (
-              <Flex
-                key={m.id}
-                align="center" justify="space-between"
-                px={5} py={4}
-                bg="white"
-                borderBottom={i < MULTIPLIER_META.length - 1 ? '1px solid' : 'none'}
-                borderColor="slate.100"
-              >
-                <Box>
-                  <Text fontSize="14px" fontWeight="600" color="slate.900" fontFamily="heading">{m.label}</Text>
-                  <Text fontSize="11px" color="slate.400" fontFamily="heading">{m.description}</Text>
-                </Box>
-                {isEditing ? (
-                  <HStack gap={2}>
-                    <Input
-                      type="number" step="0.1" value={draft}
-                      onChange={e => setDraft(e.target.value)}
-                      w="80px" size="sm" borderRadius="4px" fontFamily="heading" fontWeight="700"
-                      autoFocus
-                      onKeyDown={e => {
-                        if (e.key === 'Enter') savePlatform(m.id, draft);
-                        if (e.key === 'Escape') setEditId(null);
-                      }}
-                    />
-                    <Text fontSize="12px" color="slate.400" fontFamily="heading">×</Text>
-                    <Button size="sm" bg="brand.500" color="white" borderRadius="4px"
-                      loading={saving} loadingText="…" onClick={() => savePlatform(m.id, draft)}
-                      fontFamily="heading" fontWeight="600" fontSize="12px" px={3}>
-                      <Icon as={LucideSave} w={3.5} h={3.5} mr={1.5} />Save
-                    </Button>
-                    <Button size="sm" variant="ghost" borderRadius="4px" color="slate.400"
-                      onClick={() => setEditId(null)} px={2}>
-                      <Icon as={LucideX} w={3.5} h={3.5} />
-                    </Button>
-                  </HStack>
-                ) : (
-                  <HStack gap={3}>
-                    <Text fontSize="22px" fontWeight="800" fontFamily="heading"
-                      letterSpacing="-0.04em" color="slate.900">
-                      {current ? `${current}×` : '—'}
-                    </Text>
-                    <Button size="sm" variant="outline" borderColor="slate.200" color="slate.500"
-                      borderRadius="4px" fontWeight="600" fontSize="12px" fontFamily="heading"
-                      _hover={{ borderColor: 'brand.300', color: 'brand.600', bg: 'brand.50' }}
-                      onClick={() => { setEditId(m.id); setDraft(current); }}>
-                      <Icon as={LucidePencil} w={3.5} h={3.5} mr={1.5} />Edit
-                    </Button>
-                  </HStack>
-                )}
-              </Flex>
-            );
-          })}
-        </VStack>
-      </Box>
-
       {/* ── Coverage ZIPs ── */}
       <Box>
         <Flex justify="space-between" align="center" mb={3}>
@@ -1855,7 +1921,7 @@ function LeadPricingPanel() {
             </Text>
             <Text fontSize="12px" color="#0A80DB" fontFamily="heading" lineHeight={1.6}>
               The base price is charged to the cleaner who accepts the lead.
-              Same-day and recurring multipliers stack on top of the base price.
+              Prices are randomly picked within each service range at lead creation.
               ZIP coverage, when configured, restricts which areas can submit leads.
             </Text>
           </VStack>

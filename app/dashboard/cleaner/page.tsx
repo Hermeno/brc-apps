@@ -30,11 +30,14 @@ type Lead = {
   estimatedMinPrice?: number;
   estimatedMaxPrice?: number;
   estimatedHours?: number;
+  leadPrice?: number;
 };
 
 type MyConversation = {
   id: string;
   status: string;
+  feeStatus: string;
+  leadFee: number;
   lead: Lead & { client: { name: string } | null };
 };
 
@@ -104,8 +107,8 @@ export default function CleanerDashboard() {
   const [loading, setLoading]             = useState(true);
   const [showHistory, setShowHistory]     = useState(false);
 
-  const fetchLeads = useCallback(async () => {
-    setLoading(true);
+  const fetchLeads = useCallback(async (silent = false) => {
+    if (!silent) setLoading(true);
     try {
       const res = await fetch('/api/leads/available');
       if (res.ok) {
@@ -114,7 +117,7 @@ export default function CleanerDashboard() {
         setAccepted(data.accepted);
         setConversations(data.conversations ?? []);
       }
-    } finally { setLoading(false); }
+    } finally { if (!silent) setLoading(false); }
   }, []);
 
   useEffect(() => {
@@ -122,6 +125,25 @@ export default function CleanerDashboard() {
     fetch('/api/cleaner/verification')
       .then(r => r.json())
       .then(d => setVerifyStatus(d.verification?.status ?? 'NONE'));
+
+    if (typeof window !== 'undefined') {
+      const p = new URLSearchParams(window.location.search);
+      if (p.get('lead_paid') === '1') {
+        toaster.create({
+          title: 'Payment successful!',
+          description: 'Lead unlocked. Your conversation will appear below.',
+          type: 'success',
+        });
+        window.history.replaceState({}, '', window.location.pathname);
+        // Poll silently until the Stripe webhook creates the conversation (up to ~10 s)
+        let tries = 0;
+        const poll = setInterval(() => {
+          tries++;
+          fetchLeads(true);
+          if (tries >= 5) clearInterval(poll);
+        }, 2000);
+      }
+    }
   }, [fetchLeads]);
 
   const handleRespond = async (leadId: string) => {
@@ -132,18 +154,16 @@ export default function CleanerDashboard() {
       if (res.ok) {
         if (data.alreadyResponded) {
           router.push(`/dashboard/chat/${data.conversationId}`);
-        } else {
-          toaster.create({
-            title: `Lead accepted! Fee $${data.leadFee} charged.`,
-            description: 'You can now chat with the client.',
-            type: 'success',
-          });
-          router.push(`/dashboard/chat/${data.conversationId}`);
+        } else if (data.checkoutUrl) {
+          // Thumbtack model: pay first, then get access
+          window.location.href = data.checkoutUrl;
+          return; // keep button in loading state while navigating
         }
       } else throw new Error(data.error);
     } catch (error: any) {
       toaster.create({ title: error.message, type: 'error' });
-    } finally { setResponding(null); }
+    }
+    setResponding(null);
   };
 
   const activeJobs    = accepted.filter(l => l.status !== 'COMPLETED');
@@ -237,7 +257,7 @@ export default function CleanerDashboard() {
             <Button
               size="xs" variant="ghost" color="#697386" borderRadius="4px" fontFamily="heading"
               _hover={{ color: '#0A80DB', bg: 'rgba(26,127,160,0.06)' }}
-              onClick={fetchLeads} loading={loading}
+              onClick={() => fetchLeads()} loading={loading}
             >
               <Icon as={LucideRefreshCw} w={3} h={3} mr={1.5} />Refresh
             </Button>
@@ -363,7 +383,7 @@ export default function CleanerDashboard() {
                       loadingText="…"
                     >
                       <Icon as={LucideBanknote} w={3.5} h={3.5} mr={1.5} />
-                      Accept lead
+                      Accept &amp; Pay{lead.leadPrice ? ` $${lead.leadPrice}` : ''}
                     </Button>
                   </Flex>
                 </Box>

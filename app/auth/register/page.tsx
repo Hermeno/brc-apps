@@ -7,7 +7,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { toaster } from '@/lib/toaster';
 import NextLink from 'next/link';
-import { LucideArrowRight, LucideCheckCircle } from 'lucide-react';
+import { LucideArrowRight, LucideArrowLeft, LucideCheckCircle } from 'lucide-react';
 import Image from 'next/image';
 
 function formatUSPhone(raw: string) {
@@ -124,6 +124,17 @@ export default function RegisterPage() {
       {/* ── Right panel ── */}
       <Flex flex={1} bg="white" alignItems="center" justifyContent="center" px={{ base: 5, md: 12 }} py={12}>
         <Box w="full" maxW="340px">
+
+          {/* Back to home */}
+          <Box mb={6}>
+            <NextLink href="/" style={{ textDecoration: 'none' }}>
+              <HStack gap={1.5} display="inline-flex"
+                _hover={{ color: '#0A80DB' }} color="#697386" transition="color 0.15s">
+                <Icon as={LucideArrowLeft} w={3.5} h={3.5} />
+                <Text fontSize="13px" fontFamily="heading" fontWeight="500">Back to home</Text>
+              </HStack>
+            </NextLink>
+          </Box>
 
           {/* Mobile logo */}
           <HStack gap={2.5} mb={10} display={{ base: 'flex', lg: 'none' }}>

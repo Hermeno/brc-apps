@@ -3,19 +3,32 @@ import { prisma } from '@/lib/prisma';
 import { NextRequest, NextResponse } from 'next/server';
 import { ensureRadiusColumn } from '@/lib/geo';
 
+const PLAN_MAX_RADIUS: Record<string, number> = { FREE: 25, BASIC: 40, PRO: 60, PREMIUM: 60 };
+
 export async function PUT(req: NextRequest) {
   const session = await auth();
   if (!session?.user?.email) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
   const user = await prisma.user.findUnique({
     where: { email: session.user.email },
-    select: { id: true, role: true },
+    select: { id: true, role: true, plan: true },
   });
   if (!user || user.role !== 'CLEANER') return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
 
   await ensureRadiusColumn();
 
   const { bio, serviceTypes, avatarUrl, latitude, longitude, serviceRadiusMiles } = await req.json();
+
+  // Enforce plan radius cap — prevent API bypass of UI limits
+  if (serviceRadiusMiles !== undefined) {
+    const maxRadius = PLAN_MAX_RADIUS[user.plan ?? 'FREE'] ?? 25;
+    if (Number(serviceRadiusMiles) > maxRadius) {
+      return NextResponse.json(
+        { error: `Your ${user.plan} plan allows a maximum radius of ${maxRadius} mi. Upgrade to increase it.` },
+        { status: 400 },
+      );
+    }
+  }
 
   const updated = await prisma.user.update({
     where: { id: user.id },

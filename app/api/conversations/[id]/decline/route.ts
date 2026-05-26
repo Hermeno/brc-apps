@@ -1,5 +1,6 @@
 import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
+import { stripe } from '@/lib/stripe';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
@@ -16,6 +17,21 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
     return NextResponse.json({ error: 'Not found' }, { status: 404 });
 
   await prisma.conversation.update({ where: { id }, data: { status: 'declined' } });
+
+  // Refund the cleaner if they already paid for this lead
+  if (conv.feeStatus === 'charged' && (conv.leadFee ?? 0) > 0) {
+    try {
+      const pis = await stripe.paymentIntents.search({
+        query: `metadata['leadId']:'${conv.leadId}' AND metadata['cleanerId']:'${conv.cleanerId}' AND status:'succeeded'`,
+        limit: 1,
+      });
+      if (pis.data.length > 0) {
+        await stripe.refunds.create({ payment_intent: pis.data[0].id });
+      }
+    } catch (e) {
+      console.error('[decline] refund error:', e);
+    }
+  }
 
   // If no other active conversations → revert lead to WAVE1 for redistribution
   const remaining = await prisma.conversation.count({

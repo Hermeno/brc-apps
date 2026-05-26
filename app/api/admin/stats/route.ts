@@ -2,6 +2,20 @@ import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { NextResponse } from 'next/server';
 
+function toDateKey(date: Date) {
+  return date.toISOString().slice(0, 10); // YYYY-MM-DD
+}
+
+function buildDayBuckets(daysBack: number): Record<string, number> {
+  const buckets: Record<string, number> = {};
+  for (let i = daysBack - 1; i >= 0; i--) {
+    const d = new Date();
+    d.setDate(d.getDate() - i);
+    buckets[toDateKey(d)] = 0;
+  }
+  return buckets;
+}
+
 export async function GET() {
   const session = await auth();
   if (!session?.user?.email) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -12,6 +26,9 @@ export async function GET() {
   });
   if (me?.role !== 'ADMIN') return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
 
+  const thirtyDaysAgo = new Date();
+  thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
   const [
     totalClients,
     totalCleaners,
@@ -21,6 +38,9 @@ export async function GET() {
     reviewAgg,
     recentLeads,
     topCleaners,
+    leadsLast30,
+    revenueConvs,
+    totalRevenue,
   ] = await Promise.all([
     prisma.user.count({ where: { role: 'CLIENT' } }),
     prisma.user.count({ where: { role: 'CLEANER' } }),
@@ -43,10 +63,40 @@ export async function GET() {
       where: { ratingAvg: { gt: 0 } },
       include: { cleaner: { select: { name: true, email: true, isVerified: true } } },
     }),
+    prisma.lead.findMany({
+      where: { createdAt: { gte: thirtyDaysAgo } },
+      select: { createdAt: true },
+      orderBy: { createdAt: 'asc' },
+    }),
+    prisma.conversation.findMany({
+      where: { createdAt: { gte: thirtyDaysAgo }, feeStatus: 'charged' },
+      select: { createdAt: true, leadFee: true },
+      orderBy: { createdAt: 'asc' },
+    }),
+    prisma.conversation.aggregate({
+      where: { feeStatus: 'charged' },
+      _sum: { leadFee: true },
+    }),
   ]);
 
   const byStatus: Record<string, number> = {};
   for (const row of leadByStatus) byStatus[row.status] = row._count.id;
+
+  // Build time-series buckets for last 30 days
+  const leadBuckets  = buildDayBuckets(30);
+  const revBuckets   = buildDayBuckets(30);
+
+  for (const l of leadsLast30) {
+    const key = toDateKey(new Date(l.createdAt));
+    if (key in leadBuckets) leadBuckets[key]++;
+  }
+  for (const c of revenueConvs) {
+    const key = toDateKey(new Date(c.createdAt));
+    if (key in revBuckets) revBuckets[key] = (revBuckets[key] ?? 0) + (c.leadFee ?? 0);
+  }
+
+  const leadsTimeSeries  = Object.entries(leadBuckets).map(([date, count])   => ({ date, count }));
+  const revenueTimeSeries = Object.entries(revBuckets).map(([date, revenue]) => ({ date, revenue }));
 
   return NextResponse.json({
     users:         { totalClients, totalCleaners, verifiedCleaners, total: totalClients + totalCleaners },
@@ -55,5 +105,8 @@ export async function GET() {
     reviews:       { total: reviewAgg._count.id, avgRating: reviewAgg._avg.rating ?? 0 },
     recentLeads,
     topCleaners,
+    leadsTimeSeries,
+    revenueTimeSeries,
+    totalRevenue:  totalRevenue._sum.leadFee ?? 0,
   });
 }
