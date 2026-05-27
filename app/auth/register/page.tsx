@@ -175,7 +175,7 @@ export default function RegisterPage() {
               <Box>
                 <Text fontSize="12px" fontWeight="500" color="#425466" letterSpacing="-0.01em"
                   fontFamily="heading" mb={1.5}>Phone number</Text>
-                <Flex align="center" border="1px solid" borderColor="#E3E8EE" borderRadius="9999px"
+                <Flex align="center" border="1px solid" borderColor="#E3E8EE" borderRadius="8px"
                   h="38px" px={4} bg="white" _focusWithin={{ borderColor: '#0A80DB' }} gap={2}>
                   <Text fontSize="13.5px" color="#425466" fontFamily="heading" flexShrink={0}
                     borderRight="1px solid #E3E8EE" pr={2}>+1</Text>
