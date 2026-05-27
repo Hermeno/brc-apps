@@ -21,10 +21,17 @@ export async function POST(req: NextRequest) {
   // ── Idempotency guard ─────────────────────────────────────────────────────
   // Stripe retries on timeout — reject duplicates before any processing.
   try {
+    // Create table if it doesn't exist yet (handles fresh deploys before prisma db push)
+    await prisma.$executeRawUnsafe(`
+      CREATE TABLE IF NOT EXISTS "StripeEvent" (
+        "id"        TEXT         NOT NULL,
+        "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        CONSTRAINT "StripeEvent_pkey" PRIMARY KEY ("id")
+      )
+    `);
     await prisma.stripeEvent.create({ data: { id: event.id } });
   } catch (err: any) {
     if (err.code === 'P2002') {
-      // Already processed — acknowledge and exit
       return NextResponse.json({ received: true });
     }
     throw err;

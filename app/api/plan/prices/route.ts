@@ -2,20 +2,28 @@ import { prisma } from '@/lib/prisma';
 import { PLANS } from '@/lib/pricing';
 import { NextResponse } from 'next/server';
 
-// Build defaults from the single source of truth in lib/pricing.ts
 const PAID_PLANS = PLANS.filter(p => p.price > 0);
+
+async function ensureTable() {
+  await prisma.$executeRawUnsafe(`
+    CREATE TABLE IF NOT EXISTS "PlanConfig" (
+      "id"        TEXT             NOT NULL,
+      "price"     DOUBLE PRECISION NOT NULL,
+      "updatedAt" TIMESTAMP(3)     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      CONSTRAINT "PlanConfig_pkey" PRIMARY KEY ("id")
+    )
+  `);
+  for (const p of PAID_PLANS) {
+    await prisma.$executeRawUnsafe(
+      `INSERT INTO "PlanConfig" ("id","price","updatedAt") VALUES ($1,$2,NOW()) ON CONFLICT ("id") DO NOTHING`,
+      p.id, p.price,
+    );
+  }
+}
 
 export async function GET() {
   try {
-    // Auto-seed rows that don't exist yet
-    for (const plan of PAID_PLANS) {
-      await prisma.planConfig.upsert({
-        where:  { id: plan.id },
-        create: { id: plan.id, price: plan.price },
-        update: {},  // never overwrite an admin-set price
-      });
-    }
-
+    await ensureTable();
     const configs = await prisma.planConfig.findMany();
     const result = PAID_PLANS.map(p => {
       const db = configs.find(c => c.id === p.id);
