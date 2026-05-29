@@ -18,21 +18,21 @@ import Image from 'next/image';
 
 /* ─── Service options ─────────────────────────────────────────── */
 const SERVICES = [
-  { id: 'Standard Cleaning',    icon: '🧹', desc: 'Regular home maintenance' },
-  { id: 'Deep Cleaning',        icon: '✨', desc: 'Thorough top-to-bottom clean' },
-  { id: 'Move-In/Out',          icon: '📦', desc: 'Empty property cleaning' },
-  { id: 'Post-Construction',    icon: '🏗️', desc: 'After renovation dust & debris' },
-  { id: 'Office',               icon: '🏢', desc: 'Commercial spaces' },
-  { id: 'Condo/Apartment',      icon: '🏙️', desc: 'Smaller units & high-rises' },
-  { id: 'Airbnb',               icon: '🛎️', desc: 'Turnover between guests' },
-  { id: 'Window Cleaning',      icon: '🪟', desc: 'Interior & exterior windows' },
+  { id: 'Standard Cleaning',    icon: '🧹', desc: 'Recurring home upkeep' },
+  { id: 'Deep Cleaning',        icon: '✨', desc: 'Full top-to-bottom clean' },
+  { id: 'Move-In/Out',          icon: '📦', desc: 'Vacant property cleaning' },
+  { id: 'Post-Construction',    icon: '🏗️', desc: 'Post-renovation cleanup' },
+  { id: 'Office',               icon: '🏢', desc: 'Offices & commercial spaces' },
+  { id: 'Condo/Apartment',      icon: '🏙️', desc: 'Units & high-rises' },
+  { id: 'Airbnb',               icon: '🛎️', desc: 'Guest turnovers' },
+  { id: 'Window Cleaning',      icon: '🪟', desc: 'Interior & exterior glass' },
 ];
 
 /* ─── Radius options ──────────────────────────────────────────── */
 const RADIUS_OPTIONS = [5, 10, 15, 20, 25, 35, 50, 75, 110];
 
 /* ─── Step progress indicator ────────────────────────────────── */
-const STEPS = ['Services', 'Location', 'About you', 'All set'];
+const STEPS = ['Services', 'Location', 'Your profile', 'Ready'];
 
 function StepDots({ current }: { current: number }) {
   return (
@@ -115,7 +115,7 @@ export default function OnboardingPage() {
 
   const detectGPS = () => {
     if (!navigator.geolocation) {
-      toaster.create({ title: 'Geolocation not supported by your browser', type: 'error' });
+      toaster.create({ title: "Your browser doesn't support location detection", description: 'Please type your ZIP code instead.', type: 'error' });
       return;
     }
     setGeoLoading(true);
@@ -135,7 +135,7 @@ export default function OnboardingPage() {
         setGeoLoading(false);
         toaster.create({
           title: 'Location access blocked',
-          description: 'Allow location in your browser settings, then try again.',
+          description: 'Enable location in your browser settings, then try again.',
           type: 'error',
         });
       } else if (err.code === 3) {
@@ -145,8 +145,8 @@ export default function OnboardingPage() {
           () => {
             setGeoLoading(false);
             toaster.create({
-              title: 'Could not detect location',
-              description: 'Enter your ZIP code instead.',
+              title: "Couldn't detect your location",
+              description: 'Please type your ZIP code instead.',
               type: 'error',
             });
           },
@@ -157,7 +157,7 @@ export default function OnboardingPage() {
         setGeoLoading(false);
         toaster.create({
           title: 'Location unavailable',
-          description: 'Enter your ZIP code instead.',
+          description: 'Please type your ZIP code instead.',
           type: 'error',
         });
       }
@@ -186,7 +186,7 @@ export default function OnboardingPage() {
     try {
       if (step === 0) {
         if (serviceTypes.length === 0) {
-          toaster.create({ title: 'Select at least one service', type: 'error' });
+          toaster.create({ title: 'Please select at least one service to continue', type: 'error' });
           return;
         }
         await saveStep('services', { serviceTypes });
@@ -194,7 +194,7 @@ export default function OnboardingPage() {
 
       if (step === 1) {
         if (!latitude && !longitude && !zipCode.trim()) {
-          toaster.create({ title: 'Add your location or ZIP code', type: 'error' });
+          toaster.create({ title: 'Please add your location or zip code to continue', type: 'error' });
           return;
         }
         await saveStep('location', { latitude, longitude, zipCode: zipCode.trim() || null, serviceRadiusMiles });
@@ -262,12 +262,12 @@ export default function OnboardingPage() {
                 <VStack gap={6} align="stretch">
                   <Box>
                     <Text fontSize="xs" fontWeight="700" color="#0A80DB" textTransform="uppercase"
-                      letterSpacing="0.12em" mb={2}>Step 1 — Services</Text>
+                      letterSpacing="0.12em" mb={2}>Step 1 of 4 — Services</Text>
                     <Text fontSize="26px" fontWeight="black" color="slate.900" lineHeight="1.2" mb={1}>
-                      What services do you offer?
+                      What do you specialize in?
                     </Text>
                     <Text color="slate.500" fontSize="sm">
-                      Select all that apply. You can change this anytime from your profile.
+                      Select everything you offer. You can always update this later.
                     </Text>
                   </Box>
 
@@ -305,7 +305,7 @@ export default function OnboardingPage() {
 
                   {serviceTypes.length > 0 && (
                     <Text fontSize="xs" color="#059669" fontWeight="semibold">
-                      ✓ {serviceTypes.length} service{serviceTypes.length > 1 ? 's' : ''} selected
+                      ✓ {serviceTypes.length} service{serviceTypes.length > 1 ? 's' : ''} selected — looking great!
                     </Text>
                   )}
                 </VStack>
@@ -316,12 +316,12 @@ export default function OnboardingPage() {
                 <VStack gap={6} align="stretch">
                   <Box>
                     <Text fontSize="xs" fontWeight="700" color="#0A80DB" textTransform="uppercase"
-                      letterSpacing="0.12em" mb={2}>Step 2 — Location</Text>
+                      letterSpacing="0.12em" mb={2}>Step 2 of 4 — Location</Text>
                     <Text fontSize="26px" fontWeight="black" color="slate.900" lineHeight="1.2" mb={1}>
-                      Where do you work?
+                      Where are you based?
                     </Text>
                     <Text color="slate.500" fontSize="sm">
-                      We use this to match you with nearby clients. Your exact address is never shown publicly.
+                      We use your location to match you with nearby clients. Your exact address is never shown publicly.
                     </Text>
                   </Box>
 
@@ -329,14 +329,14 @@ export default function OnboardingPage() {
                   <Box bg="white" border="1px solid" borderColor="slate.200" p={5}>
                     <Flex justify="space-between" align="center" gap={4}>
                       <VStack align="start" gap={0.5}>
-                        <Text fontWeight="bold" fontSize="sm" color="slate.900">Use my current location</Text>
+                        <Text fontWeight="bold" fontSize="sm" color="slate.900">Detect my location</Text>
                         {locationLabel ? (
                           <HStack gap={1.5}>
                             <Icon as={LucideMapPin} w={3.5} h={3.5} color="#059669" />
                             <Text fontSize="xs" color="#059669" fontWeight="semibold">{locationLabel}</Text>
                           </HStack>
                         ) : (
-                          <Text fontSize="xs" color="slate.400">Faster and more precise</Text>
+                          <Text fontSize="xs" color="slate.400">Quick and accurate — takes just a second</Text>
                         )}
                       </VStack>
                       <Button
@@ -356,7 +356,7 @@ export default function OnboardingPage() {
                   {/* OR divider */}
                   <Flex align="center" gap={3}>
                     <Box flex={1} h="1px" bg="slate.200" />
-                    <Text fontSize="xs" color="slate.400" fontWeight="semibold">or enter ZIP code</Text>
+                    <Text fontSize="xs" color="slate.400" fontWeight="semibold">or type your ZIP code</Text>
                     <Box flex={1} h="1px" bg="slate.200" />
                   </Flex>
 
@@ -378,8 +378,8 @@ export default function OnboardingPage() {
                   <Box bg="white" border="1px solid" borderColor="slate.200" p={5}>
                     <Flex justify="space-between" align="center" mb={4}>
                       <VStack align="start" gap={0}>
-                        <Text fontWeight="bold" fontSize="sm" color="slate.900">Service radius</Text>
-                        <Text fontSize="xs" color="slate.400">How far are you willing to travel?</Text>
+                        <Text fontWeight="bold" fontSize="sm" color="slate.900">How far will you travel?</Text>
+                        <Text fontSize="xs" color="slate.400">We'll only show you leads within this distance</Text>
                       </VStack>
                       <Box bg="#EBF5FE" px={3} py={1} borderRadius="4px">
                         <Text fontWeight="black" fontSize="lg" color="#0A80DB">{serviceRadiusMiles} mi</Text>
@@ -414,12 +414,12 @@ export default function OnboardingPage() {
                 <VStack gap={6} align="stretch">
                   <Box>
                     <Text fontSize="xs" fontWeight="700" color="#0A80DB" textTransform="uppercase"
-                      letterSpacing="0.12em" mb={2}>Step 3 — About you</Text>
+                      letterSpacing="0.12em" mb={2}>Step 3 of 4 — Your profile</Text>
                     <Text fontSize="26px" fontWeight="black" color="slate.900" lineHeight="1.2" mb={1}>
-                      Introduce yourself to clients
+                      Make a great first impression
                     </Text>
                     <Text color="slate.500" fontSize="sm">
-                      A good profile gets 3× more bookings. This step is optional — you can fill it in later.
+                      Cleaners with a photo and bio get 3× more bookings. Takes less than 2 minutes — or skip for now.
                     </Text>
                   </Box>
 
@@ -434,12 +434,12 @@ export default function OnboardingPage() {
                         placeholder="Photo"
                       />
                       <Box flex={1}>
-                        <Text fontWeight="bold" color="slate.800" fontSize="sm">Profile photo</Text>
+                        <Text fontWeight="bold" color="slate.800" fontSize="sm">Add a profile photo</Text>
                         <Text fontSize="xs" color="slate.400" mt={0.5}>
-                          Click the circle to upload · JPG, PNG · max 8 MB
+                          Tap the circle to upload · JPG or PNG · max 8 MB
                         </Text>
                         {avatarUrl && (
-                          <Text fontSize="xs" color="#059669" fontWeight="semibold" mt={1}>✓ Photo uploaded</Text>
+                          <Text fontSize="xs" color="#059669" fontWeight="semibold" mt={1}>✓ Photo added</Text>
                         )}
                       </Box>
                     </Flex>
@@ -448,9 +448,9 @@ export default function OnboardingPage() {
                   {/* Bio */}
                   <Box>
                     <Text fontSize="xs" fontWeight="bold" color="slate.500" textTransform="uppercase"
-                      letterSpacing="wider" mb={1.5}>Bio</Text>
+                      letterSpacing="wider" mb={1.5}>About you</Text>
                     <Textarea
-                      placeholder="e.g. Professional cleaner with 5+ years experience in the Miami area. I specialize in deep cleaning and move-outs. Detail-oriented and always on time."
+                      placeholder="e.g. I'm a professional cleaner with 5+ years of experience in the Miami area. I specialize in deep cleaning and move-outs, and I take pride in being detail-oriented and always on time."
                       value={bio}
                       onChange={e => setBio(e.target.value)}
                       bg="white" border="1px solid" borderColor="slate.200"
@@ -464,7 +464,7 @@ export default function OnboardingPage() {
                     variant="ghost" color="slate.400" fontSize="sm" alignSelf="flex-start"
                     _hover={{ color: 'slate.600' }}
                     onClick={() => setStep(s => s + 1)}>
-                    Skip for now →
+                    I'll do this later →
                   </Button>
                 </VStack>
               )}
@@ -485,11 +485,10 @@ export default function OnboardingPage() {
                       </Box>
                     </motion.div>
                     <Text fontSize="28px" fontWeight="black" color="slate.900" mb={2}>
-                      You're all set!
+                      You're ready to go!
                     </Text>
                     <Text color="slate.500" fontSize="sm" lineHeight="1.8" maxW="380px" mx="auto">
-                      Your profile is ready. As soon as a client in your area submits a request
-                      matching your services, you'll receive a lead notification.
+                      Your profile is live. The moment a client near you books one of your services, we'll send you the lead instantly.
                     </Text>
                   </Box>
 
@@ -517,7 +516,7 @@ export default function OnboardingPage() {
                       {locationLabel ? (
                         <Text fontSize="xs" color="slate.700" fontWeight="semibold" lineHeight="1.5">{locationLabel}</Text>
                       ) : zipCode ? (
-                        <Text fontSize="xs" color="slate.700" fontWeight="semibold">ZIP {zipCode}</Text>
+                        <Text fontSize="xs" color="slate.700" fontWeight="semibold">Zip {zipCode}</Text>
                       ) : null}
                       <HStack gap={1.5} mt={2}>
                         <Icon as={LucideZap} w={3} h={3} color="#0A80DB" />
@@ -530,7 +529,7 @@ export default function OnboardingPage() {
                     <HStack gap={3}>
                       <Icon as={LucideZap} w={5} h={5} color="#0A80DB" flexShrink={0} />
                       <Text fontSize="sm" color="#065594" lineHeight="1.6">
-                        <Text as="span" fontWeight="bold">Pro tip:</Text> Upgrade to a paid plan to appear first in search results and receive Wave 1 exclusive leads before other cleaners.
+                        <Text as="span" fontWeight="bold">Want more leads?</Text> Upgrade to a paid plan to rank higher and get exclusive first-look access to new jobs before other cleaners.
                       </Text>
                     </HStack>
                   </Box>
@@ -557,13 +556,13 @@ export default function OnboardingPage() {
               color="white" px={7} h="44px" borderRadius="4px" fontWeight="bold"
               _hover={{ bg: step === 3 ? '#047857' : '#0870C2' }}
               loading={saving}
-              loadingText={step === 3 ? 'Starting…' : 'Saving…'}
+              loadingText={step === 3 ? 'Launching…' : 'Saving…'}
               disabled={!canProceed}
               onClick={handleNext}>
               {step === 3 ? (
                 <>
                   <Icon as={LucideZap} w={4} h={4} mr={2} />
-                  Start receiving leads
+                  Go to my dashboard
                 </>
               ) : (
                 <>

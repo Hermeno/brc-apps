@@ -76,7 +76,7 @@ export default function PublicProfilePage() {
         <VStack gap={3}>
           <Box w="40px" h="40px" border="3px solid" borderColor="brand.500" borderTopColor="transparent"
             borderRadius="full" animation="spin 0.8s linear infinite" />
-          <Text color="slate.500" fontSize="sm">Loading profile…</Text>
+          <Text color="slate.500" fontSize="sm">Loading profile...</Text>
         </VStack>
       </Box>
     );
@@ -217,7 +217,7 @@ export default function PublicProfilePage() {
                     borderRadius="4px" px={4} py={3}>
                     <Icon as={LucideMapPin} w={4} h={4} color="slate.400" />
                     <Text fontSize="xs" color="slate.400">
-                      Contact visible after accepting the cleaner
+                      Contact details are visible after you accept this cleaner.
                     </Text>
                   </HStack>
                 )}
@@ -340,7 +340,7 @@ export default function PublicProfilePage() {
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}>
               <Box bg="white" border="1px solid" borderColor="slate.200" p={8} textAlign="center">
                 <Text fontSize="2xl" mb={2}>⭐</Text>
-                <Text color="slate.500" fontSize="sm">No reviews yet — be the first!</Text>
+                <Text color="slate.500" fontSize="sm">No reviews yet. Be the first to leave one!</Text>
               </Box>
             </motion.div>
           )}

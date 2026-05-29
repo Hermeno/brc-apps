@@ -130,8 +130,8 @@ export default function CleanerDashboard() {
       const p = new URLSearchParams(window.location.search);
       if (p.get('lead_paid') === '1') {
         toaster.create({
-          title: 'Payment successful!',
-          description: 'Lead unlocked. Your conversation will appear below.',
+          title: 'Payment confirmed!',
+          description: 'Lead unlocked. You can now message this client below.',
           type: 'success',
         });
         window.history.replaceState({}, '', window.location.pathname);
@@ -170,7 +170,7 @@ export default function CleanerDashboard() {
   const completedJobs = accepted.filter(l => l.status === 'COMPLETED');
   // Conversations waiting for client response (lead IN_REVIEW)
   const pendingConversations = conversations.filter(c => c.lead.status === 'IN_REVIEW');
-  // Conversations for accepted leads (client already accepted — show chat in Trabalhos Aceitos)
+  // Conversations for accepted leads (client already accepted — show chat in Accepted Jobs)
   const activeAcceptedConvMap = new Map(
     conversations.filter(c => c.lead.status === 'ACCEPTED').map(c => [c.lead.id, c.id])
   );
@@ -189,10 +189,10 @@ export default function CleanerDashboard() {
                 <Icon as={LucideAlertCircle} w={4} h={4} color="#0A80DB" flexShrink={0} />
                 <Box>
                   <Text fontWeight="700" color="#92400E" fontSize="13px" fontFamily="heading">
-                    Verify your account to get more leads
+                    Get verified and stand out to clients
                   </Text>
                   <Text fontSize="11.5px" color="#0870C2" mt={0.5}>
-                    Verified cleaners get priority and a trusted badge.
+                    Verified cleaners appear higher in results and earn a trusted badge.
                   </Text>
                 </Box>
               </HStack>
@@ -202,7 +202,7 @@ export default function CleanerDashboard() {
                 _hover={{ bg: '#0870C2' }}
                 onClick={() => router.push('/dashboard/cleaner/verify')}
               >
-                <Icon as={LucideShield} w={3.5} h={3.5} mr={1.5} />Verify now
+                <Icon as={LucideShield} w={3.5} h={3.5} mr={1.5} />Get verified
               </Button>
             </Flex>
           </Box>
@@ -212,7 +212,7 @@ export default function CleanerDashboard() {
             <HStack gap={3}>
               <Icon as={LucideClock} w={4} h={4} color="#3B82F6" flexShrink={0} />
               <Text fontSize="13px" color="#0A80DB" fontWeight="600" fontFamily="heading">
-                Verification under review — we'll respond within 48h.
+                Your verification is being reviewed — we'll get back to you within 48 hours.
               </Text>
             </HStack>
           </Box>
@@ -222,7 +222,7 @@ export default function CleanerDashboard() {
             <HStack gap={3}>
               <Icon as={LucideCheckCircle2} w={4} h={4} color="#0A80DB" flexShrink={0} />
               <Text fontSize="13px" color="#0A80DB" fontWeight="600" fontFamily="heading">
-                Conta verificada
+                Account verified
               </Text>
             </HStack>
           </Box>
@@ -233,7 +233,7 @@ export default function CleanerDashboard() {
               <HStack gap={3}>
                 <Icon as={LucideAlertCircle} w={4} h={4} color="#E11D48" flexShrink={0} />
                 <Text fontSize="13px" color="#9F1239" fontWeight="600" fontFamily="heading">
-                  Verification rejected — fix and resubmit your documents.
+                  Verification declined — please review your documents and try again.
                 </Text>
               </HStack>
               <Button
@@ -242,13 +242,13 @@ export default function CleanerDashboard() {
                 _hover={{ bg: '#BE123C' }}
                 onClick={() => router.push('/dashboard/cleaner/verify')}
               >
-                Resubmit documents
+                Resubmit for review
               </Button>
             </Flex>
           </Box>
         )}
 
-        {/* ── Pedidos Disponíveis ── */}
+        {/* ── Available Leads ── */}
         <SectionPanel
           title="Available Leads"
           count={available.length}
@@ -270,10 +270,10 @@ export default function CleanerDashboard() {
           ) : available.length === 0 ? (
             <Box px={6} py={10} textAlign="center">
               <Text fontSize="13px" color="#CBD5E1" fontFamily="heading" fontWeight="500">
-                No leads available right now
+                No new leads right now
               </Text>
               <Text fontSize="12px" color="#697386" mt={1}>
-                New leads will appear here automatically.
+                We'll notify you as soon as a client in your area posts a request.
               </Text>
             </Box>
           ) : (
@@ -392,7 +392,7 @@ export default function CleanerDashboard() {
           )}
         </SectionPanel>
 
-        {/* ── Aguardando Resposta ── */}
+        {/* ── Awaiting Client Response ── */}
         {pendingConversations.length > 0 && (
           <SectionPanel
             title="Awaiting Client Response"
@@ -414,7 +414,7 @@ export default function CleanerDashboard() {
                 <Flex px={6} pl={8} py={3.5} gap={6} align="center" justify="space-between">
                   <Box>
                     <HStack gap={2.5} mb={1} flexWrap="wrap">
-                      <Chip label="Proposal sent" bg="#F6F9FC" color="#0A80DB" />
+                      <Chip label="Waiting for client" bg="#F6F9FC" color="#0A80DB" />
                       <Text fontSize="14px" fontWeight="700" color="#0F172A" fontFamily="heading" letterSpacing="-0.01em">
                         {conv.lead.serviceType}
                       </Text>
@@ -445,7 +445,7 @@ export default function CleanerDashboard() {
                     onClick={e => { e.stopPropagation(); router.push(`/dashboard/chat/${conv.id}`); }}
                   >
                     <Icon as={LucideMessageCircle} w={3.5} h={3.5} mr={1.5} />
-                    Abrir chat
+                    Open chat
                   </Button>
                 </Flex>
               </Box>
@@ -453,7 +453,7 @@ export default function CleanerDashboard() {
           </SectionPanel>
         )}
 
-        {/* ── Trabalhos Aceitos ── */}
+        {/* ── Accepted Jobs ── */}
         {activeJobs.length > 0 && (
           <SectionPanel
             title="Accepted Jobs"
@@ -491,7 +491,7 @@ export default function CleanerDashboard() {
                         <HStack gap={1}>
                           <Icon as={LucideUser} w="11px" h="11px" color="#697386" />
                           <Text fontSize="12px" color="#425466">
-                            Client:{' '}
+                            Booked by:{' '}
                             <Text as="span" fontWeight="600" color="#475569">{lead.client.name}</Text>
                           </Text>
                         </HStack>
@@ -521,7 +521,7 @@ export default function CleanerDashboard() {
           </SectionPanel>
         )}
 
-        {/* ── Histórico Concluídos ── */}
+        {/* ── Completed Jobs History ── */}
         {completedJobs.length > 0 && (
           <Box border="1px solid #E3E8EE" mb={4} style={{ borderRadius: 8 }} overflow="hidden">
             <Box
@@ -540,7 +540,7 @@ export default function CleanerDashboard() {
                     fontSize="10.5px" fontWeight="700" color="#697386"
                     fontFamily="heading" textTransform="uppercase" letterSpacing="0.07em"
                   >
-                    Completed history
+                    Past jobs
                   </Text>
                   <Box
                     bg="#475569" color="white" px={2} h="16px" minW="16px"

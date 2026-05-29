@@ -77,11 +77,11 @@ export default function RequestPage() {
 
   const handleSubmit = async () => {
     if (!address.trim() || !dateTime) {
-      toaster.create({ title: 'Please fill in address and date', type: 'error' });
+      toaster.create({ title: 'Please add your address and preferred date to continue', type: 'error' });
       return;
     }
     if (phone.trim().length < 16) {
-      toaster.create({ title: 'Please enter your contact phone number', type: 'error' });
+      toaster.create({ title: 'Please enter a valid US phone number so your cleaner can reach you', type: 'error' });
       return;
     }
     if (status === 'authenticated') {
@@ -100,7 +100,7 @@ export default function RequestPage() {
 
   const handleRegisterAndSubmit = async () => {
     if (!name.trim() || !email.trim() || !password) {
-      toaster.create({ title: 'Please fill in all fields', type: 'error' });
+      toaster.create({ title: 'Please fill in your name, email, and password to continue', type: 'error' });
       return;
     }
     setLoading(true);
@@ -154,7 +154,7 @@ export default function RequestPage() {
           <NextLink href="/auth/login">
             <Text fontSize="13px" fontWeight="600" color="rgba(255,255,255,0.55)" cursor="pointer" fontFamily="heading"
               _hover={{ color: 'white' }} transition="color 0.15s">
-              Already have an account? Sign in
+              Already have an account? Sign in →
             </Text>
           </NextLink>
         </Flex>
@@ -167,14 +167,14 @@ export default function RequestPage() {
             color="#0A80DB" textTransform="uppercase" fontFamily="heading" mb={2}
             style={{ borderLeft: '2px solid #0A80DB', paddingLeft: 10 }}
           >
-            New booking
+            Book a cleaning
           </Text>
           <Text fontSize={{ base: '26px', md: '32px' }} fontWeight="800" color="#0A2540"
             fontFamily="heading" letterSpacing="-0.025em">
-            Request Cleaning
+            Book your cleaning today
           </Text>
           <Text fontSize="14px" color="#425466" fontFamily="heading" mt={1}>
-            Fill in the details and get matched with vetted cleaners near you.
+            Tell us about your home and we'll match you with a vetted cleaner nearby — usually within the hour.
           </Text>
         </Box>
 
@@ -186,7 +186,7 @@ export default function RequestPage() {
 
               {/* Service type */}
               <Box>
-                <Text {...LABEL_STYLE}>Cleaning type</Text>
+                <Text {...LABEL_STYLE}>What type of cleaning do you need?</Text>
                 <SimpleGrid columns={2} gap={2}>
                   {SERVICE_TYPES.map(s => (
                     <Box
@@ -215,7 +215,7 @@ export default function RequestPage() {
 
               {/* Address */}
               <Box>
-                <Text {...LABEL_STYLE}>Service address</Text>
+                <Text {...LABEL_STYLE}>Where should the cleaner go?</Text>
                 <AddressInput
                   value={address}
                   onChange={setAddress}
@@ -226,7 +226,7 @@ export default function RequestPage() {
 
               {/* Phone */}
               <Box>
-                <Text {...LABEL_STYLE}>Contact phone</Text>
+                <Text {...LABEL_STYLE}>Your phone number</Text>
                 <HStack>
                   <Icon as={LucidePhone} color="#0A80DB" w="15px" h="15px" flexShrink={0} />
                   <Input
@@ -248,7 +248,7 @@ export default function RequestPage() {
 
               {/* Date */}
               <Box>
-                <Text {...LABEL_STYLE}>Date and time</Text>
+                <Text {...LABEL_STYLE}>Preferred date and time</Text>
                 <HStack>
                   <Icon as={LucideCalendar} color="#0A80DB" w="15px" h="15px" flexShrink={0} />
                   <Input type="datetime-local" value={dateTime} onChange={e => setDateTime(e.target.value)}
@@ -286,7 +286,7 @@ export default function RequestPage() {
 
               {/* Frequency */}
               <Box>
-                <Text {...LABEL_STYLE}>Frequency</Text>
+                <Text {...LABEL_STYLE}>How often would you like us?</Text>
                 <HStack gap={2} flexWrap="wrap">
                   {FREQUENCY_OPTIONS.map(f => (
                     <Button
@@ -324,7 +324,7 @@ export default function RequestPage() {
 
               {/* Extras */}
               <Box>
-                <Text {...LABEL_STYLE}>Extras (optional)</Text>
+                <Text {...LABEL_STYLE}>Add-ons (optional)</Text>
                 <SimpleGrid columns={2} gap={2}>
                   {EXTRAS.map(ex => (
                     <Box
@@ -356,9 +356,9 @@ export default function RequestPage() {
 
               {/* Notes */}
               <Box>
-                <Text {...LABEL_STYLE}>Notes (optional)</Text>
+                <Text {...LABEL_STYLE}>Anything we should know? (optional)</Text>
                 <Textarea value={notes} onChange={e => setNotes(e.target.value)}
-                  placeholder="E.g., I have pets, gate access on the side…"
+                  placeholder="E.g., I have a dog, the side gate code is 1234, please focus on the kitchen…"
                   bg="#F6F9FC" border="1px solid" borderColor="#E3E8EE" borderRadius="4px"
                   fontFamily="heading" fontSize="14px" rows={3}
                   _focus={{ bg: 'white', borderColor: '#0A80DB' }} />
@@ -373,7 +373,7 @@ export default function RequestPage() {
                   _hover={{ bg: '#0870C2' }} transition="background 0.15s"
                   loading={loading}
                 >
-                  Book now
+                  Book my cleaning
                   <Icon as={LucideArrowRight} w={4} h={4} ml={2} />
                 </Button>
               )}
@@ -386,21 +386,21 @@ export default function RequestPage() {
             <Box bg="white" border="1px solid #E3E8EE" p={6} style={{ borderRadius: 8 }}>
               <Text fontSize="11px" fontWeight="700" color="#425466" textTransform="uppercase"
                 letterSpacing="0.1em" fontFamily="heading" mb={4}>
-                Price estimate
+                Your price estimate
               </Text>
               <VStack gap={4} align="stretch">
 
                 <Box bg="#EBF5FE" border="1px solid #A2D3F9" p={4}>
                   <HStack gap={2} mb={1}>
                     <Icon as={LucideBanknote} w="15px" h="15px" color="#0A80DB" />
-                    <Text fontSize="11px" color="#0A80DB" fontWeight="700" fontFamily="heading">Estimated range</Text>
+                    <Text fontSize="11px" color="#0A80DB" fontWeight="700" fontFamily="heading">Estimated price range</Text>
                   </HStack>
                   <Text fontSize="26px" fontWeight="800" color="#065594" fontFamily="heading" letterSpacing="-0.02em">
                     ${estimate.minPrice}–${estimate.maxPrice}
                   </Text>
                   {estimate.discountPct > 0 && (
                     <Text fontSize="11px" fontWeight="700" color="#0A80DB" fontFamily="heading" mt={1}>
-                      {estimate.discountPct}% frequency discount
+                      {estimate.discountPct}% recurring booking discount applied
                     </Text>
                   )}
                 </Box>
@@ -408,14 +408,14 @@ export default function RequestPage() {
                 <HStack gap={2}>
                   <Icon as={LucideClock} w="14px" h="14px" color="#0A80DB" />
                   <Text fontSize="13px" color="#425466" fontFamily="heading">
-                    Estimated duration:{' '}
-                    <Text as="span" fontWeight="700" color="#0A2540">~{estimate.hours}h</Text>
+                    Estimated time:{' '}
+                    <Text as="span" fontWeight="700" color="#0A2540">~{estimate.hours} hours</Text>
                   </Text>
                 </HStack>
 
                 <Box bg="#F6F9FC" border="1px solid #E3E8EE" p={3}>
                   <Text fontSize="12px" color="#697386" fontFamily="heading" lineHeight="1.6">
-                    Final price is agreed with your cleaner. Estimate is based on the details provided.
+                    This is an estimate. You'll confirm the final price directly with your cleaner before the visit.
                   </Text>
                 </Box>
 
@@ -439,36 +439,36 @@ export default function RequestPage() {
                 <Box mb={6}>
                   <Text fontSize="18px" fontWeight="800" color="#0A2540" fontFamily="heading"
                     letterSpacing="-0.02em" mb={1}>
-                    Create account to confirm
+                    One last step — create your free account
                   </Text>
                   <Text fontSize="13px" color="#425466" fontFamily="heading">
-                    It's free and takes less than 30 seconds. No email verification required.
+                    It's free and takes under 30 seconds. No email verification — your booking is sent immediately.
                   </Text>
                 </Box>
 
                 <SimpleGrid columns={{ base: 1, md: 3 }} gap={4} mb={5}>
                   <Box>
-                    <Text {...LABEL_STYLE}>Name</Text>
+                    <Text {...LABEL_STYLE}>Full name</Text>
                     <HStack>
                       <Icon as={LucideUser} w="14px" h="14px" color="#697386" flexShrink={0} />
                       <Input value={name} onChange={e => setName(e.target.value)}
-                        placeholder="Your name" {...inputStyle} />
+                        placeholder="Jane Smith" {...inputStyle} />
                     </HStack>
                   </Box>
                   <Box>
-                    <Text {...LABEL_STYLE}>Email</Text>
+                    <Text {...LABEL_STYLE}>Email address</Text>
                     <HStack>
                       <Icon as={LucideMail} w="14px" h="14px" color="#697386" flexShrink={0} />
                       <Input type="email" value={email} onChange={e => setEmail(e.target.value)}
-                        placeholder="your@email.com" {...inputStyle} />
+                        placeholder="you@example.com" {...inputStyle} />
                     </HStack>
                   </Box>
                   <Box>
-                    <Text {...LABEL_STYLE}>Password</Text>
+                    <Text {...LABEL_STYLE}>Create a password</Text>
                     <HStack>
                       <Icon as={LucideLock} w="14px" h="14px" color="#697386" flexShrink={0} />
                       <Input type="password" value={password} onChange={e => setPassword(e.target.value)}
-                        placeholder="••••••••" {...inputStyle} />
+                        placeholder="At least 8 characters" {...inputStyle} />
                     </HStack>
                   </Box>
                 </SimpleGrid>
@@ -478,17 +478,17 @@ export default function RequestPage() {
                   bg="#0A80DB" color="white" h="44px"
                   borderRadius="4px" fontWeight="700" fontSize="14px" fontFamily="heading"
                   _hover={{ bg: '#0870C2' }} transition="background 0.15s"
-                  loading={loading} loadingText="Creating account and submitting…"
+                  loading={loading} loadingText="Setting up your account…"
                 >
                   <Icon as={LucideCheckCircle} w={4} h={4} mr={2} />
-                  Create account & book now
+                  Create account and send request
                 </Button>
 
                 <Text fontSize="12px" color="#697386" fontFamily="heading" mt={4}>
                   Already have an account?{' '}
                   <NextLink href="/auth/login">
                     <Text as="span" color="#0A80DB" fontWeight="700" cursor="pointer"
-                      _hover={{ color: '#0870C2' }}>Sign in</Text>
+                      _hover={{ color: '#0870C2' }}>Sign in instead</Text>
                   </NextLink>
                 </Text>
               </Box>

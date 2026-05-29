@@ -26,11 +26,11 @@ export default function ForgotPasswordPage() {
       });
       const data = await res.json();
       if (res.ok) {
-        toaster.create({ title: 'Code sent!', description: 'Check your email for the reset code.', type: 'success' });
+        toaster.create({ title: 'Reset code sent!', description: 'Check your inbox for a 6-digit code. It may take a minute to arrive.', type: 'success' });
         router.push(`/auth/reset-password?email=${encodeURIComponent(email)}`);
       } else {
         toaster.create({
-          title: res.status === 404 ? 'Email not found' : 'Error',
+          title: res.status === 404 ? 'No account found with that email' : 'Something went wrong',
           description: data.error,
           type: 'error',
         });
@@ -58,10 +58,10 @@ export default function ForgotPasswordPage() {
           <Box mb={7}>
             <Text fontSize="22px" fontWeight="800" color="#0A2540" fontFamily="heading"
               letterSpacing="-0.025em" mb={1}>
-              Forgot your password?
+              Reset your password
             </Text>
             <Text fontSize="14px" color="#425466" fontFamily="heading">
-              Enter your email and we&apos;ll send you a reset code.
+              Enter the email on your account and we&apos;ll send you a reset code right away.
             </Text>
           </Box>
 
@@ -70,7 +70,7 @@ export default function ForgotPasswordPage() {
 
               <Box>
                 <Text fontSize="12px" fontWeight="500" color="#425466" letterSpacing="-0.01em"
-                  fontFamily="heading" mb={1.5}>Email</Text>
+                  fontFamily="heading" mb={1.5}>Email address</Text>
                 <Input
                   type="email"
                   placeholder="name@email.com"
@@ -104,9 +104,9 @@ export default function ForgotPasswordPage() {
                 _hover={{ bg: '#0870C2' }}
                 transition="background 0.15s"
                 loading={loading}
-                loadingText="Sending…"
+                loadingText="Sending your code…"
               >
-                Send reset code
+                Send me a reset code
                 <Icon as={LucideArrowRight} w={3.5} h={3.5} ml={1.5} />
               </Button>
 
@@ -119,7 +119,7 @@ export default function ForgotPasswordPage() {
             Remembered your password?{' '}
             <NextLink href="/auth/login">
               <Text as="span" color="#0A80DB" fontWeight="700" cursor="pointer"
-                _hover={{ color: '#0870C2' }}>Back to sign in</Text>
+                _hover={{ color: '#0870C2' }}>Go back to sign in</Text>
             </NextLink>
           </Text>
         </Box>

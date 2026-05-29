@@ -47,7 +47,7 @@ export default function ClientProfilePage() {
         body: JSON.stringify({ name, phone, address, avatarUrl }),
       });
       if (res.ok) {
-        toaster.create({ title: 'Profile saved!', type: 'success' });
+        toaster.create({ title: 'Profile saved successfully.', type: 'success' });
         router.push('/dashboard/client');
       } else {
         const err = await res.json();
@@ -87,7 +87,7 @@ export default function ClientProfilePage() {
           <VStack gap={6} align="stretch">
 
             <Box>
-              <Heading size="lg" fontWeight="black" color="slate.900">Edit profile</Heading>
+              <Heading size="lg" fontWeight="black" color="slate.900">Edit your profile</Heading>
               <Text color="slate.500" fontSize="sm" mt={1}>Your personal information</Text>
             </Box>
 
@@ -105,9 +105,9 @@ export default function ClientProfilePage() {
                 <Box flex={1}>
                   <Text fontWeight="bold" color="slate.800" fontSize="sm">{name || 'Your name'}</Text>
                   <Text fontSize="xs" color="slate.400" mt={0.5}>
-                    Click the circle to choose a photo
+                    Tap the circle to choose a photo from your device.
                   </Text>
-                  <Text fontSize="xs" color="slate.300" mt={0.5}>JPG, PNG or WEBP · max 8 MB</Text>
+                  <Text fontSize="xs" color="slate.300" mt={0.5}>JPG, PNG, or WEBP · max 8 MB</Text>
                 </Box>
               </Flex>
             </Box>
@@ -124,7 +124,7 @@ export default function ClientProfilePage() {
                       textTransform="uppercase" letterSpacing="wider">Full name</Text>
                   </HStack>
                   <Input
-                    placeholder="Your full name"
+                    placeholder="First and last name"
                     value={name}
                     onChange={e => setName(e.target.value)}
                     bg="slate.50" border="1px solid" borderColor="slate.200"
@@ -173,7 +173,7 @@ export default function ClientProfilePage() {
               bg="brand.500" color="white" h="44px" borderRadius="4px" fontWeight="bold" fontSize="md"
               _hover={{ bg: 'brand.600' }}
               transition="background 0.15s"
-              loading={saving} loadingText="Saving..."
+              loading={saving} loadingText="Saving changes..."
               onClick={handleSave}
               disabled={loading}>
               <Icon as={LucideSave} w={4} h={4} mr={2} />

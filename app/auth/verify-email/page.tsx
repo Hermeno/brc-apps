@@ -27,7 +27,7 @@ function VerifyEmailForm() {
   const handleVerify = async (e: React.FormEvent) => {
     e.preventDefault();
     if (code.length !== 6) {
-      toaster.create({ title: 'Please enter all 6 digits', type: 'error' });
+      toaster.create({ title: 'Code incomplete', description: 'Please enter all 6 digits from your email.', type: 'error' });
       return;
     }
     setLoading(true);
@@ -39,10 +39,10 @@ function VerifyEmailForm() {
       });
       const data = await res.json();
       if (res.ok) {
-        toaster.create({ title: 'Email verified!', description: 'You can now sign in.', type: 'success' });
+        toaster.create({ title: 'Email verified!', description: 'Your account is active. You can sign in now.', type: 'success' });
         router.push('/auth/login');
       } else {
-        toaster.create({ title: 'Error', description: data.error, type: 'error' });
+        toaster.create({ title: 'That code didn\'t work', description: data.error, type: 'error' });
       }
     } finally {
       setLoading(false);
@@ -57,7 +57,7 @@ function VerifyEmailForm() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email }),
       });
-      toaster.create({ title: 'New code sent!', type: 'success' });
+      toaster.create({ title: 'New code sent!', description: 'Check your inbox — it may take a minute to arrive in your spam folder too.', type: 'success' });
       setCountdown(60);
     } finally {
       setResending(false);
@@ -82,10 +82,10 @@ function VerifyEmailForm() {
           <Box mb={7} textAlign="center">
             <Text fontSize="22px" fontWeight="800" color="#0A2540" fontFamily="heading"
               letterSpacing="-0.025em" mb={1}>
-              Verify your email
+              Check your inbox
             </Text>
             <Text fontSize="14px" color="#425466" fontFamily="heading">
-              We sent a 6-digit code to
+              We sent a 6-digit verification code to
             </Text>
             <Text fontSize="14px" fontWeight="700" color="#0A2540" fontFamily="heading">
               {email}
@@ -98,7 +98,7 @@ function VerifyEmailForm() {
               <Box>
                 <Text fontSize="11px" fontWeight="700" color="#425466" textTransform="uppercase"
                   letterSpacing="0.1em" fontFamily="heading" mb={1.5} textAlign="center">
-                  Verification code
+                  Enter your code
                 </Text>
                 <Input
                   placeholder="000000"
@@ -118,7 +118,7 @@ function VerifyEmailForm() {
                   maxLength={6}
                 />
                 <Text fontSize="12px" color="#697386" textAlign="center" mt={2} fontFamily="heading">
-                  Code expires in 10 minutes
+                  This code is valid for 10 minutes. Check your spam folder if you don't see it.
                 </Text>
               </Box>
 
@@ -134,10 +134,10 @@ function VerifyEmailForm() {
                 _hover={{ bg: '#0870C2' }}
                 transition="background 0.15s"
                 loading={loading}
-                loadingText="Verifying…"
+                loadingText="Verifying your code..."
                 disabled={code.length !== 6}
               >
-                Confirm email
+                Verify my email
                 <Icon as={LucideArrowRight} w={4} h={4} ml={2} />
               </Button>
 
@@ -155,7 +155,7 @@ function VerifyEmailForm() {
                 _hover={{ color: '#0A80DB', bg: '#F0F9FF' }}
               >
                 <Icon as={LucideRefreshCw} w={3.5} h={3.5} mr={1.5} />
-                {countdown > 0 ? `Resend in ${countdown}s` : 'Resend code'}
+                {countdown > 0 ? `Resend in ${countdown}s` : 'Send a new code'}
               </Button>
 
             </VStack>

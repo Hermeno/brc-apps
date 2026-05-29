@@ -45,7 +45,7 @@ function UploadBox({
       const { url } = await res.json();
       onChange(url);
     } catch {
-      toaster.create({ title: 'Failed to upload photo', type: 'error' });
+      toaster.create({ title: 'Photo upload failed. Please try again.', type: 'error' });
     } finally {
       setUploading(false);
     }
@@ -78,7 +78,7 @@ function UploadBox({
         ) : (
           <>
             <Icon as={LucideUpload} w={6} h={6} color={uploading ? 'brand.400' : 'slate.400'} />
-            <Text fontSize="sm" fontWeight="bold" color="slate.600">{uploading ? 'Uploading…' : label}</Text>
+            <Text fontSize="sm" fontWeight="bold" color="slate.600">{uploading ? 'Uploading...' : label}</Text>
             <Text fontSize="xs" color="slate.400" textAlign="center">{hint}</Text>
           </>
         )}
@@ -120,10 +120,10 @@ export default function CleanerVerifyPage() {
 
   const handleSubmit = async () => {
     if (!fullName.trim() || !idNumber.trim() || !address.trim()) {
-      toaster.create({ title: 'Please fill in all text fields', type: 'error' }); return;
+      toaster.create({ title: 'Please complete all fields before continuing.', type: 'error' }); return;
     }
     if (!frontDocUrl || !backDocUrl || !selfieUrl) {
-      toaster.create({ title: 'Please upload all required photos', type: 'error' }); return;
+      toaster.create({ title: 'Please upload all three required photos before submitting.', type: 'error' }); return;
     }
     setSubmitting(true);
     try {
@@ -136,7 +136,7 @@ export default function CleanerVerifyPage() {
         const d = await res.json();
         throw new Error(d.error || 'Submission failed');
       }
-      toaster.create({ title: 'Submitted for review!', description: "We'll review your documents within 48 hours.", type: 'success' });
+      toaster.create({ title: 'Documents submitted for review.', description: 'We will review your information and get back to you within 48 hours.', type: 'success' });
       router.push('/dashboard/cleaner');
     } catch (e: any) {
       toaster.create({ title: e.message, type: 'error' });
@@ -147,7 +147,7 @@ export default function CleanerVerifyPage() {
 
   if (loading) return (
     <Box minH="100vh" display="flex" alignItems="center" justifyContent="center">
-      <Text color="slate.400">Loading…</Text>
+      <Text color="slate.400">Loading...</Text>
     </Box>
   );
 
@@ -156,8 +156,8 @@ export default function CleanerVerifyPage() {
       <HStack gap={3}>
         <Icon as={LucideCheckCircle} w={7} h={7} color="#059669" />
         <Box>
-          <Text fontWeight="black" color="#047857" fontSize="lg">Account verified!</Text>
-          <Text color="#059669" fontSize="sm">Your profile is active and verified on the platform.</Text>
+          <Text fontWeight="black" color="#047857" fontSize="lg">Your account is verified</Text>
+          <Text color="#059669" fontSize="sm">Your profile is live and displays the verified badge to clients.</Text>
         </Box>
       </HStack>
     </Box>
@@ -166,8 +166,8 @@ export default function CleanerVerifyPage() {
       <HStack gap={3}>
         <Icon as={LucideClock} w={7} h={7} color="#0A80DB" />
         <Box>
-          <Text fontWeight="black" color="#0A80DB" fontSize="lg">Under review</Text>
-          <Text color="#0A80DB" fontSize="sm">We received your documents. We'll respond within 48 hours.</Text>
+          <Text fontWeight="black" color="#0A80DB" fontSize="lg">Documents under review</Text>
+          <Text color="#0A80DB" fontSize="sm">We received your submission and are reviewing it. You will hear back within 48 hours.</Text>
         </Box>
       </HStack>
     </Box>
@@ -176,9 +176,9 @@ export default function CleanerVerifyPage() {
       <HStack gap={3}>
         <Icon as={LucideXCircle} w={7} h={7} color="red.500" />
         <Box>
-          <Text fontWeight="black" color="red.700" fontSize="lg">Verification rejected</Text>
-          {existing.adminNote && <Text color="red.600" fontSize="sm">Reason: {existing.adminNote}</Text>}
-          <Text color="red.500" fontSize="xs" mt={1}>Please correct the information below and resubmit.</Text>
+          <Text fontWeight="black" color="red.700" fontSize="lg">Verification was not approved</Text>
+          {existing.adminNote && <Text color="red.600" fontSize="sm">Reason for rejection: {existing.adminNote}</Text>}
+          <Text color="red.500" fontSize="xs" mt={1}>Please review the reason above, correct your information, and resubmit.</Text>
         </Box>
       </HStack>
     </Box>
@@ -204,9 +204,9 @@ export default function CleanerVerifyPage() {
           <VStack gap={6} align="stretch">
 
             <VStack gap={2} textAlign="center">
-              <Heading size="xl" fontWeight="black" color="slate.900">Verify my account</Heading>
+              <Heading size="xl" fontWeight="black" color="slate.900">Get your account verified</Heading>
               <Text color="slate.500" fontSize="sm">
-                Verified cleaners get more leads and appear with a trusted badge.
+                Verified cleaners earn more leads and display a trusted badge on their profile.
               </Text>
             </VStack>
 
@@ -234,15 +234,15 @@ export default function CleanerVerifyPage() {
             <Box bg="white" borderRadius="4px" border="1px solid" borderColor="slate.200" p={8}>
               {step === 1 && (
                 <VStack gap={5} align="stretch">
-                  <Text fontWeight="black" color="slate.900" fontSize="lg">Personal information</Text>
+                  <Text fontWeight="black" color="slate.900" fontSize="lg">Your personal information</Text>
 
                   <Box>
                     <Text fontSize="xs" fontWeight="bold" color="slate.500" textTransform="uppercase"
-                      letterSpacing="wider" mb={2}>Full name</Text>
+                      letterSpacing="wider" mb={2}>Full legal name</Text>
                     <HStack>
                       <Icon as={LucideUser} w={4} h={4} color="slate.400" />
                       <Input value={fullName} onChange={e => setFullName(e.target.value)}
-                        placeholder="Your full name as it appears on your ID"
+                        placeholder="Enter your name exactly as it appears on your ID"
                         bg="slate.50" border="1px solid" borderColor="slate.200" h="11" borderRadius="4px"
                         _focus={{ bg: 'white', borderColor: 'brand.300' }}
                         disabled={!canEdit} />
@@ -251,11 +251,11 @@ export default function CleanerVerifyPage() {
 
                   <Box>
                     <Text fontSize="xs" fontWeight="bold" color="slate.500" textTransform="uppercase"
-                      letterSpacing="wider" mb={2}>ID number (SSN / ITIN / Passport)</Text>
+                      letterSpacing="wider" mb={2}>Government ID number (SSN, ITIN, or Passport)</Text>
                     <HStack>
                       <Icon as={LucideIdCard} w={4} h={4} color="slate.400" />
                       <Input value={idNumber} onChange={e => setIdNumber(e.target.value)}
-                        placeholder="e.g., XXX-XX-XXXX"
+                        placeholder="SSN: XXX-XX-XXXX · Passport: A12345678"
                         bg="slate.50" border="1px solid" borderColor="slate.200" h="11" borderRadius="4px"
                         _focus={{ bg: 'white', borderColor: 'brand.300' }}
                         disabled={!canEdit} />
@@ -264,11 +264,11 @@ export default function CleanerVerifyPage() {
 
                   <Box>
                     <Text fontSize="xs" fontWeight="bold" color="slate.500" textTransform="uppercase"
-                      letterSpacing="wider" mb={2}>Full address</Text>
+                      letterSpacing="wider" mb={2}>Home address</Text>
                     <HStack>
                       <Icon as={LucideMapPin} w={4} h={4} color="slate.400" />
                       <Input value={address} onChange={e => setAddress(e.target.value)}
-                        placeholder="Street, city, state, ZIP"
+                        placeholder="Street address, city, state, ZIP code"
                         bg="slate.50" border="1px solid" borderColor="slate.200" h="11" borderRadius="4px"
                         _focus={{ bg: 'white', borderColor: 'brand.300' }}
                         disabled={!canEdit} />
@@ -278,13 +278,13 @@ export default function CleanerVerifyPage() {
                   {canEdit && (
                     <Button onClick={() => {
                       if (!fullName.trim() || !idNumber.trim() || !address.trim()) {
-                        toaster.create({ title: 'Please fill in all fields', type: 'error' }); return;
+                        toaster.create({ title: 'Please fill in all fields before continuing.', type: 'error' }); return;
                       }
                       setStep(2);
                     }}
                       bg="brand.500" color="white" h="11" borderRadius="4px" fontWeight="bold"
                       _hover={{ bg: 'brand.600' }}>
-                      Next → Upload documents
+                      Continue to document upload
                     </Button>
                   )}
                 </VStack>
@@ -293,7 +293,7 @@ export default function CleanerVerifyPage() {
               {step === 2 && (
                 <VStack gap={5} align="stretch">
                   <HStack justify="space-between">
-                    <Text fontWeight="black" color="slate.900" fontSize="lg">Document photos</Text>
+                    <Text fontWeight="black" color="slate.900" fontSize="lg">Upload your ID photos</Text>
                     <Badge bg="#F6F9FC" color="#0A80DB" borderRadius="4px" px={3}>
                       <Icon as={LucideCamera} w={3} h={3} mr={1} />All required
                     </Badge>
@@ -301,10 +301,10 @@ export default function CleanerVerifyPage() {
 
                   <Box>
                     <Text fontSize="xs" fontWeight="bold" color="slate.500" textTransform="uppercase"
-                      letterSpacing="wider" mb={2}>ID — front</Text>
+                      letterSpacing="wider" mb={2}>ID front side</Text>
                     <UploadBox
-                      label="Click to upload"
-                      hint="Front of your government-issued ID"
+                      label="Upload front of ID"
+                      hint="Take a clear photo of the front of your government-issued ID"
                       value={frontDocUrl}
                       onChange={setFrontDoc}
                     />
@@ -312,10 +312,10 @@ export default function CleanerVerifyPage() {
 
                   <Box>
                     <Text fontSize="xs" fontWeight="bold" color="slate.500" textTransform="uppercase"
-                      letterSpacing="wider" mb={2}>ID — back</Text>
+                      letterSpacing="wider" mb={2}>ID back side</Text>
                     <UploadBox
-                      label="Click to upload"
-                      hint="Back of your government-issued ID"
+                      label="Upload back of ID"
+                      hint="Take a clear photo of the back of your government-issued ID"
                       value={backDocUrl}
                       onChange={setBackDoc}
                     />
@@ -323,10 +323,10 @@ export default function CleanerVerifyPage() {
 
                   <Box>
                     <Text fontSize="xs" fontWeight="bold" color="slate.500" textTransform="uppercase"
-                      letterSpacing="wider" mb={2}>Selfie holding your ID</Text>
+                      letterSpacing="wider" mb={2}>Selfie with your ID</Text>
                     <UploadBox
-                      label="Click to upload"
-                      hint="Photo of your face holding the open ID document"
+                      label="Upload selfie with ID"
+                      hint="Take a photo of yourself holding your open ID next to your face"
                       value={selfieUrl}
                       onChange={setSelfie}
                     />
@@ -334,14 +334,14 @@ export default function CleanerVerifyPage() {
 
                   <HStack gap={3}>
                     <Button onClick={() => setStep(1)} variant="outline" h="11" borderRadius="4px"
-                      flex={1} fontWeight="bold">← Back</Button>
+                      flex={1} fontWeight="bold">Back to personal info</Button>
                     {canEdit && (
                       <Button onClick={handleSubmit}
                         bg="brand.500" color="white" h="11" borderRadius="4px" fontWeight="bold"
-                        loading={submitting} loadingText="Submitting…"
+                        loading={submitting} loadingText="Submitting documents..."
                         flex={2}
                         _hover={{ bg: 'brand.600' }}>
-                        Submit for review
+                        Submit documents for review
                       </Button>
                     )}
                   </HStack>
@@ -351,8 +351,8 @@ export default function CleanerVerifyPage() {
 
             <Box bg="slate.100" borderRadius="4px" p={4}>
               <Text fontSize="xs" color="slate.500" textAlign="center">
-                Your data is handled securely and used only for identity verification.
-                We never share your information with third parties.
+                Your documents are encrypted and used solely to verify your identity.
+                We never sell or share your personal information with third parties.
               </Text>
             </Box>
           </VStack>

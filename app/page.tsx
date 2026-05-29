@@ -91,7 +91,7 @@ export default function HomePage() {
               color={C.blue} textTransform="uppercase" fontFamily="heading"
               style={{ borderLeft: `2px solid ${C.blue}`, paddingLeft: 10 }}
             >
-              The trusted cleaning platform
+              Trusted by homeowners across the US
             </Text>
 
             <Text
@@ -101,15 +101,15 @@ export default function HomePage() {
               color="white" fontFamily="heading" mb={6}
             >
               A spotless home,{' '}
-              <Text as="span" color={C.blue}>on your schedule</Text>
+              <Text as="span" color={C.blue}>done right every time</Text>
             </Text>
 
             <Text
               fontSize={{ base: '16px', md: '18px' }} color="rgba(255,255,255,0.68)"
               lineHeight="1.68" fontWeight="300" mb={10} maxW="500px" fontFamily="heading"
             >
-              Connect with background-checked cleaners near you.
-              Book in minutes, relax all day.
+              We match you with background-checked, vetted cleaners in your area.
+              Book in under 2 minutes — and get back to your day.
             </Text>
 
             <HStack gap={3} flexWrap="wrap" mb={14}>
@@ -119,7 +119,7 @@ export default function HomePage() {
                   style={{ borderRadius: 4 }} fontWeight="600" fontSize="14px" fontFamily="heading"
                   _hover={{ bg: C.blueHover }} transition="background 0.15s"
                 >
-                  Book a cleaning
+                  Book my cleaning
                   <Icon as={LucideArrowRight} w={4} h={4} ml={2} />
                 </Button>
               </NextLink>
@@ -128,8 +128,8 @@ export default function HomePage() {
             <HStack gap={0} divideX="1px" divideColor="rgba(255,255,255,0.14)" flexWrap="wrap">
               {[
                 { icon: LucideStar,        text: '4.9 average rating' },
-                { icon: LucideCheckCircle, text: 'Vetted cleaners' },
-                { icon: LucideShield,      text: 'Secure payment' },
+                { icon: LucideCheckCircle, text: 'Background-checked cleaners' },
+                { icon: LucideShield,      text: 'Safe, secure payment' },
               ].map(item => (
                 <HStack key={item.text} gap={1.5} px={4} py={1} _first={{ pl: 0 }}>
                   <Icon as={item.icon} w="13px" h="13px" color={C.blue} />
@@ -149,14 +149,14 @@ export default function HomePage() {
           <Box mb={14} maxW="560px">
             <Text fontSize="10.5px" fontWeight="700" letterSpacing="0.12em" color={C.blue}
               textTransform="uppercase" fontFamily="heading" mb={3}>
-              How it works
+              Simple from start to finish
             </Text>
             <Text fontSize={{ base: '26px', md: '34px' }} fontWeight="700" color={C.heading}
               fontFamily="heading" letterSpacing="-0.025em" lineHeight="1.2" mb={3}>
-              Book a cleaner in under 2 minutes
+              From request to clean home in 3 easy steps
             </Text>
             <Text fontSize="16px" color={C.body} lineHeight="1.7" fontWeight="400" fontFamily="heading">
-              No calls, no hassle. Tell us what you need and we handle the rest.
+              No phone calls, no back-and-forth. Tell us what you need and we handle the rest.
             </Text>
           </Box>
 
@@ -164,18 +164,18 @@ export default function HomePage() {
             {[
               {
                 n: '01', icon: LucideCalendar,
-                title: 'Book in minutes',
-                desc: 'Choose your cleaning type, enter your address, and pick a date. Takes less than 2 minutes.',
+                title: 'Tell us what you need',
+                desc: 'Pick your cleaning type, enter your address, and choose a date and time. It takes less than 2 minutes.',
               },
               {
                 n: '02', icon: LucideMessageCircle,
-                title: 'Get matched',
-                desc: 'Background-checked cleaners in your area respond. You review, choose, and confirm.',
+                title: 'Get matched fast',
+                desc: 'Vetted cleaners near you receive your request. Review their profiles, pick your favorite, and confirm.',
               },
               {
                 n: '03', icon: LucideCheckCircle,
-                title: 'Enjoy your clean home',
-                desc: 'Your cleaner handles everything. Rate the job and rebook with one tap.',
+                title: 'Sit back — it\'s handled',
+                desc: 'Your cleaner arrives on time and takes care of everything. Rate the job and rebook in one tap.',
               },
             ].map((step) => (
               <Box
@@ -214,14 +214,14 @@ export default function HomePage() {
           <Box mb={14} maxW="560px">
             <Text fontSize="10.5px" fontWeight="700" letterSpacing="0.12em" color={C.blue}
               textTransform="uppercase" fontFamily="heading" mb={3}>
-              Why homeowners love us
+              Why homeowners choose us
             </Text>
             <Text fontSize={{ base: '26px', md: '34px' }} fontWeight="700" color={C.heading}
               fontFamily="heading" letterSpacing="-0.025em" lineHeight="1.2" mb={3}>
-              Built for trust. Built for results.
+              Quality you can count on, every single visit
             </Text>
             <Text fontSize="16px" color={C.body} lineHeight="1.7" fontWeight="400" fontFamily="heading">
-              Every cleaner on our platform is vetted, rated, and ready to deliver.
+              Every cleaner on our platform is vetted, rated by real customers, and ready to impress.
             </Text>
           </Box>
 
@@ -229,18 +229,18 @@ export default function HomePage() {
             {[
               {
                 icon: LucideTrendingUp,
-                title: 'Smart Matching',
-                desc: 'Our system connects you with top-rated cleaners first — based on proximity, ratings, and availability.',
+                title: 'Smart matching',
+                desc: 'We connect you with top-rated cleaners first — ranked by proximity, customer ratings, and real-time availability.',
               },
               {
                 icon: LucideShield,
-                title: 'Background Checks',
-                desc: 'Every cleaner is ID-verified and background-checked before they can accept bookings on BrazilianClean.',
+                title: 'Thorough background checks',
+                desc: 'Every cleaner is ID-verified and background-checked before their first booking. Your home is in safe hands.',
               },
               {
                 icon: LucideMapPin,
-                title: 'Local Cleaners',
-                desc: "You're matched with cleaners in your zip code — faster response times and better local knowledge.",
+                title: 'Cleaners near you',
+                desc: "You're matched with cleaners in your zip code — faster response times and someone who knows your neighborhood.",
               },
             ].map((item) => (
               <Box
@@ -272,14 +272,14 @@ export default function HomePage() {
           <Box mb={14} maxW="560px">
             <Text fontSize="10.5px" fontWeight="700" letterSpacing="0.12em" color={C.blue}
               textTransform="uppercase" fontFamily="heading" mb={3}>
-              Client reviews
+              What our customers say
             </Text>
             <Text fontSize={{ base: '26px', md: '34px' }} fontWeight="700" color={C.heading}
               fontFamily="heading" letterSpacing="-0.025em" lineHeight="1.2" mb={3}>
-              Thousands of happy homes
+              Thousands of happy customers
             </Text>
             <Text fontSize="16px" color={C.body} lineHeight="1.7" fontWeight="400" fontFamily="heading">
-              Homeowners across the US trust BrazilianClean to keep their homes spotless.
+              Homeowners across the US trust BrazilianClean for consistent, high-quality results — every time.
             </Text>
           </Box>
 
@@ -378,9 +378,9 @@ export default function HomePage() {
                 <Box w="1px" h="60px" bg={C.border} display={{ base: 'none', md: 'block' }} />
                 <SimpleGrid columns={3} gap={8} display={{ base: 'none', md: 'grid' }}>
                   {[
-                    { label: 'Bookings completed', value: '2,400+' },
-                    { label: 'Active cleaners',    value: '500+' },
-                    { label: 'Cities covered',     value: '12' },
+                    { label: 'Cleanings completed', value: '2,400+' },
+                    { label: 'Vetted cleaners',    value: '500+' },
+                    { label: 'Cities served',      value: '12' },
                   ].map(stat => (
                     <Box key={stat.label} textAlign="center">
                       <Text fontSize="24px" fontWeight="700" color={C.heading} fontFamily="heading"
@@ -396,7 +396,7 @@ export default function HomePage() {
                   style={{ borderRadius: 4 }} fontWeight="600" fontSize="13px" fontFamily="heading"
                   _hover={{ bg: C.blueHover }} transition="background 0.15s"
                 >
-                  Join them — book now
+                  Book my cleaning
                   <Icon as={LucideArrowRight} w={4} h={4} ml={2} />
                 </Button>
               </NextLink>
@@ -415,10 +415,10 @@ export default function HomePage() {
           <Box>
             <Text fontSize={{ base: '22px', md: '30px' }} fontWeight="700" color="white"
               fontFamily="heading" letterSpacing="-0.025em" mb={2}>
-              Ready for a spotless home?
+              Your cleanest home is one booking away
             </Text>
             <Text fontSize="15px" color="rgba(255,255,255,0.48)" fontFamily="heading" fontWeight="400">
-              Join thousands of happy homeowners. Book your first cleaning today.
+              Join thousands of happy homeowners. Takes 2 minutes — no account required.
             </Text>
           </Box>
           <NextLink href="/request">
@@ -427,7 +427,7 @@ export default function HomePage() {
               style={{ borderRadius: 4 }} fontWeight="600" fontSize="14px" fontFamily="heading"
               _hover={{ bg: C.blueHover }} transition="background 0.15s" flexShrink={0}
             >
-              Book a cleaning
+              Book my cleaning
               <Icon as={LucideArrowRight} w={4} h={4} ml={2} />
             </Button>
           </NextLink>
@@ -448,7 +448,7 @@ export default function HomePage() {
               </HStack>
               <Text fontSize="12px" color="rgba(255,255,255,0.32)" fontFamily="heading"
                 lineHeight="1.7" fontWeight="400">
-                The trusted cleaning marketplace connecting homeowners with vetted Brazilian cleaning professionals across the US.
+                The cleaning marketplace that connects homeowners with vetted Brazilian cleaning professionals — across the US.
               </Text>
             </Box>
 
@@ -461,7 +461,7 @@ export default function HomePage() {
                 <VStack gap={2} align="start">
                   {[
                     { label: 'About Us',     href: '/about' },
-                    { label: 'How it works', href: '/#how-it-works' },
+                    { label: 'How it works',  href: '/#how-it-works' },
                   ].map(l => (
                     <NextLink key={l.label} href={l.href}>
                       <Text fontSize="12.5px" color="rgba(255,255,255,0.38)" fontFamily="heading" fontWeight="400"
@@ -497,7 +497,7 @@ export default function HomePage() {
               <Box>
                 <Text fontSize="10.5px" fontWeight="700" letterSpacing="0.12em" color="rgba(255,255,255,0.22)"
                   textTransform="uppercase" fontFamily="heading" mb={3}>
-                  Legal & support
+                  Legal & Support
                 </Text>
                 <VStack gap={2} align="start">
                   {[
@@ -522,7 +522,7 @@ export default function HomePage() {
 
           <Box borderTop="1px solid rgba(255,255,255,0.06)" pt={6}>
             <Text fontSize="11.5px" color="rgba(255,255,255,0.22)" fontFamily="heading" fontWeight="400">
-              © 2026 BrazilianClean. All rights reserved. Background checks provided by third-party partners.
+              © 2026 BrazilianClean. All rights reserved. Background checks are conducted through trusted third-party partners.
             </Text>
           </Box>
         </Box>

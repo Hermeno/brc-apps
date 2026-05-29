@@ -24,7 +24,7 @@ function ResetPasswordForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (password !== confirm) {
-      toaster.create({ title: 'Passwords do not match', type: 'error' });
+      toaster.create({ title: 'Passwords don\'t match', description: 'Make sure both password fields are identical and try again.', type: 'error' });
       return;
     }
     setLoading(true);
@@ -37,10 +37,10 @@ function ResetPasswordForm() {
       const data = await res.json();
       if (res.ok) {
         setCodeError('');
-        toaster.create({ title: 'Password reset!', description: 'Sign in with your new password.', type: 'success' });
+        toaster.create({ title: 'Password updated!', description: 'You\'re all set — sign in with your new password.', type: 'success' });
         router.push('/auth/login');
       } else {
-        setCodeError(data.error ?? 'Invalid or expired code.');
+        setCodeError(data.error ?? 'This code is invalid or has expired. Please request a new one.');
       }
     } finally {
       setLoading(false);
@@ -65,10 +65,10 @@ function ResetPasswordForm() {
           <Box mb={7}>
             <Text fontSize="22px" fontWeight="800" color="#0A2540" fontFamily="heading"
               letterSpacing="-0.025em" mb={1}>
-              Reset your password
+              Create a new password
             </Text>
             <Text fontSize="14px" color="#425466" fontFamily="heading">
-              Enter the code sent to{' '}
+              Enter the 6-digit code we sent to{' '}
               <Text as="span" fontWeight="700" color="#0A2540">{email}</Text>
             </Text>
           </Box>
@@ -80,7 +80,7 @@ function ResetPasswordForm() {
               <Box>
                 <Text fontSize="11px" fontWeight="700" color="#425466" textTransform="uppercase"
                   letterSpacing="0.1em" fontFamily="heading" mb={1.5} textAlign="center">
-                  Verification code
+                  Reset code
                 </Text>
                 <Input
                   placeholder="000000"
@@ -107,13 +107,13 @@ function ResetPasswordForm() {
                     <NextLink href={`/auth/forgot-password`}>
                       <Text fontSize="12px" color="#0A80DB" fontWeight="700" textAlign="center"
                         cursor="pointer" fontFamily="heading" _hover={{ color: '#0870C2' }}>
-                        ← Request a new code
+                        Get a new code
                       </Text>
                     </NextLink>
                   </Box>
                 ) : (
                   <Text fontSize="12px" color="#697386" textAlign="center" mt={2} fontFamily="heading">
-                    Code expires in 10 minutes
+                    This code is valid for 10 minutes. Check your spam folder if you don't see it.
                   </Text>
                 )}
               </Box>
@@ -126,7 +126,7 @@ function ResetPasswordForm() {
                   <Icon as={LucideLock} w="14px" h="14px" color="#697386" flexShrink={0} />
                   <Input
                     type="password"
-                    placeholder="••••••••"
+                    placeholder="At least 8 characters"
                     value={password}
                     onChange={e => setPassword(e.target.value)}
                     bg="#F6F9FC"
@@ -145,7 +145,7 @@ function ResetPasswordForm() {
               {/* Confirm password */}
               <Box>
                 <Text fontSize="11px" fontWeight="700" color="#425466" textTransform="uppercase"
-                  letterSpacing="0.1em" fontFamily="heading" mb={1.5}>Confirm new password</Text>
+                  letterSpacing="0.1em" fontFamily="heading" mb={1.5}>Confirm your new password</Text>
                 <HStack gap={2}>
                   <Icon as={LucideLock} w="14px" h="14px" color="#697386" flexShrink={0} />
                   <Input
@@ -178,10 +178,10 @@ function ResetPasswordForm() {
                 _hover={{ bg: '#0870C2' }}
                 transition="background 0.15s"
                 loading={loading}
-                loadingText="Saving…"
+                loadingText="Saving your password…"
                 disabled={code.length !== 6 || !password}
               >
-                Reset password
+                Set my new password
                 <Icon as={LucideArrowRight} w={4} h={4} ml={2} />
               </Button>
 
@@ -193,7 +193,7 @@ function ResetPasswordForm() {
           <NextLink href="/auth/forgot-password">
             <Text fontSize="13px" color="#0A80DB" fontWeight="600" cursor="pointer"
               fontFamily="heading" _hover={{ color: '#0870C2' }}>
-              ← Request a new code
+              Didn't get a code? Request a new one
             </Text>
           </NextLink>
         </Box>

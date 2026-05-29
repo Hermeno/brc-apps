@@ -126,7 +126,7 @@ export default function CleanerNav() {
             size="sm" variant="ghost" color="#6B7280" px={2} h="34px" borderRadius="lg"
             _hover={{ color: '#F43F5E', bg: 'rgba(244,63,94,0.1)' }} transition="all 0.15s"
             onClick={() => signOut({ callbackUrl: '/auth/login' })}
-            title="Sair"
+            title="Sign out"
             display={{ base: 'none', sm: 'flex' }}
           >
             <Icon as={LucideLogOut} w={4} h={4} />

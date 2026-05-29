@@ -98,7 +98,7 @@ export default function ProfilePage() {
 
   const handleDetectLocation = () => {
     if (!navigator.geolocation) {
-      toaster.create({ title: 'Geolocation not supported in this browser', type: 'error' });
+      toaster.create({ title: 'Location detection is not supported in this browser.', type: 'error' });
       return;
     }
     setGeoLoading(true);
@@ -109,7 +109,7 @@ export default function ProfilePage() {
       setLongitude(lng);
       setGeoLoading(false);
       await reverseGeocode(lat, lng);
-      toaster.create({ title: 'Location detected!', type: 'success' });
+      toaster.create({ title: 'Location updated successfully.', type: 'success' });
     };
     const onError = () => {
       // Retry with low accuracy (IP/WiFi-based) if high accuracy fails
@@ -117,7 +117,7 @@ export default function ProfilePage() {
         onSuccess,
         () => {
           setGeoLoading(false);
-          toaster.create({ title: 'Could not detect location', description: 'Please allow location access in your browser settings.', type: 'error' });
+          toaster.create({ title: 'Could not detect your location.', description: 'Please allow location access in your browser settings and try again.', type: 'error' });
         },
         { enableHighAccuracy: false, timeout: 15000 }
       );
@@ -137,7 +137,7 @@ export default function ProfilePage() {
         body: JSON.stringify({ bio, serviceTypes, avatarUrl, latitude, longitude, serviceRadiusMiles }),
       });
       if (res.ok) {
-        toaster.create({ title: 'Profile saved!', type: 'success' });
+        toaster.create({ title: 'Profile saved successfully.', type: 'success' });
       } else {
         const err = await res.json();
         throw new Error(err.error);
@@ -184,7 +184,7 @@ export default function ProfilePage() {
       if (res.ok) {
         setPhotos(prev => [d.photo, ...prev]);
         setPendingUrl(''); setPhotoCaption(''); setShowPhotoForm(false);
-        toaster.create({ title: 'Photo added!', type: 'success' });
+        toaster.create({ title: 'Photo added to your gallery.', type: 'success' });
       } else {
         throw new Error(d.error);
       }
@@ -201,7 +201,7 @@ export default function ProfilePage() {
       const res = await fetch(`/api/photos/${photoId}`, { method: 'DELETE' });
       if (res.ok) {
         setPhotos(prev => prev.filter(p => p.id !== photoId));
-        toaster.create({ title: 'Photo removed', type: 'success' });
+        toaster.create({ title: 'Photo removed from your gallery.', type: 'success' });
       } else {
         const err = await res.json();
         throw new Error(err.error);
@@ -230,12 +230,11 @@ export default function ProfilePage() {
 
           {/* Header */}
           <Box>
-            <Heading size="lg" fontWeight="black" color="slate.900" fontFamily="heading">My Profile</Heading>
+            <Heading size="lg" fontWeight="black" color="slate.900" fontFamily="heading">My public profile</Heading>
             <Text color="slate.500" fontSize="sm" mt={1}>
-              Customize your public profile and work gallery
+              This is what clients see when they view your listing — make it count.
             </Text>
           </Box>
-
           {/* ── Avatar + About card ── */}
           <Box bg="white" border="1px solid #E3E8EE" style={{ borderRadius: 8 }} overflow="hidden">
             {/* Section header */}
@@ -264,10 +263,10 @@ export default function ProfilePage() {
                 <Box flex={1}>
                   <Text fontWeight="bold" color="slate.800" fontSize="sm">Profile photo</Text>
                   <Text fontSize="xs" color="slate.400" mt={0.5}>
-                    Click the circle to upload
+                    Tap the circle to choose a photo from your device.
                   </Text>
                   <Text fontSize="xs" color="slate.300" mt={0.5}>
-                    JPG, PNG or WEBP · max 8 MB
+                    JPG, PNG, or WEBP · max 8 MB
                   </Text>
                 </Box>
               </Flex>
@@ -276,11 +275,11 @@ export default function ProfilePage() {
                 {/* Bio */}
                 <Box>
                   <Text fontSize="xs" fontWeight="bold" color="slate.500" mb={2}
-                    textTransform="uppercase" letterSpacing="wider">Bio</Text>
+                    textTransform="uppercase" letterSpacing="wider">About you</Text>
                   <Textarea
                     value={bio}
                     onChange={e => setBio(e.target.value)}
-                    placeholder="Tell us about your experience, specialties, and what sets you apart…"
+                    placeholder="Describe your experience, the services you specialize in, and what clients can expect when they book you..."
                     bg="slate.50" border="1px solid" borderColor="slate.200"
                     borderRadius="4px" rows={4} fontSize="sm"
                     _focus={{ borderColor: 'brand.300', bg: 'white' }}
@@ -292,7 +291,7 @@ export default function ProfilePage() {
                 {/* Service types */}
                 <Box>
                   <Text fontSize="xs" fontWeight="bold" color="slate.500" mb={3}
-                    textTransform="uppercase" letterSpacing="wider">Service types</Text>
+                    textTransform="uppercase" letterSpacing="wider">Services you offer</Text>
                   <SimpleGrid columns={{ base: 2, sm: 3 }} gap={2}>
                     {SERVICE_LIST.map(s => {
                       const sel = serviceTypes.includes(s);
@@ -313,7 +312,7 @@ export default function ProfilePage() {
                   bg="#0A80DB" color="white" borderRadius="4px" fontWeight="bold"
                   _hover={{ bg: '#0870C2' }}
                   transition="all 0.2s"
-                  loading={saving} loadingText="Saving..."
+                  loading={saving} loadingText="Saving profile..."
                   onClick={handleSave}
                   alignSelf="flex-end">
                   <Icon as={LucideSave} w={4} h={4} mr={2} />
@@ -342,7 +341,7 @@ export default function ProfilePage() {
 
             <Box p={6}>
               <Text fontSize="xs" color="slate.400" mb={5}>
-                Used to show distance to clients and improve lead matching.
+                Your location helps clients see how far you are and helps us send you nearby job leads. Your exact address is never shown publicly.
               </Text>
 
               <VStack gap={4} align="stretch">
@@ -352,10 +351,10 @@ export default function ProfilePage() {
                   borderRadius="4px" fontWeight="semibold" fontSize="sm"
                   _hover={{ borderColor: 'brand.300', color: 'brand.600', bg: 'brand.50' }}
                   transition="all 0.15s"
-                  loading={geoLoading} loadingText="Detecting…"
+                  loading={geoLoading} loadingText="Detecting your location..."
                   onClick={handleDetectLocation}>
                   <Icon as={LucideNavigation} w={4} h={4} mr={2} />
-                  {latitude ? 'Update my location' : 'Detect my location'}
+                  {latitude ? 'Update my location' : 'Use my current location'}
                 </Button>
 
                 {/* Location label */}
@@ -401,7 +400,7 @@ export default function ProfilePage() {
                       fontSize: '9.5px', fontWeight: 700, padding: '2px 7px',
                       background: '#EFF6FF', color: '#0A80DB', borderRadius: 2,
                     }}>
-                      Your plan: max {planMaxRadius} mi
+                      Your plan allows up to {planMaxRadius} miles
                     </Text>
                   </HStack>
                   <Box display="flex" gap={2} flexWrap="wrap">
@@ -425,15 +424,15 @@ export default function ProfilePage() {
                           _hover={locked ? {} : { borderColor: '#0A80DB', color: active ? 'white' : '#0A80DB' }}
                           onClick={() => !locked && setServiceRadius(miles)}
                         >
-                          {miles} mi{locked ? ' 🔒' : ''}
+                          {miles} {miles === 1 ? 'mile' : 'miles'}{locked ? ' 🔒' : ''}
                         </Box>
                       );
                     })}
                   </Box>
                   <Text fontSize="11px" color="slate.400" mt={1.5}>
-                    You will only receive leads within this distance.
+                    We will only send you job leads within this distance from your location.
                     {planMaxRadius < 110 && (
-                      <> Upgrade your plan to unlock a wider radius.</>
+                      <> Upgrade your plan to reach more clients across a wider area.</>
                     )}
                   </Text>
                 </Box>
@@ -443,11 +442,11 @@ export default function ProfilePage() {
                   bg="#0A80DB" color="white" borderRadius="4px" fontWeight="bold"
                   _hover={{ bg: '#0870C2' }}
                   transition="all 0.2s"
-                  loading={saving} loadingText="Saving..."
+                  loading={saving} loadingText="Saving location..."
                   onClick={handleSave}
                   alignSelf="flex-end">
                   <Icon as={LucideSave} w={4} h={4} mr={2} />
-                  Save location & radius
+                  Save location and radius
                 </Button>
               </VStack>
             </Box>
@@ -472,10 +471,10 @@ export default function ProfilePage() {
                 {photos.length < 20 && !showPhotoForm && (
                   <Button size="sm" bg="#0A80DB" color="white" borderRadius="4px" fontWeight="bold"
                     _hover={{ bg: '#0870C2' }}
-                    loading={uploading} loadingText="Uploading…"
+                    loading={uploading} loadingText="Uploading photo..."
                     onClick={() => fileInputRef.current?.click()}>
                     <Icon as={LucidePlus} w={3.5} h={3.5} mr={1.5} />
-                    Add photo
+                    Add work photo
                   </Button>
                 )}
               </Flex>
@@ -487,7 +486,7 @@ export default function ProfilePage() {
                 {showPhotoForm && pendingUrl && (
                   <Box bg="brand.50" border="1px solid" borderColor="brand.200" borderRadius="4px" p={4} mb={5}>
                     <Text fontSize="sm" fontWeight="bold" color="brand.700" mb={3}>
-                      Photo uploaded — add a caption (optional)
+                      Photo uploaded — add a short caption so clients know what they are looking at (optional)
                     </Text>
                     <Flex gap={3} align="flex-start">
                       <Box w="80px" h="80px" borderRadius="4px" overflow="hidden" flexShrink={0}
@@ -497,7 +496,7 @@ export default function ProfilePage() {
                       </Box>
                       <VStack gap={3} flex={1} align="stretch">
                         <Input
-                          placeholder="Caption (e.g., Living room after cleaning)"
+                          placeholder="e.g., Kitchen deep clean — before and after"
                           value={photoCaption}
                           onChange={e => setPhotoCaption(e.target.value)}
                           bg="white" borderRadius="4px" h="10" border="1px solid"
@@ -511,9 +510,9 @@ export default function ProfilePage() {
                           </Button>
                           <Button size="sm" bg="#0A80DB" color="white" borderRadius="4px" fontWeight="bold"
                             _hover={{ bg: '#0870C2' }}
-                            loading={addingPhoto} loadingText="Saving..."
+                            loading={addingPhoto} loadingText="Adding photo..."
                             onClick={handleAddPhoto}>
-                            Save photo
+                            Add to gallery
                           </Button>
                         </HStack>
                       </VStack>
@@ -527,9 +526,9 @@ export default function ProfilePage() {
                   cursor="pointer" onClick={() => fileInputRef.current?.click()}
                   _hover={{ borderColor: 'brand.300', bg: 'brand.50' }} transition="all 0.15s">
                   <Text fontSize="3xl" mb={2}>📷</Text>
-                  <Text color="slate.500" fontSize="sm" fontWeight="semibold">No photos yet</Text>
+                  <Text color="slate.500" fontSize="sm" fontWeight="semibold">Your gallery is empty</Text>
                   <Text color="slate.400" fontSize="xs" mt={1}>
-                    Click here to add photos of your work
+                    Add before-and-after photos to show clients the quality of your work
                   </Text>
                 </Box>
               ) : (
@@ -543,7 +542,7 @@ export default function ProfilePage() {
                         transition="border-color 0.15s">
                         <img
                           src={photo.url}
-                          alt={photo.caption ?? `Foto ${i + 1}`}
+                          alt={photo.caption ?? `Photo ${i + 1}`}
                           style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }}
                         />
                         <Button

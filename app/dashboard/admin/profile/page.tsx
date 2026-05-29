@@ -28,10 +28,10 @@ export default function AdminProfilePage() {
 
   const handleSave = async () => {
     if (newPassword && newPassword !== confirm) {
-      toaster.create({ title: 'Passwords do not match', type: 'error' }); return;
+      toaster.create({ title: 'Passwords do not match.', type: 'error' }); return;
     }
     if (newPassword && newPassword.length < 6) {
-      toaster.create({ title: 'Password must be at least 6 characters', type: 'error' }); return;
+      toaster.create({ title: 'Password must be at least 6 characters.', type: 'error' }); return;
     }
     setLoading(true);
     try {
@@ -41,7 +41,7 @@ export default function AdminProfilePage() {
         body: JSON.stringify({ name, email, phone, newPassword: newPassword || undefined }),
       });
       if (!res.ok) throw new Error('Error saving');
-      toaster.create({ title: 'Profile updated!', type: 'success' });
+      toaster.create({ title: 'Profile updated successfully.', type: 'success' });
       setNewPass(''); setConfirm('');
     } catch (e: any) {
       toaster.create({ title: e.message, type: 'error' });
@@ -119,7 +119,7 @@ export default function AdminProfilePage() {
               </VStack>
             </Box>
 
-            <Button onClick={handleSave} loading={loading} loadingText="Saving…"
+            <Button onClick={handleSave} loading={loading} loadingText="Saving changes..."
               bg="brand.500" color="white" h="11" borderRadius="4px" fontWeight="bold"
               _hover={{ bg: 'brand.600' }}>
               <Icon as={LucideSave} mr={2} /> Save changes

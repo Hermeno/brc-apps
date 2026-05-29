@@ -61,7 +61,7 @@ export default function PlanPage() {
     load();
     // Check if returning from successful payment
     if (typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('upgraded')) {
-      toaster.create({ title: 'Subscription activated! 🎉', description: 'Your CFS ranking has been updated.', type: 'success' });
+      toaster.create({ title: 'Plan activated!', description: 'Your ranking has been updated. You\'ll start getting better leads right away.', type: 'success' });
       window.history.replaceState({}, '', '/dashboard/plan');
     }
   }, [load]);
@@ -79,8 +79,8 @@ export default function PlanPage() {
           body: JSON.stringify({ plan: 'FREE' }),
         });
         setCurrentPlan('FREE');
-        toaster.create({ title: 'Plan downgraded to Free', type: 'success' });
-      } catch { toaster.create({ title: 'Error updating plan', type: 'error' }); }
+        toaster.create({ title: 'Switched to Free plan.', description: 'No commitment required — upgrade again anytime.', type: 'success' });
+      } catch { toaster.create({ title: 'Something went wrong. Please try again.', type: 'error' }); }
       finally { setSaving(false); }
       return;
     }
@@ -130,9 +130,9 @@ export default function PlanPage() {
         body: JSON.stringify({ zipCode }),
       });
       if (res.ok) {
-        toaster.create({ title: 'ZIP saved!', description: 'Leads in your area will be prioritized.', type: 'success' });
+        toaster.create({ title: 'Service area saved!', description: 'Leads near your zip code will be matched to you first.', type: 'success' });
       }
-    } catch { toaster.create({ title: 'Error saving ZIP', type: 'error' }); }
+    } catch { toaster.create({ title: 'Could not save your area. Please try again.', type: 'error' }); }
     finally { setSaving(false); }
   };
 
@@ -141,7 +141,7 @@ export default function PlanPage() {
       <CleanerNav />
       <Box p={6} maxW="960px" mx="auto">
         <Heading size="md" fontWeight="bold" color="slate.900" fontFamily="heading" mb={6}>
-          My Plan
+          Plan &amp; Visibility
         </Heading>
 
         <VStack gap={8} align="stretch">
@@ -153,19 +153,19 @@ export default function PlanPage() {
                 <Icon as={LucideTrendingUp} w={4} h={4} color="brand.500" />
                 <Box>
                   <Text fontSize="10.5px" fontWeight={700} color="#697386" textTransform="uppercase" letterSpacing="0.06em" fontFamily="heading">
-                    How the CFS Ranking works
+                    How you rank for new leads
                   </Text>
-                  <Text fontSize="xs" color="slate.500">Cleaner Fit Score — determines who gets leads first</Text>
+                  <Text fontSize="xs" color="slate.500">Your score determines how early you see each lead</Text>
                 </Box>
               </HStack>
             </Box>
             <Box p={5}>
               <SimpleGrid columns={{ base: 2, sm: 4 }} gap={3}>
                 {[
-                  { label: 'Plan', max: '30 pts', icon: '💎', desc: 'PRO = top' },
-                  { label: 'Service', max: '40 pts', icon: '🧹', desc: 'Exact match' },
-                  { label: 'Rating', max: '20 pts', icon: '⭐', desc: 'Avg. rating' },
-                  { label: 'Area', max: '10 pts', icon: '📍', desc: 'Same ZIP' },
+                  { label: 'Plan', max: '30 pts', icon: '💎', desc: 'Pro ranks highest' },
+                  { label: 'Service', max: '40 pts', icon: '🧹', desc: 'Services matched' },
+                  { label: 'Rating', max: '20 pts', icon: '⭐', desc: 'Client reviews' },
+                  { label: 'Area', max: '10 pts', icon: '📍', desc: 'Near client zip code' },
                 ].map(item => (
                   <Box key={item.label} border="1px solid #E3E8EE" p={3} textAlign="center">
                     <Text fontSize="lg" mb={1}>{item.icon}</Text>
@@ -184,7 +184,7 @@ export default function PlanPage() {
               <HStack gap={2}>
                 <Icon as={LucideMapPin} w={4} h={4} color="red.500" />
                 <Text fontSize="10.5px" fontWeight={700} color="#697386" textTransform="uppercase" letterSpacing="0.06em" fontFamily="heading">
-                  My Area (ZIP code)
+                  My service area
                 </Text>
                 <Text
                   style={{
@@ -195,7 +195,7 @@ export default function PlanPage() {
                     fontWeight: 700,
                     color: '#0A80DB',
                   }}>
-                  +10 pts no ranking
+                  +10 pts in your score
                 </Text>
               </HStack>
             </Box>
@@ -213,11 +213,11 @@ export default function PlanPage() {
                 <Button bg="brand.500" color="white" borderRadius="4px" fontWeight="bold" px={5} h="11"
                   _hover={{ bg: 'brand.600' }} onClick={handleSaveZip} loading={saving}>
                   <Icon as={LucideSave} w={4} h={4} mr={2} />
-                  Salvar
+                  Save area
                 </Button>
               </HStack>
               <Text fontSize="xs" color="slate.400" mt={2}>
-                Leads in the same area earn +10 points in your CFS, increasing your chances of being matched first.
+                Adding your zip code earns you 10 points and helps us match you with nearby clients first.
               </Text>
             </Box>
           </Box>
@@ -228,7 +228,7 @@ export default function PlanPage() {
               Choose your plan
             </Text>
             <Text color="slate.500" fontSize="sm" mb={5}>
-              Higher plans = more CFS points = you appear first to clients.
+              A higher plan boosts your score — so you see leads sooner and win more jobs. Start earning today.
             </Text>
 
             <SimpleGrid columns={{ base: 1, sm: 2, lg: 4 }} gap={4}>
@@ -319,7 +319,7 @@ export default function PlanPage() {
                           onClick={() => handleSelectPlan(pid)}
                           loading={redirecting || saving}
                           disabled={redirecting}>
-                          {plan.price === 0 ? 'Use free' : `Subscribe to ${plan.name}`}
+                          {plan.price === 0 ? 'Switch to Free' : `Upgrade to ${plan.name}`}
                         </Button>
                       )}
                     </VStack>
@@ -333,32 +333,32 @@ export default function PlanPage() {
           <Box border="1px solid #E3E8EE" style={{ borderRadius: 8 }} overflow="hidden">
             <Box bg="#F6F9FC" px={5} py={3} borderBottom="1px solid #E3E8EE">
               <Text fontSize="10.5px" fontWeight={700} color="#697386" textTransform="uppercase" letterSpacing="0.06em" fontFamily="heading">
-                How leads are distributed
+                How leads reach you
               </Text>
             </Box>
             <VStack gap={0} align="stretch">
               {[
                 {
                   wave: 'Instant Book',
-                  time: 'Imediato',
+                  time: 'Immediately',
                   cleaners: '1 cleaner',
-                  desc: 'Score ≥ 85 pts — the system matches directly. No competition.',
+                  desc: 'Score 85+ — the system books you directly. No competition, no waiting.',
                   chipBg: '#FEFCE8',
                   chipColor: '#854D0E',
                 },
                 {
                   wave: 'Wave 1',
-                  time: '90 segundos',
-                  cleaners: '1 exclusive',
-                  desc: 'Top 1 in the ranking. Exclusive window — no one else sees the lead.',
+                  time: 'First 90 seconds',
+                  cleaners: '1 cleaner only',
+                  desc: 'The top-ranked cleaner gets a private 90-second window. No one else sees this lead yet.',
                   chipBg: '#F8FAFC',
                   chipColor: '#0A80DB',
                 },
                 {
                   wave: 'Wave 2',
-                  time: '180 segundos',
-                  cleaners: '2 simultaneous',
-                  desc: 'If Wave 1 expires: 2 cleaners compete. First to accept wins. The other is not charged.',
+                  time: 'After 90 seconds',
+                  cleaners: '2 cleaners',
+                  desc: 'If Wave 1 passes, 2 cleaners compete. The first to accept wins — the other pays nothing.',
                   chipBg: '#F5F3FF',
                   chipColor: '#0A80DB',
                 },
@@ -402,9 +402,9 @@ export default function PlanPage() {
             <Box bg="white" border="1px solid #E3E8EE" p={5} style={{ borderRadius: 8 }}>
               <Flex justify="space-between" align="center">
                 <Box>
-                  <Text fontWeight="bold" color="slate.800">Manage subscription</Text>
+                  <Text fontWeight="bold" color="slate.800">Billing & subscription</Text>
                   <Text fontSize="sm" color="slate.500" mt={0.5}>
-                    Update your card, view invoices, or cancel via the Stripe portal.
+                    Update your payment method, view past invoices, or cancel anytime. No commitment required.
                   </Text>
                 </Box>
                 <Button
@@ -414,7 +414,7 @@ export default function PlanPage() {
                   onClick={handleManageSubscription}
                   loading={redirecting}>
                   <Icon as={LucideSettings} w={4} h={4} mr={1.5} />
-                  Manage
+                  Manage billing
                 </Button>
               </Flex>
             </Box>

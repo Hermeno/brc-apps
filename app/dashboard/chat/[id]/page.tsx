@@ -96,7 +96,7 @@ export default function ChatPage() {
       setText('');
       await fetchMessages();
     } catch {
-      toaster.create({ title: 'Failed to send message', type: 'error' });
+      toaster.create({ title: 'Message could not be sent. Please try again.', type: 'error' });
     } finally {
       setSending(false);
     }
@@ -107,7 +107,7 @@ export default function ChatPage() {
     try {
       const res = await fetch(`/api/conversations/${id}/confirm`, { method: 'POST' });
       if (res.ok) {
-        toaster.create({ title: 'Cleaner confirmed!', description: 'The job has been marked as accepted.', type: 'success' });
+        toaster.create({ title: 'Cleaner confirmed!', description: 'Your booking is all set. The job is now accepted.', type: 'success' });
         await fetchMessages();
       }
     } finally {
@@ -126,7 +126,7 @@ export default function ChatPage() {
         window.location.href = data.checkoutUrl;
       }
     } catch {
-      toaster.create({ title: 'Payment error, please try again', type: 'error' });
+      toaster.create({ title: 'Something went wrong with the payment. Please try again.', type: 'error' });
     } finally {
       setPaying(false);
     }
@@ -186,18 +186,18 @@ export default function ChatPage() {
             {isWaitingForClient ? (
               <>
                 <Text fontWeight="black" fontSize="xl" color="slate.900" mb={2}>
-                  Waiting for client confirmation
+                  Waiting for the client to choose
                 </Text>
                 <Text color="slate.500" fontSize="sm" lineHeight="1.7">
-                  Your interest has been submitted. The client is reviewing cleaners and will confirm their choice shortly.
-                  You'll be notified as soon as they confirm.
+                  Your interest has been sent. The client is reviewing available cleaners and will pick their top choice shortly.
+                  We'll notify you the moment they confirm.
                 </Text>
                 <Box mt={6} bg="#F6F9FC" border="1px solid" borderColor="#E3E8EE" px={4} py={3}>
                   <HStack gap={2} justify="center">
                     <Icon as={LucideBanknote} w={4} h={4} color="#0A80DB" />
                     <Text fontSize="sm" color="slate.600">
                       Lead fee: <Text as="span" fontWeight="black" color="#0A80DB">${conv.leadFee}</Text>
-                      {' '}— charged only after confirmation
+                      {' '}— only charged once the client confirms you
                     </Text>
                   </HStack>
                 </Box>
@@ -205,10 +205,10 @@ export default function ChatPage() {
             ) : (
               <>
                 <Text fontWeight="black" fontSize="xl" color="slate.900" mb={2}>
-                  Payment required to access chat
+                  One step to unlock your chat
                 </Text>
                 <Text color="slate.500" fontSize="sm" lineHeight="1.7" mb={6}>
-                  The client has selected you. Pay the lead fee to unlock the chat and the client's contact information.
+                  Great news — the client has chosen you! Pay the lead fee to open the chat and see the client's contact details.
                 </Text>
                 <Box bg="#EBF5FE" border="1px solid" borderColor="#A2D3F9" px={5} py={4} mb={6}>
                   <Text fontSize="2xl" fontWeight="black" color="#0A80DB">${conv.leadFee}</Text>
@@ -218,12 +218,12 @@ export default function ChatPage() {
                   w="full" bg="#0A80DB" color="white" h="44px" borderRadius="4px"
                   fontWeight="bold" fontSize="sm"
                   _hover={{ bg: '#0870C2' }}
-                  loading={paying} loadingText="Redirecting…"
+                  loading={paying} loadingText="Redirecting to payment…"
                   onClick={handlePayLeadFee}>
                   <Icon as={LucideBanknote} w={4} h={4} mr={2} />
-                  Pay ${conv.leadFee} to unlock chat
+                  Pay ${conv.leadFee} and unlock chat
                 </Button>
-                <Text fontSize="xs" color="slate.400" mt={3}>Secure payment via Stripe · USD</Text>
+                <Text fontSize="xs" color="slate.400" mt={3}>Secure checkout via Stripe · USD</Text>
               </>
             )}
           </Box>
@@ -283,10 +283,10 @@ export default function ChatPage() {
               size="sm" bg="#0A80DB" color="white" borderRadius="4px" fontWeight="bold"
               _hover={{ bg: '#0870C2' }}
               onClick={confirmCleaner} loading={confirming}
-              loadingText="Confirming..."
+              loadingText="Confirming…"
             >
               <Icon as={LucideCheckCircle} w={4} h={4} mr={1} />
-              Confirm
+              Confirm this cleaner
             </Button>
           )}
         </Flex>
@@ -298,7 +298,7 @@ export default function ChatPage() {
           <Container maxW="760px">
             <HStack gap={2}>
               <Icon as={LucidePhone} w={4} h={4} color="#0A80DB" />
-              <Text fontSize="sm" fontWeight="bold" color="#064882">Client contact:</Text>
+              <Text fontSize="sm" fontWeight="bold" color="#064882">Client's contact:</Text>
               <Text fontSize="sm" color="#0A80DB" fontWeight="semibold">
                 {conv.client.phone || conv.lead.clientPhone}
               </Text>
@@ -345,7 +345,7 @@ export default function ChatPage() {
                 border="1px solid"
                 borderColor={feePaid ? '#A7F3D0' : '#E3E8EE'}
               >
-                Lead fee: ${conv.leadFee} — {feePaid ? 'paid ✓' : 'pending'}
+                Lead fee: ${conv.leadFee} — {feePaid ? 'paid ✓' : 'payment pending'}
               </Badge>
             )}
           </Flex>
@@ -359,12 +359,12 @@ export default function ChatPage() {
             <Box textAlign="center" py={12}>
               <Text fontSize="3xl" mb={2}>💬</Text>
               <Text color="slate.500" fontWeight="medium">
-                {isClient ? `Start the conversation with ${otherName}` : `Introduce yourself to ${otherName}`}
+                {isClient ? `Say hello to ${otherName} to kick things off` : `Introduce yourself to ${otherName} and make a great first impression`}
               </Text>
               <Text color="slate.400" fontSize="sm" mt={1}>
                 {!isClient && feePaid
-                  ? `Lead fee of $${conv.leadFee} has been paid.`
-                  : 'Be professional and friendly.'}
+                  ? `Your lead fee of $${conv.leadFee} has been paid — you're all set.`
+                  : 'Keep it professional and friendly.'}
               </Text>
             </Box>
           ) : (
@@ -425,7 +425,7 @@ export default function ChatPage() {
         <Container maxW="760px">
           <HStack gap={3}>
             <Input
-              placeholder="Type your message..."
+              placeholder="Write a message…"
               value={text}
               onChange={e => setText(e.target.value)}
               onKeyDown={e => e.key === 'Enter' && !e.shiftKey && sendMessage()}

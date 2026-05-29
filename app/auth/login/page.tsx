@@ -25,15 +25,15 @@ export default function LoginPage() {
     if (result?.error) {
       if (result.error.includes('EMAIL_NOT_VERIFIED')) {
         toaster.create({
-          title: 'Email not verified',
-          description: 'Please verify your email before signing in.',
+          title: 'Check your inbox',
+          description: 'You need to verify your email before signing in. We\'ll send a new code.',
           type: 'warning',
         });
         router.push(`/auth/verify-email?email=${encodeURIComponent(email)}`);
       } else if (result.error.includes('ACCOUNT_SUSPENDED')) {
-        toaster.create({ title: 'Account suspended', description: 'Your account has been suspended. Please contact support.', type: 'error' });
+        toaster.create({ title: 'Account suspended', description: 'Your account has been suspended. Please reach out to our support team for help.', type: 'error' });
       } else {
-        toaster.create({ title: 'Sign in failed', description: 'Invalid email or password.', type: 'error' });
+        toaster.create({ title: 'Incorrect email or password', description: 'Double-check your details and try again, or reset your password below.', type: 'error' });
       }
       setLoading(false);
     } else {
@@ -74,7 +74,7 @@ export default function LoginPage() {
               color="#0A80DB" textTransform="uppercase" fontFamily="heading" mb={4}
               style={{ borderLeft: '2px solid #0A80DB', paddingLeft: 10 }}
             >
-              Trusted by homeowners
+              Trusted by homeowners across the US
             </Text>
             <Text fontSize="26px" fontWeight="800" color="white" fontFamily="heading"
               letterSpacing="-0.03em" lineHeight="1.15" mb={6}>
@@ -125,7 +125,7 @@ export default function LoginPage() {
               Welcome back
             </Text>
             <Text fontSize="14px" color="#425466" fontFamily="heading">
-              Sign in to your account to continue.
+              Sign in to manage your bookings and cleaners.
             </Text>
           </Box>
 
@@ -134,7 +134,7 @@ export default function LoginPage() {
 
               <Box>
                 <Text fontSize="12px" fontWeight="500" color="#425466" letterSpacing="-0.01em"
-                  fontFamily="heading" mb={1.5}>Email</Text>
+                  fontFamily="heading" mb={1.5}>Email address</Text>
                 <Input
                   placeholder="name@email.com"
                   value={email}
@@ -161,7 +161,7 @@ export default function LoginPage() {
                     fontFamily="heading">Password</Text>
                   <NextLink href="/auth/forgot-password">
                     <Text fontSize="12px" color="#0A80DB" fontWeight="500" cursor="pointer"
-                      fontFamily="heading" _hover={{ color: '#0870C2' }}>Forgot password?</Text>
+                      fontFamily="heading" _hover={{ color: '#0870C2' }}>Forgot your password?</Text>
                   </NextLink>
                 </Flex>
                 <Input
@@ -197,10 +197,10 @@ export default function LoginPage() {
                 _hover={{ bg: '#0870C2' }}
                 transition="background 0.15s"
                 loading={loading}
-                loadingText="Signing in…"
+                loadingText="Signing you in…"
                 mt={1}
               >
-                Sign in to BrazilianClean
+                Sign in to my account
                 <Icon as={LucideArrowRight} w={3.5} h={3.5} ml={1.5} />
               </Button>
 
@@ -209,10 +209,10 @@ export default function LoginPage() {
 
           <Box mt={7} pt={6} borderTop="1px solid #E3E8EE">
             <Text fontSize="13px" color="#425466" fontFamily="heading" textAlign="center">
-              Don&apos;t have an account?{' '}
+              New to BrazilianClean?{' '}
               <NextLink href="/auth/register">
                 <Text as="span" color="#0A80DB" fontWeight="700" cursor="pointer"
-                  _hover={{ color: '#0870C2' }}>Create free account</Text>
+                  _hover={{ color: '#0870C2' }}>Create a free account</Text>
               </NextLink>
             </Text>
           </Box>

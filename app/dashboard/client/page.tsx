@@ -28,15 +28,15 @@ import Image from 'next/image';
 
 /* ─── types ──────────────────────────────────────────────────── */
 const STATUS_MAP: Record<string, { label: string; bg: string; color: string; border: string }> = {
-  NEW:       { label: 'Pending',                bg: '#F8FAFC', color: '#64748B', border: '#E3E8EE' },
-  WAVE1:     { label: 'Searching…',             bg: '#F8FAFC', color: '#0A80DB', border: '#E3E8EE' },
-  WAVE2:     { label: 'Searching…',             bg: '#F8FAFC', color: '#0A80DB', border: '#E3E8EE' },
-  WAVE3:     { label: 'Searching…',             bg: '#F8FAFC', color: '#0A80DB', border: '#E3E8EE' },
-  IN_REVIEW: { label: 'Pros responded',         bg: '#ECFDF5', color: '#059669', border: '#A7F3D0' },
-  ACCEPTED:  { label: 'Confirmed ✓',            bg: '#ECFDF5', color: '#059669', border: '#A7F3D0' },
+  NEW:       { label: 'Awaiting match',          bg: '#F8FAFC', color: '#64748B', border: '#E3E8EE' },
+  WAVE1:     { label: 'Finding cleaners…',       bg: '#F8FAFC', color: '#0A80DB', border: '#E3E8EE' },
+  WAVE2:     { label: 'Finding cleaners…',       bg: '#F8FAFC', color: '#0A80DB', border: '#E3E8EE' },
+  WAVE3:     { label: 'Finding cleaners…',       bg: '#F8FAFC', color: '#0A80DB', border: '#E3E8EE' },
+  IN_REVIEW: { label: 'Cleaners available',      bg: '#ECFDF5', color: '#059669', border: '#A7F3D0' },
+  ACCEPTED:  { label: 'Booked ✓',               bg: '#ECFDF5', color: '#059669', border: '#A7F3D0' },
   COMPLETED: { label: 'Completed ✓',            bg: '#ECFDF5', color: '#047857', border: '#A7F3D0' },
   CANCELLED: { label: 'Cancelled',              bg: '#FEF2F2', color: '#DC2626', border: '#FECACA' },
-  UNMATCHED: { label: 'No match found',         bg: '#FEF2F2', color: '#DC2626', border: '#FECACA' },
+  UNMATCHED: { label: 'No cleaners found',       bg: '#FEF2F2', color: '#DC2626', border: '#FECACA' },
 };
 
 type ConvEntry = { id: string; cleanerId: string; status: string; cleaner: { id: string; name: string; avatarUrl?: string | null; isVerified?: boolean } };
@@ -173,15 +173,16 @@ export default function ClientPage() {
   }, [form.address, form.date, form.time, form.bedrooms, form.bathrooms, form.squareMeters]);
 
   /* ── estimate ─── */
+  // form.squareMeters holds sq ft (US input); convert to m² for the estimate engine
   const estimate = useMemo(() => {
     if (form.squareMeters <= 0) return null;
-    return calculateEstimate({ serviceType: form.serviceType, bedrooms: form.bedrooms, bathrooms: form.bathrooms, squareMeters: form.squareMeters, extras: form.extras, frequency: form.frequency });
+    return calculateEstimate({ serviceType: form.serviceType, bedrooms: form.bedrooms, bathrooms: form.bathrooms, squareMeters: form.squareMeters / 10.764, extras: form.extras, frequency: form.frequency });
   }, [form.serviceType, form.bedrooms, form.bathrooms, form.squareMeters, form.extras, form.frequency]);
 
   /* ── submit new ── */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!form.address || !form.date || !form.time) { toaster.create({ title: 'Please fill in address, date and time', type: 'error' }); return; }
+    if (!form.address || !form.date || !form.time) { toaster.create({ title: 'Almost there! Please fill in the address, date, and time.', type: 'error' }); return; }
     setSubmitting(true);
     try {
       const dateTime = new Date(`${form.date}T${form.time}`).toISOString();
@@ -189,12 +190,12 @@ export default function ClientPage() {
       const res = await fetch('/api/leads', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ serviceType: serviceLabel, address: form.address, notes: form.notes, dateTime,
-          bedrooms: form.bedrooms, bathrooms: form.bathrooms, squareMeters: form.squareMeters,
+          bedrooms: form.bedrooms, bathrooms: form.bathrooms, squareMeters: form.squareMeters > 0 ? form.squareMeters / 10.764 : 0,
           extras: form.extras, frequency: form.frequency,
           estimatedMinPrice: estimate?.minPrice, estimatedMaxPrice: estimate?.maxPrice, estimatedHours: estimate?.hours }),
       });
       if (res.ok) {
-        toaster.create({ title: 'Booking submitted!', description: 'Searching for professionals…', type: 'success' });
+        toaster.create({ title: 'Booking request sent!', description: "We're finding the best cleaner for you.", type: 'success' });
         setShowForm(false); setForm(emptyForm); fetchLeads();
       } else { const err = await res.json(); throw new Error(err.error); }
     } catch (error: any) {
@@ -208,7 +209,7 @@ export default function ClientPage() {
     const dt = new Date(lead.dateTime);
     setEditForm({
       serviceType: sId,
-      bedrooms: lead.bedrooms ?? 1, bathrooms: lead.bathrooms ?? 1, squareMeters: lead.squareMeters ?? 0,
+      bedrooms: lead.bedrooms ?? 1, bathrooms: lead.bathrooms ?? 1, squareMeters: Math.round((lead.squareMeters ?? 0) * 10.764),
       extras: lead.extras ?? [], frequency: lead.frequency ?? 'once',
       address: lead.address,
       date: dt.toISOString().split('T')[0],
@@ -219,20 +220,21 @@ export default function ClientPage() {
   };
 
   const handleSaveEdit = async (leadId: string) => {
-    if (!editForm.address || !editForm.date || !editForm.time) { toaster.create({ title: 'Please fill in address, date and time', type: 'error' }); return; }
+    if (!editForm.address || !editForm.date || !editForm.time) { toaster.create({ title: 'Please fill in the address, date, and time before saving.', type: 'error' }); return; }
     setSaving(true);
     try {
       const dateTime = new Date(`${editForm.date}T${editForm.time}`).toISOString();
       const serviceLabel = SERVICE_TYPES.find(s => s.id === editForm.serviceType)?.labelEn ?? editForm.serviceType;
-      const est = editForm.squareMeters > 0 ? calculateEstimate({ serviceType: editForm.serviceType, bedrooms: editForm.bedrooms, bathrooms: editForm.bathrooms, squareMeters: editForm.squareMeters, extras: editForm.extras, frequency: editForm.frequency }) : null;
+      const sqftToM2 = editForm.squareMeters > 0 ? editForm.squareMeters / 10.764 : 0;
+      const est = sqftToM2 > 0 ? calculateEstimate({ serviceType: editForm.serviceType, bedrooms: editForm.bedrooms, bathrooms: editForm.bathrooms, squareMeters: sqftToM2, extras: editForm.extras, frequency: editForm.frequency }) : null;
       const res = await fetch(`/api/leads/${leadId}`, {
         method: 'PUT', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ serviceType: serviceLabel, address: editForm.address, dateTime, notes: editForm.notes,
-          bedrooms: editForm.bedrooms, bathrooms: editForm.bathrooms, squareMeters: editForm.squareMeters,
+          bedrooms: editForm.bedrooms, bathrooms: editForm.bathrooms, squareMeters: sqftToM2,
           extras: editForm.extras, frequency: editForm.frequency,
           estimatedMinPrice: est?.minPrice, estimatedMaxPrice: est?.maxPrice, estimatedHours: est?.hours }),
       });
-      if (res.ok) { toaster.create({ title: 'Booking updated!', type: 'success' }); setEditingId(null); fetchLeads(); }
+      if (res.ok) { toaster.create({ title: 'Booking updated successfully!', type: 'success' }); setEditingId(null); fetchLeads(); }
       else { const err = await res.json(); throw new Error(err.error); }
     } catch (e: any) { toaster.create({ title: e.message, type: 'error' }); }
     finally { setSaving(false); }
@@ -243,7 +245,7 @@ export default function ClientPage() {
     setCancelling(leadId);
     try {
       const res = await fetch(`/api/leads/${leadId}/cancel`, { method: 'POST' });
-      if (res.ok) { toaster.create({ title: 'Booking cancelled', type: 'success' }); setConfirmCancel(null); fetchLeads(); }
+      if (res.ok) { toaster.create({ title: 'Booking cancelled', description: "Your booking has been cancelled. No worries — you can book again anytime.", type: 'success' }); setConfirmCancel(null); fetchLeads(); }
       else { const err = await res.json(); throw new Error(err.error); }
     } catch (e: any) { toaster.create({ title: e.message, type: 'error' }); }
     finally { setCancelling(null); }
@@ -254,7 +256,7 @@ export default function ClientPage() {
     setCompleting(leadId);
     try {
       const res = await fetch(`/api/leads/${leadId}/complete`, { method: 'POST' });
-      if (res.ok) { toaster.create({ title: 'Job completed! 🎉', description: 'How about rating the professional?', type: 'success' }); setConfirmComplete(null); fetchLeads(); }
+      if (res.ok) { toaster.create({ title: "Job marked as complete!", description: "Nice! Don't forget to leave a rating for your cleaner.", type: 'success' }); setConfirmComplete(null); fetchLeads(); }
       else { const err = await res.json(); throw new Error(err.error); }
     } catch (e: any) { toaster.create({ title: e.message, type: 'error' }); }
     finally { setCompleting(null); }
@@ -265,7 +267,7 @@ export default function ClientPage() {
     setDeclining(convId);
     try {
       const res = await fetch(`/api/conversations/${convId}/decline`, { method: 'POST' });
-      if (res.ok) { toaster.create({ title: 'Professional declined', type: 'success' }); fetchLeads(); }
+      if (res.ok) { toaster.create({ title: 'Cleaner declined', description: "No problem — we'll keep looking for the right fit.", type: 'success' }); fetchLeads(); }
       else { const err = await res.json(); throw new Error(err.error); }
     } catch (e: any) { toaster.create({ title: e.message, type: 'error' }); }
     finally { setDeclining(null); }
@@ -278,7 +280,7 @@ export default function ClientPage() {
       const res = await fetch(`/api/conversations/${convId}/confirm`, { method: 'POST' });
       const data = await res.json();
       if (res.ok) {
-        toaster.create({ title: 'Professional accepted!', description: 'Opening chat…', type: 'success' });
+        toaster.create({ title: "Cleaner confirmed! You're all set.", description: "Opening your chat now.", type: 'success' });
         fetchLeads();
         router.push(`/dashboard/chat/${convId}`);
       } else { throw new Error(data.error); }
@@ -289,11 +291,11 @@ export default function ClientPage() {
   /* ── reactivate ── */
   const handleReactivate = async (leadId: string) => {
     if (!reactivateDate || !reactivateTime) {
-      toaster.create({ title: 'Please select a new date and time', type: 'error' }); return;
+      toaster.create({ title: 'Please choose a new date and time to reactivate.', type: 'error' }); return;
     }
     const dateTime = new Date(`${reactivateDate}T${reactivateTime}`);
     if (dateTime <= new Date()) {
-      toaster.create({ title: 'Please choose a future date and time', type: 'error' }); return;
+      toaster.create({ title: 'The date and time must be in the future.', type: 'error' }); return;
     }
     setReactivating(true);
     try {
@@ -302,7 +304,7 @@ export default function ClientPage() {
         body: JSON.stringify({ dateTime: dateTime.toISOString() }),
       });
       if (res.ok) {
-        toaster.create({ title: 'Booking reactivated!', description: 'Searching for professionals…', type: 'success' });
+        toaster.create({ title: "Booking reactivated!", description: "We're finding available cleaners for your new date.", type: 'success' });
         setReactivateId(null); fetchLeads();
       } else { const err = await res.json(); throw new Error(err.error); }
     } catch (e: any) { toaster.create({ title: e.message, type: 'error' }); }
@@ -311,14 +313,14 @@ export default function ClientPage() {
 
   /* ── review ── */
   const handleSubmitRating = async () => {
-    if (!ratingLead || starValue === 0) { toaster.create({ title: 'Please select a rating from 1 to 5', type: 'error' }); return; }
+    if (!ratingLead || starValue === 0) { toaster.create({ title: 'Please tap a star to rate your experience.', type: 'error' }); return; }
     setSendingRating(true);
     try {
       const res = await fetch(`/api/leads/${ratingLead.id}/review`, {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ rating: starValue, comment: ratingComment }),
       });
-      if (res.ok) { toaster.create({ title: 'Rating submitted! ⭐', type: 'success' }); setRatingLead(null); setStarValue(0); setRatingComment(''); fetchLeads(); }
+      if (res.ok) { toaster.create({ title: 'Thanks for the review!', description: 'Your feedback helps our whole community.', type: 'success' }); setRatingLead(null); setStarValue(0); setRatingComment(''); fetchLeads(); }
       else { const err = await res.json(); throw new Error(err.error); }
     } catch (e: any) { toaster.create({ title: e.message, type: 'error' }); }
     finally { setSendingRating(false); }
@@ -360,7 +362,7 @@ export default function ClientPage() {
             <NotificationBell dark />
             <Button size="sm" variant="ghost" color="#6B7280" px={2} h="34px" borderRadius="lg"
               _hover={{ color: '#F43F5E', bg: 'rgba(244,63,94,0.1)' }} transition="all 0.15s"
-              onClick={() => signOut({ callbackUrl: '/auth/login' })} title="Sair">
+              onClick={() => signOut({ callbackUrl: '/auth/login' })} title="Sign out">
               <Icon as={LucideLogOut} w={4} h={4} />
             </Button>
           </HStack>
@@ -410,7 +412,7 @@ export default function ClientPage() {
                 <HStack gap={0} borderLeft="1px solid #E3E8EE" flexShrink={0}>
                   <Box textAlign="center" px={4}>
                     <Text fontWeight="black" fontSize="lg" color="brand.600" fontFamily="heading">{leads.length}</Text>
-                    <Text fontSize="10px" color="slate.400" fontWeight="700" textTransform="uppercase" letterSpacing="wider" fontFamily="heading">bookings</Text>
+                    <Text fontSize="10px" color="slate.400" fontWeight="700" textTransform="uppercase" letterSpacing="wider" fontFamily="heading">total bookings</Text>
                   </Box>
                   <Box textAlign="center" px={4} borderLeft="1px solid #E3E8EE">
                     <Text fontWeight="black" fontSize="lg" color="#0A80DB" fontFamily="heading">
@@ -428,7 +430,9 @@ export default function ClientPage() {
             <Box>
               <Heading size="lg" fontWeight="black" color="slate.900" fontFamily="heading">My Bookings</Heading>
               <Text color="slate.500" fontSize="sm" mt={1}>
-                {leads.filter(l => !['COMPLETED', 'CANCELLED'].includes(l.status)).length} active booking(s)
+                {leads.filter(l => !['COMPLETED', 'CANCELLED'].includes(l.status)).length === 1
+                  ? '1 active booking'
+                  : `${leads.filter(l => !['COMPLETED', 'CANCELLED'].includes(l.status)).length} active bookings`}
               </Text>
             </Box>
             <Button
@@ -438,7 +442,7 @@ export default function ClientPage() {
               transition="background 0.15s"
               onClick={() => { setShowForm(v => !v); if (showForm) setForm(emptyForm); }}>
               <Icon as={showForm ? LucideX : LucidePlus} w={4} h={4} mr={2} />
-              {showForm ? 'Cancel' : 'New Booking'}
+              {showForm ? 'Discard request' : 'Book a cleaning'}
             </Button>
           </Flex>
 
@@ -469,11 +473,11 @@ export default function ClientPage() {
                 {activeLeads.length === 0 ? (
                   <Box border="1px solid #E3E8EE" p={16} textAlign="center" bg="white">
                     <Text fontSize="4xl" mb={3}>🧹</Text>
-                    <Text color="slate.600" fontWeight="bold" fontSize="lg">No active bookings</Text>
+                    <Text color="slate.600" fontWeight="bold" fontSize="lg">No active bookings yet</Text>
                     <Text color="slate.400" fontSize="sm" mt={1}>
                       {historyLeads.length > 0
-                        ? 'All your bookings are finalized. View your history below.'
-                        : 'Click "New Booking" to request a cleaning professional.'}
+                        ? "All your bookings are wrapped up. Check your history below."
+                        : 'Ready for a sparkling home? Hit "Book a cleaning" to get started.'}
                     </Text>
                   </Box>
                 ) : (
@@ -536,7 +540,7 @@ export default function ClientPage() {
                                     <HStack gap={3} flexWrap="wrap">
                                       {lead.bedrooms && <Text fontSize="xs" color="slate.600">🛏 {lead.bedrooms}bd</Text>}
                                       {lead.bathrooms && <Text fontSize="xs" color="slate.600">🚿 {lead.bathrooms}ba</Text>}
-                                      {(lead.squareMeters ?? 0) > 0 && <Text fontSize="xs" color="slate.600">📐 {lead.squareMeters}m²</Text>}
+                                      {(lead.squareMeters ?? 0) > 0 && <Text fontSize="xs" color="slate.600">📐 {Math.round((lead.squareMeters ?? 0) * 10.764)} sq ft</Text>}
                                       {freqLabel && freqLabel !== 'One-time' && (
                                         <Text style={{ borderRadius: 2, background: '#F6F9FC', padding: '2px 6px', fontSize: '9.5px', fontWeight: 700, color: '#0A80DB' }}>
                                           🔄 {freqLabel}
@@ -594,8 +598,8 @@ export default function ClientPage() {
                                     <Box w="full">
                                       <Text fontSize="xs" color="brand.600" fontWeight="bold" mb={2}>
                                         {activeConvs.length === 1
-                                          ? '1 professional available — accept or decline:'
-                                          : `${activeConvs.length} professionals available — choose one:`}
+                                          ? '1 cleaner is ready — accept or decline below:'
+                                          : `${activeConvs.length} cleaners are ready — choose the one you prefer:`}
                                       </Text>
                                       <VStack align="start" gap={2}>
                                         {activeConvs.map(conv => (
@@ -615,7 +619,7 @@ export default function ClientPage() {
                                                 {conv.cleaner.name}
                                               </Text>
                                               {conv.cleaner.isVerified && (
-                                                <Icon as={LucideShieldCheck} w={4} h={4} color="#0A80DB" aria-label="Verificado" />
+                                                <Icon as={LucideShieldCheck} w={4} h={4} color="#0A80DB" aria-label="Verified" />
                                               )}
                                             </HStack>
                                             <Button size="xs" variant="outline" borderColor="slate.200" color="slate.600"
@@ -630,7 +634,7 @@ export default function ClientPage() {
                                               loading={accepting === conv.id}
                                               onClick={() => handleAccept(conv.id)}>
                                               <Icon as={LucideCheckCircle} w={3} h={3} mr={1} />
-                                              Accept
+                                              Accept this cleaner
                                             </Button>
                                             <Button size="xs" variant="outline" color="red.500" borderColor="red.200"
                                               borderRadius="4px" fontWeight="bold"
@@ -638,7 +642,7 @@ export default function ClientPage() {
                                               loading={declining === conv.id}
                                               onClick={() => handleDecline(conv.id)}>
                                               <Icon as={LucideThumbsDown} w={3} h={3} mr={1} />
-                                              Decline
+                                              Not a fit
                                             </Button>
                                           </HStack>
                                         ))}
@@ -696,7 +700,7 @@ export default function ClientPage() {
                                       transition="background 0.15s"
                                       onClick={() => editingId === lead.id ? setEditingId(null) : openEdit(lead)}>
                                       <Icon as={editingId === lead.id ? LucideChevronUp : LucidePencil} w={4} h={4} mr={1.5} />
-                                      {editingId === lead.id ? 'Close edit' : 'Edit'}
+                                      {editingId === lead.id ? 'Close editor' : 'Edit booking'}
                                     </Button>
                                   )}
 
@@ -706,19 +710,19 @@ export default function ClientPage() {
                                       borderRadius="4px" fontWeight="semibold"
                                       _hover={{ bg: 'red.50' }} transition="background 0.15s"
                                       onClick={() => setConfirmCancel(lead.id)}>
-                                      ✕ Cancel booking
+                                      ✕ Cancel this booking
                                     </Button>
                                   )}
 
                                   {/* Cancel confirmation */}
                                   {confirmCancel === lead.id && (
                                     <HStack gap={2} bg="#FEF2F2" px={3} py={2} border="1px solid #FECACA">
-                                      <Text fontSize="sm" color="red.600" fontWeight="semibold">Confirm cancellation?</Text>
+                                      <Text fontSize="sm" color="red.600" fontWeight="semibold">Cancel this booking?</Text>
                                       <Button size="xs" bg="red.500" color="white" borderRadius="4px"
                                         loading={cancelling === lead.id}
                                         onClick={() => handleCancel(lead.id)}>Yes, cancel</Button>
                                       <Button size="xs" variant="ghost" color="slate.500"
-                                        onClick={() => setConfirmCancel(null)}>No</Button>
+                                        onClick={() => setConfirmCancel(null)}>Keep it</Button>
                                     </HStack>
                                   )}
 
@@ -737,7 +741,7 @@ export default function ClientPage() {
                                         }
                                       }}>
                                       <Icon as={LucideRotateCcw} w={4} h={4} mr={1.5} />
-                                      {reactivateId === lead.id ? 'Close' : 'Reschedule & Reactivate'}
+                                      {reactivateId === lead.id ? 'Close' : 'Reschedule and reactivate'}
                                     </Button>
                                   )}
 
@@ -755,12 +759,12 @@ export default function ClientPage() {
                                   {/* Terminate confirmation */}
                                   {confirmComplete === lead.id && (
                                     <HStack gap={2} bg="#F6F9FC" px={3} py={2} border="1px solid #E3E8EE">
-                                      <Text fontSize="sm" color="#0A80DB" fontWeight="semibold">Job completed?</Text>
+                                      <Text fontSize="sm" color="#0A80DB" fontWeight="semibold">All done with this cleaning?</Text>
                                       <Button size="xs" bg="#0A80DB" color="white" borderRadius="4px"
                                         loading={completing === lead.id}
-                                        onClick={() => handleComplete(lead.id)}>Yes, completed</Button>
+                                        onClick={() => handleComplete(lead.id)}>Yes, mark complete</Button>
                                       <Button size="xs" variant="ghost" color="slate.500"
-                                        onClick={() => setConfirmComplete(null)}>No</Button>
+                                        onClick={() => setConfirmComplete(null)}>Not yet</Button>
                                     </HStack>
                                   )}
 
@@ -781,7 +785,7 @@ export default function ClientPage() {
                             {/* ── Reactivate Form (inline) ── */}
                             {reactivateId === lead.id && (
                               <Box borderTop="1px solid #FED7AA" bg="#FFF7ED" p={5}>
-                                <Text fontSize="sm" fontWeight="bold" color="#0A80DB" mb={4}>🔄 Choose a new date & time</Text>
+                                <Text fontSize="sm" fontWeight="bold" color="#0A80DB" mb={4}>🔄 Pick a new date and time</Text>
                                 <VStack gap={3} align="stretch">
                                   <HStack gap={3}>
                                     <Input type="date" value={reactivateDate}
@@ -795,12 +799,12 @@ export default function ClientPage() {
                                       border="1px solid" borderColor="#E3E8EE" />
                                   </HStack>
                                   <HStack gap={3} justify="flex-end">
-                                    <Button size="sm" variant="ghost" color="slate.500" onClick={() => setReactivateId(null)}>Cancel</Button>
+                                    <Button size="sm" variant="ghost" color="slate.500" onClick={() => setReactivateId(null)}>Discard</Button>
                                     <Button size="sm" bg="#0A80DB" color="white" borderRadius="4px" fontWeight="bold"
                                       _hover={{ bg: '#0870C2' }} loading={reactivating} loadingText="Reactivating…"
                                       onClick={() => handleReactivate(lead.id)}>
                                       <Icon as={LucideRotateCcw} w={4} h={4} mr={1.5} />
-                                      Reactivate Booking
+                                      Confirm new date
                                     </Button>
                                   </HStack>
                                 </VStack>
@@ -810,7 +814,7 @@ export default function ClientPage() {
                             {/* ── Edit Form (inline) ── */}
                             {editingId === lead.id && (
                               <Box borderTop="1px solid #E3E8EE" bg="#F6F9FC" p={5}>
-                                <Text fontSize="sm" fontWeight="bold" color="brand.700" mb={4}>✏️ Edit booking</Text>
+                                <Text fontSize="sm" fontWeight="bold" color="brand.700" mb={4}>✏️ Update your booking details</Text>
                                 <VStack gap={4} align="stretch">
                                   <SimpleGrid columns={2} gap={3}>
                                     {SERVICE_TYPES.map(sv => (
@@ -843,11 +847,11 @@ export default function ClientPage() {
                                       bg="white" borderRadius="4px" h="11" flex={1} border="1px solid" borderColor="slate.200" />
                                   </HStack>
                                   <HStack gap={3} justify="flex-end">
-                                    <Button size="sm" variant="ghost" color="slate.500" onClick={() => setEditingId(null)}>Cancel</Button>
+                                    <Button size="sm" variant="ghost" color="slate.500" onClick={() => setEditingId(null)}>Discard changes</Button>
                                     <Button size="sm" bg="brand.500" color="white" borderRadius="4px" fontWeight="bold"
                                       _hover={{ bg: 'brand.600' }} loading={saving} loadingText="Saving…"
                                       onClick={() => handleSaveEdit(lead.id)}>
-                                      Save changes
+                                      Save booking changes
                                     </Button>
                                   </HStack>
                                 </VStack>
@@ -913,7 +917,7 @@ export default function ClientPage() {
                                       <HStack gap={3} flexWrap="wrap">
                                         {lead.bedrooms && <Text fontSize="xs" color="slate.500">🛏 {lead.bedrooms}bd</Text>}
                                         {lead.bathrooms && <Text fontSize="xs" color="slate.500">🚿 {lead.bathrooms}ba</Text>}
-                                        {(lead.squareMeters ?? 0) > 0 && <Text fontSize="xs" color="slate.500">📐 {lead.squareMeters}m²</Text>}
+                                        {(lead.squareMeters ?? 0) > 0 && <Text fontSize="xs" color="slate.500">📐 {Math.round((lead.squareMeters ?? 0) * 10.764)} sq ft</Text>}
                                         {freqLabel && freqLabel !== 'One-time' && <Text style={{ borderRadius: 2, background: '#F6F9FC', padding: '2px 6px', fontSize: '9.5px', fontWeight: 700, color: '#0A80DB' }}>🔄 {freqLabel}</Text>}
                                       </HStack>
                                     )}
@@ -981,17 +985,17 @@ export default function ClientPage() {
                     <Text fontSize="2xl">⭐</Text>
                   </Box>
                   <Box>
-                    <Heading size="md" fontWeight="black" color="slate.900" fontFamily="heading">Rate professional</Heading>
+                    <Heading size="md" fontWeight="black" color="slate.900" fontFamily="heading">How did it go?</Heading>
                     <Text color="slate.500" fontSize="sm" mt={1}>
-                      {ratingLead.cleaner?.name ?? 'Professional'}
+                      Share your experience with {ratingLead.cleaner?.name ?? 'your cleaner'}
                     </Text>
                   </Box>
                   <StarRating value={starValue} onChange={setStarValue} />
                   <Text fontSize="xs" color="slate.400">
-                    {starValue === 0 ? 'Tap a star to rate' : ['','Poor','Fair','Good','Great','Excellent!'][starValue]}
+                    {starValue === 0 ? 'Tap a star to share your rating' : ['','Poor','Fair','Good','Great','Excellent!'][starValue]}
                   </Text>
                   <Textarea
-                    placeholder="Optional comment (e.g. super attentive and fast!)"
+                    placeholder="Leave a comment — e.g. punctual, thorough, very friendly"
                     value={ratingComment}
                     onChange={e => setRatingComment(e.target.value)}
                     bg="slate.50" border="1px solid" borderColor="slate.200"
@@ -1002,13 +1006,13 @@ export default function ClientPage() {
                   <HStack gap={3} w="full">
                     <Button flex={1} variant="outline" borderColor="slate.200" color="slate.500"
                       borderRadius="4px" onClick={() => setRatingLead(null)}>
-                      Not now
+                      Maybe later
                     </Button>
                     <Button flex={1} bg="#0A80DB" color="white" borderRadius="4px" fontWeight="bold"
                       _hover={{ bg: '#0870C2' }}
                       loading={sendingRating} loadingText="Submitting…"
                       onClick={handleSubmitRating} disabled={starValue === 0}>
-                      Submit rating
+                      Submit my review
                     </Button>
                   </HStack>
                 </VStack>
@@ -1032,7 +1036,7 @@ function OrderForm({ form, setField, toggleExtra, estimate, progress, onSubmit, 
         <Flex justify="space-between" align="center">
           <Text fontSize="10.5px" fontWeight={700} color="#697386" textTransform="uppercase"
             letterSpacing="0.07em" fontFamily="heading">
-            NEW REQUEST
+            NEW BOOKING REQUEST
           </Text>
           <Button size="sm" variant="ghost" color="slate.400" onClick={onCancel} borderRadius="4px" minW={0} px={1.5}>
             <Icon as={LucideX} w={4} h={4} />
@@ -1089,8 +1093,8 @@ function OrderForm({ form, setField, toggleExtra, estimate, progress, onSubmit, 
                 <Box><Text fontSize="sm" color="slate.600" mb={2} fontWeight="medium">🛏 Bedrooms</Text><Stepper value={form.bedrooms} onChange={v => setField('bedrooms', v)} /></Box>
                 <Box><Text fontSize="sm" color="slate.600" mb={2} fontWeight="medium">🚿 Bathrooms</Text><Stepper value={form.bathrooms} onChange={v => setField('bathrooms', v)} /></Box>
                 <Box>
-                  <Text fontSize="sm" color="slate.600" mb={2} fontWeight="medium">📐 Area (m²)</Text>
-                  <Input type="number" placeholder="e.g. 80" value={form.squareMeters || ''}
+                  <Text fontSize="sm" color="slate.600" mb={2} fontWeight="medium">📐 Area (sq ft)</Text>
+                  <Input type="number" placeholder="e.g. 900" value={form.squareMeters || ''}
                     onChange={e => setField('squareMeters', Number(e.target.value))}
                     bg="slate.50" border="1px solid" borderColor={form.squareMeters > 0 ? 'brand.300' : 'slate.200'}
                     h="10" borderRadius="4px" fontSize="sm"
@@ -1168,7 +1172,7 @@ function OrderForm({ form, setField, toggleExtra, estimate, progress, onSubmit, 
                     _focus={{ bg: 'white', borderColor: 'brand.400' }} transition="all 0.15s" required />
                 </HStack>
                 <textarea value={form.notes} onChange={e => setField('notes', e.target.value)}
-                  placeholder="Notes (optional)..." rows={2}
+                  placeholder="Any special instructions or notes for the cleaner (optional)" rows={2}
                   style={{ background: '#F9FAFB', border: '1px solid #E5E7EB', borderRadius: '4px', padding: '12px 16px',
                     width: '100%', fontSize: '14px', color: '#1F2937', resize: 'vertical', outline: 'none', fontFamily: 'inherit' }} />
               </VStack>
@@ -1199,7 +1203,7 @@ function OrderForm({ form, setField, toggleExtra, estimate, progress, onSubmit, 
                     <Box><Text fontSize="xs" color="slate.500">Duration</Text><Text fontSize="xl" fontWeight="black" color="brand.700" fontFamily="heading">~{estimate.hours}h</Text></Box>
                   </HStack>
                 </Flex>
-                <Text fontSize="xs" color="slate.400" mt={3}>* Estimate to guide the professional. Final price may vary.</Text>
+                <Text fontSize="xs" color="slate.400" mt={3}>* This is an estimate to help your cleaner prepare. The final price may vary slightly.</Text>
               </Box>
             )}
 
@@ -1207,7 +1211,7 @@ function OrderForm({ form, setField, toggleExtra, estimate, progress, onSubmit, 
               h="12" borderRadius="4px" fontWeight="bold" fontSize="md"
               _hover={{ bg: '#0870C2' }}
               transition="background 0.15s" loading={submitting} loadingText="Submitting…">
-              {progress === 100 ? '✓ Submit Request' : 'Submit Request'}
+              {progress === 100 ? '✓ Submit booking request' : 'Submit booking request'}
             </Button>
           </VStack>
         </form>

@@ -33,7 +33,7 @@ export default function RegisterPage() {
     e.preventDefault();
     const phoneDigits = phone.replace(/\D/g, '');
     if (phoneDigits.length !== 10) {
-      toaster.create({ title: 'Invalid phone', description: 'Enter a 10-digit US phone number.', type: 'error' });
+      toaster.create({ title: 'Phone number looks off', description: 'Please enter a valid 10-digit US phone number, e.g. (555) 123-4567.', type: 'error' });
       return;
     }
     setLoading(true);
@@ -44,14 +44,14 @@ export default function RegisterPage() {
         body: JSON.stringify({ name, email, password, role: 'CLEANER', phone: `+1${phoneDigits}` }),
       });
       if (res.ok) {
-        toaster.create({ title: 'Account created!', description: 'Check your email to activate.', type: 'success' });
+        toaster.create({ title: 'Account created!', description: 'Check your inbox for a 6-digit code to activate your account.', type: 'success' });
         router.push(`/auth/verify-email?email=${encodeURIComponent(email)}`);
       } else {
         const data = await res.json();
         throw new Error(data.error || 'Registration failed');
       }
     } catch (error: any) {
-      toaster.create({ title: 'Error', description: error.message, type: 'error' });
+      toaster.create({ title: 'Something went wrong', description: error.message, type: 'error' });
     } finally {
       setLoading(false);
     }
@@ -99,7 +99,7 @@ export default function RegisterPage() {
             <Text fontSize="10.5px" fontWeight="700" letterSpacing="0.14em" color="#0A80DB"
               textTransform="uppercase" fontFamily="heading" mb={4}
               style={{ borderLeft: '2px solid #0A80DB', paddingLeft: 10 }}>
-              For cleaning professionals
+              Built for cleaning professionals
             </Text>
             <Text fontSize="26px" fontWeight="800" color="white" fontFamily="heading"
               letterSpacing="-0.03em" lineHeight="1.15" mb={6}>
@@ -151,7 +151,7 @@ export default function RegisterPage() {
               Join as a cleaner
             </Text>
             <Text fontSize="14px" color="#425466" fontFamily="heading">
-              Start earning. Set your own schedule.
+              Set up your profile in minutes and start earning on your schedule.
             </Text>
           </Box>
 
@@ -161,20 +161,20 @@ export default function RegisterPage() {
               <Box>
                 <Text fontSize="12px" fontWeight="500" color="#425466" letterSpacing="-0.01em"
                   fontFamily="heading" mb={1.5}>Full name</Text>
-                <Input placeholder="Jane Smith" value={name} onChange={e => setName(e.target.value)}
+                <Input placeholder="e.g. Jane Smith" value={name} onChange={e => setName(e.target.value)}
                   required {...inputStyle} />
               </Box>
 
               <Box>
                 <Text fontSize="12px" fontWeight="500" color="#425466" letterSpacing="-0.01em"
-                  fontFamily="heading" mb={1.5}>Email</Text>
+                  fontFamily="heading" mb={1.5}>Email address</Text>
                 <Input type="email" placeholder="name@email.com" value={email}
                   onChange={e => setEmail(e.target.value)} required {...inputStyle} />
               </Box>
 
               <Box>
                 <Text fontSize="12px" fontWeight="500" color="#425466" letterSpacing="-0.01em"
-                  fontFamily="heading" mb={1.5}>Phone number</Text>
+                  fontFamily="heading" mb={1.5}>US phone number</Text>
                 <Flex align="center" border="1px solid" borderColor="#E3E8EE" borderRadius="8px"
                   h="38px" px={4} bg="white" _focusWithin={{ borderColor: '#0A80DB' }} gap={2}>
                   <Text fontSize="13.5px" color="#425466" fontFamily="heading" flexShrink={0}
@@ -195,8 +195,8 @@ export default function RegisterPage() {
 
               <Box>
                 <Text fontSize="12px" fontWeight="500" color="#425466" letterSpacing="-0.01em"
-                  fontFamily="heading" mb={1.5}>Password</Text>
-                <Input type="password" placeholder="••••••••" value={password}
+                  fontFamily="heading" mb={1.5}>Create a password</Text>
+                <Input type="password" placeholder="At least 8 characters" value={password}
                   onChange={e => setPassword(e.target.value)} required {...inputStyle} />
               </Box>
 
@@ -205,9 +205,9 @@ export default function RegisterPage() {
                 bg="#0A80DB" color="white" h="40px" borderRadius="9999px"
                 fontWeight="600" fontSize="13.5px" letterSpacing="-0.01em" fontFamily="heading"
                 _hover={{ bg: '#0870C2' }} transition="background 0.15s"
-                loading={loading} loadingText="Creating account…" mt={1}
+                loading={loading} loadingText="Creating your account…" mt={1}
               >
-                Create cleaner account
+                Create my account
                 <Icon as={LucideArrowRight} w={3.5} h={3.5} ml={1.5} />
               </Button>
 
@@ -219,7 +219,7 @@ export default function RegisterPage() {
               Already have an account?{' '}
               <NextLink href="/auth/login">
                 <Text as="span" color="#0A80DB" fontWeight="700" cursor="pointer"
-                  _hover={{ color: '#0870C2' }}>Sign in</Text>
+                  _hover={{ color: '#0870C2' }}>Sign in instead</Text>
               </NextLink>
             </Text>
           </Box>
