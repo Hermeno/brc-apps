@@ -1,6 +1,6 @@
 import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
-import { stripe, BASE_URL } from '@/lib/stripe';
+import { createNotification } from '@/lib/notifications';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(
@@ -12,7 +12,7 @@ export async function POST(
 
   const cleaner = await prisma.user.findUnique({
     where: { email: session.user.email },
-    select: { id: true, role: true, stripeCustomerId: true, email: true, name: true },
+    select: { id: true, role: true, email: true, name: true },
   });
   if (!cleaner || cleaner.role !== 'CLEANER') {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
@@ -20,7 +20,7 @@ export async function POST(
 
   const { id: leadId } = await params;
 
-  // Already paid → redirect to existing conversation
+  // Already responded → redirect to existing conversation
   const existing = await prisma.conversation.findUnique({
     where: { leadId_cleanerId: { leadId, cleanerId: cleaner.id } },
   });
@@ -45,52 +45,61 @@ export async function POST(
     return NextResponse.json({ error: 'You were not invited to this lead or the time has expired' }, { status: 409 });
   }
 
-  // Wave 2 pre-check: quick race guard before charging
+  // Lead already accepted by another cleaner
   if (dist.wave === 2 && lead.status === 'ACCEPTED') {
     return NextResponse.json({ error: 'Another cleaner already accepted this lead' }, { status: 409 });
   }
 
+  const waveNum  = dist.wave;
   const leadPrice = lead.leadPrice ?? 15;
 
-  // Ensure cleaner has a Stripe customer record
-  let customerId = cleaner.stripeCustomerId ?? undefined;
-  if (!customerId) {
-    const customer = await stripe.customers.create({
-      email: cleaner.email ?? undefined,
-      name:  cleaner.name  ?? undefined,
-      metadata: { userId: cleaner.id },
+  let conversationId = '';
+
+  try {
+    await prisma.$transaction(async tx => {
+      const conv = await tx.conversation.create({
+        data: { leadId, clientId: lead.clientId, cleanerId: cleaner.id, leadFee: leadPrice, feeStatus: 'pending' },
+      });
+      conversationId = conv.id;
+
+      // Move lead to IN_REVIEW; only set cleanerId if not already claimed by another responder
+      await tx.lead.update({
+        where: { id: leadId },
+        data: {
+          status: 'IN_REVIEW',
+          ...(lead.cleanerId ? {} : { cleanerId: cleaner.id }),
+        },
+      });
+
+      await tx.leadDistribution.updateMany({
+        where: { leadId, cleanerId: cleaner.id, wave: waveNum },
+        data: { status: 'ACCEPTED', respondedAt: new Date() },
+      });
+
+      await tx.cleanerStats.upsert({
+        where:  { cleanerId: cleaner.id },
+        create: { cleanerId: cleaner.id, totalLeads: 1 },
+        update: { totalLeads: { increment: 1 } },
+      });
     });
-    customerId = customer.id;
-    await prisma.user.update({ where: { id: cleaner.id }, data: { stripeCustomerId: customerId } });
+  } catch (txErr: any) {
+    if (txErr.code === 'P2002') {
+      // Race: conversation already created by a parallel request
+      const raced = await prisma.conversation.findUnique({
+        where: { leadId_cleanerId: { leadId, cleanerId: cleaner.id } },
+      });
+      if (raced) return NextResponse.json({ conversationId: raced.id, alreadyResponded: true });
+    }
+    throw txErr;
   }
 
-  const checkoutSession = await stripe.checkout.sessions.create({
-    mode: 'payment',
-    customer: customerId,
-    line_items: [{
-      quantity: 1,
-      price_data: {
-        currency: 'usd',
-        unit_amount: Math.round(leadPrice * 100),
-        product_data: {
-          name: `Lead fee — ${lead.serviceType}`,
-          description: 'Unlocks client contact information for this lead',
-        },
-      },
-    }],
-    metadata: {
-      type:       'lead_payment',
-      leadId,
-      cleanerId:  cleaner.id,
-      wave:       String(dist.wave),
-      leadPrice:  String(leadPrice),
-    },
-    payment_intent_data: {
-      metadata: { type: 'lead_payment', leadId, cleanerId: cleaner.id },
-    },
-    success_url: `${BASE_URL}/dashboard/cleaner?lead_paid=1`,
-    cancel_url:  `${BASE_URL}/dashboard/cleaner`,
-  });
+  createNotification({
+    userId: lead.clientId,
+    type:   'cleaner_responded',
+    title:  'Cleaner available!',
+    body:   'A professional responded to your request. Accept or decline.',
+    link:   '/dashboard/client',
+  }).catch(() => {});
 
-  return NextResponse.json({ checkoutUrl: checkoutSession.url, leadFee: leadPrice });
+  return NextResponse.json({ conversationId, won: true });
 }

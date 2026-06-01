@@ -1,5 +1,6 @@
 import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
+import { stripe } from '@/lib/stripe';
 import { createNotification } from '@/lib/notifications';
 import { NextRequest, NextResponse } from 'next/server';
 
@@ -14,12 +15,15 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
   if (!user || user.role !== 'CLIENT') return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
 
   const { id } = await params;
-  const conversation = await prisma.conversation.findUnique({ where: { id } });
+  const conversation = await prisma.conversation.findUnique({
+    where: { id },
+    include: { lead: { select: { serviceType: true } } },
+  });
   if (!conversation || conversation.clientId !== user.id) {
     return NextResponse.json({ error: 'Not found' }, { status: 404 });
   }
 
-  // Accept this cleaner: lead → ACCEPTED, close all other conversations
+  // Accept this cleaner: lead → ACCEPTED, close all other conversations for this lead
   await prisma.$transaction([
     prisma.lead.update({
       where: { id: conversation.leadId },
@@ -32,18 +36,56 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
     prisma.conversation.update({ where: { id }, data: { status: 'active' } }),
   ]);
 
-  // For legacy conversations created before the pay-first model, waive the fee
+  // Automatically charge the cleaner now that the client confirmed
+  let autoCharged = false;
   if (conversation.feeStatus === 'pending' && (conversation.leadFee ?? 0) > 0) {
-    await prisma.conversation.update({ where: { id }, data: { feeStatus: 'waived' } });
+    const cleanerUser = await prisma.user.findUnique({
+      where:  { id: conversation.cleanerId },
+      select: { stripeCustomerId: true },
+    });
+
+    if (cleanerUser?.stripeCustomerId) {
+      try {
+        const customer = await stripe.customers.retrieve(cleanerUser.stripeCustomerId);
+        const defaultPM =
+          !('deleted' in customer) &&
+          typeof customer.invoice_settings?.default_payment_method === 'string'
+            ? customer.invoice_settings.default_payment_method
+            : null;
+
+        if (defaultPM) {
+          const pi = await stripe.paymentIntents.create({
+            amount:         Math.round(conversation.leadFee! * 100),
+            currency:       'usd',
+            customer:       cleanerUser.stripeCustomerId,
+            payment_method: defaultPM,
+            confirm:        true,
+            off_session:    true,
+            description:    `Lead fee — ${conversation.lead.serviceType}`,
+            metadata:       { type: 'lead_payment', conversationId: id, cleanerId: conversation.cleanerId },
+          });
+          if (pi.status === 'succeeded') {
+            await prisma.conversation.update({ where: { id }, data: { feeStatus: 'charged' } });
+            autoCharged = true;
+          }
+        }
+      } catch {
+        // Card declined or no saved card — cleaner pays manually via payment wall
+      }
+    }
   }
+
+  const notifBody = autoCharged
+    ? 'The client confirmed you and the lead fee was charged. Open the chat to continue.'
+    : 'The client accepted you! Pay the lead fee to access the chat and client contact.';
 
   createNotification({
     userId: conversation.cleanerId,
     type:   'client_accepted',
     title:  'Client accepted you!',
-    body:   'You were accepted. Open the chat to continue.',
+    body:   notifBody,
     link:   `/dashboard/chat/${id}`,
   }).catch(() => {});
 
-  return NextResponse.json({ ok: true, conversationId: id });
+  return NextResponse.json({ ok: true, conversationId: id, autoCharged });
 }

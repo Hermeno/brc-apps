@@ -6,7 +6,7 @@ import {
   LucideMapPin, LucideCalendar, LucideUser, LucideCheckCircle2,
   LucideRefreshCw, LucideBriefcase, LucideBanknote,
   LucideClock, LucideMessageCircle, LucideShield, LucideAlertCircle,
-  LucideChevronDown, LucideChevronUp,
+  LucideChevronDown, LucideChevronUp, LucidePhone,
 } from 'lucide-react';
 import { EXTRAS, FREQUENCY_OPTIONS } from '@/lib/estimate';
 import CleanerNav from '@/components/cleaner-nav';
@@ -38,7 +38,7 @@ type MyConversation = {
   status: string;
   feeStatus: string;
   leadFee: number;
-  lead: Lead & { client: { name: string } | null };
+  lead: Lead & { clientPhone?: string | null; client: { name: string; phone?: string | null } | null };
 };
 
 // ─── Section panel ────────────────────────────────────────────────────────────
@@ -151,15 +151,12 @@ export default function CleanerDashboard() {
     try {
       const res = await fetch(`/api/leads/${leadId}/respond`, { method: 'POST' });
       const data = await res.json();
-      if (res.ok) {
-        if (data.alreadyResponded) {
-          router.push(`/dashboard/chat/${data.conversationId}`);
-        } else if (data.checkoutUrl) {
-          // Thumbtack model: pay first, then get access
-          window.location.href = data.checkoutUrl;
-          return; // keep button in loading state while navigating
-        }
-      } else throw new Error(data.error);
+      if (res.ok && data.conversationId) {
+        router.push(`/dashboard/chat/${data.conversationId}`);
+        return;
+      } else if (!res.ok) {
+        throw new Error(data.error);
+      }
     } catch (error: any) {
       toaster.create({ title: error.message, type: 'error' });
     }
@@ -170,9 +167,9 @@ export default function CleanerDashboard() {
   const completedJobs = accepted.filter(l => l.status === 'COMPLETED');
   // Conversations waiting for client response (lead IN_REVIEW)
   const pendingConversations = conversations.filter(c => c.lead.status === 'IN_REVIEW');
-  // Conversations for accepted leads (client already accepted — show chat in Accepted Jobs)
+  // Conversations for accepted leads (client already accepted — show chat + contact in Accepted Jobs)
   const activeAcceptedConvMap = new Map(
-    conversations.filter(c => c.lead.status === 'ACCEPTED').map(c => [c.lead.id, c.id])
+    conversations.filter(c => c.lead.status === 'ACCEPTED').map(c => [c.lead.id, c])
   );
 
   return (
@@ -382,8 +379,7 @@ export default function CleanerDashboard() {
                       loading={responding === lead.id}
                       loadingText="…"
                     >
-                      <Icon as={LucideBanknote} w={3.5} h={3.5} mr={1.5} />
-                      Accept &amp; Pay{lead.leadPrice ? ` $${lead.leadPrice}` : ''}
+                      Accept lead
                     </Button>
                   </Flex>
                 </Box>
@@ -460,64 +456,113 @@ export default function CleanerDashboard() {
             count={activeJobs.length}
             accentColor="#10B981"
           >
-            {activeJobs.map((lead, i) => (
-              <Box
-                key={lead.id}
-                bg="white"
-                borderBottom={i < activeJobs.length - 1 ? '1px solid #F1F5F9' : 'none'}
-                position="relative"
-              >
-                <Box position="absolute" left={0} top={0} bottom={0} w="3px" bg="#10B981" />
-                <Flex px={6} pl={8} py={3.5} gap={6} align="flex-start">
-                  <Box flex={1}>
-                    <HStack gap={2.5} mb={1} flexWrap="wrap">
-                      <Chip label="Accepted" bg="#F0FDF4" color="#047857" />
-                      <Text fontSize="14px" fontWeight="700" color="#0F172A" fontFamily="heading" letterSpacing="-0.01em">
-                        {lead.serviceType}
-                      </Text>
-                    </HStack>
-                    <HStack gap={4} flexWrap="wrap">
-                      <HStack gap={1}>
-                        <Icon as={LucideMapPin} w="11px" h="11px" color="#697386" />
-                        <Text fontSize="12px" color="#425466">{lead.address}</Text>
-                      </HStack>
-                      <HStack gap={1}>
-                        <Icon as={LucideCalendar} w="11px" h="11px" color="#697386" />
-                        <Text fontSize="12px" color="#425466">
-                          {new Date(lead.dateTime).toLocaleString('en-US', { dateStyle: 'short', timeStyle: 'short' })}
-                        </Text>
-                      </HStack>
-                      {lead.client && (
-                        <HStack gap={1}>
-                          <Icon as={LucideUser} w="11px" h="11px" color="#697386" />
-                          <Text fontSize="12px" color="#425466">
-                            Booked by:{' '}
-                            <Text as="span" fontWeight="600" color="#475569">{lead.client.name}</Text>
+            {activeJobs.map((lead, i) => {
+              const conv = activeAcceptedConvMap.get(lead.id);
+              const feePaid = conv && (conv.feeStatus === 'charged' || conv.feeStatus === 'waived');
+              const contactPhone = conv && (conv.lead.clientPhone || conv.lead.client?.phone);
+              return (
+                <Box
+                  key={lead.id}
+                  bg="white"
+                  borderBottom={i < activeJobs.length - 1 ? '1px solid #F1F5F9' : 'none'}
+                  position="relative"
+                >
+                  <Box position="absolute" left={0} top={0} bottom={0} w="3px" bg="#10B981" />
+                  <Box px={6} pl={8} py={3.5}>
+                    <Flex gap={6} align="flex-start">
+                      <Box flex={1}>
+                        <HStack gap={2.5} mb={1} flexWrap="wrap">
+                          <Chip label="Accepted" bg="#F0FDF4" color="#047857" />
+                          <Text fontSize="14px" fontWeight="700" color="#0F172A" fontFamily="heading" letterSpacing="-0.01em">
+                            {lead.serviceType}
                           </Text>
                         </HStack>
+                        <HStack gap={4} flexWrap="wrap">
+                          <HStack gap={1}>
+                            <Icon as={LucideMapPin} w="11px" h="11px" color="#697386" />
+                            <Text fontSize="12px" color="#425466">{lead.address}</Text>
+                          </HStack>
+                          <HStack gap={1}>
+                            <Icon as={LucideCalendar} w="11px" h="11px" color="#697386" />
+                            <Text fontSize="12px" color="#425466">
+                              {new Date(lead.dateTime).toLocaleString('en-US', { dateStyle: 'short', timeStyle: 'short' })}
+                            </Text>
+                          </HStack>
+                          {lead.client && (
+                            <HStack gap={1}>
+                              <Icon as={LucideUser} w="11px" h="11px" color="#697386" />
+                              <Text fontSize="12px" color="#425466">
+                                <Text as="span" fontWeight="600" color="#475569">{lead.client.name}</Text>
+                              </Text>
+                            </HStack>
+                          )}
+                        </HStack>
+                        {lead.notes && (
+                          <Text color="#697386" fontSize="11.5px" fontStyle="italic" mt={1.5}>{lead.notes}</Text>
+                        )}
+                      </Box>
+                      {conv && (
+                        <Button
+                          size="sm" bg="#0A80DB" color="white" borderRadius="4px"
+                          fontWeight="600" fontFamily="heading" flexShrink={0}
+                          _hover={{ bg: '#0870C2' }}
+                          onClick={() => router.push(`/dashboard/chat/${conv.id}`)}
+                        >
+                          <Icon as={LucideMessageCircle} w={3.5} h={3.5} mr={1.5} />
+                          Chat
+                        </Button>
                       )}
-                    </HStack>
-                    {lead.notes && (
-                      <Text color="#697386" fontSize="11.5px" fontStyle="italic" mt={1.5}>{lead.notes}</Text>
-                    )}
-                  </Box>
-                  {(() => {
-                    const convId = activeAcceptedConvMap.get(lead.id);
-                    return convId ? (
-                      <Button
-                        size="sm" bg="#0A80DB" color="white" borderRadius="4px"
-                        fontWeight="600" fontFamily="heading" flexShrink={0}
-                        _hover={{ bg: '#0870C2' }}
-                        onClick={() => router.push(`/dashboard/chat/${convId}`)}
+                    </Flex>
+
+                    {/* Client contact — shown as soon as fee is paid */}
+                    {feePaid && contactPhone ? (
+                      <Box
+                        mt={3} px={4} py={3}
+                        bg="#F0FDF4" border="1px solid #BBF7D0"
+                        style={{ borderRadius: 6 }}
                       >
-                        <Icon as={LucideMessageCircle} w={3.5} h={3.5} mr={1.5} />
-                        Chat
-                      </Button>
-                    ) : null;
-                  })()}
-                </Flex>
-              </Box>
-            ))}
+                        <HStack gap={2}>
+                          <Icon as={LucidePhone} w={4} h={4} color="#059669" flexShrink={0} />
+                          <Text fontSize="11px" fontWeight="700" color="#047857" fontFamily="heading"
+                            textTransform="uppercase" letterSpacing="0.06em">
+                            Client contact
+                          </Text>
+                          <Text
+                            fontSize="15px" fontWeight="800" color="#065F46"
+                            fontFamily="heading" letterSpacing="-0.01em"
+                          >
+                            {contactPhone}
+                          </Text>
+                        </HStack>
+                      </Box>
+                    ) : conv && !feePaid ? (
+                      <Box
+                        mt={3} px={4} py={3}
+                        bg="#FFFBEB" border="1px solid #FDE68A"
+                        style={{ borderRadius: 6 }}
+                      >
+                        <Flex align="center" justify="space-between" gap={3} flexWrap="wrap">
+                          <HStack gap={2}>
+                            <Icon as={LucidePhone} w={4} h={4} color="#D97706" flexShrink={0} />
+                            <Text fontSize="12px" color="#92400E" fontWeight="600" fontFamily="heading">
+                              Pay the lead fee to unlock the client's contact
+                            </Text>
+                          </HStack>
+                          <Button
+                            size="xs" bg="#D97706" color="white" borderRadius="4px"
+                            fontWeight="700" fontFamily="heading"
+                            _hover={{ bg: '#B45309' }}
+                            onClick={() => router.push(`/dashboard/chat/${conv.id}`)}
+                          >
+                            Pay ${conv.leadFee} to unlock
+                          </Button>
+                        </Flex>
+                      </Box>
+                    ) : null}
+                  </Box>
+                </Box>
+              );
+            })}
           </SectionPanel>
         )}
 

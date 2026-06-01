@@ -114,24 +114,10 @@ export default function MarketplacePage() {
       const res = await fetch(`/api/leads/${leadId}/respond`, { method: 'POST' });
       const data = await res.json();
 
-      if (res.ok && data.won) {
-        toaster.create({
-          title: data.alreadyResponded ? 'Already submitted!' : '✓ Interest submitted!',
-          description: 'Waiting for the client to choose a cleaner.',
-          type: 'success',
-        });
-        fetchLeads();
-        if (data.alreadyResponded && data.conversationId) {
-          router.push(`/dashboard/chat/${data.conversationId}`);
-        }
-      } else if (!data.won) {
-        toaster.create({
-          title: 'Too slow 😓',
-          description: data.message ?? 'Another cleaner accepted first. You were not charged.',
-          type: 'warning',
-        });
-        fetchLeads();
-      } else {
+      if (res.ok && data.conversationId) {
+        router.push(`/dashboard/chat/${data.conversationId}`);
+        return;
+      } else if (!res.ok) {
         throw new Error(data.error);
       }
     } catch (err: any) {

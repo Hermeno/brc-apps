@@ -42,7 +42,7 @@ export async function GET() {
     prisma.conversation.findMany({
       where: { cleanerId: dbUser.id, status: 'active' },
       include: {
-        lead: { include: { client: { select: { name: true } } } },
+        lead: { include: { client: { select: { name: true, phone: true } } } },
       },
       orderBy: { id: 'desc' },
       // feeStatus and leadFee included by default (not in select — full model)
