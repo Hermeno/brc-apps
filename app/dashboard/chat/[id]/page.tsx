@@ -8,7 +8,7 @@ import {
 import {
   LucideSend, LucideArrowLeft, LucideCheckCircle, LucideZap,
   LucideBanknote, LucideClock, LucideMapPin, LucideCalendar, LucidePhone,
-  LucideLock, LucideLoader,
+  LucideLock, LucideLoader, LucideXCircle,
 } from 'lucide-react';
 import { useRouter, useParams, useSearchParams } from 'next/navigation';
 import { motion, AnimatePresence } from 'motion/react';
@@ -53,6 +53,7 @@ export default function ChatPage() {
   const [conv, setConv]           = useState<ConversationData | null>(null);
   const [userId, setUserId]       = useState<string>('');
   const [paymentRequired, setPaymentRequired] = useState(false);
+  const [declined, setDeclined]   = useState(false);
   const [text, setText]           = useState('');
   const [sending, setSending]     = useState(false);
   const [confirming, setConfirming] = useState(false);
@@ -66,6 +67,7 @@ export default function ChatPage() {
     setConv(data.conversation);
     setUserId(data.userId);
     setPaymentRequired(!!data.paymentRequired);
+    setDeclined(!!data.declined);
   }, [id, router]);
 
   useEffect(() => {
@@ -147,6 +149,48 @@ export default function ChatPage() {
   const otherName  = isClient ? conv.cleaner.name : conv.client.name;
   const isAccepted = conv.status === 'active' && conv.lead.status === 'ACCEPTED';
   const feePaid    = conv.feeStatus === 'charged' || conv.feeStatus === 'waived';
+
+  // ── Declined screen (cleaner was not selected by client) ───────────────────
+  if (!isClient && declined) {
+    return (
+      <Flex h="100vh" bg="slate.50" direction="column">
+        <Box bg="white" borderBottom="1px solid" borderColor="slate.100" px={4} py={3} flexShrink={0}>
+          <Flex align="center" gap={3} maxW="760px" mx="auto">
+            <Button size="sm" variant="ghost" color="slate.500" _hover={{ bg: 'slate.100' }} onClick={() => router.back()} px={2}>
+              <Icon as={LucideArrowLeft} w={5} h={5} />
+            </Button>
+            <Box flex={1}>
+              <Text fontWeight="bold" fontSize="md" color="slate.900">{conv.lead.serviceType}</Text>
+              <Text fontSize="xs" color="slate.400">{conv.lead.address}</Text>
+            </Box>
+          </Flex>
+        </Box>
+        <Flex flex={1} align="center" justify="center" px={6}>
+          <Box bg="white" border="1px solid" borderColor="slate.200" p={10} maxW="440px" w="full" textAlign="center">
+            <Box
+              w="56px" h="56px" borderRadius="full" bg="#FEF2F2"
+              display="flex" alignItems="center" justifyContent="center" mx="auto" mb={5}>
+              <Icon as={LucideXCircle} w={6} h={6} color="#EF4444" />
+            </Box>
+            <Text fontWeight="black" fontSize="xl" color="slate.900" mb={2}>
+              Not selected this time
+            </Text>
+            <Text color="slate.500" fontSize="sm" lineHeight="1.7">
+              The client chose a different cleaner for this job. You were not charged.
+              Keep an eye out for new leads — the next one could be yours.
+            </Text>
+            <Button
+              mt={7} w="full" bg="brand.500" color="white" h="44px" borderRadius="4px"
+              fontWeight="bold" fontSize="sm" _hover={{ bg: 'brand.600' }}
+              onClick={() => router.push('/dashboard/cleaner')}
+            >
+              Back to dashboard
+            </Button>
+          </Box>
+        </Flex>
+      </Flex>
+    );
+  }
 
   // ── Payment wall for cleaner ────────────────────────────────────────────────
   if (!isClient && paymentRequired) {

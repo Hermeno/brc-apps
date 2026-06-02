@@ -16,7 +16,14 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
   if (!conv || conv.clientId !== user.id)
     return NextResponse.json({ error: 'Not found' }, { status: 404 });
 
-  await prisma.conversation.update({ where: { id }, data: { status: 'declined' } });
+  await prisma.conversation.update({
+    where: { id },
+    data: {
+      status: 'declined',
+      // Waive the fee — client rejected this cleaner, nothing to charge
+      feeStatus: conv.feeStatus === 'charged' ? 'refunded' : 'waived',
+    },
+  });
 
   // Refund the cleaner if they already paid for this lead
   if (conv.feeStatus === 'charged' && (conv.leadFee ?? 0) > 0) {
