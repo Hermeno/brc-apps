@@ -64,7 +64,7 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ id:
         confirm:        true,
         off_session:    true,
         description:    `Lead fee — ${conversation.lead.serviceType}`,
-        metadata:       { type: 'lead_payment', conversationId: id, cleanerId: user.id },
+        metadata:       { type: 'lead_payment', conversationId: id, cleanerId: user.id, leadId: conversation.leadId },
       });
       if (pi.status === 'succeeded') {
         await prisma.conversation.update({ where: { id }, data: { feeStatus: 'charged' } });
@@ -88,9 +88,13 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ id:
     }],
     success_url: `${BASE_URL}/dashboard/chat/${id}?paid=1`,
     cancel_url:  `${BASE_URL}/dashboard/chat/${id}`,
-    metadata:    { type: 'lead_payment', conversationId: id, cleanerId: user.id },
+    // Checkout-session metadata drives webhook routing — keep it identical to the
+    // legacy shape (conversationId, no leadId) so the webhook takes the correct
+    // "mark-charged" branch instead of the wave-creation branch.
+    metadata: { type: 'lead_payment', conversationId: id, cleanerId: user.id },
     payment_intent_data: {
-      metadata: { type: 'lead_payment', conversationId: id, cleanerId: user.id },
+      // PaymentIntent metadata carries leadId for refund searches in decline/cancel.
+      metadata: { type: 'lead_payment', conversationId: id, cleanerId: user.id, leadId: conversation.leadId },
     },
   });
 

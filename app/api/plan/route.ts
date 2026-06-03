@@ -27,19 +27,13 @@ export async function PUT(req: NextRequest) {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
   }
 
-  const { plan, zipCode } = await req.json();
-
-  const validPlans = ['FREE', 'BASIC', 'PRO'];
-  if (plan && !validPlans.includes(plan)) {
-    return NextResponse.json({ error: 'Invalid plan' }, { status: 400 });
-  }
+  // Plan changes are handled exclusively via Stripe Checkout → webhook.
+  // Only service-area metadata (zipCode) can be updated here.
+  const { zipCode } = await req.json();
 
   const updated = await prisma.user.update({
     where: { id: user.id },
-    data: {
-      ...(plan    !== undefined && { plan }),
-      ...(zipCode !== undefined && { zipCode: zipCode || null }),
-    },
+    data: { ...(zipCode !== undefined && { zipCode: zipCode || null }) },
     select: { plan: true, zipCode: true },
   });
 

@@ -23,6 +23,8 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
     return NextResponse.json({ error: 'Not found' }, { status: 404 });
   }
 
+  const FEE_PAYMENT_HOURS = 24;
+
   // Accept this cleaner: lead → ACCEPTED, close all other conversations for this lead
   await prisma.$transaction([
     prisma.lead.update({
@@ -62,7 +64,7 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
             confirm:        true,
             off_session:    true,
             description:    `Lead fee — ${conversation.lead.serviceType}`,
-            metadata:       { type: 'lead_payment', conversationId: id, cleanerId: conversation.cleanerId },
+            metadata:       { type: 'lead_payment', conversationId: id, cleanerId: conversation.cleanerId, leadId: conversation.leadId },
           });
           if (pi.status === 'succeeded') {
             await prisma.conversation.update({ where: { id }, data: { feeStatus: 'charged' } });
@@ -73,11 +75,18 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
         // Card declined or no saved card — cleaner pays manually via payment wall
       }
     }
+
+    // Auto-charge didn't happen: start the payment deadline clock.
+    // advanceWaves will auto-decline and re-match if this deadline passes unpaid.
+    if (!autoCharged) {
+      const deadline = new Date(Date.now() + FEE_PAYMENT_HOURS * 60 * 60 * 1000);
+      await prisma.conversation.update({ where: { id }, data: { feeDeadline: deadline } });
+    }
   }
 
   const notifBody = autoCharged
     ? 'The client confirmed you and the lead fee was charged. Open the chat to continue.'
-    : 'The client accepted you! Pay the lead fee to access the chat and client contact.';
+    : `The client accepted you! Pay the lead fee within ${FEE_PAYMENT_HOURS}h to keep the lead.`;
 
   createNotification({
     userId: conversation.cleanerId,

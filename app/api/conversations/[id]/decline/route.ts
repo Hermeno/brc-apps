@@ -1,6 +1,7 @@
 import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { stripe } from '@/lib/stripe';
+import { runMatching } from '@/lib/matching';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
@@ -48,13 +49,15 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
   if (remaining === 0) {
     const lead = await prisma.lead.findUnique({ where: { id: conv.leadId } });
     if (lead && ['IN_REVIEW', 'ACCEPTED'].includes(lead.status)) {
-      // No cleaners left — revert so a new wave can be triggered
-      await prisma.lead.update({ where: { id: conv.leadId }, data: { status: 'WAVE1', cleanerId: null } });
-      // Expire any pending distributions so advanceWaves picks up a fresh wave
-      await prisma.leadDistribution.updateMany({
-        where: { leadId: conv.leadId, status: 'INVITED' },
-        data:  { status: 'EXPIRED' },
-      });
+      await prisma.$transaction([
+        prisma.lead.update({ where: { id: conv.leadId }, data: { status: 'NEW', cleanerId: null } }),
+        prisma.leadDistribution.updateMany({
+          where: { leadId: conv.leadId, status: 'INVITED' },
+          data:  { status: 'EXPIRED' },
+        }),
+      ]);
+      // Re-run matching so cleaners are notified immediately — no manual reactivation needed
+      runMatching(conv.leadId).catch(e => console.error('[decline rematch]', e));
     }
   }
 

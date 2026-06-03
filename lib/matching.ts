@@ -1,6 +1,6 @@
 import { prisma } from './prisma';
 import { calculateLeadPrice, detectServiceKey, getLeadPriceConfig } from './pricing';
-import { createNotificationMany } from './notifications';
+import { createNotificationMany, createNotification } from './notifications';
 import { haversineDistance, resolveCoords, ensureRadiusColumn } from './geo';
 
 // ─── CFS (Cleaner Fit Score) ─────────────────────────────────────────────────
@@ -67,7 +67,11 @@ function filterByRadius(cleaners: any[], leadCoords: { lat: number; lng: number 
   return cleaners
     .map(c => {
       const cleanerCoords = resolveCoords(c.latitude, c.longitude, c.zipCode);
-      const distanceMiles = (leadCoords && cleanerCoords)
+
+      // Cleaner has no location data — cannot verify service area, skip
+      if (!cleanerCoords) return null;
+
+      const distanceMiles = leadCoords
         ? haversineDistance(cleanerCoords.lat, cleanerCoords.lng, leadCoords.lat, leadCoords.lng)
         : null;
 
@@ -75,7 +79,7 @@ function filterByRadius(cleaners: any[], leadCoords: { lat: number; lng: number 
       const planMax = PLAN_MAX_RADIUS[c.plan ?? 'FREE'] ?? 25;
       const radiusMiles = Math.min(c.serviceRadiusMiles ?? 25, planMax);
 
-      // Hard distance filter — only skip if BOTH have coordinates AND distance exceeds radius
+      // Hard distance filter — skip if lead coords are known and cleaner is out of range
       if (distanceMiles !== null && distanceMiles > radiusMiles) return null;
 
       return { cleaner: c, distanceMiles };
@@ -171,35 +175,62 @@ export async function runMatching(leadId: string) {
   }
 
   // ── Wave 1: top BASIC/PRO cleaner, 90-second exclusive window ─────────────
-  // FREE cleaners are excluded from Wave 1 — they only enter Wave 2
+  // FREE cleaners are excluded from Wave 1 — they only enter Wave 2.
+  // If no BASIC/PRO cleaners are in radius, skip Wave 1 entirely and go straight to Wave 2
+  // so the lead never gets stuck with no distributions to advance.
   const wave1Pool     = scored.filter(s => isWave1Eligible(s.cleaner.plan ?? 'FREE'));
-  const wave1Cleaners = wave1Pool.slice(0, 1); // 1 exclusive cleaner in Wave 1
+  const wave1Cleaners = wave1Pool.slice(0, 1);
 
-  const wave1Expires = new Date(Date.now() + WAVE1_WINDOW_MS);
+  if (wave1Cleaners.length === 0) {
+    const wave2Pool    = scored.slice(0, 2);
+    const wave2Expires = new Date(Date.now() + WAVE2_WINDOW_MS);
 
-  await prisma.lead.update({ where: { id: leadId }, data: { status: 'WAVE1', leadPrice } });
-
-  if (wave1Cleaners.length > 0) {
+    await prisma.lead.update({ where: { id: leadId }, data: { status: 'WAVE2', leadPrice } });
     await prisma.leadDistribution.createMany({
-      data: wave1Cleaners.map(({ cleaner }) => ({
+      data: wave2Pool.map(({ cleaner }) => ({
         leadId,
         cleanerId:  cleaner.id,
-        wave:       1,
+        wave:       2,
         status:     'INVITED',
         notifiedAt: new Date(),
-        expiresAt:  wave1Expires,
+        expiresAt:  wave2Expires,
       })),
       skipDuplicates: true,
     });
 
-    createNotificationMany(wave1Cleaners.map(({ cleaner }) => ({
+    createNotificationMany(wave2Pool.map(({ cleaner }) => ({
       userId: cleaner.id,
       type:   'lead_received',
-      title:  'New lead — exclusive access!',
-      body:   `${lead.serviceType} at ${lead.address}. You have 90 seconds.`,
+      title:  'New lead available!',
+      body:   `${lead.serviceType} at ${lead.address}. Be the first to accept!`,
       link:   '/dashboard/cleaner',
     }))).catch(() => {});
+
+    return { type: 'wave2_direct', cleanerIds: wave2Pool.map(c => c.cleaner.id), leadPrice };
   }
+
+  const wave1Expires = new Date(Date.now() + WAVE1_WINDOW_MS);
+
+  await prisma.lead.update({ where: { id: leadId }, data: { status: 'WAVE1', leadPrice } });
+  await prisma.leadDistribution.createMany({
+    data: wave1Cleaners.map(({ cleaner }) => ({
+      leadId,
+      cleanerId:  cleaner.id,
+      wave:       1,
+      status:     'INVITED',
+      notifiedAt: new Date(),
+      expiresAt:  wave1Expires,
+    })),
+    skipDuplicates: true,
+  });
+
+  createNotificationMany(wave1Cleaners.map(({ cleaner }) => ({
+    userId: cleaner.id,
+    type:   'lead_received',
+    title:  'New lead — exclusive access!',
+    body:   `${lead.serviceType} at ${lead.address}. You have 90 seconds.`,
+    link:   '/dashboard/cleaner',
+  }))).catch(() => {});
 
   return { type: 'wave1', cleanerIds: wave1Cleaners.map(c => c.cleaner.id) };
 }
@@ -322,5 +353,65 @@ export async function advanceWaves() {
       data:  { status: 'EXPIRED' },
     });
     await prisma.lead.update({ where: { id: lead.id }, data: { status: 'UNMATCHED' } });
+  }
+
+  // ── Fee deadline expiry: cleaner accepted but never paid ───────────────────
+  // When the client confirms a cleaner and auto-charge fails, a 24-hour deadline
+  // is set. If it passes without payment, auto-decline and re-match.
+  const unpaidConvs = await prisma.conversation.findMany({
+    where: {
+      status:      'active',
+      feeStatus:   'pending',
+      feeDeadline: { lt: nowDate },
+    },
+    select: {
+      id:        true,
+      leadId:    true,
+      cleanerId: true,
+      clientId:  true,
+    },
+  });
+
+  for (const conv of unpaidConvs) {
+    // Mark this conversation as auto-declined due to non-payment
+    await prisma.conversation.update({
+      where: { id: conv.id },
+      data:  { status: 'declined', feeStatus: 'waived', feeDeadline: null },
+    });
+
+    // Notify the cleaner they lost the lead for not paying
+    createNotification({
+      userId: conv.cleanerId,
+      type:   'payment_failed',
+      title:  'Lead released — fee not paid',
+      body:   'You did not pay the lead fee within 24 hours. The lead has been released.',
+      link:   '/dashboard/cleaner',
+    }).catch(() => {});
+
+    // If no other active conversations exist for this lead, re-match immediately
+    const remaining = await prisma.conversation.count({
+      where: { leadId: conv.leadId, status: 'active', id: { not: conv.id } },
+    });
+
+    if (remaining === 0) {
+      await prisma.$transaction([
+        prisma.lead.update({ where: { id: conv.leadId }, data: { status: 'NEW', cleanerId: null } }),
+        prisma.leadDistribution.updateMany({
+          where: { leadId: conv.leadId, status: 'INVITED' },
+          data:  { status: 'EXPIRED' },
+        }),
+      ]);
+
+      // Notify the client so they know matching is running again
+      createNotification({
+        userId: conv.clientId,
+        type:   'lead_unmatched',
+        title:  'Looking for a new cleaner',
+        body:   'The previous cleaner did not confirm in time. We are finding a new match for you.',
+        link:   '/dashboard/client',
+      }).catch(() => {});
+
+      runMatching(conv.leadId).catch(e => console.error('[fee-deadline rematch]', e));
+    }
   }
 }

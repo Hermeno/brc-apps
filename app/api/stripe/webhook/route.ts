@@ -71,11 +71,12 @@ export async function POST(req: NextRequest) {
           });
 
         } else if (meta.type === 'lead_payment' && meta.conversationId && !meta.leadId) {
-          // Legacy path: conversation already created, just mark charged
+          // Existing-conversation path: cleaner paid via the /payment route checkout.
+          // Mark charged and clear feeDeadline so the cron does not auto-decline them.
           try {
             await prisma.conversation.update({
               where: { id: meta.conversationId },
-              data:  { feeStatus: 'charged' },
+              data:  { feeStatus: 'charged', feeDeadline: null },
             });
           } catch { /* already charged or deleted — ignore */ }
 
@@ -112,8 +113,21 @@ export async function POST(req: NextRequest) {
                 }
               }
 
-              // Wave 2 race: another cleaner already won — refund this payment
-              if (waveNum === 2 && lead.status === 'ACCEPTED' && lead.cleanerId !== cleanerId) {
+              // Wave 1: verify the 90-second window hasn't expired
+              if (waveNum === 1) {
+                const dist = await tx.leadDistribution.findFirst({
+                  where:  { leadId, cleanerId, wave: 1, status: 'INVITED' },
+                  select: { expiresAt: true },
+                });
+                if (!dist || (dist.expiresAt && dist.expiresAt < new Date())) {
+                  refund = true;
+                  return;
+                }
+              }
+
+              // Wave 2 race: another cleaner already won — refund this payment.
+              // Status is IN_REVIEW (not ACCEPTED) immediately after a cleaner wins.
+              if (waveNum === 2 && (lead.status === 'IN_REVIEW' || lead.status === 'ACCEPTED') && lead.cleanerId !== cleanerId) {
                 refund = true;
                 return;
               }
@@ -149,7 +163,8 @@ export async function POST(req: NextRequest) {
             });
           } catch (txErr: any) {
             if (txErr.code !== 'P2002') throw txErr;
-            // P2002 = conversation unique constraint — already created, skip
+            // P2002 = conversation already created by a concurrent Wave 2 payment — refund this one
+            refund = true;
           }
 
           if (refund && paymentIntentId) {
@@ -181,7 +196,34 @@ export async function POST(req: NextRequest) {
               data:  { plan: planId as any, stripeSubscriptionId: sub.id },
             });
           }
+        } else if (sub.status === 'past_due' || sub.status === 'unpaid' || sub.status === 'paused') {
+          // DB-only downgrade — notification is handled by invoice.payment_failed to avoid duplicates
+          await prisma.user.update({
+            where: { id: userId },
+            data:  { plan: 'FREE' },
+          });
         }
+        break;
+      }
+
+      case 'invoice.payment_failed': {
+        const inv   = event.data.object as Stripe.Invoice;
+        const subId = typeof inv.subscription === 'string' ? inv.subscription : null;
+        if (!subId) break;
+        const sub    = await stripe.subscriptions.retrieve(subId);
+        const userId = sub.metadata?.userId;
+        if (!userId) break;
+        await prisma.user.update({
+          where: { id: userId },
+          data:  { plan: 'FREE' },
+        });
+        createNotification({
+          userId,
+          type:  'payment_failed',
+          title: 'Payment failed',
+          body:  'Your subscription payment failed. Update your payment method to keep access.',
+          link:  '/dashboard/cleaner',
+        }).catch(() => {});
         break;
       }
 

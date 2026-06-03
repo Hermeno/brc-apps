@@ -205,6 +205,7 @@ model Conversation {
   status      String    @default("active")   // active | closed
   leadFee     Float     @default(0)
   feeStatus   String    @default("pending")  // pending | charged | waived | refunded
+  feeDeadline DateTime?                      // set when auto-charge fails; cron auto-declines after this
 
   messages    Message[]
 
