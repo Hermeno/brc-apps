@@ -1682,10 +1682,18 @@ function PlanPricingPanel() {
 // ─── LeadPricingPanel ─────────────────────────────────────────────────────────
 
 const SERVICE_META: { id: string; label: string; range: string }[] = [
-  { id: 'standard',  label: 'Standard Clean',      range: '$8–$12' },
-  { id: 'deep',      label: 'Deep Clean',           range: '$15–$25' },
-  { id: 'post-work', label: 'Post-Construction',    range: '$25–$40' },
-  { id: 'moving',    label: 'Move In / Move Out',   range: '$25–$40' },
+  { id: 'standard',           label: 'Standard Clean',            range: '$8–$12' },
+  { id: 'deep',               label: 'Deep Clean',                range: '$15–$25' },
+  { id: 'post-work',          label: 'Post-Construction',         range: '$25–$40' },
+  { id: 'moving',             label: 'Move In / Move Out',        range: '$25–$40' },
+  { id: 'deck-cleaning',      label: 'Deck Cleaning',             range: '$10–$18' },
+  { id: 'pressure-washing',   label: 'Pressure Washing',          range: '$12–$20' },
+  { id: 'gutter-cleaning',    label: 'Gutter Cleaning',           range: '$15–$25' },
+  { id: 'flashing-cleaning',  label: 'Flashing Cleaning',         range: '$10–$18' },
+  { id: 'tile-grout',         label: 'Tile & Grout Cleaning',     range: '$12–$20' },
+  { id: 'home-organizing',    label: 'Home Organizing',           range: '$15–$25' },
+  { id: 'garage-attic',       label: 'Garage / Basement / Attic', range: '$15–$25' },
+  { id: 'commercial',         label: 'Commercial Cleaning',       range: '$25–$40' },
 ];
 
 

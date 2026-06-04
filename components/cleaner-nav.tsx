@@ -2,7 +2,7 @@
 
 import { Box, Flex, HStack, Text, Icon, Button } from '@chakra-ui/react';
 import {
-  LucideLayoutDashboard, LucideCompass, LucideCalendar,
+  LucideLayoutDashboard, LucideCalendar,
   LucideWallet, LucideCrown, LucideLogOut, LucideUser, LucideCreditCard,
   LucideMenu,
 } from 'lucide-react';
@@ -16,7 +16,6 @@ import Image from 'next/image';
 
 const NAV_ITEMS = [
   { name: 'Dashboard',  icon: LucideLayoutDashboard, href: '/dashboard/cleaner' },
-  { name: 'Marketplace', icon: LucideCompass,         href: '/dashboard/marketplace' },
   { name: 'Schedule',   icon: LucideCalendar,         href: '/dashboard/schedule' },
   { name: 'Finances',   icon: LucideWallet,           href: '/dashboard/finances' },
   { name: 'Plan',       icon: LucideCrown,            href: '/dashboard/plan' },

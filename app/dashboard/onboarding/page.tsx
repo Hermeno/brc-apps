@@ -18,14 +18,22 @@ import Image from 'next/image';
 
 /* ─── Service options ─────────────────────────────────────────── */
 const SERVICES = [
-  { id: 'Standard Cleaning',    icon: '🧹', desc: 'Recurring home upkeep' },
-  { id: 'Deep Cleaning',        icon: '✨', desc: 'Full top-to-bottom clean' },
-  { id: 'Move-In/Out',          icon: '📦', desc: 'Vacant property cleaning' },
-  { id: 'Post-Construction',    icon: '🏗️', desc: 'Post-renovation cleanup' },
-  { id: 'Office',               icon: '🏢', desc: 'Offices & commercial spaces' },
-  { id: 'Condo/Apartment',      icon: '🏙️', desc: 'Units & high-rises' },
-  { id: 'Airbnb',               icon: '🛎️', desc: 'Guest turnovers' },
-  { id: 'Window Cleaning',      icon: '🪟', desc: 'Interior & exterior glass' },
+  { id: 'Standard Cleaning',              icon: '🧹', desc: 'Recurring home upkeep' },
+  { id: 'Deep Cleaning',                  icon: '✨', desc: 'Full top-to-bottom clean' },
+  { id: 'Move-In/Out',                    icon: '📦', desc: 'Vacant property cleaning' },
+  { id: 'Post-Construction',              icon: '🏗️', desc: 'Post-renovation cleanup' },
+  { id: 'Office',                         icon: '🏢', desc: 'Offices & workspaces' },
+  { id: 'Condo/Apartment',               icon: '🏙️', desc: 'Units & high-rises' },
+  { id: 'Airbnb',                         icon: '🛎️', desc: 'Guest turnovers' },
+  { id: 'Window Cleaning',               icon: '🪟', desc: 'Interior & exterior glass' },
+  { id: 'Deck Cleaning',                  icon: '🪵', desc: 'Deck surfaces & wood' },
+  { id: 'Pressure Washing',              icon: '💦', desc: 'High-pressure exterior wash' },
+  { id: 'Gutter Cleaning',               icon: '🍂', desc: 'Debris removal & flush' },
+  { id: 'Flashing Cleaning',             icon: '🏠', desc: 'Roof flashing & sealants' },
+  { id: 'Tile & Grout Cleaning',         icon: '🔲', desc: 'Tile & grout restoration' },
+  { id: 'Home Organizing',               icon: '📋', desc: 'Declutter & organize spaces' },
+  { id: 'Garage / Basement / Attic',     icon: '🏚️', desc: 'Utility space deep clean' },
+  { id: 'Commercial Cleaning',           icon: '🏬', desc: 'Large commercial spaces' },
 ];
 
 /* ─── Radius options ──────────────────────────────────────────── */

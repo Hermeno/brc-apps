@@ -20,6 +20,8 @@ type Photo = { id: string; url: string; caption?: string | null; createdAt: stri
 const SERVICE_LIST = [
   'Standard Cleaning', 'Deep Cleaning', 'Post-Construction', 'Move-In/Out',
   'Office', 'Condo/Apartment', 'Airbnb', 'Window Cleaning',
+  'Deck Cleaning', 'Pressure Washing', 'Gutter Cleaning', 'Flashing Cleaning',
+  'Tile & Grout Cleaning', 'Home Organizing', 'Garage / Basement / Attic', 'Commercial Cleaning',
 ];
 
 export default function ProfilePage() {

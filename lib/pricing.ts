@@ -2,13 +2,24 @@
 
 import { prisma } from './prisma';
 
-type ServiceKey = 'standard' | 'deep' | 'post-work' | 'moving';
+type ServiceKey =
+  | 'standard' | 'deep' | 'post-work' | 'moving'
+  | 'deck-cleaning' | 'pressure-washing' | 'gutter-cleaning' | 'flashing-cleaning'
+  | 'tile-grout' | 'home-organizing' | 'garage-attic' | 'commercial';
 
 const PRICE_RANGE: Record<ServiceKey, [number, number]> = {
-  standard:    [8,  12],
-  deep:        [15, 25],
-  'post-work': [25, 40],
-  moving:      [25, 40],
+  standard:           [8,  12],
+  deep:               [15, 25],
+  'post-work':        [25, 40],
+  moving:             [25, 40],
+  'deck-cleaning':    [10, 18],
+  'pressure-washing': [12, 20],
+  'gutter-cleaning':  [15, 25],
+  'flashing-cleaning':[10, 18],
+  'tile-grout':       [12, 20],
+  'home-organizing':  [15, 25],
+  'garage-attic':     [15, 25],
+  commercial:         [25, 40],
 };
 
 function randInRange(min: number, max: number): number {
@@ -20,6 +31,14 @@ export function detectServiceKey(serviceType: string): ServiceKey {
   if (s.includes('pesada') || s.includes('deep') || s.includes('profunda') || s === 'deep_cleaning') return 'deep';
   if (s.includes('obra')   || s.includes('post') || s === 'post_construction')                       return 'post-work';
   if (s.includes('mudança') || s.includes('moving') || s === 'move_in_out')                          return 'moving';
+  if (s.includes('pressure') || s.includes('power wash') || s.includes('pressão'))                   return 'pressure-washing';
+  if (s.includes('deck'))                                                                             return 'deck-cleaning';
+  if (s.includes('gutter') || s.includes('calha'))                                                   return 'gutter-cleaning';
+  if (s.includes('flashing') || s.includes('rufo'))                                                  return 'flashing-cleaning';
+  if (s.includes('tile') || s.includes('grout') || s.includes('azulejo') || s.includes('rejunte'))  return 'tile-grout';
+  if (s.includes('organ'))                                                                            return 'home-organizing';
+  if (s.includes('garage') || s.includes('basement') || s.includes('attic') || s.includes('porão') || s.includes('sótão')) return 'garage-attic';
+  if (s.includes('commercial') || s.includes('comercial'))                                           return 'commercial';
   return 'standard';
 }
 

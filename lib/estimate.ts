@@ -1,8 +1,16 @@
 export const SERVICE_TYPES = [
-  { id: 'standard',  label: 'Padrão',             labelEn: 'Standard Clean',    icon: '🧹', desc: 'Limpeza completa de rotina',   descEn: 'Regular full-home cleaning' },
-  { id: 'deep',      label: 'Pesada / Deep Clean', labelEn: 'Deep Clean',         icon: '✨', desc: 'Limpeza profunda e detalhada', descEn: 'Thorough deep cleaning' },
-  { id: 'post-work', label: 'Pós-Obra',            labelEn: 'Post-Construction',  icon: '🔨', desc: 'Limpeza após reformas',         descEn: 'Cleaning after renovation' },
-  { id: 'moving',    label: 'Mudança',             labelEn: 'Move In / Move Out', icon: '📦', desc: 'Entrada ou saída de imóvel',   descEn: 'Move-in or move-out cleaning' },
+  { id: 'standard',          label: 'Padrão',                   labelEn: 'Standard Clean',              icon: '🧹', desc: 'Limpeza completa de rotina',        descEn: 'Regular full-home cleaning' },
+  { id: 'deep',              label: 'Pesada / Deep Clean',       labelEn: 'Deep Clean',                  icon: '✨', desc: 'Limpeza profunda e detalhada',      descEn: 'Thorough deep cleaning' },
+  { id: 'post-work',         label: 'Pós-Obra',                  labelEn: 'Post-Construction',           icon: '🔨', desc: 'Limpeza após reformas',             descEn: 'Cleaning after renovation' },
+  { id: 'moving',            label: 'Mudança',                   labelEn: 'Move In / Move Out',          icon: '📦', desc: 'Entrada ou saída de imóvel',        descEn: 'Move-in or move-out cleaning' },
+  { id: 'deck-cleaning',     label: 'Limpeza de Deck',           labelEn: 'Deck Cleaning',               icon: '🪵', desc: 'Limpeza de decks e superfícies externas', descEn: 'Deck surface cleaning' },
+  { id: 'pressure-washing',  label: 'Lavagem a Pressão',         labelEn: 'Pressure Washing',            icon: '💦', desc: 'Lavagem de alta pressão de exteriores',   descEn: 'High-pressure exterior washing' },
+  { id: 'gutter-cleaning',   label: 'Limpeza de Calhas',         labelEn: 'Gutter Cleaning',             icon: '🍂', desc: 'Remoção de detritos em calhas',     descEn: 'Gutter debris removal and flush' },
+  { id: 'flashing-cleaning', label: 'Limpeza de Rufos',          labelEn: 'Flashing Cleaning',           icon: '🏠', desc: 'Limpeza de rufos e vedações de telhado', descEn: 'Roof flashing and sealant cleaning' },
+  { id: 'tile-grout',        label: 'Limpeza de Azulejos',       labelEn: 'Tile & Grout Cleaning',       icon: '🔲', desc: 'Restauração de azulejos e rejuntes', descEn: 'Tile surface and grout restoration' },
+  { id: 'home-organizing',   label: 'Organização Residencial',   labelEn: 'Home Organizing',             icon: '📋', desc: 'Organização e destralhe de ambientes',    descEn: 'Declutter and organize any space' },
+  { id: 'garage-attic',      label: 'Garagem / Porão / Sótão',   labelEn: 'Garage, Basement or Attic',   icon: '🏚️', desc: 'Limpeza profunda de espaços utilitários', descEn: 'Deep clean of utility spaces' },
+  { id: 'commercial',        label: 'Limpeza Comercial',         labelEn: 'Commercial Cleaning',         icon: '🏢', desc: 'Escritórios e espaços comerciais',   descEn: 'Offices and commercial spaces' },
 ];
 
 export const FREQUENCY_OPTIONS = [
@@ -39,13 +47,25 @@ type ServiceConfig = {
 
 const SERVICE_CONFIG: Record<string, ServiceConfig> = {
   // ~$45/hr implied rate
-  standard:    { basePrice: 90,  pricePerRoom: 30, pricePerBath: 35, pricePerSqft: 0.06, baseHours: 1.5, hoursPerRoom: 1.00, hoursPerBath: 0.75, hoursPerSqft: 0.002 },
+  standard:           { basePrice: 90,  pricePerRoom: 30, pricePerBath: 35, pricePerSqft: 0.06, baseHours: 1.5, hoursPerRoom: 1.00, hoursPerBath: 0.75, hoursPerSqft: 0.002 },
   // ~$50/hr implied rate
-  deep:        { basePrice: 150, pricePerRoom: 55, pricePerBath: 65, pricePerSqft: 0.10, baseHours: 2.0, hoursPerRoom: 1.50, hoursPerBath: 1.25, hoursPerSqft: 0.003 },
+  deep:               { basePrice: 150, pricePerRoom: 55, pricePerBath: 65, pricePerSqft: 0.10, baseHours: 2.0, hoursPerRoom: 1.50, hoursPerBath: 1.25, hoursPerSqft: 0.003 },
   // ~$55/hr implied rate — most expensive service
-  'post-work': { basePrice: 250, pricePerRoom: 75, pricePerBath: 85, pricePerSqft: 0.18, baseHours: 3.0, hoursPerRoom: 2.00, hoursPerBath: 1.75, hoursPerSqft: 0.005 },
+  'post-work':        { basePrice: 250, pricePerRoom: 75, pricePerBath: 85, pricePerSqft: 0.18, baseHours: 3.0, hoursPerRoom: 2.00, hoursPerBath: 1.75, hoursPerSqft: 0.005 },
   // between standard and deep
-  moving:      { basePrice: 160, pricePerRoom: 50, pricePerBath: 55, pricePerSqft: 0.08, baseHours: 2.0, hoursPerRoom: 1.25, hoursPerBath: 1.00, hoursPerSqft: 0.003 },
+  moving:             { basePrice: 160, pricePerRoom: 50, pricePerBath: 55, pricePerSqft: 0.08, baseHours: 2.0, hoursPerRoom: 1.25, hoursPerBath: 1.00, hoursPerSqft: 0.003 },
+  // outdoor/surface — sqft-driven, rooms/baths less relevant
+  'deck-cleaning':    { basePrice: 120, pricePerRoom: 0,  pricePerBath: 0,  pricePerSqft: 0.12, baseHours: 2.0, hoursPerRoom: 0,    hoursPerBath: 0,    hoursPerSqft: 0.003 },
+  'pressure-washing': { basePrice: 150, pricePerRoom: 0,  pricePerBath: 0,  pricePerSqft: 0.15, baseHours: 2.0, hoursPerRoom: 0,    hoursPerBath: 0,    hoursPerSqft: 0.004 },
+  // linear-foot work — base price dominates
+  'gutter-cleaning':  { basePrice: 180, pricePerRoom: 20, pricePerBath: 0,  pricePerSqft: 0.04, baseHours: 2.5, hoursPerRoom: 0.25, hoursPerBath: 0,    hoursPerSqft: 0.001 },
+  'flashing-cleaning':{ basePrice: 120, pricePerRoom: 0,  pricePerBath: 0,  pricePerSqft: 0.06, baseHours: 1.5, hoursPerRoom: 0,    hoursPerBath: 0,    hoursPerSqft: 0.002 },
+  // interior specialty — bath count matters most
+  'tile-grout':       { basePrice: 140, pricePerRoom: 40, pricePerBath: 65, pricePerSqft: 0.08, baseHours: 2.0, hoursPerRoom: 0.75, hoursPerBath: 1.25, hoursPerSqft: 0.003 },
+  'home-organizing':  { basePrice: 130, pricePerRoom: 45, pricePerBath: 0,  pricePerSqft: 0.05, baseHours: 2.5, hoursPerRoom: 1.25, hoursPerBath: 0,    hoursPerSqft: 0.002 },
+  'garage-attic':     { basePrice: 150, pricePerRoom: 0,  pricePerBath: 0,  pricePerSqft: 0.10, baseHours: 2.5, hoursPerRoom: 0,    hoursPerBath: 0,    hoursPerSqft: 0.003 },
+  // commercial — similar scope to post-work
+  commercial:         { basePrice: 250, pricePerRoom: 60, pricePerBath: 70, pricePerSqft: 0.15, baseHours: 3.0, hoursPerRoom: 1.50, hoursPerBath: 1.25, hoursPerSqft: 0.004 },
 };
 
 export type EstimateResult = {
