@@ -698,6 +698,7 @@ export default function ClientPage() {
                                       borderRadius="4px" fontWeight="semibold"
                                       _hover={{ bg: 'slate.50', borderColor: 'brand.300', color: 'brand.600' }}
                                       transition="background 0.15s"
+                                      disabled={saving}
                                       onClick={() => editingId === lead.id ? setEditingId(null) : openEdit(lead)}>
                                       <Icon as={editingId === lead.id ? LucideChevronUp : LucidePencil} w={4} h={4} mr={1.5} />
                                       {editingId === lead.id ? 'Close editor' : 'Edit booking'}

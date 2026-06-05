@@ -38,6 +38,8 @@ export default function SchedulePage() {
     try {
       const res = await fetch('/api/schedule');
       if (res.ok) setJobs((await res.json()).jobs);
+    } catch {
+      // network error — keep current state, do not crash
     } finally { setLoading(false); }
   }, []);
 

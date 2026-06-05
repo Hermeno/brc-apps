@@ -19,6 +19,8 @@ export async function GET() {
   const userId = user.id;
   let closed = false;
 
+  let intervalId: ReturnType<typeof setInterval> | undefined;
+
   const stream = new ReadableStream({
     async start(controller) {
       const send = (data: object) => {
@@ -28,13 +30,13 @@ export async function GET() {
         } catch {}
       };
 
-      // Send immediately
-      const count = await prisma.notification.count({ where: { userId, read: false } });
-      send({ unreadCount: count });
+      try {
+        const count = await prisma.notification.count({ where: { userId, read: false } });
+        send({ unreadCount: count });
+      } catch { closed = true; return; }
 
-      // Poll every 5 seconds
-      const interval = setInterval(async () => {
-        if (closed) { clearInterval(interval); return; }
+      intervalId = setInterval(async () => {
+        if (closed) { clearInterval(intervalId); return; }
         try {
           const [unreadCount, latest] = await Promise.all([
             prisma.notification.count({ where: { userId, read: false } }),
@@ -45,10 +47,10 @@ export async function GET() {
             }),
           ]);
           send({ unreadCount, latest });
-        } catch { clearInterval(interval); }
+        } catch { clearInterval(intervalId); closed = true; }
       }, 30000);
     },
-    cancel() { closed = true; },
+    cancel() { closed = true; clearInterval(intervalId); },
   });
 
   return new Response(stream, {

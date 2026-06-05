@@ -61,13 +61,17 @@ export default function ChatPage() {
   const bottomRef = useRef<HTMLDivElement>(null);
 
   const fetchMessages = useCallback(async () => {
-    const res = await fetch(`/api/conversations/${id}/messages`);
-    if (!res.ok) { router.push('/dashboard'); return; }
-    const data = await res.json();
-    setConv(data.conversation);
-    setUserId(data.userId);
-    setPaymentRequired(!!data.paymentRequired);
-    setDeclined(!!data.declined);
+    try {
+      const res = await fetch(`/api/conversations/${id}/messages`);
+      if (!res.ok) { router.push('/dashboard'); return; }
+      const data = await res.json();
+      setConv(data.conversation);
+      setUserId(data.userId);
+      setPaymentRequired(!!data.paymentRequired);
+      setDeclined(!!data.declined);
+    } catch {
+      // network error — keep current state, poll will retry in 6s
+    }
   }, [id, router]);
 
   useEffect(() => {
@@ -144,11 +148,15 @@ export default function ChatPage() {
     );
   }
 
-  const isClient   = userId === conv.clientId;
-  const isInstant  = conv.lead.isInstantBook;
-  const otherName  = isClient ? conv.cleaner.name : conv.client.name;
-  const isAccepted = conv.status === 'active' && conv.lead.status === 'ACCEPTED';
-  const feePaid    = conv.feeStatus === 'charged' || conv.feeStatus === 'waived';
+  const isClient     = userId === conv.clientId;
+  const isInstant    = conv.lead.isInstantBook;
+  const otherName    = isClient ? conv.cleaner.name : conv.client.name;
+  const isAccepted   = conv.status === 'active' && conv.lead.status === 'ACCEPTED';
+  const isCompleted  = conv.lead.status === 'COMPLETED';
+  const isClosed     = isCompleted || conv.status === 'declined' || conv.lead.status === 'CANCELLED';
+  const feePaid      = conv.feeStatus === 'charged' || conv.feeStatus === 'waived';
+  // Button only appears while client is choosing (IN_REVIEW) — never after ACCEPTED, COMPLETED, etc.
+  const isConfirmable = isClient && conv.status === 'active' && conv.lead.status === 'IN_REVIEW';
 
   // ── Declined screen (cleaner was not selected by client) ───────────────────
   if (!isClient && declined) {
@@ -321,8 +329,8 @@ export default function ChatPage() {
             <Text fontSize="xs" color="slate.400">{conv.lead.serviceType} · {conv.lead.address}</Text>
           </Box>
 
-          {/* Client confirms cleaner */}
-          {isClient && !isAccepted && (
+          {/* Client confirms cleaner — only while lead is IN_REVIEW */}
+          {isConfirmable && (
             <Button
               size="sm" bg="#0A80DB" color="white" borderRadius="4px" fontWeight="bold"
               _hover={{ bg: '#0870C2' }}
@@ -461,40 +469,65 @@ export default function ChatPage() {
         </Container>
       </Box>
 
-      {/* ── Input bar ── */}
-      <Box
-        bg="white" borderTop="1px solid" borderColor="slate.100"
-        px={4} py={3} flexShrink={0}
-      >
-        <Container maxW="760px">
-          <HStack gap={3}>
-            <Input
-              placeholder="Write a message…"
-              value={text}
-              onChange={e => setText(e.target.value)}
-              onKeyDown={e => e.key === 'Enter' && !e.shiftKey && sendMessage()}
-              bg="slate.50" border="1px solid" borderColor="slate.200"
-              borderRadius="2xl" h="12" flex={1}
-              _focus={{ bg: 'white', borderColor: 'brand.300', boxShadow: '0 0 0 3px rgba(37,99,235,0.1)' }}
-              transition="all 0.2s"
-            />
-            <motion.div whileTap={{ scale: 0.94 }}>
-              <Button
-                bg={text.trim() ? 'brand.500' : 'slate.200'}
-                color={text.trim() ? 'white' : 'slate.400'}
-                borderRadius="2xl" h="12" px={4} flexShrink={0}
-                _hover={{ bg: text.trim() ? 'brand.600' : 'slate.200' }}
-                onClick={sendMessage}
-                loading={sending}
-                disabled={!text.trim()}
-                transition="all 0.2s"
+      {/* ── Input bar / closed state ── */}
+      {isClosed ? (
+        <Box
+          bg={isCompleted ? '#F0FDF4' : '#FEF2F2'}
+          borderTop="1px solid"
+          borderColor={isCompleted ? '#A7F3D0' : '#FECACA'}
+          px={4} py={3} flexShrink={0}
+        >
+          <Container maxW="760px">
+            <HStack gap={2} justify="center">
+              <Icon
+                as={isCompleted ? LucideCheckCircle : LucideXCircle}
+                w={4} h={4}
+                color={isCompleted ? '#059669' : '#DC2626'}
+              />
+              <Text
+                fontSize="sm" fontWeight="600"
+                color={isCompleted ? '#047857' : '#DC2626'}
               >
-                <Icon as={LucideSend} w={5} h={5} />
-              </Button>
-            </motion.div>
-          </HStack>
-        </Container>
-      </Box>
+                {isCompleted ? 'Service completed — this conversation is closed.' : 'This conversation has been closed.'}
+              </Text>
+            </HStack>
+          </Container>
+        </Box>
+      ) : (
+        <Box
+          bg="white" borderTop="1px solid" borderColor="slate.100"
+          px={4} py={3} flexShrink={0}
+        >
+          <Container maxW="760px">
+            <HStack gap={3}>
+              <Input
+                placeholder="Write a message…"
+                value={text}
+                onChange={e => setText(e.target.value)}
+                onKeyDown={e => e.key === 'Enter' && !e.shiftKey && sendMessage()}
+                bg="slate.50" border="1px solid" borderColor="slate.200"
+                borderRadius="2xl" h="12" flex={1}
+                _focus={{ bg: 'white', borderColor: 'brand.300', boxShadow: '0 0 0 3px rgba(37,99,235,0.1)' }}
+                transition="all 0.2s"
+              />
+              <motion.div whileTap={{ scale: 0.94 }}>
+                <Button
+                  bg={text.trim() ? 'brand.500' : 'slate.200'}
+                  color={text.trim() ? 'white' : 'slate.400'}
+                  borderRadius="2xl" h="12" px={4} flexShrink={0}
+                  _hover={{ bg: text.trim() ? 'brand.600' : 'slate.200' }}
+                  onClick={sendMessage}
+                  loading={sending}
+                  disabled={!text.trim()}
+                  transition="all 0.2s"
+                >
+                  <Icon as={LucideSend} w={5} h={5} />
+                </Button>
+              </motion.div>
+            </HStack>
+          </Container>
+        </Box>
+      )}
     </Flex>
   );
 }

@@ -17,16 +17,10 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
   if (!conv || conv.clientId !== user.id)
     return NextResponse.json({ error: 'Not found' }, { status: 404 });
 
-  await prisma.conversation.update({
-    where: { id },
-    data: {
-      status: 'declined',
-      // Waive the fee — client rejected this cleaner, nothing to charge
-      feeStatus: conv.feeStatus === 'charged' ? 'refunded' : 'waived',
-    },
-  });
+  // Attempt Stripe refund BEFORE marking as refunded in DB — if Stripe fails,
+  // status stays 'charged' so the issue can be retried rather than silently lost.
+  let resolvedFeeStatus = conv.feeStatus === 'charged' ? 'charged' : 'waived';
 
-  // Refund the cleaner if they already paid for this lead
   if (conv.feeStatus === 'charged' && (conv.leadFee ?? 0) > 0) {
     try {
       const pis = await stripe.paymentIntents.search({
@@ -35,11 +29,22 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
       });
       if (pis.data.length > 0) {
         await stripe.refunds.create({ payment_intent: pis.data[0].id });
+        resolvedFeeStatus = 'refunded';
+      } else {
+        resolvedFeeStatus = 'waived';
       }
     } catch (e) {
       console.error('[decline] refund error:', e);
+      // Keep feeStatus as 'charged' so the refund can be retried manually
     }
+  } else {
+    resolvedFeeStatus = 'waived';
   }
+
+  await prisma.conversation.update({
+    where: { id },
+    data: { status: 'declined', feeStatus: resolvedFeeStatus },
+  });
 
   // If no other active conversations → revert lead to WAVE1 for redistribution
   const remaining = await prisma.conversation.count({

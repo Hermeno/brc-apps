@@ -117,6 +117,8 @@ export default function CleanerDashboard() {
         setAccepted(data.accepted);
         setConversations(data.conversations ?? []);
       }
+    } catch {
+      // network error — keep current state, do not crash
     } finally { if (!silent) setLoading(false); }
   }, []);
 

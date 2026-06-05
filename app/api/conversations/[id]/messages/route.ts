@@ -76,10 +76,18 @@ export async function POST(req: NextRequest, { params }: Params) {
 
   if (!content?.trim()) return NextResponse.json({ error: 'Message is empty' }, { status: 400 });
 
-  const conversation = await prisma.conversation.findUnique({ where: { id } });
+  const conversation = await prisma.conversation.findUnique({
+    where: { id },
+    include: { lead: { select: { status: true } } },
+  });
   if (!conversation) return NextResponse.json({ error: 'Not found' }, { status: 404 });
   if (conversation.clientId !== user.id && conversation.cleanerId !== user.id) {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+  }
+
+  // Block messages on closed conversations
+  if (conversation.status !== 'active' || conversation.lead.status === 'COMPLETED' || conversation.lead.status === 'CANCELLED') {
+    return NextResponse.json({ error: 'conversation_closed' }, { status: 403 });
   }
 
   // Cleaner cannot send messages until the lead fee is paid

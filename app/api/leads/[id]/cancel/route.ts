@@ -28,10 +28,10 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
     prisma.conversation.updateMany({ where: { leadId: id }, data: { status: 'closed' } }),
   ]);
 
-  // Refund any cleaners who paid for this lead
+  // Refund any cleaners who paid for this lead and mark feeStatus accordingly
   const paidConvs = await prisma.conversation.findMany({
     where: { leadId: id, feeStatus: 'charged', leadFee: { gt: 0 } },
-    select: { cleanerId: true },
+    select: { id: true, cleanerId: true },
   });
   for (const conv of paidConvs) {
     try {
@@ -41,9 +41,14 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
       });
       if (pis.data.length > 0) {
         await stripe.refunds.create({ payment_intent: pis.data[0].id });
+        await prisma.conversation.update({
+          where: { id: conv.id },
+          data: { feeStatus: 'refunded' },
+        });
       }
     } catch (e) {
       console.error('[cancel] refund error:', e);
+      // feeStatus stays 'charged' so the refund can be identified and retried
     }
   }
 

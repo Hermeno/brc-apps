@@ -42,6 +42,8 @@ export default function FinancesPage() {
     try {
       const res = await fetch('/api/finances');
       if (res.ok) setData(await res.json());
+    } catch {
+      // network error — keep current state, do not crash
     } finally { setLoading(false); }
   }, []);
 
