@@ -41,13 +41,24 @@ export default function HomePage() {
           </HStack>
 
           <HStack gap={3}>
-            <NextLink href="/about">
-              <Text fontSize="13px" color="rgba(255,255,255,0.55)" fontFamily="heading" fontWeight="500"
-                display={{ base: 'none', md: 'block' }}
-                style={{ cursor: 'pointer', transition: 'color 0.15s' }}
-                _hover={{ color: 'rgba(255,255,255,0.9)' }}>
+            <NextLink href="/about" style={{ textDecoration: 'none' }}>
+              <Box
+                as="span"
+                display={{ base: 'inline-flex', md: 'inline-flex' }}
+                alignItems="center"
+                fontSize="13px" fontFamily="heading" fontWeight="500"
+                color="rgba(255,255,255,0.55)"
+                px={3} h="34px" borderRadius="4px"
+                border="1px solid transparent"
+                style={{ cursor: 'pointer', transition: 'all 0.15s' }}
+                _hover={{
+                  color: 'white',
+                  borderColor: 'rgba(255,255,255,0.14)',
+                  background: 'rgba(255,255,255,0.05)',
+                }}
+              >
                 About
-              </Text>
+              </Box>
             </NextLink>
             <NextLink href="/auth/register?role=cleaner">
               <Button

@@ -1,10 +1,16 @@
 'use client';
 
 import { Box, Text, Flex, HStack, VStack, SimpleGrid, Icon } from '@chakra-ui/react';
-import { LucideHeart, LucideShield, LucideUsers, LucideStar, LucideArrowRight, LucideCheckCircle, LucideMapPin } from 'lucide-react';
+import { LucideHeart, LucideShield, LucideUsers, LucideStar, LucideArrowRight, LucideMapPin, LucideArrowLeft } from 'lucide-react';
 import NextLink from 'next/link';
 import { Button } from '@chakra-ui/react';
 import Image from 'next/image';
+const CITIES = [
+  'Miami, FL', 'Orlando, FL', 'Fort Lauderdale, FL', 'Tampa, FL',
+  'Hartford, CT', 'Stamford, CT', 'New York, NY',
+  'Boston, MA', 'Newark, NJ', 'Providence, RI',
+  'New Haven, CT', 'Bridgeport, CT',
+];
 
 export default function AboutPage() {
   return (
@@ -16,14 +22,30 @@ export default function AboutPage() {
         style={{ background: 'rgba(11,17,32,0.92)', backdropFilter: 'blur(10px)', borderBottom: '1px solid rgba(255,255,255,0.06)' }}
       >
         <Flex align="center" h="full" px={{ base: 5, md: 10, lg: 16 }} maxW="1440px" mx="auto" justify="space-between">
-          <NextLink href="/" style={{ textDecoration: 'none' }}>
-            <HStack gap={2.5}>
-              <Image src="/2.png" alt="BrazilianClean" width={32} height={32} style={{ borderRadius: "50%", objectFit: "cover", flexShrink: 0 }} />
-              <Text fontWeight="700" fontSize="15px" letterSpacing="-0.02em" color="white" fontFamily="heading">
-                Brazilian<Text as="span" color="#0A80DB">Clean</Text>
-              </Text>
-            </HStack>
-          </NextLink>
+          <HStack gap={4}>
+            <NextLink href="/" style={{ textDecoration: 'none' }}>
+              <HStack gap={1.5}
+                color="rgba(255,255,255,0.5)" fontSize="13px" fontFamily="heading" fontWeight="500"
+                px={2} h="34px" borderRadius="4px"
+                border="1px solid transparent"
+                transition="all 0.15s"
+                _hover={{ color: 'white', borderColor: 'rgba(255,255,255,0.12)', bg: 'rgba(255,255,255,0.05)' }}
+                style={{ cursor: 'pointer' }}
+              >
+                <Icon as={LucideArrowLeft} w="13px" h="13px" />
+                <Text>Home</Text>
+              </HStack>
+            </NextLink>
+            <Box w="1px" h="18px" bg="rgba(255,255,255,0.08)" />
+            <NextLink href="/" style={{ textDecoration: 'none' }}>
+              <HStack gap={2.5}>
+                <Image src="/2.png" alt="BrazilianClean" width={28} height={28} style={{ borderRadius: "50%", objectFit: "cover", flexShrink: 0 }} />
+                <Text fontWeight="700" fontSize="15px" letterSpacing="-0.02em" color="white" fontFamily="heading">
+                  Brazilian<Text as="span" color="#0A80DB">Clean</Text>
+                </Text>
+              </HStack>
+            </NextLink>
+          </HStack>
           <HStack gap={2}>
             <NextLink href="/auth/login">
               <Button size="sm" bg="#0A80DB" color="white" borderRadius="4px" fontWeight="600" fontSize="13px"
@@ -245,24 +267,25 @@ export default function AboutPage() {
             </Text>
             <Text fontSize={{ base: '24px', md: '30px' }} fontWeight="800" color="#0A2540"
               fontFamily="heading" letterSpacing="-0.025em" mb={4}>
-              Currently serving 12 cities
+              East Coast — and growing
             </Text>
             <Text fontSize="14px" color="#425466" lineHeight="1.7" fontFamily="heading">
-              We are actively expanding. If your city is not listed, enter your ZIP code when booking — we may already have cleaners in your area.
+              We're actively expanding across the United States. If your city isn't listed, enter your ZIP when booking — we likely have cleaners nearby already.
             </Text>
           </Box>
 
-          <SimpleGrid columns={{ base: 2, md: 4 }} gap={3}>
-            {[
-              'Miami, FL', 'Orlando, FL', 'Fort Lauderdale, FL', 'Tampa, FL',
-              'Hartford, CT', 'Stamford, CT', 'Bridgeport, CT', 'New Haven, CT',
-              'Boston, MA', 'New York, NY', 'Newark, NJ', 'Providence, RI',
-            ].map(city => (
-              <HStack key={city} gap={2} p={3} border="1px solid #E3E8EE" bg="#F6F9FC">
-                <Icon as={LucideMapPin} w="12px" h="12px" color="#0A80DB" flexShrink={0} />
+          <SimpleGrid columns={{ base: 2, md: 4 }} gap={2}>
+            {CITIES.map(city => (
+              <HStack key={city} gap={2} px={3} py={2.5} border="1px solid #E3E8EE">
+                <Icon as={LucideMapPin} w="11px" h="11px" color="#94A3B8" flexShrink={0} />
                 <Text fontSize="12.5px" color="#475569" fontFamily="heading" fontWeight="600">{city}</Text>
               </HStack>
             ))}
+
+            {/* Non-interactive tile — signals there are more cities not listed */}
+            <HStack gap={2} px={3} py={2.5} border="1px dashed #CBD5E1">
+              <Text fontSize="12.5px" color="#94A3B8" fontFamily="heading" fontWeight="600">+ more</Text>
+            </HStack>
           </SimpleGrid>
         </Box>
       </Box>
