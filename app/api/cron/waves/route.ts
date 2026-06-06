@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { advanceWaves } from '@/lib/matching';
+import { after } from 'next/server';
+import { advanceWaves, runMatching } from '@/lib/matching';
 
-// Called by Vercel Cron every minute — advances Wave1→Wave2 and Wave2→UNMATCHED
+// Called by Vercel Cron every minute — advances Wave1→Wave2→Wave3 and cycles WAVE3 batches.
 export async function GET(req: NextRequest) {
-  // Validate Vercel cron secret to prevent unauthorized calls
   const authHeader = req.headers.get('authorization');
   const cronSecret = process.env.CRON_SECRET;
 
@@ -12,8 +12,19 @@ export async function GET(req: NextRequest) {
   }
 
   try {
-    await advanceWaves();
-    return NextResponse.json({ ok: true, ts: new Date().toISOString() });
+    const rematchIds = await advanceWaves();
+
+    // Re-run matching for leads whose fee deadline expired — must use after() here
+    // because advanceWaves() is library code and cannot call after() itself.
+    if (rematchIds.length > 0) {
+      after(() =>
+        Promise.all(
+          rematchIds.map(id => runMatching(id).catch(e => console.error('[fee-deadline rematch]', e))),
+        ),
+      );
+    }
+
+    return NextResponse.json({ ok: true, ts: new Date().toISOString(), rematchIds });
   } catch (err: any) {
     console.error('[cron/waves]', err);
     return NextResponse.json({ error: err.message }, { status: 500 });

@@ -25,19 +25,26 @@ export function coordsFromZip(zip: string): { lat: number; lng: number } | null 
   return { lat: info.latitude, lng: info.longitude };
 }
 
-// Resolve the best available coordinates for a location:
-// prefers stored lat/lng (GPS precision), falls back to ZIP centroid
+// Resolve the best available coordinates for a location.
+// Prefers stored lat/lng (GPS precision) over ZIP centroid.
+// Explicit 0,0 is treated as "not set" — falls through to ZIP.
 export function resolveCoords(
   storedLat: number | null | undefined,
   storedLng: number | null | undefined,
   zip: string | null | undefined,
 ): { lat: number; lng: number } | null {
-  if (storedLat && storedLng) return { lat: storedLat, lng: storedLng };
+  if (
+    storedLat != null && storedLng != null &&
+    storedLat !== 0   && storedLng !== 0
+  ) {
+    return { lat: storedLat, lng: storedLng };
+  }
   if (zip) return coordsFromZip(zip);
   return null;
 }
 
-// Add serviceRadiusMiles column to User table if it doesn't exist yet
+// Add serviceRadiusMiles column to User table if it doesn't exist yet.
+// Uses a module-level flag so DDL only runs once per process instance.
 let columnEnsured = false;
 export async function ensureRadiusColumn(): Promise<void> {
   if (columnEnsured) return;

@@ -39,16 +39,18 @@ export async function GET(_req: NextRequest, { params }: Params) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
-    const isCleaner  = conversation.cleanerId === user.id;
-    const isDeclined = conversation.status === 'declined';
-    const feePaid    = conversation.feeStatus === 'charged' || conversation.feeStatus === 'waived';
+    const isCleaner   = conversation.cleanerId === user.id;
+    const isDeclined  = conversation.status === 'declined';
+    const feePaid     = conversation.feeStatus === 'charged' || conversation.feeStatus === 'waived';
+    // Chat and contact are locked until the cleaner has paid the lead fee.
+    // Neither side can read messages or see contact info before that point.
+    const chatUnlocked = feePaid || isDeclined;
 
-    // Strip client contact until fee is paid; never gate a declined conversation
-    const safeConversation = isCleaner && !feePaid && !isDeclined
+    const safeConversation = !chatUnlocked
       ? {
           ...conversation,
-          client: { id: conversation.client.id, name: conversation.client.name, phone: null },
-          lead:   { ...conversation.lead, clientPhone: null },
+          client:   { id: conversation.client.id, name: conversation.client.name, phone: null },
+          lead:     { ...conversation.lead, clientPhone: null },
           messages: [],
         }
       : conversation;
@@ -56,7 +58,7 @@ export async function GET(_req: NextRequest, { params }: Params) {
     return NextResponse.json({
       conversation: safeConversation,
       userId: user.id,
-      paymentRequired: isCleaner && !feePaid && !isDeclined,
+      paymentRequired: !chatUnlocked,
       declined: isDeclined,
     });
   } catch (err: any) {
@@ -96,10 +98,10 @@ export async function POST(req: NextRequest, { params }: Params) {
       return NextResponse.json({ error: 'conversation_closed' }, { status: 403 });
     }
 
-    // Cleaner cannot send messages until the lead fee is paid
-    const isCleaner = conversation.cleanerId === user.id;
-    const feePaid   = conversation.feeStatus === 'charged' || conversation.feeStatus === 'waived';
-    if (isCleaner && !feePaid) {
+    // Neither side can message until the lead fee is paid —
+    // this prevents contact exchange before the platform captures the fee.
+    const feePaid = conversation.feeStatus === 'charged' || conversation.feeStatus === 'waived';
+    if (!feePaid) {
       return NextResponse.json({ error: 'payment_required', leadFee: conversation.leadFee }, { status: 402 });
     }
 

@@ -19,7 +19,7 @@ export async function GET() {
         status: { in: ['ACCEPTED', 'COMPLETED'] },
       },
       include: {
-        client: { select: { name: true, email: true, phone: true } },
+        client: { select: { name: true } },
         review: { select: { rating: true, comment: true } },
       },
       orderBy: { dateTime: 'asc' },

@@ -107,13 +107,14 @@ export default function PublicProfilePage() {
   return (
     <Box minH="100vh" bg="slate.50">
 
-      {/* Back button */}
-      <Box bg="white" borderBottom="1px solid" borderColor="slate.100" px={6} py={3} position="sticky" top={0} zIndex={40}>
+      {/* Back button — dark nav consistent with all other pages */}
+      <Box bg="#0B1120" px={6} py={3} position="sticky" top={0} zIndex={40}
+        style={{ boxShadow: '0 1px 8px rgba(0,0,0,0.2)' }}>
         <Box maxW="900px" mx="auto">
           <Box as="button" onClick={() => router.back()}
             display="inline-flex" alignItems="center" gap={1.5}
-            color="slate.500" fontWeight="semibold" fontSize="sm" cursor="pointer"
-            _hover={{ color: 'brand.600' }} transition="color 0.15s">
+            color="rgba(255,255,255,0.5)" fontWeight="semibold" fontSize="sm" cursor="pointer"
+            _hover={{ color: 'white' }} transition="color 0.15s">
             <Icon as={LucideArrowLeft} w={4} h={4} />
             Back
           </Box>

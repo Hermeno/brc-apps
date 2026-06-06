@@ -1,6 +1,7 @@
 import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { NextRequest, NextResponse } from 'next/server';
+import { after } from 'next/server';
 import { runMatching } from '@/lib/matching';
 
 const EDITABLE_STATUSES = ['NEW', 'WAVE1', 'WAVE2', 'WAVE3', 'UNMATCHED'];
@@ -51,7 +52,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
       prisma.leadDistribution.deleteMany({ where: { leadId: id } }),
     ]);
 
-    runMatching(id).catch(e => console.error('[re-match]', e));
+    after(() => runMatching(id).catch(e => console.error('[re-match]', e)));
 
     return NextResponse.json({ lead: updated });
   } catch (err: any) {

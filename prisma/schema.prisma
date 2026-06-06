@@ -160,6 +160,7 @@ model LeadDistribution {
   createdAt       DateTime      @default(now())
   expiresAt       DateTime?
 
+  @@unique([leadId, cleanerId])
   @@index([cleanerId, status])
   @@index([leadId])
 }

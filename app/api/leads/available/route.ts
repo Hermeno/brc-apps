@@ -1,7 +1,6 @@
 import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { NextResponse } from 'next/server';
-import { advanceWaves } from '@/lib/matching';
 
 export async function GET() {
   const session = await auth();
@@ -17,9 +16,6 @@ export async function GET() {
   if (!dbUser || dbUser.role !== 'CLEANER') {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
   }
-
-  // Fire-and-forget — never blocks the response
-  advanceWaves().catch(e => console.error('[advanceWaves]', e));
 
   try {
     const [available, accepted, myConversations] = await Promise.all([
@@ -43,7 +39,7 @@ export async function GET() {
       prisma.conversation.findMany({
         where: { cleanerId: dbUser.id, status: 'active' },
         include: {
-          lead: { include: { client: { select: { name: true, phone: true } } } },
+          lead: { include: { client: { select: { name: true } } } },
         },
         orderBy: { id: 'desc' },
       }),

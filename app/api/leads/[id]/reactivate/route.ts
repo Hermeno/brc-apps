@@ -1,6 +1,7 @@
 import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { NextRequest, NextResponse } from 'next/server';
+import { after } from 'next/server';
 import { runMatching } from '@/lib/matching';
 
 export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
@@ -23,18 +24,25 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     const lead = await prisma.lead.findUnique({ where: { id } });
     if (!lead || lead.clientId !== dbUser.id) return NextResponse.json({ error: 'Not found' }, { status: 404 });
 
-    const reactivatable = ['NEW', 'WAVE1', 'WAVE2', 'WAVE3', 'UNMATCHED'];
+    const reactivatable = ['NEW', 'WAVE1', 'WAVE2', 'WAVE3', 'UNMATCHED', 'CANCELLED'];
     if (!reactivatable.includes(lead.status)) {
       return NextResponse.json({ error: 'This booking cannot be reactivated' }, { status: 400 });
     }
 
     await prisma.$transaction([
-      prisma.lead.update({ where: { id: lead.id }, data: { status: 'NEW', dateTime: parsedDate } }),
+      prisma.lead.update({
+        where: { id: lead.id },
+        data: {
+          status: 'NEW',
+          dateTime: parsedDate,
+          cleanerId: null,
+        },
+      }),
       prisma.leadDistribution.deleteMany({ where: { leadId: lead.id } }),
       prisma.conversation.updateMany({ where: { leadId: lead.id }, data: { status: 'closed' } }),
     ]);
 
-    runMatching(lead.id).catch(e => console.error('[reactivate matching]', e));
+    after(() => runMatching(lead.id).catch(e => console.error('[reactivate matching]', e)));
 
     return NextResponse.json({ ok: true });
   } catch (err: any) {

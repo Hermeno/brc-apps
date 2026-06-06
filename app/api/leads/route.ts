@@ -1,8 +1,10 @@
 import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { NextRequest, NextResponse } from 'next/server';
+import { after } from 'next/server';
 import { runMatching } from '@/lib/matching';
 import { calculateLeadPrice, getLeadPriceConfig } from '@/lib/pricing';
+import { coordsFromZip } from '@/lib/geo';
 import dns from 'dns/promises';
 
 // Extract a 5-digit US ZIP code from an address string
@@ -11,7 +13,7 @@ function extractZip(address: string): string | null {
   return match ? match[1] : null;
 }
 
-// Resolve MX records for an email's domain; returns false on NXDOMAIN / timeout
+// Resolve MX records for an email domain; returns false on NXDOMAIN / timeout
 async function hasMxRecords(email: string): Promise<boolean> {
   try {
     const domain = email.split('@')[1];
@@ -34,7 +36,7 @@ export async function GET() {
 
   try {
     const dbUser = await prisma.user.findUnique({
-      where: { email: session.user.email },
+      where:  { email: session.user.email },
       select: { id: true },
     });
 
@@ -45,10 +47,13 @@ export async function GET() {
     const leads = await prisma.lead.findMany({
       where: { clientId: dbUser.id },
       include: {
-        cleaner: { select: { name: true, email: true } },
+        cleaner:       { select: { name: true, avatarUrl: true } },
         conversations: {
-          where: { status: { in: ['active', 'declined'] } },
-          select: { id: true, cleanerId: true, status: true, cleaner: { select: { id: true, name: true, avatarUrl: true, isVerified: true } } },
+          where:  { status: { in: ['active', 'declined'] } },
+          select: {
+            id: true, cleanerId: true, status: true,
+            cleaner: { select: { id: true, name: true, avatarUrl: true, isVerified: true } },
+          },
         },
         review: { select: { rating: true, comment: true } },
       },
@@ -81,9 +86,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
-    // Resolve user ID from DB using email (reliable regardless of JWT version)
     const dbUser = await prisma.user.findUnique({
-      where: { email: session.user.email! },
+      where:  { email: session.user.email! },
       select: { id: true },
     });
 
@@ -96,32 +100,35 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Invalid date/time' }, { status: 400 });
     }
 
-    // Booking must be within the next 90 days
     const maxDate = new Date();
     maxDate.setDate(maxDate.getDate() + 90);
     if (parsedDate > maxDate) {
-      return NextResponse.json({ error: 'Booking date must be within the next 90 days.' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'Booking date must be within the next 90 days.' },
+        { status: 400 },
+      );
     }
 
-    // Rate limit: max 5 active bookings per client at once
     const activeCount = await prisma.lead.count({
       where: {
         clientId: dbUser.id,
-        status: { in: ['NEW', 'WAVE1', 'WAVE2', 'WAVE3', 'IN_REVIEW', 'ACCEPTED'] },
+        status:   { in: ['NEW', 'WAVE1', 'WAVE2', 'WAVE3', 'IN_REVIEW', 'ACCEPTED'] },
       },
     });
     if (activeCount >= 5) {
       return NextResponse.json(
-        { error: 'You have too many active bookings. Please complete or cancel existing ones first.' },
+        { error: 'You have too many active bookings. Please complete or cancel some first.' },
         { status: 429 },
       );
     }
 
-    // Load DB-backed pricing config (multipliers + coverage)
     const priceConfig = await getLeadPriceConfig();
 
-    // ── ZIP coverage check ────────────────────────────────────────────────────────
-    const zip = extractZip(address ?? '');
+    // ── ZIP extraction + geocoding ────────────────────────────────────────────
+    const zip       = extractZip(address ?? '');
+    const zipCoords = zip ? coordsFromZip(zip) : null;
+
+    // Coverage check (only active when admin has set specific ZIPs)
     if (priceConfig.coverageZips.length > 0 && zip && !priceConfig.coverageZips.includes(zip)) {
       return NextResponse.json(
         { error: 'Service is not available in your area yet. Check back soon!' },
@@ -129,45 +136,43 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // ── Email MX validation (quality flag — non-blocking) ────────────────────────
-    const emailValid = await hasMxRecords(session.user.email!);
+    const emailValid  = await hasMxRecords(session.user.email!);
     const qualityScore = emailValid ? 1 : 0;
-
-    // ── Calculate lead price at creation time ────────────────────────────────────
-    const leadPrice = calculateLeadPrice(serviceType, parsedDate, frequency ?? 'once', priceConfig);
+    const leadPrice   = calculateLeadPrice(serviceType, parsedDate, frequency ?? 'once', priceConfig);
 
     const lead = await prisma.lead.create({
       data: {
-        clientId: dbUser.id,
+        clientId:          dbUser.id,
         serviceType,
         address,
-        notes:            notes || null,
-        dateTime:         parsedDate,
-        latitude:         0,
-        longitude:        0,
-        status:           'NEW',
-        bedrooms:         bedrooms     ?? 1,
-        bathrooms:        bathrooms    ?? 1,
-        squareMeters:     squareMeters ?? 0,
-        extras:           Array.isArray(extras) ? extras : [],
-        frequency:        frequency    ?? 'once',
-        photos:           Array.isArray(photos) ? photos.filter(Boolean).slice(0, 4) : [],
-        clientPhone:      clientPhone  || null,
+        notes:             notes         || null,
+        dateTime:          parsedDate,
+        // Store ZIP-derived coords so matching has real distance data from the start
+        latitude:          zipCoords?.lat  ?? 0,
+        longitude:         zipCoords?.lng  ?? 0,
+        zipCode:           zip,
+        status:            'NEW',
+        bedrooms:          bedrooms      ?? 1,
+        bathrooms:         bathrooms     ?? 1,
+        squareMeters:      squareMeters  ?? 0,
+        extras:            Array.isArray(extras) ? extras : [],
+        frequency:         frequency     ?? 'once',
+        photos:            Array.isArray(photos) ? photos.filter(Boolean).slice(0, 4) : [],
+        clientPhone:       clientPhone   || null,
         estimatedMinPrice: estimatedMinPrice ?? null,
         estimatedMaxPrice: estimatedMaxPrice ?? null,
-        estimatedHours:   estimatedHours    ?? null,
-        zipCode:          zip,
+        estimatedHours:    estimatedHours    ?? null,
         leadPrice,
         qualityScore,
       },
     });
 
-    // Trigger matching asynchronously (fire-and-forget)
-    runMatching(lead.id).catch(e => console.error('[matching]', e));
+    // after() ensures matching runs AFTER the response is sent, never killed mid-flight
+    after(() => runMatching(lead.id).catch(e => console.error('[matching]', e)));
 
     return NextResponse.json({ lead }, { status: 201 });
   } catch (err: any) {
-    console.error('[POST /api/leads] Prisma error:', err);
+    console.error('[POST /api/leads]', err);
     return NextResponse.json({ error: err.message ?? 'Internal error' }, { status: 500 });
   }
 }

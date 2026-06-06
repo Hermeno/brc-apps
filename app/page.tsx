@@ -40,7 +40,15 @@ export default function HomePage() {
             </Text>
           </HStack>
 
-          <HStack gap={1.5}>
+          <HStack gap={3}>
+            <NextLink href="/about">
+              <Text fontSize="13px" color="rgba(255,255,255,0.55)" fontFamily="heading" fontWeight="500"
+                display={{ base: 'none', md: 'block' }}
+                style={{ cursor: 'pointer', transition: 'color 0.15s' }}
+                _hover={{ color: 'rgba(255,255,255,0.9)' }}>
+                About
+              </Text>
+            </NextLink>
             <NextLink href="/auth/register?role=cleaner">
               <Button
                 size="sm" variant="outline" borderColor="rgba(255,255,255,0.18)" color="white"
@@ -403,6 +411,85 @@ export default function HomePage() {
             </Flex>
           </Box>
 
+        </Box>
+      </Box>
+
+      {/* ── About Us ── */}
+      <Box id="about" bg="white" borderTop="1px solid #E3E8EE" px={{ base: 5, md: 10, lg: 16 }} py={20}>
+        <Box maxW="1100px" mx="auto">
+          <Flex gap={{ base: 12, lg: 20 }} flexDir={{ base: 'column', md: 'row' }} align="start">
+
+            {/* Left: story */}
+            <Box flex={1}>
+              <Text fontSize="10.5px" fontWeight="700" letterSpacing="0.14em" color={C.blue}
+                textTransform="uppercase" fontFamily="heading"
+                style={{ borderLeft: `2px solid ${C.blue}`, paddingLeft: 10 }} mb={4}>
+                About us
+              </Text>
+              <Text fontSize={{ base: '26px', md: '32px' }} fontWeight="800" color={C.heading}
+                fontFamily="heading" letterSpacing="-0.025em" lineHeight={1.15} mb={5}>
+                Built for trust.<br />
+                Driven by community.
+              </Text>
+              <VStack gap={4} align="stretch">
+                <Text fontSize="14.5px" color={C.body} lineHeight="1.8" fontFamily="heading">
+                  The Brazilian community in the United States has always been known for its
+                  exceptional work ethic and genuine care for the homes they serve. For decades,
+                  Brazilian cleaning professionals built their reputation word of mouth.
+                </Text>
+                <Text fontSize="14.5px" color={C.body} lineHeight="1.8" fontFamily="heading">
+                  BrazilianClean was created to give these professionals a modern platform that
+                  matches their talent — where reputation is built transparently, payments are
+                  protected, and clients can book with real confidence.
+                </Text>
+              </VStack>
+              <NextLink href="/about">
+                <Button mt={6} variant="outline" borderColor={C.border} color={C.heading}
+                  borderRadius="4px" fontWeight="600" fontSize="13px" fontFamily="heading"
+                  h="40px" px={5} _hover={{ borderColor: C.blue, color: C.blue }}
+                  transition="all 0.15s">
+                  Read our full story
+                  <Icon as={LucideArrowRight} w={4} h={4} ml={2} />
+                </Button>
+              </NextLink>
+            </Box>
+
+            {/* Right: values */}
+            <Box w={{ base: 'full', md: '380px' }} flexShrink={0}>
+              <SimpleGrid columns={2} gap={0} border="1px solid #E3E8EE">
+                {[
+                  { title: 'Trust',         desc: 'Every cleaner is ID-verified with a background check before activation.' },
+                  { title: 'Transparency',  desc: 'No hidden fees. Clear pricing for clients and cleaners alike.' },
+                  { title: 'Community',     desc: 'We celebrate the Brazilian professionals who built their reputation through dedication.' },
+                  { title: 'Excellence',    desc: 'Ratings are real. The best professionals rise to the top naturally.' },
+                ].map((v, i) => (
+                  <Box key={v.title} p={5} bg="white"
+                    borderRight={{ md: i % 2 === 0 ? '1px solid #E3E8EE' : 'none' }}
+                    borderBottom={i < 2 ? '1px solid #E3E8EE' : 'none'}>
+                    <Text fontSize="13px" fontWeight="700" color={C.heading} fontFamily="heading" mb={1.5}>{v.title}</Text>
+                    <Text fontSize="12px" color={C.muted} lineHeight="1.65" fontFamily="heading">{v.desc}</Text>
+                  </Box>
+                ))}
+              </SimpleGrid>
+              <SimpleGrid columns={2} gap={0} border="1px solid #E3E8EE" borderTop="none">
+                {[
+                  { value: '500+',   label: 'Verified cleaners' },
+                  { value: '2,400+', label: 'Bookings completed' },
+                  { value: '4.9★',   label: 'Average rating' },
+                  { value: '12',     label: 'Cities covered' },
+                ].map((s, i) => (
+                  <Box key={s.label} p={5}
+                    borderRight={i % 2 === 0 ? '1px solid #E3E8EE' : 'none'}
+                    borderBottom={i < 2 ? '1px solid #E3E8EE' : 'none'}>
+                    <Text fontSize="22px" fontWeight="800" color={C.heading} fontFamily="heading"
+                      letterSpacing="-0.03em" lineHeight={1}>{s.value}</Text>
+                    <Text fontSize="11px" color={C.muted} fontFamily="heading" mt={1}>{s.label}</Text>
+                  </Box>
+                ))}
+              </SimpleGrid>
+            </Box>
+
+          </Flex>
         </Box>
       </Box>
 

@@ -22,8 +22,8 @@ export async function GET() {
         : { cleanerId: user.id },
       include: {
         lead:    { select: { serviceType: true, address: true, dateTime: true, status: true, isInstantBook: true } },
-        client:  { select: { name: true, email: true } },
-        cleaner: { select: { name: true, email: true } },
+        client:  { select: { name: true } },
+        cleaner: { select: { name: true } },
         messages: {
           orderBy: { createdAt: 'desc' },
           take: 1,

@@ -161,35 +161,31 @@ export default function ChatPage() {
   // ── Declined screen (cleaner was not selected by client) ───────────────────
   if (!isClient && declined) {
     return (
-      <Flex h="100vh" bg="slate.50" direction="column">
-        <Box bg="white" borderBottom="1px solid" borderColor="slate.100" px={4} py={3} flexShrink={0}>
+      <Flex h="100vh" bg="white" direction="column">
+        <Box bg="#0B1120" px={4} py={3} flexShrink={0} style={{ boxShadow: '0 1px 8px rgba(0,0,0,0.2)' }}>
           <Flex align="center" gap={3} maxW="760px" mx="auto">
-            <Button size="sm" variant="ghost" color="slate.500" _hover={{ bg: 'slate.100' }} onClick={() => router.back()} px={2}>
+            <Button size="sm" variant="ghost" color="rgba(255,255,255,0.5)"
+              _hover={{ color: 'white', bg: 'rgba(255,255,255,0.06)' }} onClick={() => router.back()} px={2}>
               <Icon as={LucideArrowLeft} w={5} h={5} />
             </Button>
             <Box flex={1}>
-              <Text fontWeight="bold" fontSize="md" color="slate.900">{conv.lead.serviceType}</Text>
-              <Text fontSize="xs" color="slate.400">{conv.lead.address}</Text>
+              <Text fontWeight="semibold" fontSize="sm" color="white">{conv.lead.serviceType}</Text>
+              <Text fontSize="xs" color="rgba(255,255,255,0.4)">{conv.lead.address}</Text>
             </Box>
           </Flex>
         </Box>
         <Flex flex={1} align="center" justify="center" px={6}>
-          <Box bg="white" border="1px solid" borderColor="slate.200" p={10} maxW="440px" w="full" textAlign="center">
-            <Box
-              w="56px" h="56px" borderRadius="full" bg="#FEF2F2"
-              display="flex" alignItems="center" justifyContent="center" mx="auto" mb={5}>
-              <Icon as={LucideXCircle} w={6} h={6} color="#EF4444" />
-            </Box>
-            <Text fontWeight="black" fontSize="xl" color="slate.900" mb={2}>
+          <Box maxW="400px" w="full">
+            <Text fontWeight="black" fontSize="xl" color="slate.900" mb={3}>
               Not selected this time
             </Text>
-            <Text color="slate.500" fontSize="sm" lineHeight="1.7">
-              The client chose a different cleaner for this job. You were not charged.
-              Keep an eye out for new leads — the next one could be yours.
+            <Text color="slate.500" fontSize="sm" lineHeight="1.75" mb={8}>
+              The client chose a different cleaner for this job. You were not charged anything.
+              Keep an eye on your dashboard — the next lead could be yours.
             </Text>
             <Button
-              mt={7} w="full" bg="brand.500" color="white" h="44px" borderRadius="4px"
-              fontWeight="bold" fontSize="sm" _hover={{ bg: 'brand.600' }}
+              w="full" bg="#0B1120" color="white" h="44px" borderRadius="4px"
+              fontWeight="bold" fontSize="sm" _hover={{ bg: '#1a2540' }}
               onClick={() => router.push('/dashboard/cleaner')}
             >
               Back to dashboard
@@ -203,79 +199,147 @@ export default function ChatPage() {
   // ── Payment wall for cleaner ────────────────────────────────────────────────
   if (!isClient && paymentRequired) {
     const isWaitingForClient = conv.lead.status === 'IN_REVIEW';
+    const jobDate = new Date(conv.lead.dateTime).toLocaleString('en-US', {
+      weekday: 'short', month: 'short', day: 'numeric',
+      hour: 'numeric', minute: '2-digit', hour12: true,
+    });
 
     return (
-      <Flex h="100vh" bg="slate.50" direction="column">
-        {/* Top bar */}
-        <Box bg="white" borderBottom="1px solid" borderColor="slate.100" px={4} py={3} flexShrink={0}>
-          <Flex align="center" gap={3} maxW="760px" mx="auto">
-            <Button size="sm" variant="ghost" color="slate.500" _hover={{ bg: 'slate.100' }} onClick={() => router.back()} px={2}>
-              <Icon as={LucideArrowLeft} w={5} h={5} />
-            </Button>
-            <Box
-              w="40px" h="40px" borderRadius="full" bg="brand.500"
-              display="flex" alignItems="center" justifyContent="center"
-              fontWeight="black" color="white" fontSize="md" flexShrink={0}>
-              {otherName[0].toUpperCase()}
-            </Box>
-            <Box flex={1}>
-              <Text fontWeight="bold" fontSize="md" color="slate.900">{otherName}</Text>
-              <Text fontSize="xs" color="slate.400">{conv.lead.serviceType} · {conv.lead.address}</Text>
-            </Box>
-          </Flex>
+      <Flex h="100vh" direction="column" bg="white">
+
+        {/* Nav */}
+        <Box bg="#0B1120" px={5} h="52px" display="flex" alignItems="center" flexShrink={0}
+          style={{ boxShadow: '0 1px 0 rgba(255,255,255,0.06)' }}>
+          <Button size="sm" variant="ghost" color="rgba(255,255,255,0.45)"
+            _hover={{ color: 'white', bg: 'rgba(255,255,255,0.06)' }}
+            onClick={() => router.back()} px={2} h="32px">
+            <Icon as={LucideArrowLeft} w={4} h={4} />
+          </Button>
         </Box>
 
-        {/* Wall content */}
-        <Flex flex={1} align="center" justify="center" px={6}>
-          <Box bg="white" border="1px solid" borderColor="slate.200" p={10} maxW="440px" w="full" textAlign="center">
-            <Box
-              w="56px" h="56px" borderRadius="full" bg={isWaitingForClient ? '#EBF5FE' : '#FEF3C7'}
-              display="flex" alignItems="center" justifyContent="center" mx="auto" mb={5}>
-              <Icon as={isWaitingForClient ? LucideLoader : LucideLock} w={6} h={6}
-                color={isWaitingForClient ? '#0A80DB' : '#D97706'} />
-            </Box>
+        {/* Content */}
+        <Flex flex={1} align="center" justify="center" px={6} py={12}>
+          <Box w="full" maxW="380px">
 
             {isWaitingForClient ? (
               <>
-                <Text fontWeight="black" fontSize="xl" color="slate.900" mb={2}>
-                  Waiting for the client to choose
+                {/* Status pill */}
+                <HStack gap={1.5} mb={6}>
+                  <Box w="6px" h="6px" borderRadius="full" bg="#F59E0B" flexShrink={0} />
+                  <Text fontSize="11px" fontWeight="700" color="#78350F"
+                    letterSpacing="0.08em" textTransform="uppercase">
+                    Awaiting decision
+                  </Text>
+                </HStack>
+
+                <Text fontSize="28px" fontWeight="900" color="#0B1120" lineHeight="1.15"
+                  letterSpacing="-0.025em" mb={4}>
+                  Waiting for the<br />client's choice
                 </Text>
-                <Text color="slate.500" fontSize="sm" lineHeight="1.7">
-                  Your interest has been sent. The client is reviewing available cleaners and will pick their top choice shortly.
-                  We'll notify you the moment they confirm.
+
+                <Text fontSize="14px" color="#64748B" lineHeight="1.7" mb={10}>
+                  You've been put forward for this job.
+                  The client will confirm their cleaner shortly — you'll be notified the moment they decide.
                 </Text>
-                <Box mt={6} bg="#F6F9FC" border="1px solid" borderColor="#E3E8EE" px={4} py={3}>
-                  <HStack gap={2} justify="center">
-                    <Icon as={LucideBanknote} w={4} h={4} color="#0A80DB" />
-                    <Text fontSize="sm" color="slate.600">
-                      Lead fee: <Text as="span" fontWeight="black" color="#0A80DB">${conv.leadFee}</Text>
-                      {' '}— only charged once the client confirms you
+
+                {/* Job rows */}
+                <VStack gap={0} align="stretch" borderTop="1px solid #E3E8EE">
+                  {[
+                    { label: 'Service',   value: conv.lead.serviceType },
+                    { label: 'Date',      value: jobDate },
+                    { label: 'Location',  value: conv.lead.address },
+                  ].map(row => (
+                    <Flex key={row.label} justify="space-between" align="start"
+                      py={3.5} borderBottom="1px solid #F1F5F9" gap={4}>
+                      <Text fontSize="12px" fontWeight="600" color="#94A3B8"
+                        letterSpacing="0.05em" textTransform="uppercase" flexShrink={0} mt="1px">
+                        {row.label}
+                      </Text>
+                      <Text fontSize="13px" fontWeight="500" color="#1E293B" textAlign="right">
+                        {row.value}
+                      </Text>
+                    </Flex>
+                  ))}
+                  <Flex justify="space-between" align="center" pt={4}>
+                    <Text fontSize="12px" fontWeight="600" color="#94A3B8"
+                      letterSpacing="0.05em" textTransform="uppercase">
+                      Lead fee
                     </Text>
-                  </HStack>
-                </Box>
+                    <Text fontSize="15px" fontWeight="800" color="#0B1120">
+                      ${conv.leadFee}
+                    </Text>
+                  </Flex>
+                </VStack>
+
+                <Text fontSize="12px" color="#94A3B8" mt={4} lineHeight="1.6">
+                  Only charged if the client selects you. Nothing is owed right now.
+                </Text>
               </>
             ) : (
               <>
-                <Text fontWeight="black" fontSize="xl" color="slate.900" mb={2}>
-                  One step to unlock your chat
+                {/* Status pill */}
+                <HStack gap={1.5} mb={6}>
+                  <Box w="6px" h="6px" borderRadius="full" bg="#22C55E" flexShrink={0} />
+                  <Text fontSize="11px" fontWeight="700" color="#14532D"
+                    letterSpacing="0.08em" textTransform="uppercase">
+                    Selected
+                  </Text>
+                </HStack>
+
+                <Text fontSize="28px" fontWeight="900" color="#0B1120" lineHeight="1.15"
+                  letterSpacing="-0.025em" mb={4}>
+                  The client<br />chose you
                 </Text>
-                <Text color="slate.500" fontSize="sm" lineHeight="1.7" mb={6}>
-                  Great news — the client has chosen you! Pay the lead fee to open the chat and see the client's contact details.
+
+                <Text fontSize="14px" color="#64748B" lineHeight="1.7" mb={10}>
+                  Pay the lead fee to unlock the chat and see the client's contact details.
                 </Text>
-                <Box bg="#EBF5FE" border="1px solid" borderColor="#A2D3F9" px={5} py={4} mb={6}>
-                  <Text fontSize="2xl" fontWeight="black" color="#0A80DB">${conv.leadFee}</Text>
-                  <Text fontSize="xs" color="#065594" mt={0.5}>Lead fee — {conv.lead.serviceType}</Text>
-                </Box>
+
+                {/* Job rows */}
+                <VStack gap={0} align="stretch" borderTop="1px solid #E3E8EE">
+                  {[
+                    { label: 'Service',   value: conv.lead.serviceType },
+                    { label: 'Date',      value: jobDate },
+                    { label: 'Location',  value: conv.lead.address },
+                  ].map(row => (
+                    <Flex key={row.label} justify="space-between" align="start"
+                      py={3.5} borderBottom="1px solid #F1F5F9" gap={4}>
+                      <Text fontSize="12px" fontWeight="600" color="#94A3B8"
+                        letterSpacing="0.05em" textTransform="uppercase" flexShrink={0} mt="1px">
+                        {row.label}
+                      </Text>
+                      <Text fontSize="13px" fontWeight="500" color="#1E293B" textAlign="right">
+                        {row.value}
+                      </Text>
+                    </Flex>
+                  ))}
+
+                  {/* Price row — visually distinct */}
+                  <Flex justify="space-between" align="baseline" pt={5} pb={1}>
+                    <Text fontSize="12px" fontWeight="600" color="#94A3B8"
+                      letterSpacing="0.05em" textTransform="uppercase">
+                      Lead fee
+                    </Text>
+                    <Text fontSize="32px" fontWeight="900" color="#0B1120"
+                      letterSpacing="-0.04em" lineHeight="1">
+                      ${conv.leadFee}
+                    </Text>
+                  </Flex>
+                  <Text fontSize="11px" color="#CBD5E1" mb={7}>One-time · non-refundable</Text>
+                </VStack>
+
                 <Button
-                  w="full" bg="#0A80DB" color="white" h="44px" borderRadius="4px"
-                  fontWeight="bold" fontSize="sm"
-                  _hover={{ bg: '#0870C2' }}
-                  loading={paying} loadingText="Redirecting to payment…"
+                  w="full" bg="#0A80DB" color="white" h="48px" borderRadius="6px"
+                  fontWeight="700" fontSize="14px" letterSpacing="-0.01em"
+                  _hover={{ bg: '#0870C2' }} _active={{ bg: '#0760A8' }}
+                  loading={paying} loadingText="Redirecting to Stripe…"
                   onClick={handlePayLeadFee}>
-                  <Icon as={LucideBanknote} w={4} h={4} mr={2} />
-                  Pay ${conv.leadFee} and unlock chat
+                  Pay ${conv.leadFee} · Unlock chat
                 </Button>
-                <Text fontSize="xs" color="slate.400" mt={3}>Secure checkout via Stripe · USD</Text>
+
+                <Text fontSize="11px" color="#CBD5E1" mt={3} textAlign="center">
+                  Secure checkout via Stripe · USD
+                </Text>
               </>
             )}
           </Box>

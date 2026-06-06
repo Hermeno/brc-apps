@@ -2,6 +2,7 @@ import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { stripe } from '@/lib/stripe';
 import { runMatching } from '@/lib/matching';
+import { after } from 'next/server';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
@@ -62,7 +63,7 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
         }),
       ]);
       // Re-run matching so cleaners are notified immediately — no manual reactivation needed
-      runMatching(conv.leadId).catch(e => console.error('[decline rematch]', e));
+      after(() => runMatching(conv.leadId).catch(e => console.error('[decline rematch]', e)));
     }
   }
 
