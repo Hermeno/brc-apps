@@ -32,29 +32,34 @@ export async function GET() {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  const dbUser = await prisma.user.findUnique({
-    where: { email: session.user.email },
-    select: { id: true },
-  });
+  try {
+    const dbUser = await prisma.user.findUnique({
+      where: { email: session.user.email },
+      select: { id: true },
+    });
 
-  if (!dbUser) {
-    return NextResponse.json({ error: 'User not found' }, { status: 401 });
-  }
+    if (!dbUser) {
+      return NextResponse.json({ error: 'User not found' }, { status: 401 });
+    }
 
-  const leads = await prisma.lead.findMany({
-    where: { clientId: dbUser.id },
-    include: {
-      cleaner: { select: { name: true, email: true } },
-      conversations: {
-        where: { status: { in: ['active', 'declined'] } },
-        select: { id: true, cleanerId: true, status: true, cleaner: { select: { id: true, name: true, avatarUrl: true, isVerified: true } } },
+    const leads = await prisma.lead.findMany({
+      where: { clientId: dbUser.id },
+      include: {
+        cleaner: { select: { name: true, email: true } },
+        conversations: {
+          where: { status: { in: ['active', 'declined'] } },
+          select: { id: true, cleanerId: true, status: true, cleaner: { select: { id: true, name: true, avatarUrl: true, isVerified: true } } },
+        },
+        review: { select: { rating: true, comment: true } },
       },
-      review: { select: { rating: true, comment: true } },
-    },
-    orderBy: { createdAt: 'desc' },
-  });
+      orderBy: { createdAt: 'desc' },
+    });
 
-  return NextResponse.json({ leads });
+    return NextResponse.json({ leads });
+  } catch (err: any) {
+    console.error('[GET /api/leads]', err);
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+  }
 }
 
 export async function POST(request: NextRequest) {
@@ -63,74 +68,74 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  const body = await request.json();
-  const {
-    serviceType, address, notes, dateTime,
-    bedrooms, bathrooms, squareMeters, extras, frequency,
-    estimatedMinPrice, estimatedMaxPrice, estimatedHours,
-    photos, clientPhone,
-  } = body;
-
-  if (!serviceType || !address || !dateTime) {
-    return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
-  }
-
-  // Resolve user ID from DB using email (reliable regardless of JWT version)
-  const dbUser = await prisma.user.findUnique({
-    where: { email: session.user.email! },
-    select: { id: true },
-  });
-
-  if (!dbUser) {
-    return NextResponse.json({ error: 'User not found' }, { status: 401 });
-  }
-
-  const parsedDate = new Date(dateTime);
-  if (isNaN(parsedDate.getTime())) {
-    return NextResponse.json({ error: 'Invalid date/time' }, { status: 400 });
-  }
-
-  // Booking must be within the next 90 days
-  const maxDate = new Date();
-  maxDate.setDate(maxDate.getDate() + 90);
-  if (parsedDate > maxDate) {
-    return NextResponse.json({ error: 'Booking date must be within the next 90 days.' }, { status: 400 });
-  }
-
-  // Rate limit: max 5 active bookings per client at once
-  const activeCount = await prisma.lead.count({
-    where: {
-      clientId: dbUser.id,
-      status: { in: ['NEW', 'WAVE1', 'WAVE2', 'WAVE3', 'IN_REVIEW', 'ACCEPTED'] },
-    },
-  });
-  if (activeCount >= 5) {
-    return NextResponse.json(
-      { error: 'You have too many active bookings. Please complete or cancel existing ones first.' },
-      { status: 429 },
-    );
-  }
-
-  // Load DB-backed pricing config (multipliers + coverage)
-  const priceConfig = await getLeadPriceConfig();
-
-  // ── ZIP coverage check ────────────────────────────────────────────────────────
-  const zip = extractZip(address ?? '');
-  if (priceConfig.coverageZips.length > 0 && zip && !priceConfig.coverageZips.includes(zip)) {
-    return NextResponse.json(
-      { error: 'Service is not available in your area yet. Check back soon!' },
-      { status: 422 },
-    );
-  }
-
-  // ── Email MX validation (quality flag — non-blocking) ────────────────────────
-  const emailValid = await hasMxRecords(session.user.email!);
-  const qualityScore = emailValid ? 1 : 0;
-
-  // ── Calculate lead price at creation time ────────────────────────────────────
-  const leadPrice = calculateLeadPrice(serviceType, parsedDate, frequency ?? 'once', priceConfig);
-
   try {
+    const body = await request.json();
+    const {
+      serviceType, address, notes, dateTime,
+      bedrooms, bathrooms, squareMeters, extras, frequency,
+      estimatedMinPrice, estimatedMaxPrice, estimatedHours,
+      photos, clientPhone,
+    } = body;
+
+    if (!serviceType || !address || !dateTime) {
+      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
+    }
+
+    // Resolve user ID from DB using email (reliable regardless of JWT version)
+    const dbUser = await prisma.user.findUnique({
+      where: { email: session.user.email! },
+      select: { id: true },
+    });
+
+    if (!dbUser) {
+      return NextResponse.json({ error: 'User not found' }, { status: 401 });
+    }
+
+    const parsedDate = new Date(dateTime);
+    if (isNaN(parsedDate.getTime())) {
+      return NextResponse.json({ error: 'Invalid date/time' }, { status: 400 });
+    }
+
+    // Booking must be within the next 90 days
+    const maxDate = new Date();
+    maxDate.setDate(maxDate.getDate() + 90);
+    if (parsedDate > maxDate) {
+      return NextResponse.json({ error: 'Booking date must be within the next 90 days.' }, { status: 400 });
+    }
+
+    // Rate limit: max 5 active bookings per client at once
+    const activeCount = await prisma.lead.count({
+      where: {
+        clientId: dbUser.id,
+        status: { in: ['NEW', 'WAVE1', 'WAVE2', 'WAVE3', 'IN_REVIEW', 'ACCEPTED'] },
+      },
+    });
+    if (activeCount >= 5) {
+      return NextResponse.json(
+        { error: 'You have too many active bookings. Please complete or cancel existing ones first.' },
+        { status: 429 },
+      );
+    }
+
+    // Load DB-backed pricing config (multipliers + coverage)
+    const priceConfig = await getLeadPriceConfig();
+
+    // ── ZIP coverage check ────────────────────────────────────────────────────────
+    const zip = extractZip(address ?? '');
+    if (priceConfig.coverageZips.length > 0 && zip && !priceConfig.coverageZips.includes(zip)) {
+      return NextResponse.json(
+        { error: 'Service is not available in your area yet. Check back soon!' },
+        { status: 422 },
+      );
+    }
+
+    // ── Email MX validation (quality flag — non-blocking) ────────────────────────
+    const emailValid = await hasMxRecords(session.user.email!);
+    const qualityScore = emailValid ? 1 : 0;
+
+    // ── Calculate lead price at creation time ────────────────────────────────────
+    const leadPrice = calculateLeadPrice(serviceType, parsedDate, frequency ?? 'once', priceConfig);
+
     const lead = await prisma.lead.create({
       data: {
         clientId: dbUser.id,

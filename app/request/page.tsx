@@ -70,8 +70,9 @@ export default function RequestPage() {
       }),
     });
     if (!res.ok) {
-      const d = await res.json();
-      throw new Error(d.error || 'Failed to submit request');
+      let msg = 'Failed to submit request';
+      try { const d = await res.json(); msg = d.error || d.message || msg; } catch {}
+      throw new Error(msg);
     }
   };
 

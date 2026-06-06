@@ -6,19 +6,24 @@ export async function GET() {
   const session = await auth();
   if (!session?.user?.email) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
-  const me = await prisma.user.findUnique({ where: { email: session.user.email }, select: { role: true } });
-  if (!me || me.role !== 'ADMIN') return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+  try {
+    const me = await prisma.user.findUnique({ where: { email: session.user.email }, select: { role: true } });
+    if (!me || me.role !== 'ADMIN') return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
 
-  const users = await prisma.user.findMany({
-    where: { role: { not: 'ADMIN' } },
-    select: {
-      id: true, name: true, email: true, role: true, phone: true,
-      address: true, isVerified: true, suspendedUntil: true,
-      createdAt: true, plan: true, isAvailable: true,
-      verification: { select: { status: true } },
-    },
-    orderBy: { createdAt: 'desc' },
-  });
+    const users = await prisma.user.findMany({
+      where: { role: { not: 'ADMIN' } },
+      select: {
+        id: true, name: true, email: true, role: true, phone: true,
+        address: true, isVerified: true, suspendedUntil: true,
+        createdAt: true, plan: true, isAvailable: true,
+        verification: { select: { status: true } },
+      },
+      orderBy: { createdAt: 'desc' },
+    });
 
-  return NextResponse.json({ users });
+    return NextResponse.json({ users });
+  } catch (err: any) {
+    console.error('[GET /api/admin/users]', err);
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+  }
 }

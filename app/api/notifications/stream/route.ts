@@ -10,10 +10,15 @@ export async function GET() {
   const session = await auth();
   if (!session?.user?.email) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
-  const user = await prisma.user.findUnique({
-    where: { email: session.user.email },
-    select: { id: true },
-  });
+  let user: { id: string } | null = null;
+  try {
+    user = await prisma.user.findUnique({
+      where: { email: session.user.email },
+      select: { id: true },
+    });
+  } catch {
+    return NextResponse.json({ error: 'Service unavailable' }, { status: 503 });
+  }
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
   const userId = user.id;

@@ -60,67 +60,75 @@ export async function GET() {
   const admin = await requireAdmin();
   if (!admin) return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
 
-  await ensureTables();
+  try {
+    await ensureTables();
 
-  const [prices, platform] = await Promise.all([
-    prisma.$queryRaw<{ id: string; price: number; updatedAt: Date }[]>`
-      SELECT id, price, "updatedAt" FROM "LeadPriceConfig" ORDER BY id
-    `,
-    prisma.$queryRaw<{ id: string; value: string; updatedAt: Date }[]>`
-      SELECT id, value, "updatedAt" FROM "LeadPlatformConfig" ORDER BY id
-    `,
-  ]);
+    const [prices, platform] = await Promise.all([
+      prisma.$queryRaw<{ id: string; price: number; updatedAt: Date }[]>`
+        SELECT id, price, "updatedAt" FROM "LeadPriceConfig" ORDER BY id
+      `,
+      prisma.$queryRaw<{ id: string; value: string; updatedAt: Date }[]>`
+        SELECT id, value, "updatedAt" FROM "LeadPlatformConfig" ORDER BY id
+      `,
+    ]);
 
-  return NextResponse.json({ prices, platform });
+    return NextResponse.json({ prices, platform });
+  } catch (err: any) {
+    console.error('[GET /api/admin/lead-config]', err);
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+  }
 }
 
 export async function PATCH(req: NextRequest) {
   const admin = await requireAdmin();
   if (!admin) return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
 
-  const body = await req.json();
+  try {
+    const body = await req.json();
 
-  // Update service base price
-  if (body.type === 'price') {
-    const { id, price } = body;
-    if (!['standard', 'deep', 'post-work', 'moving'].includes(id)) {
-      return NextResponse.json({ error: 'Invalid service type' }, { status: 400 });
-    }
-    if (typeof price !== 'number' || price < 0) {
-      return NextResponse.json({ error: 'Invalid price' }, { status: 400 });
-    }
-    await ensureTables();
-    await prisma.$executeRawUnsafe(
-      `INSERT INTO "LeadPriceConfig" ("id", "price", "updatedAt")
-       VALUES ($1, $2, NOW())
-       ON CONFLICT ("id") DO UPDATE SET "price" = $2, "updatedAt" = NOW()`,
-      id, price,
-    );
-    return NextResponse.json({ ok: true });
-  }
-
-  // Update platform config (multipliers / coverage ZIPs)
-  if (body.type === 'platform') {
-    const { id, value } = body;
-    const allowed = ['same_day_multiplier', 'recurring_multiplier', 'coverage_zips'];
-    if (!allowed.includes(id)) {
-      return NextResponse.json({ error: 'Invalid config key' }, { status: 400 });
-    }
-    if (id !== 'coverage_zips') {
-      const num = parseFloat(value);
-      if (isNaN(num) || num <= 0) {
-        return NextResponse.json({ error: 'Multiplier must be a positive number' }, { status: 400 });
+    if (body.type === 'price') {
+      const { id, price } = body;
+      if (!['standard', 'deep', 'post-work', 'moving'].includes(id)) {
+        return NextResponse.json({ error: 'Invalid service type' }, { status: 400 });
       }
+      if (typeof price !== 'number' || price < 0) {
+        return NextResponse.json({ error: 'Invalid price' }, { status: 400 });
+      }
+      await ensureTables();
+      await prisma.$executeRawUnsafe(
+        `INSERT INTO "LeadPriceConfig" ("id", "price", "updatedAt")
+         VALUES ($1, $2, NOW())
+         ON CONFLICT ("id") DO UPDATE SET "price" = $2, "updatedAt" = NOW()`,
+        id, price,
+      );
+      return NextResponse.json({ ok: true });
     }
-    await ensureTables();
-    await prisma.$executeRawUnsafe(
-      `INSERT INTO "LeadPlatformConfig" ("id", "value", "updatedAt")
-       VALUES ($1, $2, NOW())
-       ON CONFLICT ("id") DO UPDATE SET "value" = $2, "updatedAt" = NOW()`,
-      id, String(value),
-    );
-    return NextResponse.json({ ok: true });
-  }
 
-  return NextResponse.json({ error: 'Invalid request type' }, { status: 400 });
+    if (body.type === 'platform') {
+      const { id, value } = body;
+      const allowed = ['same_day_multiplier', 'recurring_multiplier', 'coverage_zips'];
+      if (!allowed.includes(id)) {
+        return NextResponse.json({ error: 'Invalid config key' }, { status: 400 });
+      }
+      if (id !== 'coverage_zips') {
+        const num = parseFloat(value);
+        if (isNaN(num) || num <= 0) {
+          return NextResponse.json({ error: 'Multiplier must be a positive number' }, { status: 400 });
+        }
+      }
+      await ensureTables();
+      await prisma.$executeRawUnsafe(
+        `INSERT INTO "LeadPlatformConfig" ("id", "value", "updatedAt")
+         VALUES ($1, $2, NOW())
+         ON CONFLICT ("id") DO UPDATE SET "value" = $2, "updatedAt" = NOW()`,
+        id, String(value),
+      );
+      return NextResponse.json({ ok: true });
+    }
+
+    return NextResponse.json({ error: 'Invalid request type' }, { status: 400 });
+  } catch (err: any) {
+    console.error('[PATCH /api/admin/lead-config]', err);
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+  }
 }

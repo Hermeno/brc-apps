@@ -7,51 +7,55 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   const session = await auth();
   if (!session?.user?.email) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
-  const user = await prisma.user.findUnique({ where: { email: session.user.email }, select: { id: true } });
-  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  try {
+    const user = await prisma.user.findUnique({ where: { email: session.user.email }, select: { id: true } });
+    if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
-  const { id } = await params;
-  const lead = await prisma.lead.findUnique({ where: { id }, include: { review: true } });
+    const { id } = await params;
+    const lead = await prisma.lead.findUnique({ where: { id }, include: { review: true } });
 
-  if (!lead || lead.clientId !== user.id)
-    return NextResponse.json({ error: 'Not found' }, { status: 404 });
+    if (!lead || lead.clientId !== user.id)
+      return NextResponse.json({ error: 'Not found' }, { status: 404 });
 
-  if (lead.status !== 'COMPLETED')
-    return NextResponse.json({ error: 'Booking has not been completed yet' }, { status: 409 });
+    if (lead.status !== 'COMPLETED')
+      return NextResponse.json({ error: 'Booking has not been completed yet' }, { status: 409 });
 
-  if (!lead.cleanerId)
-    return NextResponse.json({ error: 'Nenhum profissional para avaliar' }, { status: 409 });
+    if (!lead.cleanerId)
+      return NextResponse.json({ error: 'Nenhum profissional para avaliar' }, { status: 409 });
 
-  if (lead.review)
-    return NextResponse.json({ error: 'Review already submitted' }, { status: 409 });
+    if (lead.review)
+      return NextResponse.json({ error: 'Review already submitted' }, { status: 409 });
 
-  const { rating, comment } = await req.json();
+    const { rating, comment } = await req.json();
 
-  if (!rating || rating < 1 || rating > 5)
-    return NextResponse.json({ error: 'Rating must be between 1 and 5' }, { status: 400 });
+    if (!rating || rating < 1 || rating > 5)
+      return NextResponse.json({ error: 'Rating must be between 1 and 5' }, { status: 400 });
 
-  const review = await prisma.$transaction(async tx => {
-    const r = await tx.review.create({
-      data: { leadId: id, clientId: user.id, cleanerId: lead.cleanerId!, rating, comment: comment || null },
+    const review = await prisma.$transaction(async tx => {
+      const r = await tx.review.create({
+        data: { leadId: id, clientId: user.id, cleanerId: lead.cleanerId!, rating, comment: comment || null },
+      });
+      const reviews = await tx.review.findMany({ where: { cleanerId: lead.cleanerId! }, select: { rating: true } });
+      const avg = reviews.reduce((s, r) => s + r.rating, 0) / reviews.length;
+      await tx.cleanerStats.upsert({
+        where: { cleanerId: lead.cleanerId! },
+        create: { cleanerId: lead.cleanerId!, ratingAvg: avg },
+        update: { ratingAvg: avg },
+      });
+      return r;
     });
-    // Update cleaner stats
-    const reviews = await tx.review.findMany({ where: { cleanerId: lead.cleanerId! }, select: { rating: true } });
-    const avg = reviews.reduce((s, r) => s + r.rating, 0) / reviews.length;
-    await tx.cleanerStats.upsert({
-      where: { cleanerId: lead.cleanerId! },
-      create: { cleanerId: lead.cleanerId!, ratingAvg: avg },
-      update: { ratingAvg: avg },
-    });
-    return r;
-  });
 
-  createNotification({
-    userId: lead.cleanerId!,
-    type:   'review_received',
-    title:  'New review received!',
-    body:   `${rating} estrelas${comment ? ` — "${comment}"` : ''}`,
-    link:   '/dashboard/cleaner',
-  }).catch(() => {});
+    createNotification({
+      userId: lead.cleanerId!,
+      type:   'review_received',
+      title:  'New review received!',
+      body:   `${rating} estrelas${comment ? ` — "${comment}"` : ''}`,
+      link:   '/dashboard/cleaner',
+    }).catch(() => {});
 
-  return NextResponse.json({ review });
+    return NextResponse.json({ review });
+  } catch (err: any) {
+    console.error('[POST /api/leads/[id]/review]', err);
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+  }
 }

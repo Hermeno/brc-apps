@@ -10,48 +10,56 @@ export async function DELETE(
   const session = await auth();
   if (!session?.user?.email) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
-  const { id } = await params;
+  try {
+    const { id } = await params;
 
-  const user = await prisma.user.findUnique({
-    where: { email: session.user.email },
-    select: { stripeCustomerId: true },
-  });
-  if (!user?.stripeCustomerId) return NextResponse.json({ error: 'Sem conta Stripe' }, { status: 400 });
+    const user = await prisma.user.findUnique({
+      where: { email: session.user.email },
+      select: { stripeCustomerId: true },
+    });
+    if (!user?.stripeCustomerId) return NextResponse.json({ error: 'Sem conta Stripe' }, { status: 400 });
 
-  // Verify the PM belongs to this customer before detaching
-  const pm = await stripe.paymentMethods.retrieve(id);
-  if (pm.customer !== user.stripeCustomerId) {
-    return NextResponse.json({ error: 'Not authorized' }, { status: 403 });
+    const pm = await stripe.paymentMethods.retrieve(id);
+    if (pm.customer !== user.stripeCustomerId) {
+      return NextResponse.json({ error: 'Not authorized' }, { status: 403 });
+    }
+
+    await stripe.paymentMethods.detach(id);
+    return NextResponse.json({ ok: true });
+  } catch (err: any) {
+    console.error('[DELETE /api/stripe/payment-methods/[id]]', err);
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
-
-  await stripe.paymentMethods.detach(id);
-  return NextResponse.json({ ok: true });
 }
 
 export async function POST(
   _req: NextRequest,
   { params }: { params: Promise<{ id: string }> },
 ) {
-  // Set as default payment method
   const session = await auth();
   if (!session?.user?.email) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
-  const { id } = await params;
+  try {
+    const { id } = await params;
 
-  const user = await prisma.user.findUnique({
-    where: { email: session.user.email },
-    select: { stripeCustomerId: true },
-  });
-  if (!user?.stripeCustomerId) return NextResponse.json({ error: 'Sem conta Stripe' }, { status: 400 });
+    const user = await prisma.user.findUnique({
+      where: { email: session.user.email },
+      select: { stripeCustomerId: true },
+    });
+    if (!user?.stripeCustomerId) return NextResponse.json({ error: 'Sem conta Stripe' }, { status: 400 });
 
-  const pm = await stripe.paymentMethods.retrieve(id);
-  if (pm.customer !== user.stripeCustomerId) {
-    return NextResponse.json({ error: 'Not authorized' }, { status: 403 });
+    const pm = await stripe.paymentMethods.retrieve(id);
+    if (pm.customer !== user.stripeCustomerId) {
+      return NextResponse.json({ error: 'Not authorized' }, { status: 403 });
+    }
+
+    await stripe.customers.update(user.stripeCustomerId, {
+      invoice_settings: { default_payment_method: id },
+    });
+
+    return NextResponse.json({ ok: true });
+  } catch (err: any) {
+    console.error('[POST /api/stripe/payment-methods/[id]]', err);
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
-
-  await stripe.customers.update(user.stripeCustomerId, {
-    invoice_settings: { default_payment_method: id },
-  });
-
-  return NextResponse.json({ ok: true });
 }

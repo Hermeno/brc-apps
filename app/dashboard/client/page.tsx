@@ -139,8 +139,10 @@ export default function ClientPage() {
   const [reactivating, setReactivating]     = useState(false);
 
   const fetchLeads = useCallback(async () => {
-    const res = await fetch('/api/leads');
-    if (res.ok) setLeads((await res.json()).leads);
+    try {
+      const res = await fetch('/api/leads');
+      if (res.ok) setLeads((await res.json()).leads ?? []);
+    } catch { /* network error — keep current leads state */ }
   }, []);
 
   useEffect(() => {
