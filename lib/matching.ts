@@ -7,9 +7,9 @@ import { haversineDistance, resolveCoords, ensureRadiusColumn } from './geo';
 // Max 100 points: Plan(30) + Service(40) + Rating(20) + Proximity(10)
 //
 // Plan tiers:
-//   FREE  →  0 pts  | Wave 2+ only      | max radius  25 mi
-//   BASIC → 15 pts  | Wave 1 + Wave 2+  | max radius  60 mi
-//   PRO   → 30 pts  | Wave 1 + Instant Book | max radius 110 mi
+//   FREE  →  0 pts  | max radius  25 mi
+//   BASIC → 15 pts  | max radius  60 mi
+//   PRO   → 30 pts  | Instant Book eligible | max radius 110 mi
 
 const PLAN_BONUS: Record<string, number> = {
   FREE: 0, BASIC: 15, PRO: 30, PREMIUM: 30,
@@ -18,10 +18,6 @@ const PLAN_BONUS: Record<string, number> = {
 const PLAN_MAX_RADIUS: Record<string, number> = {
   FREE: 25, BASIC: 60, PRO: 110, PREMIUM: 110,
 };
-
-function isWave1Eligible(plan: string): boolean {
-  return plan === 'BASIC' || plan === 'PRO' || plan === 'PREMIUM';
-}
 
 function isInstantBookEligible(plan: string): boolean {
   return plan === 'PRO' || plan === 'PREMIUM';
@@ -64,7 +60,7 @@ function filterByRadius(
   return cleaners
     .map(c => {
       const cleanerCoords = resolveCoords(c.latitude, c.longitude, c.zipCode);
-      if (!cleanerCoords) return null;                             // cleaner has no location
+      if (!cleanerCoords) return null;
 
       const distanceMiles = leadCoords
         ? haversineDistance(cleanerCoords.lat, cleanerCoords.lng, leadCoords.lat, leadCoords.lng)
@@ -73,7 +69,6 @@ function filterByRadius(
       const planMax     = PLAN_MAX_RADIUS[c.plan ?? 'FREE'] ?? 25;
       const radiusMiles = Math.min(c.serviceRadiusMiles ?? 25, planMax);
 
-      // If lead coords are known, enforce hard distance limit
       if (distanceMiles !== null && distanceMiles > radiusMiles) return null;
 
       return { cleaner: c, distanceMiles };
@@ -81,14 +76,15 @@ function filterByRadius(
     .filter(Boolean) as { cleaner: any; distanceMiles: number | null }[];
 }
 
-// ─── Wave timing ──────────────────────────────────────────────────────────────
-const WAVE1_WINDOW_MS        =  90 * 1000;   // 90 s  — exclusive hold for top BASIC/PRO
-const WAVE2_WINDOW_MS        = 180 * 1000;   // 3 min — two cleaners compete
-const WAVE3_WINDOW_MS        = 180 * 1000;   // 3 min — each subsequent batch
-const INSTANT_BOOK_WINDOW_MS =  10 * 60 * 1000; // 10 min — PRO instant accept
-const WAVE_BATCH_SIZE        = 2;
+// ─── Timing ───────────────────────────────────────────────────────────────────
+// Each batch of 2 cleaners gets 10 minutes to accept before the next batch is tried.
+const WAVE_BATCH_SIZE      = 2;
+const OPEN_WINDOW_MS       = 10 * 60 * 1000;
+const INSTANT_BOOK_WINDOW_MS = 10 * 60 * 1000;
 
 // ─── Main matching engine ─────────────────────────────────────────────────────
+// Sends the lead to the top 2 scored cleaners (WAVE2). If they don't respond
+// within 10 min, advanceWaves picks the next batch of 2 (WAVE3, cycling).
 
 export async function runMatching(leadId: string) {
   await ensureRadiusColumn();
@@ -160,63 +156,34 @@ export async function runMatching(leadId: string) {
     return { type: 'instant', cleanerId: top.cleaner.id, score: top.score, leadPrice };
   }
 
-  // ── Wave 1: top BASIC/PRO cleaner, 90-second exclusive window ─────────────
-  const wave1Pool     = scored.filter(s => isWave1Eligible(s.cleaner.plan ?? 'FREE'));
-  const wave1Cleaners = wave1Pool.slice(0, 1);
+  // ── Wave 2: send to top 2 cleaners ────────────────────────────────────────
+  const batch   = scored.slice(0, WAVE_BATCH_SIZE);
+  const expires = new Date(Date.now() + OPEN_WINDOW_MS);
 
-  if (wave1Cleaners.length === 0) {
-    // No BASIC/PRO in radius — skip straight to Wave 2 so the lead isn't stuck
-    const wave2Pool    = scored.slice(0, WAVE_BATCH_SIZE);
-    const wave2Expires = new Date(Date.now() + WAVE2_WINDOW_MS);
-
-    await prisma.lead.update({ where: { id: leadId }, data: { status: 'WAVE2', leadPrice } });
-    await prisma.leadDistribution.createMany({
-      data: wave2Pool.map(({ cleaner }) => ({
-        leadId, cleanerId: cleaner.id,
-        wave: 2, status: 'INVITED',
-        notifiedAt: new Date(), expiresAt: wave2Expires,
-      })),
-      skipDuplicates: true,
-    });
-
-    createNotificationMany(wave2Pool.map(({ cleaner }) => ({
-      userId: cleaner.id,
-      type:   'lead_received',
-      title:  'New lead available!',
-      body:   `${lead.serviceType} at ${lead.address}. Be the first to accept!`,
-      link:   '/dashboard/cleaner',
-    }))).catch(() => {});
-
-    return { type: 'wave2_direct', cleanerIds: wave2Pool.map(c => c.cleaner.id), leadPrice };
-  }
-
-  const wave1Expires = new Date(Date.now() + WAVE1_WINDOW_MS);
-
-  await prisma.lead.update({ where: { id: leadId }, data: { status: 'WAVE1', leadPrice } });
+  await prisma.lead.update({ where: { id: leadId }, data: { status: 'WAVE2', leadPrice } });
   await prisma.leadDistribution.createMany({
-    data: wave1Cleaners.map(({ cleaner }) => ({
+    data: batch.map(({ cleaner }) => ({
       leadId, cleanerId: cleaner.id,
-      wave: 1, status: 'INVITED',
-      notifiedAt: new Date(), expiresAt: wave1Expires,
+      wave: 2, status: 'INVITED',
+      notifiedAt: new Date(), expiresAt: expires,
     })),
     skipDuplicates: true,
   });
 
-  createNotificationMany(wave1Cleaners.map(({ cleaner }) => ({
+  createNotificationMany(batch.map(({ cleaner }) => ({
     userId: cleaner.id,
     type:   'lead_received',
-    title:  'New lead — exclusive access!',
-    body:   `${lead.serviceType} at ${lead.address}. You have 90 seconds.`,
+    title:  'New lead available!',
+    body:   `${lead.serviceType} at ${lead.address}. Be the first to respond!`,
     link:   '/dashboard/cleaner',
   }))).catch(() => {});
 
-  return { type: 'wave1', cleanerIds: wave1Cleaners.map(c => c.cleaner.id) };
+  return { type: 'wave2', cleanerIds: batch.map(s => s.cleaner.id), leadPrice };
 }
 
 // ─── Next-batch helper ────────────────────────────────────────────────────────
-// Finds the next 2 cleaners not yet tried, invites them, and sets the lead status.
-// If no more cleaners remain in radius → marks lead UNMATCHED.
-// Returns true if a new batch was dispatched, false if UNMATCHED.
+// Finds the next 2 cleaners not yet invited. Marks previous batch EXPIRED first.
+// If no candidates remain → UNMATCHED.
 async function dispatchNextBatch(
   lead: { id: string; latitude: number; longitude: number; zipCode: string | null; serviceType: string; address: string; distributions: { cleanerId: string }[] },
   nowDate: Date,
@@ -233,7 +200,7 @@ async function dispatchNextBatch(
       OR:  [{ suspendedUntil: null }, { suspendedUntil: { lt: nowDate } }],
     },
     include: { stats: true },
-    take: 100,
+    take: 200,
   });
 
   const inRadius = filterByRadius(candidates, leadCoords);
@@ -268,7 +235,7 @@ async function dispatchNextBatch(
     userId: cleaner.id,
     type:   'lead_received',
     title:  'New lead available!',
-    body:   `${lead.serviceType} at ${lead.address}. Be the first to accept!`,
+    body:   `${lead.serviceType} at ${lead.address}. Be the first to respond!`,
     link:   '/dashboard/cleaner',
   }))).catch(() => {});
 
@@ -276,9 +243,6 @@ async function dispatchNextBatch(
 }
 
 // ─── Wave advancement (called by cron every minute) ───────────────────────────
-// Returns leadIds that need runMatching called after the cron response — the
-// caller (cron handler) wraps them in after() since after() only works in route handlers.
-
 export async function advanceWaves(): Promise<string[]> {
   await ensureRadiusColumn();
   const nowDate = new Date();
@@ -304,28 +268,7 @@ export async function advanceWaves(): Promise<string[]> {
     });
   }
 
-  // ── Wave 1 expiry → Wave 2 ────────────────────────────────────────────────
-  const expiredWave1 = await prisma.lead.findMany({
-    where: {
-      status:        'WAVE1',
-      distributions: { some: { wave: 1, status: 'INVITED', expiresAt: { lt: nowDate } } },
-    },
-    include: { distributions: true },
-  });
-
-  for (const lead of expiredWave1) {
-    // Skip if any Wave 1 cleaner already accepted (race window protection)
-    if (lead.distributions.some(d => d.wave === 1 && d.status === 'ACCEPTED')) continue;
-
-    await prisma.leadDistribution.updateMany({
-      where: { leadId: lead.id, wave: 1, status: 'INVITED' },
-      data:  { status: 'EXPIRED' },
-    });
-
-    await dispatchNextBatch(lead, nowDate, 'WAVE2', WAVE2_WINDOW_MS);
-  }
-
-  // ── Wave 2 expiry → Wave 3 (first extended round) ─────────────────────────
+  // ── Wave 2 expiry → Wave 3 (next batch of 2) ─────────────────────────────
   const expiredWave2 = await prisma.lead.findMany({
     where: {
       status:        'WAVE2',
@@ -342,12 +285,10 @@ export async function advanceWaves(): Promise<string[]> {
       data:  { status: 'EXPIRED' },
     });
 
-    await dispatchNextBatch(lead, nowDate, 'WAVE3', WAVE3_WINDOW_MS);
+    await dispatchNextBatch(lead, nowDate, 'WAVE3', OPEN_WINDOW_MS);
   }
 
-  // ── Wave 3 cycling → next batch or UNMATCHED ─────────────────────────────
-  // WAVE3 is the "extended matching" state — it keeps cycling through fresh
-  // batches of 2 cleaners until the full radius is exhausted, then UNMATCHED.
+  // ── Wave 3 cycling → next batch of 2 or UNMATCHED ────────────────────────
   const expiredWave3 = await prisma.lead.findMany({
     where: {
       status:        'WAVE3',
@@ -357,17 +298,14 @@ export async function advanceWaves(): Promise<string[]> {
   });
 
   for (const lead of expiredWave3) {
-    // Skip if any invited cleaner just accepted before cron ran
     if (lead.distributions.some(d => d.status === 'ACCEPTED')) continue;
 
-    // Expire the current batch of INVITED dists that have passed their deadline
     await prisma.leadDistribution.updateMany({
       where: { leadId: lead.id, status: 'INVITED', expiresAt: { lt: nowDate } },
       data:  { status: 'EXPIRED' },
     });
 
-    // Try to find the next unused batch — stays WAVE3 or becomes UNMATCHED
-    await dispatchNextBatch(lead, nowDate, 'WAVE3', WAVE3_WINDOW_MS);
+    await dispatchNextBatch(lead, nowDate, 'WAVE3', OPEN_WINDOW_MS);
   }
 
   // ── Fee deadline expiry — re-match unpaid acceptances ─────────────────────
@@ -418,7 +356,6 @@ export async function advanceWaves(): Promise<string[]> {
         link:   '/dashboard/client',
       }).catch(() => {});
 
-      // Collected — caller wraps in after() so it runs post-response
       rematchIds.push(conv.leadId);
     }
   }
