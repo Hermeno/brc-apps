@@ -14,7 +14,8 @@ export async function GET() {
       where: { role: { not: 'ADMIN' } },
       select: {
         id: true, name: true, email: true, role: true, phone: true,
-        address: true, isVerified: true, suspendedUntil: true,
+        address: true, zipCode: true, latitude: true, longitude: true,
+        isVerified: true, suspendedUntil: true,
         createdAt: true, plan: true, isAvailable: true,
         verification: { select: { status: true } },
       },

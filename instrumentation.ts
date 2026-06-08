@@ -1,6 +1,16 @@
 export async function register() {
   if (process.env.NEXT_RUNTIME === 'nodejs') {
     const { prisma } = await import('./lib/prisma');
+    const { advanceWaves, runMatching } = await import('./lib/matching');
+
+    // Wave advancement — mirrors the Vercel cron (/api/cron/waves) so it also
+    // works when running in Docker (where Vercel's cron service doesn't reach).
+    setInterval(async () => {
+      try {
+        const rematchIds = await advanceWaves();
+        await Promise.all(rematchIds.map(id => runMatching(id).catch(() => {})));
+      } catch { /* never crash the process */ }
+    }, 60_000);
 
     const run = (sql: string, ...params: unknown[]) =>
       params.length

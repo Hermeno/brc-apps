@@ -5,8 +5,6 @@ const globalForPrisma = global as unknown as { prisma: PrismaClient };
 function buildUrl(): string | undefined {
   const url = process.env.DATABASE_URL;
   if (!url) return undefined;
-  // Neon free-tier drops idle connections after ~5 min.
-  // Appending pool params keeps connections fresh and retries faster.
   try {
     const u = new URL(url);
     if (!u.searchParams.has('connect_timeout'))  u.searchParams.set('connect_timeout', '30');
@@ -18,12 +16,22 @@ function buildUrl(): string | undefined {
   }
 }
 
-export const prisma =
-  globalForPrisma.prisma ||
-  new PrismaClient({
-    log: ['error'],
+function createClient() {
+  const client = new PrismaClient({
+    log: [{ emit: 'event', level: 'error' }],
     datasources: { db: { url: buildUrl() } },
   });
 
-// Cache instance in all environments to avoid exhausting connection pool
+  // Neon free-tier closes idle connections automatically — this is expected.
+  // Prisma reconnects on the next query; suppress the noise.
+  client.$on('error', (e) => {
+    if (e.message.includes('Error in PostgreSQL connection')) return;
+    console.error('[prisma]', e.message);
+  });
+
+  return client;
+}
+
+export const prisma = globalForPrisma.prisma || createClient();
+
 globalForPrisma.prisma = prisma;

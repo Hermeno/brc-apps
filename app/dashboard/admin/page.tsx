@@ -51,8 +51,9 @@ interface LeadRow {
 interface UserRow {
   id: string; name: string | null; email: string; role: string;
   phone: string | null; address: string | null;
+  zipCode: string | null; latitude: number | null; longitude: number | null;
   isVerified: boolean; suspendedUntil: string | null;
-  createdAt: string; plan: string;
+  createdAt: string; plan: string; isAvailable: boolean;
 }
 interface Verification {
   id: string; status: string; fullName: string; idNumber: string;
@@ -338,6 +339,7 @@ function UserTableRow({ user, onRefresh }: { user: UserRow; onRefresh: () => voi
   const [name, setName]             = useState(user.name ?? '');
   const [email, setEmail]           = useState(user.email);
   const [phone, setPhone]           = useState(user.phone ?? '');
+  const [zipCode, setZipCode]       = useState(user.zipCode ?? '');
   const [suspendDays, setSuspDays]  = useState(7);
   const [loading, setLoading]       = useState(false);
   const [showDeleteModal, setShowDelete] = useState(false);
@@ -390,6 +392,10 @@ function UserTableRow({ user, onRefresh }: { user: UserRow; onRefresh: () => voi
               <Input size="sm" value={name}  onChange={e => setName(e.target.value)}  placeholder="Name"  borderRadius="4px" />
               <Input size="sm" value={email} onChange={e => setEmail(e.target.value)} placeholder="Email" borderRadius="4px" />
               <Input size="sm" value={phone} onChange={e => setPhone(e.target.value)} placeholder="Phone" borderRadius="4px" />
+              {user.role === 'CLEANER' && (
+                <Input size="sm" value={zipCode} onChange={e => setZipCode(e.target.value)}
+                  placeholder="ZIP code (e.g. 33101)" borderRadius="4px" maxLength={10} />
+              )}
             </VStack>
           ) : (
             <Box>
@@ -405,11 +411,43 @@ function UserTableRow({ user, onRefresh }: { user: UserRow; onRefresh: () => voi
           </Text>
         </td>
         <td style={TD}>
+          {user.role === 'CLEANER' ? (
+            <Box>
+              {user.zipCode ? (
+                <HStack gap={1}>
+                  <Icon as={LucideMapPin} w="11px" h="11px" color="slate.400" flexShrink={0} />
+                  <Text fontSize="12px" fontWeight="600" color="slate.700" fontFamily="heading">{user.zipCode}</Text>
+                </HStack>
+              ) : (
+                <Text fontSize="11px" color="slate.300" fontFamily="heading">No ZIP set</Text>
+              )}
+              {(user.latitude != null && user.longitude != null && user.latitude !== 0 && user.longitude !== 0) && (
+                <Text fontSize="10px" color="slate.400" fontFamily="heading">
+                  {user.latitude.toFixed(4)}, {user.longitude.toFixed(4)}
+                </Text>
+              )}
+            </Box>
+          ) : (
+            <Text fontSize="11px" color="slate.300" fontFamily="heading">—</Text>
+          )}
+        </td>
+        <td style={TD}>
           {suspended
             ? <span style={{ fontSize: 12, fontWeight: 600, color: '#BE123C', fontFamily: 'var(--font-dm-sans,sans-serif)' }}>Suspended until {new Date(user.suspendedUntil!).toLocaleDateString('en-US')}</span>
             : user.isVerified
             ? <span style={{ fontSize: 12, fontWeight: 600, color: '#047857', fontFamily: 'var(--font-dm-sans,sans-serif)' }}>Active</span>
-            : <span style={{ fontSize: 12, fontWeight: 600, color: '#92400E', fontFamily: 'var(--font-dm-sans,sans-serif)' }}>Pending</span>
+            : (
+              <HStack gap={1.5}>
+                <span style={{ fontSize: 12, fontWeight: 600, color: '#92400E', fontFamily: 'var(--font-dm-sans,sans-serif)' }}>Unverified</span>
+                {user.role === 'CLEANER' && (
+                  <Button size="xs" h="18px" px={1.5} fontSize="10px" bg="#0A80DB" color="white"
+                    borderRadius="3px" fontFamily="heading" loading={loading}
+                    onClick={() => call({ action: 'verify' })}>
+                    Verify
+                  </Button>
+                )}
+              </HStack>
+            )
           }
         </td>
         <td style={TD}>
@@ -420,7 +458,7 @@ function UserTableRow({ user, onRefresh }: { user: UserRow; onRefresh: () => voi
             {editing ? (
               <>
                 <Button size="xs" bg="brand.500" color="white" borderRadius="4px" loading={loading}
-                  onClick={() => { call({ name, email, phone }); setEditing(false); }}>
+                  onClick={() => { call({ name, email, phone, ...(user.role === 'CLEANER' ? { zipCode: zipCode.trim() || null } : {}) }); setEditing(false); }}>
                   <Icon as={LucideSave} w={3} h={3} />
                 </Button>
                 <Button size="xs" variant="ghost" borderRadius="4px" onClick={() => setEditing(false)}>
@@ -1232,6 +1270,7 @@ export default function AdminPage() {
                     <thead><tr>
                       <th style={TH}>User</th>
                       <th style={TH}>Type</th>
+                      <th style={TH}>Location</th>
                       <th style={TH}>Status</th>
                       <th style={TH}>Joined</th>
                       <th style={{ ...TH, textAlign: 'right' }}>Actions</th>

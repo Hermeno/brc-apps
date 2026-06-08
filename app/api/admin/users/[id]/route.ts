@@ -15,7 +15,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   try {
     const { id } = await params;
     const body = await req.json();
-    const { action, name, email, phone, address, suspendDays } = body;
+    const { action, name, email, phone, address, zipCode, suspendDays } = body;
 
     if (action === 'suspend') {
       const until = new Date();
@@ -29,6 +29,11 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
       return NextResponse.json({ user });
     }
 
+    if (action === 'verify') {
+      const user = await prisma.user.update({ where: { id }, data: { isVerified: true } });
+      return NextResponse.json({ user });
+    }
+
     const user = await prisma.user.update({
       where: { id },
       data: {
@@ -36,6 +41,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
         ...(email   !== undefined && { email }),
         ...(phone   !== undefined && { phone }),
         ...(address !== undefined && { address }),
+        ...(zipCode !== undefined && { zipCode: zipCode ?? null, latitude: 0, longitude: 0 }),
       },
     });
     return NextResponse.json({ user });
