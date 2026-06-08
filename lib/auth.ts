@@ -21,7 +21,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             where: { email: credentials.email as string },
             select: {
               id: true, email: true, name: true, role: true,
-              password: true, suspendedUntil: true,
+              password: true, suspendedUntil: true, isVerified: true,
             },
           });
 
@@ -34,6 +34,10 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
           if (!isValid) return null;
 
+          if (!user.isVerified) {
+            throw new Error('EMAIL_NOT_VERIFIED');
+          }
+
           if (user.suspendedUntil && user.suspendedUntil > new Date()) {
             throw new Error('ACCOUNT_SUSPENDED');
           }
@@ -45,6 +49,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             role: user.role,
           };
         } catch (err: any) {
+          if (err.message === 'EMAIL_NOT_VERIFIED') throw err;
           if (err.message === 'ACCOUNT_SUSPENDED') throw err;
           console.error('[auth] authorize error:', err?.message ?? err);
           return null;

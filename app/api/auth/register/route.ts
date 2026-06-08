@@ -31,18 +31,22 @@ export async function POST(request: NextRequest) {
 
     const hashedPassword = await bcryptjs.hash(password, 10);
 
-    const user = await prisma.user.create({
-      data: {
-        name, email, password: hashedPassword,
-        role: role as 'CLIENT' | 'CLEANER',
-        isVerified: role === 'CLIENT',
-        ...(phone ? { phone } : {}),
-      },
+    const user = await prisma.$transaction(async (tx) => {
+      const created = await tx.user.create({
+        data: {
+          name, email, password: hashedPassword,
+          role: role as 'CLIENT' | 'CLEANER',
+          isVerified: role === 'CLIENT',
+          ...(phone ? { phone } : {}),
+        },
+      });
+      if (role === 'CLEANER') {
+        await tx.cleanerStats.create({ data: { cleanerId: created.id } });
+      }
+      return created;
     });
 
     if (role === 'CLEANER') {
-      await prisma.cleanerStats.create({ data: { cleanerId: user.id } });
-
       // Send verification email — non-fatal if email provider is misconfigured
       try {
         const code = await createVerificationCode(user.id, email, 'EMAIL_VERIFICATION');
