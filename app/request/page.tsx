@@ -34,7 +34,8 @@ export default function RequestPage() {
 
   const [serviceType, setServiceType]   = useState('standard');
   const [address, setAddress]           = useState('');
-  const [dateTime, setDateTime]         = useState('');
+  const [dateText, setDateText]         = useState('');
+  const [timeText, setTimeText]         = useState('');
   const [bedrooms, setBedrooms]         = useState(2);
   const [bathrooms, setBathrooms]       = useState(1);
   const [squareMeters, setSquareMeters] = useState(0);
@@ -57,7 +58,15 @@ export default function RequestPage() {
   const toggleExtra = (id: string) =>
     setExtras(prev => prev.includes(id) ? prev.filter(e => e !== id) : [...prev, id]);
 
+  function buildIsoDateTime(): string {
+    if (!dateText || !timeText) return '';
+    const [m, d, y] = dateText.split('/');
+    if (!m || !d || !y || y.length < 4) return '';
+    return `${y}-${m.padStart(2, '0')}-${d.padStart(2, '0')}T${timeText}`;
+  }
+
   const submitLead = async () => {
+    const dateTime = buildIsoDateTime();
     const res = await fetch('/api/leads', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -77,7 +86,7 @@ export default function RequestPage() {
   };
 
   const handleSubmit = async () => {
-    if (!address.trim() || !dateTime) {
+    if (!address.trim() || !buildIsoDateTime()) {
       toaster.create({ title: 'Please add your address and preferred date to continue', type: 'error' });
       return;
     }
@@ -252,8 +261,26 @@ export default function RequestPage() {
                 <Text {...LABEL_STYLE}>Preferred date and time</Text>
                 <HStack>
                   <Icon as={LucideCalendar} color="#0A80DB" w="15px" h="15px" flexShrink={0} />
-                  <Input type="datetime-local" value={dateTime} onChange={e => setDateTime(e.target.value)}
-                    {...inputStyle} />
+                  <Input
+                    value={dateText}
+                    onChange={e => {
+                      let v = e.target.value.replace(/[^\d/]/g, '');
+                      if (v.length === 2 && !v.includes('/')) v += '/';
+                      if (v.length === 5 && v.split('/').length === 2) v += '/';
+                      setDateText(v.slice(0, 10));
+                    }}
+                    placeholder="MM/DD/YYYY"
+                    maxLength={10}
+                    {...inputStyle}
+                  />
+                  <Input
+                    type="time"
+                    value={timeText}
+                    onChange={e => setTimeText(e.target.value)}
+                    {...inputStyle}
+                    w="140px"
+                    flexShrink={0}
+                  />
                 </HStack>
               </Box>
 
