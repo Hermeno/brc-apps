@@ -92,17 +92,11 @@ function fmtShortDate(iso: string): string {
   });
 }
 
-// Converts YYYY-MM-DD → MM/DD/YYYY for display in text inputs
+// YYYY-MM-DD → MM/DD/YYYY for overlay display
 function isoDateToUs(iso: string): string {
+  if (!iso) return '';
   const [y, m, d] = iso.split('-');
   return `${m}/${d}/${y}`;
-}
-
-// Converts MM/DD/YYYY → YYYY-MM-DD for ISO construction
-function usDateToIso(us: string): string {
-  const [m, d, y] = us.split('/');
-  if (!m || !d || !y) return '';
-  return `${y}-${m.padStart(2, '0')}-${d.padStart(2, '0')}`;
 }
 
 function getStatusStep(status: string): number {
@@ -365,7 +359,7 @@ export default function ClientPage() {
     }
     setSubmitting(true);
     try {
-      const dateTime     = new Date(`${usDateToIso(form.date)}T${form.time}`).toISOString();
+      const dateTime     = new Date(`${form.date}T${form.time}`).toISOString();
       const serviceLabel = SERVICE_TYPES.find(s => s.id === form.serviceType)?.labelEn ?? form.serviceType;
       const res = await fetch('/api/leads', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
@@ -395,7 +389,7 @@ export default function ClientPage() {
       squareMeters: Math.round((lead.squareMeters ?? 0) * 10.764),
       extras:       lead.extras ?? [], frequency: lead.frequency ?? 'once',
       address:      lead.address,
-      date:         isoDateToUs(dt.toISOString().split('T')[0]),
+      date:         dt.toISOString().split('T')[0],
       time:         dt.toTimeString().slice(0, 5),
       notes:        lead.notes ?? '',
     });
@@ -408,7 +402,7 @@ export default function ClientPage() {
     }
     setSaving(true);
     try {
-      const dateTime     = new Date(`${usDateToIso(editForm.date)}T${editForm.time}`).toISOString();
+      const dateTime     = new Date(`${editForm.date}T${editForm.time}`).toISOString();
       const serviceLabel = SERVICE_TYPES.find(s => s.id === editForm.serviceType)?.labelEn ?? editForm.serviceType;
       const sqftToM2     = editForm.squareMeters > 0 ? editForm.squareMeters / 10.764 : 0;
       const est          = sqftToM2 > 0 ? calculateEstimate({ serviceType: editForm.serviceType, bedrooms: editForm.bedrooms, bathrooms: editForm.bathrooms, squareMeters: sqftToM2, extras: editForm.extras, frequency: editForm.frequency }) : null;
@@ -481,7 +475,7 @@ export default function ClientPage() {
     if (!reactivateDate || !reactivateTime) {
       toaster.create({ title: 'Choose a new date and time.', type: 'error' }); return;
     }
-    const dateTime = new Date(`${usDateToIso(reactivateDate)}T${reactivateTime}`);
+    const dateTime = new Date(`${reactivateDate}T${reactivateTime}`);
     if (dateTime <= new Date()) {
       toaster.create({ title: 'The date must be in the future.', type: 'error' }); return;
     }
@@ -1058,7 +1052,7 @@ export default function ClientPage() {
                                       } else {
                                         setReactivateId(lead.id);
                                         const dt = new Date(lead.dateTime);
-                                        setReactivateDate(isoDateToUs(dt.toISOString().split('T')[0]));
+                                        setReactivateDate(dt.toISOString().split('T')[0]);
                                         setReactivateTime(dt.toTimeString().slice(0, 5));
                                       }
                                     }}>
@@ -1108,16 +1102,21 @@ export default function ClientPage() {
                               <Text fontSize="sm" fontWeight="bold" color="#0A80DB" mb={4}>Pick a new date and time</Text>
                               <VStack gap={3} align="stretch">
                                 <HStack gap={3}>
-                                  <Input value={reactivateDate}
-                                    onChange={e => {
-                                      let v = e.target.value.replace(/[^\d/]/g, '');
-                                      if (v.length === 2 && !v.includes('/')) v += '/';
-                                      if (v.length === 5 && v.split('/').length === 2) v += '/';
-                                      setReactivateDate(v.slice(0, 10));
-                                    }}
-                                    placeholder="MM/DD/YYYY" maxLength={10}
-                                    bg="white" borderRadius="4px" h="11" flex={1}
-                                    border="1px solid" borderColor="#E3E8EE" />
+                                  <Box position="relative" flex={1}>
+                                    <Box h="11" bg="white" border="1px solid" borderColor="#E3E8EE"
+                                      borderRadius="4px" px={3} display="flex" alignItems="center"
+                                      style={{ pointerEvents:'none' }}>
+                                      <Text fontSize="sm" color={reactivateDate ? '#0B1120' : '#A0AEC0'}>
+                                        {reactivateDate ? isoDateToUs(reactivateDate) : 'MM/DD/YYYY'}
+                                      </Text>
+                                    </Box>
+                                    <input type="date" value={reactivateDate}
+                                      onChange={e => setReactivateDate(e.target.value)}
+                                      min={new Date().toISOString().split('T')[0]}
+                                      style={{ position:'absolute', top:0, left:0, right:0, bottom:0,
+                                               opacity:0.01, cursor:'pointer', zIndex:1,
+                                               width:'100%', height:'100%' }} />
+                                  </Box>
                                   <Input type="time" value={reactivateTime}
                                     onChange={e => setReactivateTime(e.target.value)}
                                     bg="white" borderRadius="4px" h="11" flex={1}
@@ -1164,18 +1163,25 @@ export default function ClientPage() {
                                   inputProps={{ bg: 'white', borderRadius: '4px', h: '11', border: '1px solid', borderColor: 'slate.200' }}
                                 />
                                 <HStack gap={3}>
-                                  <Input value={editForm.date}
-                                    onChange={e => {
-                                      let v = e.target.value.replace(/[^\d/]/g, '');
-                                      if (v.length === 2 && !v.includes('/')) v += '/';
-                                      if (v.length === 5 && v.split('/').length === 2) v += '/';
-                                      setEditField('date', v.slice(0, 10));
-                                    }}
-                                    placeholder="MM/DD/YYYY" maxLength={10}
-                                    bg="white" borderRadius="4px" h="11" flex={1} border="1px solid" borderColor="slate.200" />
+                                  <Box position="relative" flex={1}>
+                                    <Box h="11" bg="white" border="1px solid" borderColor="slate.200"
+                                      borderRadius="4px" px={3} display="flex" alignItems="center"
+                                      style={{ pointerEvents:'none' }}>
+                                      <Text fontSize="sm" color={editForm.date ? '#0B1120' : '#A0AEC0'}>
+                                        {editForm.date ? isoDateToUs(editForm.date) : 'MM/DD/YYYY'}
+                                      </Text>
+                                    </Box>
+                                    <input type="date" value={editForm.date}
+                                      onChange={e => setEditField('date', e.target.value)}
+                                      min={new Date().toISOString().split('T')[0]}
+                                      style={{ position:'absolute', top:0, left:0, right:0, bottom:0,
+                                               opacity:0.01, cursor:'pointer', zIndex:1,
+                                               width:'100%', height:'100%' }} />
+                                  </Box>
                                   <Input type="time" value={editForm.time}
                                     onChange={e => setEditField('time', e.target.value)}
-                                    bg="white" borderRadius="4px" h="11" flex={1} border="1px solid" borderColor="slate.200" />
+                                    bg="white" borderRadius="4px" h="11" flex={1}
+                                    border="1px solid" borderColor="slate.200" />
                                 </HStack>
                                 <HStack gap={3} justify="flex-end">
                                   <Button size="sm" variant="ghost" color="slate.500" onClick={() => setEditingId(null)}>Discard</Button>
@@ -1314,7 +1320,7 @@ export default function ClientPage() {
                                             } else {
                                               setReactivateId(lead.id);
                                               const dt = new Date(lead.dateTime);
-                                              setReactivateDate(isoDateToUs(dt.toISOString().split('T')[0]));
+                                              setReactivateDate(dt.toISOString().split('T')[0]);
                                               setReactivateTime(dt.toTimeString().slice(0, 5));
                                             }
                                           }}>
@@ -1331,16 +1337,20 @@ export default function ClientPage() {
                                           Pick a new date and time to reactivate
                                         </Text>
                                         <HStack gap={2} mb={2}>
-                                          <Input value={reactivateDate}
-                                            onChange={e => {
-                                              let v = e.target.value.replace(/[^\d/]/g, '');
-                                              if (v.length === 2 && !v.includes('/')) v += '/';
-                                              if (v.length === 5 && v.split('/').length === 2) v += '/';
-                                              setReactivateDate(v.slice(0, 10));
-                                            }}
-                                            placeholder="MM/DD/YYYY" maxLength={10}
-                                            bg="white" borderRadius="4px" h="9" flex={1}
-                                            border="1px solid" borderColor="#E3E8EE" fontSize="xs" />
+                                          <Box position="relative" flex={1}>
+                                            <Box h="9" bg="white" border="1px solid" borderColor="#E3E8EE"
+                                              borderRadius="4px" px={3} display="flex" alignItems="center"
+                                              style={{ pointerEvents:'none' }}>
+                                              <Text fontSize="xs" color={reactivateDate ? '#0B1120' : '#A0AEC0'}>
+                                                {reactivateDate ? isoDateToUs(reactivateDate) : 'MM/DD/YYYY'}
+                                              </Text>
+                                            </Box>
+                                            <input type="date" value={reactivateDate}
+                                              onChange={e => setReactivateDate(e.target.value)}
+                                              min={new Date().toISOString().split('T')[0]}
+                                              style={{ position:'absolute', inset:0, opacity:0.01,
+                                                       cursor:'pointer', width:'100%', height:'100%' }} />
+                                          </Box>
                                           <Input type="time" value={reactivateTime}
                                             onChange={e => setReactivateTime(e.target.value)}
                                             bg="white" borderRadius="4px" h="9" flex={1}
@@ -1702,19 +1712,25 @@ function OrderForm({ form, setField, toggleExtra, estimate, progress, onSubmit, 
                   }}
                 />
                 <HStack gap={4}>
-                  <Input value={form.date}
-                    onChange={e => {
-                      let v = e.target.value.replace(/[^\d/]/g, '');
-                      if (v.length === 2 && !v.includes('/')) v += '/';
-                      if (v.length === 5 && v.split('/').length === 2) v += '/';
-                      setField('date', v.slice(0, 10));
-                    }}
-                    placeholder="MM/DD/YYYY" maxLength={10}
-                    bg="slate.50" border="1px solid" borderColor={form.date ? 'brand.300' : 'slate.200'} h="12" borderRadius="4px" fontSize="sm" flex={1}
-                    _focus={{ bg: 'white', borderColor: 'brand.400' }} transition="all 0.15s" />
+                  <Box position="relative" flex={1}>
+                    <Box h="12" bg="slate.50" border="1px solid"
+                      borderColor={form.date ? 'brand.300' : 'slate.200'}
+                      borderRadius="4px" px={3} display="flex" alignItems="center"
+                      style={{ pointerEvents:'none' }}>
+                      <Text fontSize="sm" color={form.date ? '#0B1120' : '#A0AEC0'}>
+                        {form.date ? isoDateToUs(form.date) : 'MM/DD/YYYY'}
+                      </Text>
+                    </Box>
+                    <input type="date" value={form.date}
+                      onChange={e => setField('date', e.target.value)}
+                      min={new Date().toISOString().split('T')[0]}
+                      style={{ position:'absolute', inset:0, opacity:0.01,
+                               cursor:'pointer', width:'100%', height:'100%' }} />
+                  </Box>
                   <Input type="time" value={form.time} onChange={e => setField('time', e.target.value)}
-                    bg="slate.50" border="1px solid" borderColor={form.time ? 'brand.300' : 'slate.200'} h="12" borderRadius="4px" fontSize="sm" flex={1}
-                    _focus={{ bg: 'white', borderColor: 'brand.400' }} transition="all 0.15s" required />
+                    bg="slate.50" border="1px solid" borderColor={form.time ? 'brand.300' : 'slate.200'}
+                    h="12" borderRadius="4px" fontSize="sm" flex={1}
+                    _focus={{ bg: 'white', borderColor: 'brand.400' }} transition="all 0.15s" />
                 </HStack>
                 <textarea value={form.notes} onChange={e => setField('notes', e.target.value)}
                   placeholder="Any special instructions or notes for the cleaner (optional)" rows={2}

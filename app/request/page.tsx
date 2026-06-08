@@ -34,8 +34,8 @@ export default function RequestPage() {
 
   const [serviceType, setServiceType]   = useState('standard');
   const [address, setAddress]           = useState('');
-  const [dateText, setDateText]         = useState('');
-  const [timeText, setTimeText]         = useState('');
+  const [dateVal, setDateVal]           = useState('');
+  const [timeVal, setTimeVal]           = useState('');
   const [bedrooms, setBedrooms]         = useState(2);
   const [bathrooms, setBathrooms]       = useState(1);
   const [squareMeters, setSquareMeters] = useState(0);
@@ -58,15 +58,8 @@ export default function RequestPage() {
   const toggleExtra = (id: string) =>
     setExtras(prev => prev.includes(id) ? prev.filter(e => e !== id) : [...prev, id]);
 
-  function buildIsoDateTime(): string {
-    if (!dateText || !timeText) return '';
-    const [m, d, y] = dateText.split('/');
-    if (!m || !d || !y || y.length < 4) return '';
-    return `${y}-${m.padStart(2, '0')}-${d.padStart(2, '0')}T${timeText}`;
-  }
-
   const submitLead = async () => {
-    const dateTime = buildIsoDateTime();
+    const dateTime = dateVal && timeVal ? `${dateVal}T${timeVal}` : '';
     const res = await fetch('/api/leads', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -86,7 +79,7 @@ export default function RequestPage() {
   };
 
   const handleSubmit = async () => {
-    if (!address.trim() || !buildIsoDateTime()) {
+    if (!address.trim() || !dateVal || !timeVal) {
       toaster.create({ title: 'Please add your address and preferred date to continue', type: 'error' });
       return;
     }
@@ -261,26 +254,30 @@ export default function RequestPage() {
                 <Text {...LABEL_STYLE}>Preferred date and time</Text>
                 <HStack>
                   <Icon as={LucideCalendar} color="#0A80DB" w="15px" h="15px" flexShrink={0} />
-                  <Input
-                    value={dateText}
-                    onChange={e => {
-                      let v = e.target.value.replace(/[^\d/]/g, '');
-                      if (v.length === 2 && !v.includes('/')) v += '/';
-                      if (v.length === 5 && v.split('/').length === 2) v += '/';
-                      setDateText(v.slice(0, 10));
-                    }}
-                    placeholder="MM/DD/YYYY"
-                    maxLength={10}
-                    {...inputStyle}
-                  />
-                  <Input
-                    type="time"
-                    value={timeText}
-                    onChange={e => setTimeText(e.target.value)}
-                    {...inputStyle}
-                    w="140px"
-                    flexShrink={0}
-                  />
+                  {/* Overlay: invisible native date input on top of a styled display */}
+                  <Box position="relative" flex={1}>
+                    <Box
+                      h="44px" bg="#F8FAFC" border="1px solid" borderColor="#E3E8EE"
+                      borderRadius="4px" px={3} display="flex" alignItems="center"
+                      style={{ pointerEvents: 'none' }}
+                    >
+                      <Text fontFamily="heading" fontSize="14px"
+                        color={dateVal ? '#0B1120' : '#A0AEC0'}>
+                        {dateVal
+                          ? (() => { const [y,m,d] = dateVal.split('-'); return `${m}/${d}/${y}`; })()
+                          : 'MM/DD/YYYY'}
+                      </Text>
+                    </Box>
+                    <input type="date" value={dateVal}
+                      onChange={e => setDateVal(e.target.value)}
+                      min={new Date().toISOString().split('T')[0]}
+                      style={{ position:'absolute', top:0, left:0, right:0, bottom:0,
+                               opacity:0.01, cursor:'pointer', zIndex:1,
+                               width:'100%', height:'100%' }} />
+                  </Box>
+                  <Input type="time" value={timeVal}
+                    onChange={e => setTimeVal(e.target.value)}
+                    {...inputStyle} w="140px" flexShrink={0} />
                 </HStack>
               </Box>
 
