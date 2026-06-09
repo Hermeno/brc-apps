@@ -44,13 +44,19 @@ export function resolveCoords(
 }
 
 // Add serviceRadiusMiles column to User table if it doesn't exist yet.
-// Uses a module-level flag so DDL only runs once per process instance.
+// instrumentation.ts already runs this at startup; this is a safety net.
+// Always marks as ensured after the first attempt (success or failure) so
+// a connection-pool timeout never blocks the wave scheduler loop.
 let columnEnsured = false;
 export async function ensureRadiusColumn(): Promise<void> {
   if (columnEnsured) return;
-  await prisma.$executeRawUnsafe(`
-    ALTER TABLE "User"
-    ADD COLUMN IF NOT EXISTS "serviceRadiusMiles" DOUBLE PRECISION DEFAULT 25
-  `);
-  columnEnsured = true;
+  columnEnsured = true; // optimistic — column created by instrumentation.ts at boot
+  try {
+    await prisma.$executeRawUnsafe(`
+      ALTER TABLE "User"
+      ADD COLUMN IF NOT EXISTS "serviceRadiusMiles" DOUBLE PRECISION DEFAULT 25
+    `);
+  } catch {
+    // Column likely already exists or a transient pool error occurred — safe to ignore.
+  }
 }

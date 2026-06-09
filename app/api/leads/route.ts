@@ -88,7 +88,7 @@ export async function POST(request: NextRequest) {
 
     const dbUser = await prisma.user.findUnique({
       where:  { email: session.user.email! },
-      select: { id: true },
+      select: { id: true, phone: true },
     });
 
     if (!dbUser) {
@@ -158,7 +158,7 @@ export async function POST(request: NextRequest) {
         extras:            Array.isArray(extras) ? extras : [],
         frequency:         frequency     ?? 'once',
         photos:            Array.isArray(photos) ? photos.filter(Boolean).slice(0, 4) : [],
-        clientPhone:       clientPhone   || null,
+        clientPhone:       dbUser.phone  || clientPhone || null,
         estimatedMinPrice: estimatedMinPrice ?? null,
         estimatedMaxPrice: estimatedMaxPrice ?? null,
         estimatedHours:    estimatedHours    ?? null,

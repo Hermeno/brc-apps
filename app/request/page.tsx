@@ -42,12 +42,12 @@ export default function RequestPage() {
   const [extras, setExtras]             = useState<string[]>([]);
   const [frequency, setFrequency]       = useState('once');
   const [notes, setNotes]               = useState('');
-  const [phone, setPhone]               = useState('+1 ');
-
   const [showRegister, setShowRegister] = useState(false);
+  const [authMode, setAuthMode]         = useState<'register' | 'login'>('register');
   const [name, setName]                 = useState('');
   const [email, setEmail]               = useState('');
   const [password, setPassword]         = useState('');
+  const [regPhone, setRegPhone]         = useState('+1 ');
   const [loading, setLoading]           = useState(false);
 
   const estimate = useMemo(() =>
@@ -65,7 +65,7 @@ export default function RequestPage() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         serviceType, address, dateTime, bedrooms, bathrooms,
-        squareMeters, extras, frequency, notes, clientPhone: phone,
+        squareMeters, extras, frequency, notes,
         estimatedMinPrice: estimate.minPrice,
         estimatedMaxPrice: estimate.maxPrice,
         estimatedHours: estimate.hours,
@@ -81,10 +81,6 @@ export default function RequestPage() {
   const handleSubmit = async () => {
     if (!address.trim() || !dateVal || !timeVal) {
       toaster.create({ title: 'Please add your address and preferred date to continue', type: 'error' });
-      return;
-    }
-    if (phone.trim().length < 16) {
-      toaster.create({ title: 'Please enter a valid US phone number so your cleaner can reach you', type: 'error' });
       return;
     }
     if (status === 'authenticated') {
@@ -103,7 +99,7 @@ export default function RequestPage() {
 
   const handleRegisterAndSubmit = async () => {
     if (!name.trim() || !email.trim() || !password) {
-      toaster.create({ title: 'Please fill in your name, email, and password to continue', type: 'error' });
+      toaster.create({ title: 'Please fill in your name, email, and password', type: 'error' });
       return;
     }
     setLoading(true);
@@ -111,14 +107,30 @@ export default function RequestPage() {
       const regRes = await fetch('/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, email, password, role: 'CLIENT' }),
+        body: JSON.stringify({ name, email, password, role: 'CLIENT', phone: regPhone.trim().length > 4 ? regPhone.trim() : undefined }),
       });
       if (!regRes.ok) {
         const d = await regRes.json();
         throw new Error(d.error || 'Failed to create account');
       }
       const loginRes = await signIn('credentials', { email, password, redirect: false });
-      if (!loginRes?.ok) throw new Error('Login failed');
+      if (!loginRes?.ok) throw new Error('Login failed after registration');
+      await submitLead();
+      router.push('/dashboard/client');
+    } catch (err: any) {
+      toaster.create({ title: err.message, type: 'error' });
+    } finally { setLoading(false); }
+  };
+
+  const handleLoginAndSubmit = async () => {
+    if (!email.trim() || !password) {
+      toaster.create({ title: 'Please enter your email and password', type: 'error' });
+      return;
+    }
+    setLoading(true);
+    try {
+      const loginRes = await signIn('credentials', { email, password, redirect: false });
+      if (!loginRes?.ok) throw new Error('Incorrect email or password');
       await submitLead();
       router.push('/dashboard/client');
     } catch (err: any) {
@@ -227,34 +239,11 @@ export default function RequestPage() {
                 />
               </Box>
 
-              {/* Phone */}
-              <Box>
-                <Text {...LABEL_STYLE}>Your phone number</Text>
-                <HStack>
-                  <Icon as={LucidePhone} color="#0A80DB" w="15px" h="15px" flexShrink={0} />
-                  <Input
-                    value={phone}
-                    onChange={e => {
-                      let v = e.target.value;
-                      if (!v.startsWith('+1 ')) v = '+1 ';
-                      const digits = v.slice(3).replace(/\D/g, '').slice(0, 10);
-                      const fmt = digits.replace(/(\d{3})(\d{3})(\d{1,4})/, '($1) $2-$3')
-                                        .replace(/(\d{3})(\d{1,3})$/, '($1) $2')
-                                        .replace(/^(\d{1,3})$/, '($1');
-                      setPhone('+1 ' + fmt);
-                    }}
-                    placeholder="+1 (555) 000-0000"
-                    {...inputStyle}
-                  />
-                </HStack>
-              </Box>
-
               {/* Date */}
               <Box>
                 <Text {...LABEL_STYLE}>Preferred date and time</Text>
                 <HStack>
                   <Icon as={LucideCalendar} color="#0A80DB" w="15px" h="15px" flexShrink={0} />
-                  {/* Overlay: invisible native date input on top of a styled display */}
                   <Box position="relative" flex={1}>
                     <Box
                       h="44px" bg="#F8FAFC" border="1px solid" borderColor="#E3E8EE"
@@ -450,7 +439,7 @@ export default function RequestPage() {
 
         </Flex>
 
-        {/* ── Register section (guest) ── */}
+        {/* ── Auth section (guest) ── */}
         <AnimatePresence>
           {showRegister && (
             <motion.div
@@ -460,62 +449,167 @@ export default function RequestPage() {
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.35 }}
             >
-              <Box mt={6} bg="white" border="1px solid #E3E8EE" borderTop="3px solid #0A80DB" p={8} style={{ borderRadius: 8 }}>
-                <Box mb={6}>
-                  <Text fontSize="18px" fontWeight="800" color="#0A2540" fontFamily="heading"
-                    letterSpacing="-0.02em" mb={1}>
-                    One last step — create your free account
-                  </Text>
-                  <Text fontSize="13px" color="#425466" fontFamily="heading">
-                    It's free and takes under 30 seconds. No email verification — your booking is sent immediately.
-                  </Text>
+              <Box mt={6} bg="white" border="1px solid #E3E8EE" borderTop="3px solid #0A80DB" style={{ borderRadius: 8 }} overflow="hidden">
+
+                {/* Tab switcher */}
+                <HStack gap={0} borderBottom="1px solid #E3E8EE">
+                  <Box
+                    as="button"
+                    px={6} py={3.5}
+                    cursor="pointer"
+                    borderBottom="2px solid"
+                    borderBottomColor={authMode === 'register' ? '#0A80DB' : 'transparent'}
+                    color={authMode === 'register' ? '#0A80DB' : '#64748B'}
+                    fontWeight={authMode === 'register' ? '700' : '500'}
+                    fontSize="13px"
+                    fontFamily="heading"
+                    transition="all 0.12s"
+                    onClick={() => setAuthMode('register')}
+                  >
+                    New here? Create account
+                  </Box>
+                  <Box
+                    as="button"
+                    px={6} py={3.5}
+                    cursor="pointer"
+                    borderBottom="2px solid"
+                    borderBottomColor={authMode === 'login' ? '#0A80DB' : 'transparent'}
+                    color={authMode === 'login' ? '#0A80DB' : '#64748B'}
+                    fontWeight={authMode === 'login' ? '700' : '500'}
+                    fontSize="13px"
+                    fontFamily="heading"
+                    transition="all 0.12s"
+                    onClick={() => setAuthMode('login')}
+                  >
+                    Already have an account? Sign in
+                  </Box>
+                </HStack>
+
+                <Box p={8}>
+                  {authMode === 'register' ? (
+                    <>
+                      <Box mb={5}>
+                        <Text fontSize="16px" fontWeight="800" color="#0A2540" fontFamily="heading"
+                          letterSpacing="-0.02em" mb={1}>
+                          One last step — create your free account
+                        </Text>
+                        <Text fontSize="13px" color="#425466" fontFamily="heading">
+                          Free and takes under 30 seconds. Your booking is sent immediately.
+                        </Text>
+                      </Box>
+
+                      <SimpleGrid columns={{ base: 1, md: 2 }} gap={4} mb={4}>
+                        <Box>
+                          <Text {...LABEL_STYLE}>Full name</Text>
+                          <HStack>
+                            <Icon as={LucideUser} w="14px" h="14px" color="#697386" flexShrink={0} />
+                            <Input value={name} onChange={e => setName(e.target.value)}
+                              placeholder="Jane Smith" {...inputStyle} />
+                          </HStack>
+                        </Box>
+                        <Box>
+                          <Text {...LABEL_STYLE}>Phone number</Text>
+                          <HStack>
+                            <Icon as={LucidePhone} w="14px" h="14px" color="#697386" flexShrink={0} />
+                            <Input
+                              value={regPhone}
+                              onChange={e => {
+                                let v = e.target.value;
+                                if (!v.startsWith('+1 ')) v = '+1 ';
+                                const digits = v.slice(3).replace(/\D/g, '').slice(0, 10);
+                                const fmt = digits.replace(/(\d{3})(\d{3})(\d{1,4})/, '($1) $2-$3')
+                                                  .replace(/(\d{3})(\d{1,3})$/, '($1) $2')
+                                                  .replace(/^(\d{1,3})$/, '($1');
+                                setRegPhone('+1 ' + fmt);
+                              }}
+                              placeholder="+1 (555) 000-0000"
+                              {...inputStyle}
+                            />
+                          </HStack>
+                        </Box>
+                      </SimpleGrid>
+                      <SimpleGrid columns={{ base: 1, md: 2 }} gap={4} mb={5}>
+                        <Box>
+                          <Text {...LABEL_STYLE}>Email address</Text>
+                          <HStack>
+                            <Icon as={LucideMail} w="14px" h="14px" color="#697386" flexShrink={0} />
+                            <Input type="email" value={email} onChange={e => setEmail(e.target.value)}
+                              placeholder="you@example.com" {...inputStyle} />
+                          </HStack>
+                        </Box>
+                        <Box>
+                          <Text {...LABEL_STYLE}>Create a password</Text>
+                          <HStack>
+                            <Icon as={LucideLock} w="14px" h="14px" color="#697386" flexShrink={0} />
+                            <Input type="password" value={password} onChange={e => setPassword(e.target.value)}
+                              placeholder="At least 8 characters" {...inputStyle} />
+                          </HStack>
+                        </Box>
+                      </SimpleGrid>
+
+                      <Button
+                        onClick={handleRegisterAndSubmit}
+                        bg="#0A80DB" color="white" h="44px"
+                        borderRadius="4px" fontWeight="700" fontSize="14px" fontFamily="heading"
+                        _hover={{ bg: '#0870C2' }} transition="background 0.15s"
+                        loading={loading} loadingText="Setting up your account…"
+                      >
+                        <Icon as={LucideCheckCircle} w={4} h={4} mr={2} />
+                        Create account and send request
+                      </Button>
+                    </>
+                  ) : (
+                    <>
+                      <Box mb={5}>
+                        <Text fontSize="16px" fontWeight="800" color="#0A2540" fontFamily="heading"
+                          letterSpacing="-0.02em" mb={1}>
+                          Sign in to your account
+                        </Text>
+                        <Text fontSize="13px" color="#425466" fontFamily="heading">
+                          Your booking will be sent immediately after signing in.
+                        </Text>
+                      </Box>
+
+                      <SimpleGrid columns={{ base: 1, md: 2 }} gap={4} mb={5}>
+                        <Box>
+                          <Text {...LABEL_STYLE}>Email address</Text>
+                          <HStack>
+                            <Icon as={LucideMail} w="14px" h="14px" color="#697386" flexShrink={0} />
+                            <Input type="email" value={email} onChange={e => setEmail(e.target.value)}
+                              placeholder="you@example.com" {...inputStyle} />
+                          </HStack>
+                        </Box>
+                        <Box>
+                          <Text {...LABEL_STYLE}>Password</Text>
+                          <HStack>
+                            <Icon as={LucideLock} w="14px" h="14px" color="#697386" flexShrink={0} />
+                            <Input type="password" value={password} onChange={e => setPassword(e.target.value)}
+                              placeholder="Your password" {...inputStyle} />
+                          </HStack>
+                        </Box>
+                      </SimpleGrid>
+
+                      <Button
+                        onClick={handleLoginAndSubmit}
+                        bg="#0A80DB" color="white" h="44px"
+                        borderRadius="4px" fontWeight="700" fontSize="14px" fontFamily="heading"
+                        _hover={{ bg: '#0870C2' }} transition="background 0.15s"
+                        loading={loading} loadingText="Signing in…"
+                      >
+                        <Icon as={LucideArrowRight} w={4} h={4} mr={2} />
+                        Sign in and send request
+                      </Button>
+
+                      <Text fontSize="12px" color="#697386" fontFamily="heading" mt={3}>
+                        Forgot your password?{' '}
+                        <NextLink href="/auth/login">
+                          <Text as="span" color="#0A80DB" fontWeight="700" cursor="pointer"
+                            _hover={{ color: '#0870C2' }}>Go to login page</Text>
+                        </NextLink>
+                      </Text>
+                    </>
+                  )}
                 </Box>
-
-                <SimpleGrid columns={{ base: 1, md: 3 }} gap={4} mb={5}>
-                  <Box>
-                    <Text {...LABEL_STYLE}>Full name</Text>
-                    <HStack>
-                      <Icon as={LucideUser} w="14px" h="14px" color="#697386" flexShrink={0} />
-                      <Input value={name} onChange={e => setName(e.target.value)}
-                        placeholder="Jane Smith" {...inputStyle} />
-                    </HStack>
-                  </Box>
-                  <Box>
-                    <Text {...LABEL_STYLE}>Email address</Text>
-                    <HStack>
-                      <Icon as={LucideMail} w="14px" h="14px" color="#697386" flexShrink={0} />
-                      <Input type="email" value={email} onChange={e => setEmail(e.target.value)}
-                        placeholder="you@example.com" {...inputStyle} />
-                    </HStack>
-                  </Box>
-                  <Box>
-                    <Text {...LABEL_STYLE}>Create a password</Text>
-                    <HStack>
-                      <Icon as={LucideLock} w="14px" h="14px" color="#697386" flexShrink={0} />
-                      <Input type="password" value={password} onChange={e => setPassword(e.target.value)}
-                        placeholder="At least 8 characters" {...inputStyle} />
-                    </HStack>
-                  </Box>
-                </SimpleGrid>
-
-                <Button
-                  onClick={handleRegisterAndSubmit}
-                  bg="#0A80DB" color="white" h="44px"
-                  borderRadius="4px" fontWeight="700" fontSize="14px" fontFamily="heading"
-                  _hover={{ bg: '#0870C2' }} transition="background 0.15s"
-                  loading={loading} loadingText="Setting up your account…"
-                >
-                  <Icon as={LucideCheckCircle} w={4} h={4} mr={2} />
-                  Create account and send request
-                </Button>
-
-                <Text fontSize="12px" color="#697386" fontFamily="heading" mt={4}>
-                  Already have an account?{' '}
-                  <NextLink href="/auth/login">
-                    <Text as="span" color="#0A80DB" fontWeight="700" cursor="pointer"
-                      _hover={{ color: '#0870C2' }}>Sign in instead</Text>
-                  </NextLink>
-                </Text>
               </Box>
             </motion.div>
           )}

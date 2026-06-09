@@ -282,3 +282,17 @@ model StripeEvent {
 
   @@index([createdAt])
 }
+
+// Admin-configurable lead prices per service type
+model LeadPriceConfig {
+  id        String   @id  // service key: standard | deep | post-work | moving …
+  price     Float
+  updatedAt DateTime @updatedAt
+}
+
+// Admin-configurable platform settings (multipliers, coverage ZIPs, etc.)
+model LeadPlatformConfig {
+  id        String   @id  // same_day_multiplier | recurring_multiplier | coverage_zips
+  value     String
+  updatedAt DateTime @updatedAt
+}

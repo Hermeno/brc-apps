@@ -26,7 +26,7 @@ function createClient() {
   // Prisma reconnects on the next query; suppress the noise.
   client.$on('error', (e) => {
     if (e.message.includes('Error in PostgreSQL connection')) return;
-    console.error('[prisma]', e.message);
+    console.error('[prisma error]', e.message, e.target ?? '');
   });
 
   return client;
