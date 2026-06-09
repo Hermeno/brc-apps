@@ -32,18 +32,22 @@ function VerifyEmailForm() {
     }
     setLoading(true);
     try {
-      const res = await fetch('/api/auth/verify-email', {
-        method: 'POST',
+      const res  = await fetch('/api/auth/verify-email', {
+        method:  'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, code }),
+        body:    JSON.stringify({ email, code }),
       });
       const data = await res.json();
+
       if (res.ok) {
-        toaster.create({ title: 'Email verified!', description: 'Your account is active. You can sign in now.', type: 'success' });
+        toaster.create({ title: 'Email verified!', description: 'Your account is active. Redirecting to sign in…', type: 'success' });
         router.push('/auth/login');
       } else {
-        toaster.create({ title: 'That code didn\'t work', description: data.error, type: 'error' });
+        toaster.create({ title: 'Verification failed', description: data.error ?? 'Please check your code and try again.', type: 'error' });
+        setCode('');
       }
+    } catch {
+      toaster.create({ title: 'Network error', description: 'Could not reach the server. Please check your connection.', type: 'error' });
     } finally {
       setLoading(false);
     }
@@ -52,13 +56,22 @@ function VerifyEmailForm() {
   const handleResend = async () => {
     setResending(true);
     try {
-      await fetch('/api/auth/resend-verification', {
-        method: 'POST',
+      const res  = await fetch('/api/auth/resend-verification', {
+        method:  'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email }),
+        body:    JSON.stringify({ email }),
       });
-      toaster.create({ title: 'New code sent!', description: 'Check your inbox — it may take a minute to arrive in your spam folder too.', type: 'success' });
-      setCountdown(60);
+      const data = await res.json();
+
+      if (res.ok) {
+        toaster.create({ title: 'New code sent!', description: 'Check your inbox — also check your spam folder.', type: 'success' });
+        setCountdown(60);
+        setCode('');
+      } else {
+        toaster.create({ title: 'Could not send code', description: data.error ?? 'Please wait a moment and try again.', type: 'error' });
+      }
+    } catch {
+      toaster.create({ title: 'Network error', description: 'Could not reach the server. Please check your connection.', type: 'error' });
     } finally {
       setResending(false);
     }
@@ -116,9 +129,10 @@ function VerifyEmailForm() {
                   borderRadius="4px"
                   _focus={{ bg: 'white', borderColor: '#0A80DB' }}
                   maxLength={6}
+                  autoComplete="one-time-code"
                 />
                 <Text fontSize="12px" color="#697386" textAlign="center" mt={2} fontFamily="heading">
-                  This code is valid for 10 minutes. Check your spam folder if you don't see it.
+                  Valid for 10 minutes. Check your spam folder if you don't see it.
                 </Text>
               </Box>
 
@@ -134,8 +148,8 @@ function VerifyEmailForm() {
                 _hover={{ bg: '#0870C2' }}
                 transition="background 0.15s"
                 loading={loading}
-                loadingText="Verifying your code..."
-                disabled={code.length !== 6}
+                loadingText="Verifying…"
+                disabled={code.length !== 6 || loading}
               >
                 Verify my email
                 <Icon as={LucideArrowRight} w={4} h={4} ml={2} />
@@ -151,8 +165,9 @@ function VerifyEmailForm() {
                 fontFamily="heading"
                 onClick={handleResend}
                 loading={resending}
-                disabled={countdown > 0}
+                disabled={countdown > 0 || resending}
                 _hover={{ color: '#0A80DB', bg: '#F0F9FF' }}
+                type="button"
               >
                 <Icon as={LucideRefreshCw} w={3.5} h={3.5} mr={1.5} />
                 {countdown > 0 ? `Resend in ${countdown}s` : 'Send a new code'}

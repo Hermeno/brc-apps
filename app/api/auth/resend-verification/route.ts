@@ -17,25 +17,27 @@ export async function POST(request: NextRequest) {
     const { email } = validation.data;
     const user = await prisma.user.findUnique({ where: { email } });
 
-    // always return success to avoid user enumeration
-    if (!user || user.isVerified) {
-      return NextResponse.json({ message: 'A new code was sent if that email exists.' });
+    if (!user) {
+      // Don't reveal whether the email exists
+      return NextResponse.json({ message: 'If that email exists, a new code was sent.' });
+    }
+
+    if (user.isVerified) {
+      // Already verified — just tell them to log in
+      return NextResponse.json({ message: 'This email is already verified. Please sign in.' });
     }
 
     const code = await createVerificationCode(user.id, email, 'EMAIL_VERIFICATION');
 
-    try {
-      await sendMail({
-        to:      email,
-        subject: 'Verification code — BrazilianClean',
-        html:    emailVerificationHtml(code, user.name ?? 'there'),
-      });
-    } catch (mailErr: any) {
-      console.error('[resend-verification] email send failed:', mailErr?.message ?? mailErr);
-    }
+    await sendMail({
+      to:      email,
+      subject: 'Your new verification code — BrazilianClean',
+      html:    emailVerificationHtml(code, user.name ?? 'there'),
+    });
 
     return NextResponse.json({ message: 'New code sent to your email.' });
-  } catch {
-    return NextResponse.json({ error: 'Internal error' }, { status: 500 });
+  } catch (err: any) {
+    console.error('[resend-verification]', err);
+    return NextResponse.json({ error: 'Failed to send code. Please try again in a moment.' }, { status: 500 });
   }
 }

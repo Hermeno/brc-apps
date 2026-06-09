@@ -1,11 +1,10 @@
 import { prisma } from '@/lib/prisma';
 import { z } from 'zod';
 import { NextRequest, NextResponse } from 'next/server';
-import { verifyCode } from '@/lib/verification';
 
 const schema = z.object({
   email: z.string().email(),
-  code: z.string().length(6),
+  code:  z.string().length(6),
 });
 
 export async function POST(request: NextRequest) {
@@ -17,19 +16,31 @@ export async function POST(request: NextRequest) {
     }
 
     const { email, code } = validation.data;
-    const result = await verifyCode(email, code, 'EMAIL_VERIFICATION');
 
-    if (!result.valid) {
-      return NextResponse.json({ error: result.reason }, { status: 400 });
-    }
-
-    await prisma.user.update({
-      where: { id: result.userId },
-      data: { isVerified: true },
+    // Find token first (without deleting) so we can retry if the update fails
+    const record = await prisma.verificationToken.findFirst({
+      where: { email, code, type: 'EMAIL_VERIFICATION' },
     });
 
-    return NextResponse.json({ message: 'Email verificado com sucesso!' });
-  } catch {
-    return NextResponse.json({ error: 'Erro interno' }, { status: 500 });
+    if (!record) {
+      return NextResponse.json({ error: 'Invalid code. Please check the email and try again.' }, { status: 400 });
+    }
+
+    if (record.expiresAt < new Date()) {
+      // Token is expired — clean it up so resend can create a fresh one
+      await prisma.verificationToken.delete({ where: { id: record.id } }).catch(() => {});
+      return NextResponse.json({ error: 'Code expired. Click "Send a new code" to get a fresh one.' }, { status: 400 });
+    }
+
+    // Atomically mark user verified AND delete the token — if either fails, nothing changes
+    await prisma.$transaction([
+      prisma.user.update({ where: { id: record.userId }, data: { isVerified: true } }),
+      prisma.verificationToken.delete({ where: { id: record.id } }),
+    ]);
+
+    return NextResponse.json({ message: 'Email verified successfully!' });
+  } catch (err: any) {
+    console.error('[verify-email]', err);
+    return NextResponse.json({ error: 'Something went wrong. Please try again.' }, { status: 500 });
   }
 }
