@@ -51,7 +51,7 @@ export async function GET() {
         conversations: {
           where:  { status: { in: ['active', 'declined'] } },
           select: {
-            id: true, cleanerId: true, status: true,
+            id: true, cleanerId: true, status: true, feeStatus: true,
             cleaner: { select: { id: true, name: true, avatarUrl: true, isVerified: true } },
           },
         },

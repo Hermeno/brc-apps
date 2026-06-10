@@ -40,7 +40,7 @@ const STATUS_MAP: Record<string, { label: string; bg: string; color: string; bor
   UNMATCHED: { label: 'No cleaners found',       bg: '#FEF2F2', color: '#DC2626', border: '#FECACA' },
 };
 
-type ConvEntry = { id: string; cleanerId: string; status: string; cleaner: { id: string; name: string; avatarUrl?: string | null; isVerified?: boolean } };
+type ConvEntry = { id: string; cleanerId: string; status: string; feeStatus: string; cleaner: { id: string; name: string; avatarUrl?: string | null; isVerified?: boolean } };
 type Lead = {
   id: string; serviceType: string; address: string; dateTime: string;
   status: string; notes?: string; createdAt: string;
@@ -781,7 +781,9 @@ export default function ClientPage() {
                       const timeHasPassed  = scheduledTime < now;
                       const isActive       = !['COMPLETED', 'CANCELLED'].includes(lead.status);
                       const canCancel      = isActive && !timeHasPassed;
-                      const canTerminate   = isActive && timeHasPassed && lead.status === 'ACCEPTED';
+                      const acceptedConv   = (lead.conversations ?? []).find(c => c.cleanerId === lead.cleanerId && c.status === 'active');
+                      const feePaid        = acceptedConv?.feeStatus === 'charged' || acceptedConv?.feeStatus === 'waived';
+                      const canTerminate   = isActive && timeHasPassed && lead.status === 'ACCEPTED' && feePaid;
                       const canReactivate  = isActive && timeHasPassed && ['NEW', 'WAVE1', 'WAVE2', 'WAVE3', 'UNMATCHED'].includes(lead.status);
                       const canRate        = lead.status === 'COMPLETED' && lead.cleanerId && !lead.review;
                       const freqLabel      = FREQUENCY_OPTIONS.find(f => f.id === lead.frequency)?.labelEn;

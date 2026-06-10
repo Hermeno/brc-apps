@@ -24,6 +24,14 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
     if (new Date(lead.dateTime) > new Date())
       return NextResponse.json({ error: 'The cleaning has not reached the scheduled time yet' }, { status: 409 });
 
+    // Lead fee must be paid before marking complete
+    const conv = await prisma.conversation.findFirst({
+      where: { leadId: id, cleanerId: lead.cleanerId ?? undefined, status: 'active' },
+      select: { feeStatus: true },
+    });
+    if (!conv || (conv.feeStatus !== 'charged' && conv.feeStatus !== 'waived'))
+      return NextResponse.json({ error: 'Lead fee has not been paid yet' }, { status: 402 });
+
     // For one-time services: mark lead COMPLETED + close the active conversation
     // For recurring (weekly/biweekly): mark COMPLETED but keep conversation active
     const ops: any[] = [
