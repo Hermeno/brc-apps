@@ -1,6 +1,7 @@
 import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { NextRequest, NextResponse } from 'next/server';
+import { logError } from '@/lib/logger';
 
 export async function GET() {
   const session = await auth();
@@ -13,9 +14,10 @@ export async function GET() {
     });
     if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
-    return NextResponse.json({ id: user.id, plan: user.plan, zipCode: user.zipCode, stripeSubscriptionId: user.stripeSubscriptionId });
+    const plan = user.plan === 'PREMIUM' ? 'PRO' : user.plan;
+    return NextResponse.json({ id: user.id, plan, zipCode: user.zipCode, stripeSubscriptionId: user.stripeSubscriptionId });
   } catch (err: any) {
-    console.error('[GET /api/plan]', err);
+    logError('[GET /api/plan]', err);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
@@ -45,7 +47,7 @@ export async function PUT(req: NextRequest) {
 
     return NextResponse.json(updated);
   } catch (err: any) {
-    console.error('[PUT /api/plan]', err);
+    logError('[PUT /api/plan]', err);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

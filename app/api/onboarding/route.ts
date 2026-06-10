@@ -1,6 +1,7 @@
 import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { NextRequest, NextResponse } from 'next/server';
+import { logError } from '@/lib/logger';
 
 // GET — returns current profile data for pre-filling the wizard
 export async function GET() {
@@ -20,7 +21,7 @@ export async function GET() {
 
     return NextResponse.json({ user });
   } catch (err: any) {
-    console.error('[GET /api/onboarding]', err);
+    logError('[GET /api/onboarding]', err);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
@@ -74,7 +75,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ ok: true });
   } catch (err: any) {
-    console.error('[POST /api/onboarding]', err);
+    logError('[POST /api/onboarding]', err);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

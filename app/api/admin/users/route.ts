@@ -1,6 +1,7 @@
 import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { NextResponse } from 'next/server';
+import { logError } from '@/lib/logger';
 
 export async function GET() {
   const session = await auth();
@@ -24,7 +25,7 @@ export async function GET() {
 
     return NextResponse.json({ users });
   } catch (err: any) {
-    console.error('[GET /api/admin/users]', err);
+    logError('[GET /api/admin/users]', err);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

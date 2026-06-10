@@ -2,15 +2,15 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import {
-  Box, Flex, VStack, HStack, Text, Heading, Button, Icon, Input, SimpleGrid,
+  Box, Flex, VStack, HStack, Text, Heading, Button, Icon, SimpleGrid,
 } from '@chakra-ui/react';
 import {
-  LucideZap, LucideCheckCircle, LucideCrown, LucideStar, LucideMapPin,
-  LucideShield, LucideTrendingUp, LucideSave, LucideSettings,
+  LucideZap, LucideCheckCircle, LucideCrown, LucideStar,
+  LucideShield, LucideTrendingUp, LucideSettings,
 } from 'lucide-react';
 import CleanerNav from '@/components/cleaner-nav';
 import { toaster } from '@/lib/toaster';
-import { PLANS } from '@/lib/pricing';
+import { PLANS } from '@/lib/plans';
 
 type PlanId = 'FREE' | 'BASIC' | 'PRO';
 
@@ -29,9 +29,8 @@ const PLAN_COLORS: Record<PlanId, { bg: string; border: string; text: string; bt
 export default function PlanPage() {
   const [currentPlan, setCurrentPlan]     = useState<PlanId>('FREE');
   const [hasSubscription, setHasSubscription] = useState(false);
-  const [zipCode, setZipCode]             = useState('');
-  const [saving, setSaving]               = useState(false);
   const [redirecting, setRedirecting]     = useState(false);
+  const [saving, setSaving]               = useState(false);
   const [loading, setLoading]             = useState(true);
   const [livePrices, setLivePrices]       = useState<Record<string, number>>({});
 
@@ -45,7 +44,6 @@ export default function PlanPage() {
       if (planRes.ok) {
         const data = await planRes.json();
         setCurrentPlan(data.plan as PlanId);
-        setZipCode(data.zipCode ?? '');
         setHasSubscription(!!data.stripeSubscriptionId);
       }
       if (priceRes.ok) {
@@ -121,20 +119,6 @@ export default function PlanPage() {
     }
   };
 
-  const handleSaveZip = async () => {
-    setSaving(true);
-    try {
-      const res = await fetch('/api/plan', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ zipCode }),
-      });
-      if (res.ok) {
-        toaster.create({ title: 'Service area saved!', description: 'Leads near your zip code will be matched to you first.', type: 'success' });
-      }
-    } catch { toaster.create({ title: 'Could not save your area. Please try again.', type: 'error' }); }
-    finally { setSaving(false); }
-  };
 
   return (
     <Box minH="100vh" bg="white">
@@ -178,49 +162,7 @@ export default function PlanPage() {
             </Box>
           </Box>
 
-          {/* ZIP Code — flat panel */}
-          <Box border="1px solid #E3E8EE" style={{ borderRadius: 8 }} overflow="hidden">
-            <Box bg="#F6F9FC" px={5} py={3} borderBottom="1px solid #E3E8EE">
-              <HStack gap={2}>
-                <Icon as={LucideMapPin} w={4} h={4} color="red.500" />
-                <Text fontSize="10.5px" fontWeight={700} color="#697386" textTransform="uppercase" letterSpacing="0.06em" fontFamily="heading">
-                  My service area
-                </Text>
-                <Text
-                  style={{
-                    borderRadius: 2,
-                    background: '#F6F9FC',
-                    padding: '2px 6px',
-                    fontSize: '9.5px',
-                    fontWeight: 700,
-                    color: '#0A80DB',
-                  }}>
-                  +10 pts in your score
-                </Text>
-              </HStack>
-            </Box>
-            <Box p={5}>
-              <HStack gap={3}>
-                <Input
-                  placeholder="e.g., 33101"
-                  value={zipCode}
-                  onChange={e => setZipCode(e.target.value)}
-                  maxLength={9}
-                  bg="white" border="1px solid" borderColor="slate.200"
-                  h="11" borderRadius="4px" flex={1}
-                  _focus={{ bg: 'white', borderColor: 'brand.300' }}
-                />
-                <Button bg="brand.500" color="white" borderRadius="4px" fontWeight="bold" px={5} h="11"
-                  _hover={{ bg: 'brand.600' }} onClick={handleSaveZip} loading={saving}>
-                  <Icon as={LucideSave} w={4} h={4} mr={2} />
-                  Save area
-                </Button>
-              </HStack>
-              <Text fontSize="xs" color="slate.400" mt={2}>
-                Adding your zip code earns you 10 points and helps us match you with nearby clients first.
-              </Text>
-            </Box>
-          </Box>
+
 
           {/* Plan Cards */}
           <Box>
@@ -347,18 +289,10 @@ export default function PlanPage() {
                   chipColor: '#854D0E',
                 },
                 {
-                  wave: 'Wave 1',
-                  time: 'First 90 seconds',
-                  cleaners: '1 cleaner only',
-                  desc: 'The top-ranked cleaner gets a private 90-second window. No one else sees this lead yet.',
-                  chipBg: '#F8FAFC',
-                  chipColor: '#0A80DB',
-                },
-                {
                   wave: 'Wave 2',
-                  time: 'After 90 seconds',
+                  time: 'First 90 seconds',
                   cleaners: '2 cleaners',
-                  desc: 'If Wave 1 passes, 2 cleaners compete. The first to accept wins — the other pays nothing.',
+                  desc: 'The top 2 ranked cleaners compete. The first to accept wins — the other pays nothing.',
                   chipBg: '#F5F3FF',
                   chipColor: '#0A80DB',
                 },

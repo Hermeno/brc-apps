@@ -2,6 +2,7 @@ import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { NextRequest, NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
+import { logError } from '@/lib/logger';
 
 export async function PATCH(req: NextRequest) {
   const session = await auth();
@@ -22,7 +23,7 @@ export async function PATCH(req: NextRequest) {
     const user = await prisma.user.update({ where: { id: me.id }, data });
     return NextResponse.json({ ok: true, name: user.name, email: user.email });
   } catch (err: any) {
-    console.error('[PATCH /api/admin/profile]', err);
+    logError('[PATCH /api/admin/profile]', err);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

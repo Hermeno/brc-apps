@@ -1,6 +1,7 @@
 import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { NextRequest, NextResponse } from 'next/server';
+import { logError } from '@/lib/logger';
 
 export async function GET(req: NextRequest) {
   const session = await auth();
@@ -54,7 +55,7 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json({ leads, total });
   } catch (err: any) {
-    console.error('[GET /api/admin/leads]', err);
+    logError('[GET /api/admin/leads]', err);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

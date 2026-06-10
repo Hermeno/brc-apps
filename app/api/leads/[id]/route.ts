@@ -3,6 +3,7 @@ import { prisma } from '@/lib/prisma';
 import { NextRequest, NextResponse } from 'next/server';
 import { after } from 'next/server';
 import { runMatching } from '@/lib/matching';
+import { logError } from '@/lib/logger';
 
 const EDITABLE_STATUSES = ['NEW', 'WAVE1', 'WAVE2', 'WAVE3', 'UNMATCHED'];
 
@@ -52,11 +53,11 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
       prisma.leadDistribution.deleteMany({ where: { leadId: id } }),
     ]);
 
-    after(() => runMatching(id).catch(e => console.error('[re-match]', e)));
+    after(() => runMatching(id).catch(e => logError('[re-match]', e)));
 
     return NextResponse.json({ lead: updated });
   } catch (err: any) {
-    console.error('[PUT /api/leads/[id]]', err);
+    logError('[PUT /api/leads/[id]]', err);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

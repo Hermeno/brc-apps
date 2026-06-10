@@ -2,6 +2,7 @@ import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { stripe, BASE_URL } from '@/lib/stripe';
 import { NextResponse } from 'next/server';
+import { logError } from '@/lib/logger';
 
 export async function POST() {
   const session = await auth();
@@ -38,7 +39,7 @@ export async function POST() {
 
     return NextResponse.json({ url: checkoutSession.url });
   } catch (err: any) {
-    console.error('[POST /api/stripe/setup]', err);
+    logError('[POST /api/stripe/setup]', err);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

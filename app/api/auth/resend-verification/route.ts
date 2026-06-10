@@ -3,6 +3,7 @@ import { z } from 'zod';
 import { NextRequest, NextResponse } from 'next/server';
 import { createVerificationCode } from '@/lib/verification';
 import { sendMail, emailVerificationHtml } from '@/lib/email';
+import { logError } from '@/lib/logger';
 
 const schema = z.object({ email: z.string().email() });
 
@@ -37,7 +38,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ message: 'New code sent to your email.' });
   } catch (err: any) {
-    console.error('[resend-verification]', err);
+    logError('[resend-verification]', err);
     return NextResponse.json({ error: 'Failed to send code. Please try again in a moment.' }, { status: 500 });
   }
 }

@@ -5,6 +5,15 @@ export const authConfig = {
     signIn: '/auth/login',
     error: '/auth/login',
   },
+  logger: {
+    error: (err: any) => {
+      const msg = err?.message ?? String(err);
+      if (msg === 'CredentialsSignin' || err?.name === 'CredentialsSignin') return;
+      console.error('[auth]', msg);
+    },
+    warn:  (code: string) => console.warn('[auth:warn]', code),
+    debug: () => {},
+  },
   callbacks: {
     async jwt({ token, user }) {
       if (user) {

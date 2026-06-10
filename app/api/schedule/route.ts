@@ -1,6 +1,7 @@
 import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { NextResponse } from 'next/server';
+import { logError } from '@/lib/logger';
 
 export async function GET() {
   const session = await auth();
@@ -9,25 +10,24 @@ export async function GET() {
   try {
     const user = await prisma.user.findUnique({
       where: { email: session.user.email },
-      select: { id: true, role: true },
+      select: {
+        id: true,
+        role: true,
+        leadsAccepted: {
+          where: { status: { in: ['ACCEPTED', 'COMPLETED'] } },
+          include: {
+            client: { select: { name: true } },
+            review: { select: { rating: true, comment: true } },
+          },
+          orderBy: { dateTime: 'asc' },
+        },
+      },
     });
     if (!user || user.role !== 'CLEANER') return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
 
-    const jobs = await prisma.lead.findMany({
-      where: {
-        cleanerId: user.id,
-        status: { in: ['ACCEPTED', 'COMPLETED'] },
-      },
-      include: {
-        client: { select: { name: true } },
-        review: { select: { rating: true, comment: true } },
-      },
-      orderBy: { dateTime: 'asc' },
-    });
-
-    return NextResponse.json({ jobs });
+    return NextResponse.json({ jobs: user.leadsAccepted });
   } catch (err: any) {
-    console.error('[GET /api/schedule]', err);
+    logError('[GET /api/schedule]', err);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

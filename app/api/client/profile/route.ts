@@ -1,6 +1,7 @@
 import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { NextRequest, NextResponse } from 'next/server';
+import { logError } from '@/lib/logger';
 
 export async function GET() {
   const session = await auth();
@@ -14,7 +15,7 @@ export async function GET() {
     if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     return NextResponse.json({ user });
   } catch (err: any) {
-    console.error('[GET /api/client/profile]', err);
+    logError('[GET /api/client/profile]', err);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
@@ -45,7 +46,7 @@ export async function PUT(req: NextRequest) {
 
     return NextResponse.json({ user: updated });
   } catch (err: any) {
-    console.error('[PUT /api/client/profile]', err);
+    logError('[PUT /api/client/profile]', err);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

@@ -1,6 +1,7 @@
 import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { NextRequest, NextResponse } from 'next/server';
+import { logError } from '@/lib/logger';
 
 async function requireAdmin() {
   const session = await auth();
@@ -74,7 +75,7 @@ export async function GET() {
 
     return NextResponse.json({ prices, platform });
   } catch (err: any) {
-    console.error('[GET /api/admin/lead-config]', err);
+    logError('[GET /api/admin/lead-config]', err);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
@@ -128,7 +129,7 @@ export async function PATCH(req: NextRequest) {
 
     return NextResponse.json({ error: 'Invalid request type' }, { status: 400 });
   } catch (err: any) {
-    console.error('[PATCH /api/admin/lead-config]', err);
+    logError('[PATCH /api/admin/lead-config]', err);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

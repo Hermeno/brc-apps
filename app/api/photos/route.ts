@@ -1,6 +1,7 @@
 import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { NextRequest, NextResponse } from 'next/server';
+import { logError } from '@/lib/logger';
 
 export async function POST(req: NextRequest) {
   const session = await auth();
@@ -25,7 +26,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ photo }, { status: 201 });
   } catch (err: any) {
-    console.error('[POST /api/photos]', err);
+    logError('[POST /api/photos]', err);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

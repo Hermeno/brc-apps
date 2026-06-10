@@ -1,6 +1,7 @@
 import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { NextRequest, NextResponse } from 'next/server';
+import { logError } from '@/lib/logger';
 
 export async function GET() {
   const session = await auth();
@@ -9,17 +10,13 @@ export async function GET() {
   try {
     const user = await prisma.user.findUnique({
       where: { email: session.user.email },
-      select: { id: true, role: true },
+      select: { id: true, role: true, verification: true },
     });
     if (!user || user.role !== 'CLEANER') return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
 
-    const verification = await prisma.cleanerVerification.findUnique({
-      where: { cleanerId: user.id },
-    });
-
-    return NextResponse.json({ verification });
+    return NextResponse.json({ verification: user.verification });
   } catch (err: any) {
-    console.error('[GET /api/cleaner/verification]', err);
+    logError('[GET /api/cleaner/verification]', err);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
@@ -58,7 +55,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ verification }, { status: 201 });
   } catch (err: any) {
-    console.error('[POST /api/cleaner/verification]', err);
+    logError('[POST /api/cleaner/verification]', err);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

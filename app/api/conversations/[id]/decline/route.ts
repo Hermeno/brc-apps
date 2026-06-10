@@ -4,6 +4,7 @@ import { stripe } from '@/lib/stripe';
 import { runMatching } from '@/lib/matching';
 import { after } from 'next/server';
 import { NextRequest, NextResponse } from 'next/server';
+import { logError } from '@/lib/logger';
 
 export async function POST(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const session = await auth();
@@ -63,7 +64,7 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
         }),
       ]);
       // Re-run matching so cleaners are notified immediately — no manual reactivation needed
-      after(() => runMatching(conv.leadId).catch(e => console.error('[decline rematch]', e)));
+      after(() => runMatching(conv.leadId).catch(e => logError('[decline rematch]', e)));
     }
   }
 

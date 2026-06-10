@@ -1,6 +1,7 @@
 import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { NextResponse } from 'next/server';
+import { logError } from '@/lib/logger';
 
 // GET /api/conversations — list conversations for current user
 export async function GET() {
@@ -35,7 +36,7 @@ export async function GET() {
 
     return NextResponse.json({ conversations, role: user.role });
   } catch (err: any) {
-    console.error('[GET /api/conversations]', err);
+    logError('[GET /api/conversations]', err);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

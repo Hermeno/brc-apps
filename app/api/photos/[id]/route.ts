@@ -1,6 +1,7 @@
 import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { NextRequest, NextResponse } from 'next/server';
+import { logError } from '@/lib/logger';
 
 export async function DELETE(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const session = await auth();
@@ -22,7 +23,7 @@ export async function DELETE(_req: NextRequest, { params }: { params: Promise<{ 
     await prisma.workPhoto.delete({ where: { id } });
     return NextResponse.json({ ok: true });
   } catch (err: any) {
-    console.error('[DELETE /api/photos/[id]]', err);
+    logError('[DELETE /api/photos/[id]]', err);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

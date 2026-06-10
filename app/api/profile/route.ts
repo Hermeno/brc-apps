@@ -2,8 +2,9 @@ import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { NextRequest, NextResponse } from 'next/server';
 import { ensureRadiusColumn } from '@/lib/geo';
+import { logError } from '@/lib/logger';
 
-const PLAN_MAX_RADIUS: Record<string, number> = { FREE: 25, BASIC: 40, PRO: 60, PREMIUM: 60 };
+const PLAN_MAX_RADIUS: Record<string, number> = { FREE: 25, BASIC: 60, PRO: 110, PREMIUM: 110 };
 
 export async function PUT(req: NextRequest) {
   const session = await auth();
@@ -18,7 +19,7 @@ export async function PUT(req: NextRequest) {
 
     await ensureRadiusColumn();
 
-    const { bio, serviceTypes, avatarUrl, latitude, longitude, serviceRadiusMiles } = await req.json();
+    const { bio, serviceTypes, avatarUrl, latitude, longitude, serviceRadiusMiles, zipCode } = await req.json();
 
     if (serviceRadiusMiles !== undefined) {
       const maxRadius = PLAN_MAX_RADIUS[user.plan ?? 'FREE'] ?? 25;
@@ -39,13 +40,14 @@ export async function PUT(req: NextRequest) {
         ...(latitude           !== undefined && latitude  !== null && { latitude:  Number(latitude)  }),
         ...(longitude          !== undefined && longitude !== null && { longitude: Number(longitude) }),
         ...(serviceRadiusMiles !== undefined && { serviceRadiusMiles: Number(serviceRadiusMiles) }),
+        ...(zipCode             !== undefined && { zipCode: zipCode || null }),
       },
-      select: { bio: true, serviceTypes: true, avatarUrl: true, latitude: true, longitude: true, serviceRadiusMiles: true },
+      select: { bio: true, serviceTypes: true, avatarUrl: true, latitude: true, longitude: true, serviceRadiusMiles: true, zipCode: true },
     });
 
     return NextResponse.json(updated);
   } catch (err: any) {
-    console.error('[PUT /api/profile]', err);
+    logError('[PUT /api/profile]', err);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { after } from 'next/server';
 import { advanceWaves, runMatching } from '@/lib/matching';
+import { logError } from '@/lib/logger';
 
 // Called by Vercel Cron every minute — advances Wave1→Wave2→Wave3 and cycles WAVE3 batches.
 export async function GET(req: NextRequest) {
@@ -19,14 +20,14 @@ export async function GET(req: NextRequest) {
     if (rematchIds.length > 0) {
       after(() =>
         Promise.all(
-          rematchIds.map(id => runMatching(id).catch(e => console.error('[fee-deadline rematch]', e))),
+          rematchIds.map(id => runMatching(id).catch(e => logError('[fee-deadline rematch]', e))),
         ),
       );
     }
 
     return NextResponse.json({ ok: true, ts: new Date().toISOString(), rematchIds });
   } catch (err: any) {
-    console.error('[cron/waves]', err);
+    logError('[cron/waves]', err);
     return NextResponse.json({ error: err.message }, { status: 500 });
   }
 }

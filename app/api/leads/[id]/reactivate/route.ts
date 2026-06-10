@@ -3,6 +3,7 @@ import { prisma } from '@/lib/prisma';
 import { NextRequest, NextResponse } from 'next/server';
 import { after } from 'next/server';
 import { runMatching } from '@/lib/matching';
+import { logError } from '@/lib/logger';
 
 export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const session = await auth();
@@ -42,11 +43,11 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
       prisma.conversation.updateMany({ where: { leadId: lead.id }, data: { status: 'closed' } }),
     ]);
 
-    after(() => runMatching(lead.id).catch(e => console.error('[reactivate matching]', e)));
+    after(() => runMatching(lead.id).catch(e => logError('[reactivate matching]', e)));
 
     return NextResponse.json({ ok: true });
   } catch (err: any) {
-    console.error('[POST /api/leads/[id]/reactivate]', err);
+    logError('[POST /api/leads/[id]/reactivate]', err);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

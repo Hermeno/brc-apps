@@ -1,6 +1,7 @@
 import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { NextResponse } from 'next/server';
+import { logError } from '@/lib/logger';
 
 // GET /api/notifications — list latest 40, unread first
 export async function GET() {
@@ -25,7 +26,7 @@ export async function GET() {
 
     return NextResponse.json({ notifications, unreadCount });
   } catch (err: any) {
-    console.error('[GET /api/notifications]', err);
+    logError('[GET /api/notifications]', err);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
@@ -49,7 +50,7 @@ export async function PATCH() {
 
     return NextResponse.json({ ok: true });
   } catch (err: any) {
-    console.error('[PATCH /api/notifications]', err);
+    logError('[PATCH /api/notifications]', err);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
@@ -69,7 +70,7 @@ export async function DELETE() {
     await prisma.notification.deleteMany({ where: { userId: user.id } });
     return NextResponse.json({ ok: true });
   } catch (err: any) {
-    console.error('[DELETE /api/notifications]', err);
+    logError('[DELETE /api/notifications]', err);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

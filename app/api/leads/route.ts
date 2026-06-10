@@ -6,6 +6,7 @@ import { runMatching } from '@/lib/matching';
 import { calculateLeadPrice, getLeadPriceConfig } from '@/lib/pricing';
 import { coordsFromZip } from '@/lib/geo';
 import dns from 'dns/promises';
+import { logError } from '@/lib/logger';
 
 // Extract a 5-digit US ZIP code from an address string
 function extractZip(address: string): string | null {
@@ -62,7 +63,7 @@ export async function GET() {
 
     return NextResponse.json({ leads });
   } catch (err: any) {
-    console.error('[GET /api/leads]', err);
+    logError('[GET /api/leads]', err);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
@@ -168,11 +169,11 @@ export async function POST(request: NextRequest) {
     });
 
     // after() ensures matching runs AFTER the response is sent, never killed mid-flight
-    after(() => runMatching(lead.id).catch(e => console.error('[matching]', e)));
+    after(() => runMatching(lead.id).catch(e => logError('[matching]', e)));
 
     return NextResponse.json({ lead }, { status: 201 });
   } catch (err: any) {
-    console.error('[POST /api/leads]', err);
+    logError('[POST /api/leads]', err);
     return NextResponse.json({ error: err.message ?? 'Internal error' }, { status: 500 });
   }
 }

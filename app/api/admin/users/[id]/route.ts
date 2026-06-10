@@ -1,6 +1,7 @@
 import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { NextRequest, NextResponse } from 'next/server';
+import { logError } from '@/lib/logger';
 
 async function requireAdmin(email: string) {
   const me = await prisma.user.findUnique({ where: { email }, select: { role: true } });
@@ -46,7 +47,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     });
     return NextResponse.json({ user });
   } catch (err: any) {
-    console.error('[PATCH /api/admin/users/[id]]', err);
+    logError('[PATCH /api/admin/users/[id]]', err);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
@@ -114,7 +115,7 @@ export async function DELETE(_req: NextRequest, { params }: { params: Promise<{ 
 
     return NextResponse.json({ ok: true });
   } catch (err: any) {
-    console.error('[DELETE /api/admin/users/[id]]', err);
+    logError('[DELETE /api/admin/users/[id]]', err);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

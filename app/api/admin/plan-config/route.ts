@@ -2,6 +2,7 @@ import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { PLANS } from '@/lib/pricing';
 import { NextRequest, NextResponse } from 'next/server';
+import { logError } from '@/lib/logger';
 
 const PAID_PLANS = PLANS.filter(p => p.price > 0);
 
@@ -38,7 +39,7 @@ export async function GET() {
     const configs = await prisma.planConfig.findMany({ orderBy: { id: 'asc' } });
     return NextResponse.json(configs);
   } catch (err: any) {
-    console.error('[plan-config GET]', err);
+    logError('[plan-config GET]', err);
     return NextResponse.json({ error: 'Internal error' }, { status: 500 });
   }
 }
@@ -63,7 +64,7 @@ export async function PATCH(req: NextRequest) {
     });
     return NextResponse.json(config);
   } catch (err: any) {
-    console.error('[plan-config PATCH]', err);
+    logError('[plan-config PATCH]', err);
     return NextResponse.json({ error: 'Internal error' }, { status: 500 });
   }
 }

@@ -1,6 +1,7 @@
 import { prisma } from '@/lib/prisma';
 import { z } from 'zod';
 import { NextRequest, NextResponse } from 'next/server';
+import { logError } from '@/lib/logger';
 
 const schema = z.object({
   email: z.string().email(),
@@ -40,7 +41,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ message: 'Email verified successfully!' });
   } catch (err: any) {
-    console.error('[verify-email]', err);
+    logError('[verify-email]', err);
     return NextResponse.json({ error: 'Something went wrong. Please try again.' }, { status: 500 });
   }
 }

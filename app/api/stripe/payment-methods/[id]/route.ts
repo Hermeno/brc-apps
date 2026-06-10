@@ -2,6 +2,7 @@ import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { stripe } from '@/lib/stripe';
 import { NextRequest, NextResponse } from 'next/server';
+import { logError } from '@/lib/logger';
 
 export async function DELETE(
   _req: NextRequest,
@@ -27,7 +28,7 @@ export async function DELETE(
     await stripe.paymentMethods.detach(id);
     return NextResponse.json({ ok: true });
   } catch (err: any) {
-    console.error('[DELETE /api/stripe/payment-methods/[id]]', err);
+    logError('[DELETE /api/stripe/payment-methods/[id]]', err);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
@@ -59,7 +60,7 @@ export async function POST(
 
     return NextResponse.json({ ok: true });
   } catch (err: any) {
-    console.error('[POST /api/stripe/payment-methods/[id]]', err);
+    logError('[POST /api/stripe/payment-methods/[id]]', err);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

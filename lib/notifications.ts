@@ -23,8 +23,8 @@ interface CreateNotificationInput {
 export async function createNotification(input: CreateNotificationInput) {
   try {
     await prisma.notification.create({ data: input });
-  } catch (e) {
-    console.error('[notifications] failed to create:', e);
+  } catch (e: any) {
+    console.error(`[notifications] create: ${e?.message ?? e}`);
   }
 }
 
@@ -32,7 +32,7 @@ export async function createNotificationMany(inputs: CreateNotificationInput[]) 
   if (!inputs.length) return;
   try {
     await prisma.notification.createMany({ data: inputs });
-  } catch (e) {
-    console.error('[notifications] failed to createMany:', e);
+  } catch (e: any) {
+    console.error(`[notifications] createMany: ${e?.message ?? e}`);
   }
 }

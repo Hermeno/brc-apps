@@ -34,6 +34,7 @@ export default function ProfilePage() {
   const [geoLoading,        setGeoLoading]   = useState(false);
   const [serviceRadiusMiles, setServiceRadius] = useState<number>(25);
   const [planMaxRadius,      setPlanMaxRadius] = useState<number>(25);
+  const [zipCode,            setZipCode]      = useState('');
   const [photos,            setPhotos]       = useState<Photo[]>([]);
   const [saving,            setSaving]       = useState(false);
 
@@ -56,6 +57,7 @@ export default function ProfilePage() {
         if (!d) return;
         const maxR = PLAN_MAX[d.plan ?? 'FREE'] ?? 25;
         setPlanMaxRadius(maxR);
+        setZipCode(d.zipCode ?? '');
         if (d.id) fetchProfile(d.id);
       })
       .catch(() => {});
@@ -136,7 +138,7 @@ export default function ProfilePage() {
       const res = await fetch('/api/profile', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ bio, serviceTypes, avatarUrl, latitude, longitude, serviceRadiusMiles }),
+        body: JSON.stringify({ bio, serviceTypes, avatarUrl, latitude, longitude, serviceRadiusMiles, zipCode }),
       });
       if (res.ok) {
         toaster.create({ title: 'Profile saved successfully.', type: 'success' });
@@ -347,6 +349,34 @@ export default function ProfilePage() {
               </Text>
 
               <VStack gap={4} align="stretch">
+                {/* ZIP code — +10 pts in ranking */}
+                <Box>
+                  <HStack mb={1.5} gap={2}>
+                    <Text fontSize="xs" fontWeight="700" color="slate.500"
+                      textTransform="uppercase" letterSpacing="0.07em">
+                      ZIP Code
+                    </Text>
+                    <Text style={{
+                      borderRadius: 2, background: '#EFF6FF',
+                      padding: '2px 6px', fontSize: '9.5px', fontWeight: 700, color: '#0A80DB',
+                    }}>
+                      +10 pts in your score
+                    </Text>
+                  </HStack>
+                  <Input
+                    placeholder="e.g., 33101"
+                    value={zipCode}
+                    onChange={e => setZipCode(e.target.value)}
+                    maxLength={9}
+                    bg="slate.50" border="1px solid" borderColor="slate.200"
+                    borderRadius="4px" h="10" fontSize="sm"
+                    _focus={{ bg: 'white', borderColor: 'brand.300' }}
+                  />
+                  <Text fontSize="xs" color="slate.400" mt={1}>
+                    Earns you 10 points and helps us match you with nearby clients first.
+                  </Text>
+                </Box>
+
                 {/* Detect button */}
                 <Button
                   variant="outline" borderColor="slate.200" color="slate.600"

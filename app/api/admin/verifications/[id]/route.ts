@@ -3,6 +3,7 @@ import { prisma } from '@/lib/prisma';
 import { NextRequest, NextResponse } from 'next/server';
 import { createNotification } from '@/lib/notifications';
 import { sendMail, verificationApprovedHtml, verificationRejectedHtml } from '@/lib/email';
+import { logError } from '@/lib/logger';
 
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const session = await auth();
@@ -72,7 +73,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
 
     return NextResponse.json({ verification });
   } catch (err: any) {
-    console.error('[PATCH /api/admin/verifications/[id]]', err);
+    logError('[PATCH /api/admin/verifications/[id]]', err);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

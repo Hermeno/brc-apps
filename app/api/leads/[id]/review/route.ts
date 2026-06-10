@@ -2,6 +2,7 @@ import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { createNotification } from '@/lib/notifications';
 import { NextRequest, NextResponse } from 'next/server';
+import { logError } from '@/lib/logger';
 
 export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const session = await auth();
@@ -55,7 +56,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
 
     return NextResponse.json({ review });
   } catch (err: any) {
-    console.error('[POST /api/leads/[id]/review]', err);
+    logError('[POST /api/leads/[id]/review]', err);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

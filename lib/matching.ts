@@ -77,14 +77,14 @@ function filterByRadius(
 }
 
 // ─── Timing ───────────────────────────────────────────────────────────────────
-// Each batch of 2 cleaners gets 10 minutes to accept before the next batch is tried.
+// Each batch of 2 cleaners gets 90 seconds to accept before the next batch is tried.
 const WAVE_BATCH_SIZE      = 2;
-const OPEN_WINDOW_MS       = 10 * 60 * 1000;
+const OPEN_WINDOW_MS       = 90 * 1000;
 const INSTANT_BOOK_WINDOW_MS = 10 * 60 * 1000;
 
 // ─── Main matching engine ─────────────────────────────────────────────────────
 // Sends the lead to the top 2 scored cleaners (WAVE2). If they don't respond
-// within 10 min, advanceWaves picks the next batch of 2 (WAVE3, cycling).
+// within 90 sec, advanceWaves picks the next batch of 2 (WAVE3, cycling).
 
 export async function runMatching(leadId: string) {
   await ensureRadiusColumn();
@@ -149,7 +149,7 @@ export async function runMatching(leadId: string) {
       userId: top.cleaner.id,
       type:   'lead_received',
       title:  '⚡ Instant Book — you were matched!',
-      body:   `${lead.serviceType} at ${lead.address}. Accept within 10 min.`,
+      body:   `${lead.serviceType} at ${lead.address}. Accept within 90 seconds.`,
       link:   '/dashboard/cleaner',
     }]).catch(() => {});
 
