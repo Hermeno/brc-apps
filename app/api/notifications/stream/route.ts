@@ -53,7 +53,7 @@ export async function GET() {
           ]);
           send({ unreadCount, latest });
         } catch { clearInterval(intervalId); closed = true; }
-      }, 30000);
+      }, 60000);
     },
     cancel() { closed = true; clearInterval(intervalId); },
   });

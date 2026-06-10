@@ -557,6 +557,22 @@ export default function ChatPage() {
             </HStack>
           </Container>
         </Box>
+      ) : isClient && paymentRequired ? (
+        <Box
+          bg="#FFFBEB"
+          borderTop="1px solid"
+          borderColor="#FDE68A"
+          px={4} py={3} flexShrink={0}
+        >
+          <Container maxW="760px">
+            <HStack gap={2} justify="center">
+              <Icon as={LucideLock} w={4} h={4} color="#D97706" />
+              <Text fontSize="sm" fontWeight="600" color="#92400E">
+                Chat locked — waiting for the cleaner to pay the lead fee.
+              </Text>
+            </HStack>
+          </Container>
+        </Box>
       ) : (
         <Box
           bg="white" borderTop="1px solid" borderColor="slate.100"

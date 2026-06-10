@@ -5,12 +5,19 @@ export async function register() {
 
     // Wave advancement — mirrors the Vercel cron (/api/cron/waves) so it also
     // works when running in Docker (where Vercel's cron service doesn't reach).
+    let wavesRunning = false;
     setInterval(async () => {
+      if (wavesRunning) return;
+      wavesRunning = true;
       try {
         const rematchIds = await advanceWaves();
-        await Promise.all(rematchIds.map(id => runMatching(id).catch(err => console.error('[waves] runMatching error:', err))));
+        for (const id of rematchIds) {
+          await runMatching(id).catch(err => console.error('[waves] runMatching error:', err));
+        }
       } catch (err) {
         console.error('[waves] advanceWaves error:', err);
+      } finally {
+        wavesRunning = false;
       }
     }, 60_000);
 
