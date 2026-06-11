@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import {
   Box, Heading, Text, VStack, HStack, Button, Input,
   Flex, Icon, SimpleGrid, Textarea,
@@ -260,6 +260,9 @@ export default function ClientPage() {
   const [reactivateDate, setReactivateDate] = useState('');
   const [reactivateTime, setReactivateTime] = useState('');
   const [reactivating, setReactivating]     = useState(false);
+
+  const reactivateDateRef = useRef<HTMLInputElement>(null);
+  const editDateRef       = useRef<HTMLInputElement>(null);
 
   /* Address book (localStorage) */
   const [addressBook, setAddressBook] = useState<string[]>([]);
@@ -1104,7 +1107,8 @@ export default function ClientPage() {
                               <Text fontSize="sm" fontWeight="bold" color="#0A80DB" mb={4}>Pick a new date and time</Text>
                               <VStack gap={3} align="stretch">
                                 <HStack gap={3}>
-                                  <Box position="relative" flex={1}>
+                                  <Box position="relative" flex={1} cursor="pointer"
+                                    onClick={() => (reactivateDateRef.current as any)?.showPicker?.()}>
                                     <Box h="11" bg="white" border="1px solid" borderColor="#E3E8EE"
                                       borderRadius="4px" px={3} display="flex" alignItems="center"
                                       style={{ pointerEvents:'none' }}>
@@ -1112,11 +1116,11 @@ export default function ClientPage() {
                                         {reactivateDate ? isoDateToUs(reactivateDate) : 'MM/DD/YYYY'}
                                       </Text>
                                     </Box>
-                                    <input type="date" value={reactivateDate}
+                                    <input ref={reactivateDateRef} type="date" value={reactivateDate}
                                       onChange={e => setReactivateDate(e.target.value)}
                                       min={new Date().toISOString().split('T')[0]}
                                       style={{ position:'absolute', top:0, left:0, right:0, bottom:0,
-                                               opacity:0.01, cursor:'pointer', zIndex:1,
+                                               opacity:0, pointerEvents:'none',
                                                width:'100%', height:'100%' }} />
                                   </Box>
                                   <Input type="time" value={reactivateTime}
@@ -1165,7 +1169,8 @@ export default function ClientPage() {
                                   inputProps={{ bg: 'white', borderRadius: '4px', h: '11', border: '1px solid', borderColor: 'slate.200' }}
                                 />
                                 <HStack gap={3}>
-                                  <Box position="relative" flex={1}>
+                                  <Box position="relative" flex={1} cursor="pointer"
+                                    onClick={() => (editDateRef.current as any)?.showPicker?.()}>
                                     <Box h="11" bg="white" border="1px solid" borderColor="slate.200"
                                       borderRadius="4px" px={3} display="flex" alignItems="center"
                                       style={{ pointerEvents:'none' }}>
@@ -1173,11 +1178,11 @@ export default function ClientPage() {
                                         {editForm.date ? isoDateToUs(editForm.date) : 'MM/DD/YYYY'}
                                       </Text>
                                     </Box>
-                                    <input type="date" value={editForm.date}
+                                    <input ref={editDateRef} type="date" value={editForm.date}
                                       onChange={e => setEditField('date', e.target.value)}
                                       min={new Date().toISOString().split('T')[0]}
                                       style={{ position:'absolute', top:0, left:0, right:0, bottom:0,
-                                               opacity:0.01, cursor:'pointer', zIndex:1,
+                                               opacity:0, pointerEvents:'none',
                                                width:'100%', height:'100%' }} />
                                   </Box>
                                   <Input type="time" value={editForm.time}

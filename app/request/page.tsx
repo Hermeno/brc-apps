@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useRef } from 'react';
 import { useSession, signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import {
@@ -49,6 +49,7 @@ export default function RequestPage() {
   const [password, setPassword]         = useState('');
   const [regPhone, setRegPhone]         = useState('+1 ');
   const [loading, setLoading]           = useState(false);
+  const dateRef                         = useRef<HTMLInputElement>(null);
 
   const estimate = useMemo(() =>
     calculateEstimate({ serviceType, bedrooms, bathrooms, squareMeters, extras, frequency }),
@@ -244,7 +245,8 @@ export default function RequestPage() {
                 <Text {...LABEL_STYLE}>Preferred date and time</Text>
                 <HStack>
                   <Icon as={LucideCalendar} color="#0A80DB" w="15px" h="15px" flexShrink={0} />
-                  <Box position="relative" flex={1}>
+                  <Box position="relative" flex={1} cursor="pointer"
+                    onClick={() => (dateRef.current as any)?.showPicker?.()}>
                     <Box
                       h="44px" bg="#F8FAFC" border="1px solid" borderColor="#E3E8EE"
                       borderRadius="4px" px={3} display="flex" alignItems="center"
@@ -257,11 +259,11 @@ export default function RequestPage() {
                           : 'MM/DD/YYYY'}
                       </Text>
                     </Box>
-                    <input type="date" value={dateVal}
+                    <input ref={dateRef} type="date" value={dateVal}
                       onChange={e => setDateVal(e.target.value)}
                       min={new Date().toISOString().split('T')[0]}
                       style={{ position:'absolute', top:0, left:0, right:0, bottom:0,
-                               opacity:0.01, cursor:'pointer', zIndex:1,
+                               opacity:0, pointerEvents:'none',
                                width:'100%', height:'100%' }} />
                   </Box>
                   <Input type="time" value={timeVal}

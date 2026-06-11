@@ -211,8 +211,41 @@ async function dispatchNextBatch(
     .slice(0, WAVE_BATCH_SIZE);
 
   if (scored.length === 0) {
-    await prisma.lead.update({ where: { id: lead.id }, data: { status: 'UNMATCHED' } });
-    return false;
+    // No new candidates — cycle back through previously invited cleaners if any are still available
+    const recycled = await prisma.user.findMany({
+      where: {
+        id: { in: usedIds },
+        role: 'CLEANER', isAvailable: true,
+        OR: [{ suspendedUntil: null }, { suspendedUntil: { lt: nowDate } }],
+      },
+      include: { stats: true },
+    });
+    const recycledScored = filterByRadius(recycled, leadCoords)
+      .map(({ cleaner, distanceMiles }) => ({ cleaner, score: scoreCFS(cleaner, lead, distanceMiles) }))
+      .filter(s => s.score > 0)
+      .sort((a, b) => b.score - a.score)
+      .slice(0, WAVE_BATCH_SIZE);
+
+    if (recycledScored.length === 0) {
+      await prisma.lead.update({ where: { id: lead.id }, data: { status: 'UNMATCHED' } });
+      return false;
+    }
+
+    const cycleExpiry = new Date(nowDate.getTime() + windowMs);
+    await prisma.lead.update({ where: { id: lead.id }, data: { status: nextStatus } });
+    await Promise.all(recycledScored.map(({ cleaner }) =>
+      prisma.leadDistribution.update({
+        where: { leadId_cleanerId: { leadId: lead.id, cleanerId: cleaner.id } },
+        data:  { status: 'INVITED', wave: nextStatus === 'WAVE2' ? 2 : 3, notifiedAt: nowDate, expiresAt: cycleExpiry },
+      })
+    ));
+    createNotificationMany(recycledScored.map(({ cleaner }) => ({
+      userId: cleaner.id, type: 'lead_received' as const,
+      title: 'New lead available!',
+      body:  `${lead.serviceType} at ${lead.address}. Be the first to respond!`,
+      link:  '/dashboard/cleaner',
+    }))).catch(() => {});
+    return true;
   }
 
   const nextExpiry = new Date(nowDate.getTime() + windowMs);
