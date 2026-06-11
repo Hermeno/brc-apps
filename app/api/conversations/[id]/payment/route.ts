@@ -86,7 +86,7 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ id:
       },
       quantity: 1,
     }],
-    success_url: `${BASE_URL}/dashboard/chat/${id}?paid=1`,
+    success_url: `${BASE_URL}/dashboard/chat/${id}?paid=1&cs={CHECKOUT_SESSION_ID}`,
     cancel_url:  `${BASE_URL}/dashboard/chat/${id}`,
     // Checkout-session metadata drives webhook routing — keep it identical to the
     // legacy shape (conversationId, no leadId) so the webhook takes the correct

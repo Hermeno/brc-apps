@@ -783,9 +783,9 @@ export default function ClientPage() {
                       const scheduledTime  = new Date(lead.dateTime);
                       const timeHasPassed  = scheduledTime < now;
                       const isActive       = !['COMPLETED', 'CANCELLED'].includes(lead.status);
-                      const canCancel      = isActive && !timeHasPassed;
                       const acceptedConv   = (lead.conversations ?? []).find(c => c.cleanerId === lead.cleanerId && c.status === 'active');
                       const feePaid        = acceptedConv?.feeStatus === 'charged' || acceptedConv?.feeStatus === 'waived';
+                      const canCancel      = isActive && !timeHasPassed && !feePaid;
                       const canTerminate   = isActive && timeHasPassed && lead.status === 'ACCEPTED' && feePaid;
                       const canReactivate  = isActive && timeHasPassed && ['NEW', 'WAVE1', 'WAVE2', 'WAVE3', 'UNMATCHED'].includes(lead.status);
                       const canRate        = lead.status === 'COMPLETED' && lead.cleanerId && !lead.review;
@@ -1020,7 +1020,8 @@ export default function ClientPage() {
                           </Box>
 
                           {/* ── Action Bar ── */}
-                          {(canCancel || canTerminate || canRate || canReactivate || (isActive && !timeHasPassed)) && (
+                          {(canCancel || canTerminate || canRate || canReactivate ||
+                            (isActive && !timeHasPassed && !feePaid && ['NEW','WAVE1','WAVE2','WAVE3','UNMATCHED'].includes(lead.status))) && (
                             <Box borderTop="1px solid #F1F5F9" px={5} py={3}>
                               <Flex gap={2} align="center" flexWrap="wrap">
 

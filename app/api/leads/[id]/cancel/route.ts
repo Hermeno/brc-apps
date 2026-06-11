@@ -23,6 +23,14 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
   if (new Date(lead.dateTime) < new Date())
     return NextResponse.json({ error: 'Time passed — use "Complete" after the scheduled time' }, { status: 409 });
 
+  // Cannot cancel after the cleaner has paid the lead fee
+  const paidConv = await prisma.conversation.findFirst({
+    where: { leadId: id, feeStatus: { in: ['charged', 'waived'] }, status: 'active' },
+    select: { id: true },
+  });
+  if (paidConv)
+    return NextResponse.json({ error: 'Cannot cancel after the cleaner has paid the lead fee' }, { status: 409 });
+
   await prisma.$transaction([
     prisma.lead.update({ where: { id }, data: { status: 'CANCELLED' } }),
     prisma.conversation.updateMany({ where: { leadId: id }, data: { status: 'closed' } }),

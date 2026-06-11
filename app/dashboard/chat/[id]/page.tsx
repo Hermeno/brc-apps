@@ -58,7 +58,11 @@ export default function ChatPage() {
   const [sending, setSending]     = useState(false);
   const [confirming, setConfirming] = useState(false);
   const [paying, setPaying]       = useState(false);
+  const [autoTriggered, setAutoTriggered] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
+
+  const returningFromStripe = searchParams.get('paid') === '1';
+  const stripeSessionId     = searchParams.get('cs') ?? null;
 
   const fetchMessages = useCallback(async () => {
     try {
@@ -80,10 +84,38 @@ export default function ChatPage() {
     return () => clearInterval(interval);
   }, [fetchMessages]);
 
-  // Re-check payment status when returning from Stripe checkout
+  // When returning from Stripe: verify session directly (handles webhook lag), then clean URL
   useEffect(() => {
-    if (searchParams.get('paid') === '1') fetchMessages();
-  }, [searchParams, fetchMessages]);
+    if (!returningFromStripe) return;
+    const verify = async () => {
+      if (stripeSessionId) {
+        // Verify with Stripe directly — no webhook wait needed
+        await fetch(`/api/conversations/${id}/payment/verify`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ sessionId: stripeSessionId }),
+        }).catch(() => {});
+      }
+      await fetchMessages();
+      const url = new URL(window.location.href);
+      url.searchParams.delete('paid');
+      url.searchParams.delete('cs');
+      window.history.replaceState({}, '', url.toString());
+    };
+    verify();
+  }, [returningFromStripe, stripeSessionId, id, fetchMessages]);
+
+  // Auto-trigger payment when cleaner opens chat and fee is due (lead ACCEPTED)
+  useEffect(() => {
+    if (!conv || autoTriggered || paying) return;
+    const isCleanerWithFee = userId && userId === conv.cleanerId && paymentRequired;
+    const clientAlreadyConfirmed = conv.lead.status === 'ACCEPTED';
+    if (isCleanerWithFee && clientAlreadyConfirmed && !returningFromStripe) {
+      setAutoTriggered(true);
+      handlePayLeadFee();
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [conv, userId, paymentRequired, autoTriggered, paying, returningFromStripe]);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -198,6 +230,36 @@ export default function ChatPage() {
 
   // ── Payment wall for cleaner ────────────────────────────────────────────────
   if (!isClient && paymentRequired) {
+    // Returning from Stripe or auto-charge in progress → show verifying state
+    if (returningFromStripe || paying) {
+      return (
+        <Flex h="100vh" direction="column" bg="white">
+          <Box bg="#0B1120" px={5} h="52px" display="flex" alignItems="center" flexShrink={0}
+            style={{ boxShadow: '0 1px 0 rgba(255,255,255,0.06)' }}>
+            <Button size="sm" variant="ghost" color="rgba(255,255,255,0.45)"
+              _hover={{ color: 'white', bg: 'rgba(255,255,255,0.06)' }}
+              onClick={() => router.back()} px={2} h="32px">
+              <Icon as={LucideArrowLeft} w={4} h={4} />
+            </Button>
+          </Box>
+          <Flex flex={1} align="center" justify="center" px={6}>
+            <VStack gap={5} textAlign="center">
+              <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 1.2, ease: 'linear' }}>
+                <Icon as={LucideLoader} w={8} h={8} color="brand.500" />
+              </motion.div>
+              <Text fontSize="lg" fontWeight="700" color="#0B1120">Verifying payment…</Text>
+              <Text fontSize="sm" color="#64748B">This should only take a moment.</Text>
+              <Button size="sm" variant="outline" borderColor="slate.300" color="slate.600"
+                borderRadius="4px" mt={2}
+                onClick={() => { setAutoTriggered(false); router.replace(`/dashboard/chat/${id}`); }}>
+                Payment confirmed? Enter chat
+              </Button>
+            </VStack>
+          </Flex>
+        </Flex>
+      );
+    }
+
     const isWaitingForClient = conv.lead.status === 'IN_REVIEW';
     const jobDate = new Date(conv.lead.dateTime).toLocaleString('en-US', {
       weekday: 'short', month: 'short', day: 'numeric',
