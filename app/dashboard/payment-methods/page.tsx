@@ -60,6 +60,15 @@ function PaymentMethodsContent() {
       toaster.create({ title: 'Card added successfully.', type: 'success' });
     }
     fetchCards();
+
+    // When the browser restores this page from bfcache (e.g. user pressed Cancel
+    // on Stripe and the back/redirect brought them here), the React state is frozen
+    // at adding:true. The pageshow event fires with e.persisted=true in that case.
+    const resetOnBfcache = (e: PageTransitionEvent) => {
+      if (e.persisted) setAdding(false);
+    };
+    window.addEventListener('pageshow', resetOnBfcache);
+    return () => window.removeEventListener('pageshow', resetOnBfcache);
   }, []);
 
   const fetchCards = async () => {
