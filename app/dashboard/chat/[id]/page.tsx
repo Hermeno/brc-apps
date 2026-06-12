@@ -13,6 +13,7 @@ import {
 import { useRouter, useParams, useSearchParams } from 'next/navigation';
 import { motion, AnimatePresence } from 'motion/react';
 import { toaster } from '@/lib/toaster';
+import { LeadFeePayment } from '@/components/lead-fee-payment';
 
 type Message = {
   id: string;
@@ -57,8 +58,6 @@ export default function ChatPage() {
   const [text, setText]           = useState('');
   const [sending, setSending]     = useState(false);
   const [confirming, setConfirming] = useState(false);
-  const [paying, setPaying]       = useState(false);
-  const [autoTriggered, setAutoTriggered] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
 
   const returningFromStripe = searchParams.get('paid') === '1';
@@ -105,17 +104,6 @@ export default function ChatPage() {
     verify();
   }, [returningFromStripe, stripeSessionId, id, fetchMessages]);
 
-  // Auto-trigger payment when cleaner opens chat and fee is due (lead ACCEPTED)
-  useEffect(() => {
-    if (!conv || autoTriggered || paying) return;
-    const isCleanerWithFee = userId && userId === conv.cleanerId && paymentRequired;
-    const clientAlreadyConfirmed = conv.lead.status === 'ACCEPTED';
-    if (isCleanerWithFee && clientAlreadyConfirmed && !returningFromStripe) {
-      setAutoTriggered(true);
-      handlePayLeadFee();
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [conv, userId, paymentRequired, autoTriggered, paying, returningFromStripe]);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -153,22 +141,6 @@ export default function ChatPage() {
     }
   };
 
-  const handlePayLeadFee = async () => {
-    setPaying(true);
-    try {
-      const res = await fetch(`/api/conversations/${id}/payment`);
-      const data = await res.json();
-      if (data.alreadyPaid) {
-        await fetchMessages();
-      } else if (data.checkoutUrl) {
-        window.location.href = data.checkoutUrl;
-      }
-    } catch {
-      toaster.create({ title: 'Something went wrong with the payment. Please try again.', type: 'error' });
-    } finally {
-      setPaying(false);
-    }
-  };
 
   if (!conv) {
     return (
@@ -230,8 +202,8 @@ export default function ChatPage() {
 
   // ── Payment wall for cleaner ────────────────────────────────────────────────
   if (!isClient && paymentRequired) {
-    // Returning from Stripe or auto-charge in progress → show verifying state
-    if (returningFromStripe || paying) {
+    // Returning from Stripe (3DS redirect) → show verifying state
+    if (returningFromStripe) {
       return (
         <Flex h="100vh" direction="column" bg="white">
           <Box bg="#0B1120" px={5} h="52px" display="flex" alignItems="center" flexShrink={0}
@@ -251,7 +223,8 @@ export default function ChatPage() {
               <Text fontSize="sm" color="#64748B">This should only take a moment.</Text>
               <Button size="sm" variant="outline" borderColor="slate.300" color="slate.600"
                 borderRadius="4px" mt={2}
-                onClick={() => { setAutoTriggered(false); router.replace(`/dashboard/chat/${id}`); }}>
+                onClick={() => router.replace(`/dashboard/chat/${id}`)}>
+
                 Payment confirmed? Enter chat
               </Button>
             </VStack>
@@ -390,18 +363,11 @@ export default function ChatPage() {
                   <Text fontSize="11px" color="#CBD5E1" mb={7}>One-time · non-refundable</Text>
                 </VStack>
 
-                <Button
-                  w="full" bg="#0A80DB" color="white" h="48px" borderRadius="6px"
-                  fontWeight="700" fontSize="14px" letterSpacing="-0.01em"
-                  _hover={{ bg: '#0870C2' }} _active={{ bg: '#0760A8' }}
-                  loading={paying} loadingText="Redirecting to Stripe…"
-                  onClick={handlePayLeadFee}>
-                  Pay ${conv.leadFee} · Unlock chat
-                </Button>
-
-                <Text fontSize="11px" color="#CBD5E1" mt={3} textAlign="center">
-                  Secure checkout via Stripe · USD
-                </Text>
+                <LeadFeePayment
+                  convId={id}
+                  leadFee={conv.leadFee}
+                  onSuccess={fetchMessages}
+                />
               </>
             )}
           </Box>

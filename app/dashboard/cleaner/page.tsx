@@ -7,6 +7,7 @@ import {
   LucideRefreshCw, LucideBriefcase, LucideBanknote,
   LucideClock, LucideMessageCircle, LucideShield, LucideAlertCircle,
   LucideChevronDown, LucideChevronUp, LucidePhone,
+  LucideCreditCard, LucideCheckCircle, LucideAlertTriangle,
 } from 'lucide-react';
 import { EXTRAS, FREQUENCY_OPTIONS } from '@/lib/estimate';
 import CleanerNav from '@/components/cleaner-nav';
@@ -106,6 +107,7 @@ export default function CleanerDashboard() {
   const [responding, setResponding]       = useState<string | null>(null);
   const [loading, setLoading]             = useState(true);
   const [showHistory, setShowHistory]     = useState(false);
+  const [hasCard, setHasCard]             = useState<boolean | null>(null);
 
   const fetchLeads = useCallback(async (silent = false) => {
     if (!silent) setLoading(true);
@@ -127,6 +129,10 @@ export default function CleanerDashboard() {
     fetch('/api/cleaner/verification')
       .then(r => r.json())
       .then(d => setVerifyStatus(d.verification?.status ?? 'NONE'));
+    fetch('/api/stripe/payment-methods')
+      .then(r => r.json())
+      .then(d => setHasCard(Array.isArray(d.paymentMethods) && d.paymentMethods.length > 0))
+      .catch(() => setHasCard(false));
 
     if (typeof window !== 'undefined') {
       const p = new URLSearchParams(window.location.search);
@@ -180,70 +186,103 @@ export default function CleanerDashboard() {
 
       <Box maxW="1080px" mx="auto" px={{ base: 4, md: 6 }} py={5}>
 
-        {/* ── Verification banners ── */}
-        {verifyStatus === 'NONE' && (
-          <Box mb={4} bg="#F6F9FC" border="1px solid #FDE68A" p={4}>
-            <Flex align="center" justify="space-between" gap={3} flexWrap="wrap">
-              <HStack gap={3}>
-                <Icon as={LucideAlertCircle} w={4} h={4} color="#0A80DB" flexShrink={0} />
-                <Box>
-                  <Text fontWeight="700" color="#92400E" fontSize="13px" fontFamily="heading">
-                    Get verified and stand out to clients
-                  </Text>
-                  <Text fontSize="11.5px" color="#0870C2" mt={0.5}>
-                    Verified cleaners appear higher in results and earn a trusted badge.
-                  </Text>
-                </Box>
-              </HStack>
-              <Button
-                size="sm" bg="#0A80DB" color="white" borderRadius="4px"
-                fontWeight="600" fontFamily="heading"
-                _hover={{ bg: '#0870C2' }}
-                onClick={() => router.push('/dashboard/cleaner/verify')}
-              >
-                <Icon as={LucideShield} w={3.5} h={3.5} mr={1.5} />Get verified
-              </Button>
-            </Flex>
-          </Box>
-        )}
-        {verifyStatus === 'PENDING' && (
-          <Box mb={4} bg="#F6F9FC" border="1px solid #E3E8EE" p={4}>
-            <HStack gap={3}>
-              <Icon as={LucideClock} w={4} h={4} color="#3B82F6" flexShrink={0} />
-              <Text fontSize="13px" color="#0A80DB" fontWeight="600" fontFamily="heading">
-                Your verification is being reviewed — we'll get back to you within 48 hours.
-              </Text>
-            </HStack>
-          </Box>
-        )}
-        {verifyStatus === 'APPROVED' && (
-          <Box mb={4} bg="#F0FDF4" border="1px solid #BBF7D0" p={4}>
-            <HStack gap={3}>
-              <Icon as={LucideCheckCircle2} w={4} h={4} color="#0A80DB" flexShrink={0} />
-              <Text fontSize="13px" color="#0A80DB" fontWeight="600" fontFamily="heading">
-                Account verified
-              </Text>
-            </HStack>
-          </Box>
-        )}
-        {verifyStatus === 'REJECTED' && (
-          <Box mb={4} bg="#FFF1F2" border="1px solid #FECDD3" p={4}>
-            <Flex align="center" justify="space-between" gap={3} flexWrap="wrap">
-              <HStack gap={3}>
-                <Icon as={LucideAlertCircle} w={4} h={4} color="#E11D48" flexShrink={0} />
-                <Text fontSize="13px" color="#9F1239" fontWeight="600" fontFamily="heading">
-                  Verification declined — please review your documents and try again.
+        {/* ── Account setup checklist — shown while any step is incomplete ── */}
+        {(hasCard === false || (verifyStatus !== null && verifyStatus !== 'APPROVED')) && (
+          <Box mb={5} border="2px solid #F59E0B" bg="white" style={{ borderRadius: 8 }} overflow="hidden">
+            <Box px={5} py={3} bg="#FFFBEB" borderBottom="1px solid #FDE68A">
+              <HStack gap={2}>
+                <Icon as={LucideAlertTriangle} w={4} h={4} color="#D97706" />
+                <Text fontSize="12px" fontWeight="700" color="#92400E" fontFamily="heading"
+                  textTransform="uppercase" letterSpacing="0.07em">
+                  Complete your setup to receive leads
                 </Text>
               </HStack>
-              <Button
-                size="sm" bg="#E11D48" color="white" borderRadius="4px"
-                fontWeight="600" fontFamily="heading"
-                _hover={{ bg: '#BE123C' }}
-                onClick={() => router.push('/dashboard/cleaner/verify')}
-              >
-                Resubmit for review
-              </Button>
-            </Flex>
+            </Box>
+
+            <VStack gap={0} align="stretch">
+              {/* Step 1 — Payment card */}
+              <Flex px={5} py={4} align="center" justify="space-between" gap={3} flexWrap="wrap"
+                borderBottom="1px solid #F1F5F9">
+                <HStack gap={3}>
+                  {hasCard
+                    ? <Icon as={LucideCheckCircle} w={5} h={5} color="#10B981" flexShrink={0} />
+                    : <Icon as={LucideCreditCard} w={5} h={5} color="#D97706" flexShrink={0} />
+                  }
+                  <Box>
+                    <Text fontSize="13px" fontWeight="700" color={hasCard ? '#047857' : '#0F172A'} fontFamily="heading">
+                      {hasCard ? 'Payment card saved' : 'Add a payment card'}
+                    </Text>
+                    <Text fontSize="11.5px" color={hasCard ? '#059669' : '#697386'} mt={0.5}>
+                      {hasCard
+                        ? 'You will be charged automatically when a client accepts you.'
+                        : 'Required. You are only charged when a client accepts your proposal — not before.'}
+                    </Text>
+                  </Box>
+                </HStack>
+                {!hasCard && (
+                  <Button
+                    size="sm" bg="#D97706" color="white" borderRadius="4px"
+                    fontWeight="700" fontFamily="heading" flexShrink={0}
+                    _hover={{ bg: '#B45309' }}
+                    onClick={() => router.push('/dashboard/payment-methods')}
+                  >
+                    <Icon as={LucideCreditCard} w={3.5} h={3.5} mr={1.5} />Add card
+                  </Button>
+                )}
+              </Flex>
+
+              {/* Step 2 — Identity / document verification */}
+              <Flex px={5} py={4} align="center" justify="space-between" gap={3} flexWrap="wrap">
+                <HStack gap={3}>
+                  {verifyStatus === 'APPROVED'
+                    ? <Icon as={LucideCheckCircle} w={5} h={5} color="#10B981" flexShrink={0} />
+                    : verifyStatus === 'PENDING'
+                    ? <Icon as={LucideClock} w={5} h={5} color="#3B82F6" flexShrink={0} />
+                    : verifyStatus === 'REJECTED'
+                    ? <Icon as={LucideAlertCircle} w={5} h={5} color="#E11D48" flexShrink={0} />
+                    : <Icon as={LucideShield} w={5} h={5} color="#D97706" flexShrink={0} />
+                  }
+                  <Box>
+                    <Text
+                      fontSize="13px" fontWeight="700" fontFamily="heading"
+                      color={
+                        verifyStatus === 'APPROVED' ? '#047857'
+                        : verifyStatus === 'PENDING' ? '#1D4ED8'
+                        : verifyStatus === 'REJECTED' ? '#9F1239'
+                        : '#0F172A'
+                      }
+                    >
+                      {verifyStatus === 'APPROVED' ? 'Identity verified'
+                       : verifyStatus === 'PENDING' ? 'Verification under review'
+                       : verifyStatus === 'REJECTED' ? 'Verification declined'
+                       : 'Verify your identity'}
+                    </Text>
+                    <Text fontSize="11.5px" color="#697386" mt={0.5}>
+                      {verifyStatus === 'APPROVED'
+                        ? 'Your documents were approved. You appear to clients as verified.'
+                        : verifyStatus === 'PENDING'
+                        ? 'We\'ll review your documents within 48 hours. You\'ll be notified.'
+                        : verifyStatus === 'REJECTED'
+                        ? 'Your documents were not accepted. Please resubmit for review.'
+                        : 'Required. Submit your documents to start receiving leads from clients.'}
+                    </Text>
+                  </Box>
+                </HStack>
+                {(verifyStatus === 'NONE' || verifyStatus === 'REJECTED') && (
+                  <Button
+                    size="sm"
+                    bg={verifyStatus === 'REJECTED' ? '#E11D48' : '#D97706'}
+                    color="white" borderRadius="4px"
+                    fontWeight="700" fontFamily="heading" flexShrink={0}
+                    _hover={{ bg: verifyStatus === 'REJECTED' ? '#BE123C' : '#B45309' }}
+                    onClick={() => router.push('/dashboard/cleaner/verify')}
+                  >
+                    <Icon as={LucideShield} w={3.5} h={3.5} mr={1.5} />
+                    {verifyStatus === 'REJECTED' ? 'Resubmit' : 'Get verified'}
+                  </Button>
+                )}
+              </Flex>
+            </VStack>
           </Box>
         )}
 

@@ -296,3 +296,11 @@ model LeadPlatformConfig {
   value     String
   updatedAt DateTime @updatedAt
 }
+
+// Singleton row that stores landing-page configurable content
+model SiteConfig {
+  id           String   @id @default("singleton")
+  heroVideoUrl String?  // Cloudinary secure_url for the hero video (mp4)
+  heroVideoPublicId String? // Cloudinary public_id for deletion
+  updatedAt    DateTime @updatedAt
+}

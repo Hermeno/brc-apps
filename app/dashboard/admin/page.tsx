@@ -1,5 +1,6 @@
 'use client';
 
+import React from 'react';
 import {
   Box, VStack, HStack, Text, Button, Icon, Flex,
   Textarea, SimpleGrid, Input,
@@ -17,7 +18,8 @@ import {
   LucideLayoutDashboard, LucideClipboardList, LucideStar,
   LucideRefreshCw, LucideSearch, LucideChevronLeft, LucideChevronRight,
   LucideCheckCircle2, LucideMapPin, LucidePhone,
-  LucideSettings, LucideDollarSign, LucideTrendingUp,
+  LucideSettings, LucideDollarSign, LucideTrendingUp, LucideVideo,
+  LucideUpload, LucideTrash,
 } from 'lucide-react';
 import {
   AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell,
@@ -26,7 +28,7 @@ import {
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
-type Tab = 'overview' | 'leads' | 'verifications' | 'users' | 'reviews' | 'pricing' | 'lead-pricing' | 'settings';
+type Tab = 'overview' | 'leads' | 'verifications' | 'users' | 'reviews' | 'pricing' | 'lead-pricing' | 'settings' | 'landing';
 
 interface StatsData {
   users:         { totalClients: number; totalCleaners: number; verifiedCleaners: number; total: number };
@@ -221,6 +223,19 @@ function Sidebar({ tab, setTab, pendingVerifs, onRefresh, user }: {
             <Text fontSize="10px" color="#475569" fontFamily="heading">Administrator</Text>
           </Box>
         </HStack>
+        <Box
+          as="button" w="full" display="flex" alignItems="center" gap={2}
+          px={3} py={2} cursor="pointer" fontSize="12px"
+          fontFamily="heading" fontWeight="500" borderRadius="0"
+          transition="all 0.12s"
+          color={tab === 'landing' ? 'white' : '#6B7280'}
+          bg={tab === 'landing' ? 'rgba(26,127,160,0.15)' : 'transparent'}
+          _hover={{ color: '#E3E8EE', bg: 'rgba(255,255,255,0.04)' }}
+          onClick={() => setTab('landing')}
+        >
+          <Icon as={LucideVideo} w={3} h={3} />
+          Landing Page
+        </Box>
         <Box
           as="button" w="full" display="flex" alignItems="center" gap={2}
           px={3} py={2} cursor="pointer" fontSize="12px"
@@ -1387,6 +1402,15 @@ export default function AdminPage() {
         )}
 
         {/* ══ MEUS DADOS ══ */}
+        {tab === 'landing' && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.15 }}>
+            <PageHeader title="Landing Page" sub="Manage the hero video shown on your public landing page" />
+            <Box px={8} py={6} maxW="720px">
+              <LandingPageForm />
+            </Box>
+          </motion.div>
+        )}
+
         {tab === 'settings' && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.15 }}>
             <PageHeader title="My Settings" sub="Update your administrator information" />
@@ -1983,5 +2007,132 @@ function LeadPricingPanel() {
       </Flex>
 
     </VStack>
+  );
+}
+
+// ─── LandingPageForm ──────────────────────────────────────────────────────────
+
+function LandingPageForm() {
+  const [videoUrl, setVideoUrl]   = useState<string | null>(null);
+  const [uploading, setUploading] = useState(false);
+  const [deleting,  setDeleting]  = useState(false);
+  const inputRef = React.useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    fetch('/api/admin/site-config')
+      .then(r => r.json())
+      .then(d => setVideoUrl(d.heroVideoUrl ?? null));
+  }, []);
+
+  const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    try {
+      const fd = new FormData();
+      fd.append('video', file);
+      const res = await fetch('/api/admin/site-config/video', { method: 'POST', body: fd });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error ?? 'Upload failed');
+      setVideoUrl(data.heroVideoUrl);
+      toaster.create({ title: 'Video uploaded!', type: 'success' });
+    } catch (err: any) {
+      toaster.create({ title: err.message, type: 'error' });
+    } finally {
+      setUploading(false);
+      if (inputRef.current) inputRef.current.value = '';
+    }
+  };
+
+  const handleDelete = async () => {
+    setDeleting(true);
+    try {
+      const res = await fetch('/api/admin/site-config', { method: 'DELETE' });
+      if (!res.ok) throw new Error('Delete failed');
+      setVideoUrl(null);
+      toaster.create({ title: 'Video removed', type: 'success' });
+    } catch (err: any) {
+      toaster.create({ title: err.message, type: 'error' });
+    } finally { setDeleting(false); }
+  };
+
+  return (
+    <Box bg="white" border="1px solid #E3E8EE" style={{ borderRadius: 8 }} overflow="hidden">
+      <Box bg="#F6F9FC" px={5} py={3} borderBottom="1px solid #E3E8EE">
+        <HStack gap={2}>
+          <Icon as={LucideVideo} w={4} h={4} color="brand.500" />
+          <Text fontSize="10.5px" fontWeight={700} color="#697386"
+            textTransform="uppercase" letterSpacing="0.07em" fontFamily="heading">
+            Hero video
+          </Text>
+        </HStack>
+      </Box>
+
+      <Box p={6}>
+        <Text fontSize="13px" color="#697386" fontFamily="heading" mb={5}>
+          Upload an mp4 video (max 200 MB). It will appear automatically on your external landing page
+          as soon as it&apos;s uploaded — no code changes needed.
+        </Text>
+
+        {videoUrl ? (
+          <Box mb={5}>
+            <Text fontSize="11px" fontWeight="700" color="#697386" textTransform="uppercase"
+              letterSpacing="0.07em" fontFamily="heading" mb={2}>
+              Current video
+            </Text>
+            <Box border="1px solid #E3E8EE" style={{ borderRadius: 8 }} overflow="hidden" bg="#000">
+              <video src={videoUrl} controls style={{ width: '100%', maxHeight: 360, display: 'block' }} />
+            </Box>
+            <Text fontSize="11px" color="#697386" fontFamily="heading" mt={2} wordBreak="break-all">
+              {videoUrl}
+            </Text>
+          </Box>
+        ) : (
+          <Box mb={5} border="2px dashed #E3E8EE" style={{ borderRadius: 8 }} py={10} textAlign="center">
+            <Icon as={LucideVideo} w={8} h={8} color="#CBD5E1" mb={3} />
+            <Text fontSize="13px" color="#CBD5E1" fontFamily="heading" fontWeight="500">
+              No video uploaded yet
+            </Text>
+            <Text fontSize="12px" color="#97A0AF" fontFamily="heading" mt={1}>
+              The landing page will show a static hero until you upload a video.
+            </Text>
+          </Box>
+        )}
+
+        <HStack gap={3} flexWrap="wrap">
+          <input
+            ref={inputRef}
+            type="file"
+            accept="video/mp4,video/mov,video/webm"
+            style={{ display: 'none' }}
+            onChange={handleUpload}
+          />
+          <Button
+            bg="#0A80DB" color="white" borderRadius="4px"
+            fontWeight="600" fontSize="13px" fontFamily="heading"
+            _hover={{ bg: '#0870C2' }}
+            loading={uploading}
+            loadingText="Uploading…"
+            onClick={() => inputRef.current?.click()}
+          >
+            <Icon as={LucideUpload} w={3.5} h={3.5} mr={1.5} />
+            {videoUrl ? 'Replace video' : 'Upload video'}
+          </Button>
+
+          {videoUrl && (
+            <Button
+              variant="outline" borderColor="#FECDD3" color="#E11D48"
+              borderRadius="4px" fontWeight="600" fontSize="13px" fontFamily="heading"
+              _hover={{ bg: '#FFF1F2' }}
+              loading={deleting}
+              loadingText="Removing…"
+              onClick={handleDelete}
+            >
+              <Icon as={LucideTrash} w={3.5} h={3.5} mr={1.5} />Remove video
+            </Button>
+          )}
+        </HStack>
+      </Box>
+    </Box>
   );
 }
