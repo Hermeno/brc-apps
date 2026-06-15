@@ -1,5 +1,6 @@
 import { PrismaClient } from '@prisma/client';
 import { PrismaPg } from '@prisma/adapter-pg';
+import { Pool } from 'pg';
 import { readFileSync } from 'fs';
 import { join } from 'path';
 
@@ -14,20 +15,29 @@ function loadCACert(): string | undefined {
 }
 
 function createClient(): PrismaClient {
-  const connectionString = process.env.DATABASE_URL;
-  if (!connectionString) {
+  const rawUrl = process.env.DATABASE_URL;
+  if (!rawUrl) {
     console.error('[prisma] DATABASE_URL is not set — all DB calls will fail');
   }
 
   const ca = loadCACert();
 
-  const adapter = new PrismaPg({
-    connectionString:        connectionString ?? '',
+  // Strip sslmode from URL so pg-connection-string doesn't override our ssl config.
+  // pg treats sslmode=require as verify-full (rejectUnauthorized: true), which breaks
+  // connections to DO managed databases that use an internal CA.
+  const connectionString = (rawUrl ?? '').replace(/([?&])sslmode=[^&]*/g, '$1').replace(/[?&]$/, '').replace(/\?$/, '');
+
+  // Create Pool directly so ssl config is guaranteed — PrismaPg(PoolConfig) may strip
+  // options other than connectionString when building the pool internally.
+  const pool = new Pool({
+    connectionString,
     max:                     3,
     connectionTimeoutMillis: 15_000,
     idleTimeoutMillis:       30_000,
-    ssl:                     ca ? { rejectUnauthorized: true, ca } : { rejectUnauthorized: false },
+    ssl: ca ? { rejectUnauthorized: true, ca } : { rejectUnauthorized: false },
   });
+
+  const adapter = new PrismaPg(pool);
 
   const client = new PrismaClient({
     adapter,
