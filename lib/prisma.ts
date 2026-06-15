@@ -4,24 +4,31 @@ const globalForPrisma = global as unknown as { prisma: PrismaClient };
 
 function buildUrl(): string | undefined {
   const url = process.env.DATABASE_URL;
-  if (!url) return undefined;
-  try {
-    const u = new URL(url);
-    if (!u.searchParams.has('connect_timeout'))  u.searchParams.set('connect_timeout', '15');
-    if (!u.searchParams.has('pool_timeout'))     u.searchParams.set('pool_timeout',    '30');
-    // Keep per-instance pool small so multiple DO instances don't exhaust Neon's connection limit.
-    // Neon free tier allows ~20 total; with 3 per instance we support up to 6 instances safely.
-    if (!u.searchParams.has('connection_limit')) u.searchParams.set('connection_limit', '3');
-    return u.toString();
-  } catch {
-    return url;
+  if (!url) {
+    console.error('[prisma] DATABASE_URL is not set — all DB calls will fail');
+    return undefined;
   }
+
+  // Append Prisma connection params via string manipulation instead of new URL()
+  // to avoid the URL API corrupting passwords that contain special characters
+  // (e.g. '@', '!', '#') by misinterpreting them as URL delimiters.
+  // Keep per-instance pool small so multiple DO instances don't exhaust Neon's
+  // ~20-connection free-tier limit; with 3 per instance we support up to 6 instances.
+  const append = (base: string, key: string, val: string) =>
+    base.includes(`${key}=`) ? base : `${base}${base.includes('?') ? '&' : '?'}${key}=${val}`;
+
+  let out = url;
+  out = append(out, 'connect_timeout',  '15');
+  out = append(out, 'pool_timeout',     '30');
+  out = append(out, 'connection_limit', '3');
+  return out;
 }
 
 function createClient() {
+  const url = buildUrl();
   const client = new PrismaClient({
     log: [{ emit: 'event', level: 'error' }],
-    datasources: { db: { url: buildUrl() } },
+    ...(url ? { datasources: { db: { url } } } : {}),
   });
 
   // Neon free-tier closes idle connections automatically — this is expected.
