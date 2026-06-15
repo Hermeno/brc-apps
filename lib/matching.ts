@@ -98,6 +98,8 @@ export async function runMatching(leadId: string) {
   const cleaners = await prisma.user.findMany({
     where: {
       role: 'CLEANER', isAvailable: true, isVerified: true,
+      hasPaymentMethod: true,
+      verification: { status: 'APPROVED' },
       OR: [{ suspendedUntil: null }, { suspendedUntil: { lt: now } }],
     },
     include: { stats: true },
@@ -196,6 +198,8 @@ async function dispatchNextBatch(
   const candidates = await prisma.user.findMany({
     where: {
       role: 'CLEANER', isAvailable: true, isVerified: true,
+      hasPaymentMethod: true,
+      verification: { status: 'APPROVED' },
       id:  { notIn: usedIds },
       OR:  [{ suspendedUntil: null }, { suspendedUntil: { lt: nowDate } }],
     },
@@ -216,6 +220,8 @@ async function dispatchNextBatch(
       where: {
         id: { in: usedIds },
         role: 'CLEANER', isAvailable: true, isVerified: true,
+        hasPaymentMethod: true,
+        verification: { status: 'APPROVED' },
         OR: [{ suspendedUntil: null }, { suspendedUntil: { lt: nowDate } }],
       },
       include: { stats: true },

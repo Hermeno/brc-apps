@@ -26,6 +26,15 @@ export async function DELETE(
     }
 
     await stripe.paymentMethods.detach(id);
+
+    const remaining = await stripe.paymentMethods.list({ customer: user.stripeCustomerId, type: 'card' });
+    if (remaining.data.length === 0) {
+      await prisma.user.updateMany({
+        where: { stripeCustomerId: user.stripeCustomerId },
+        data:  { hasPaymentMethod: false },
+      });
+    }
+
     return NextResponse.json({ ok: true });
   } catch (err: any) {
     logError('[DELETE /api/stripe/payment-methods/[id]]', err);

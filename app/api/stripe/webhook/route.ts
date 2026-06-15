@@ -55,6 +55,10 @@ export async function POST(req: NextRequest) {
                 invoice_settings: { default_payment_method: pmId },
               });
             }
+            await prisma.user.updateMany({
+              where: { stripeCustomerId: customerId },
+              data:  { hasPaymentMethod: true },
+            });
           }
 
         } else if (meta.type === 'subscription') {

@@ -63,6 +63,7 @@ model User {
   // Stripe
   stripeCustomerId      String?
   stripeSubscriptionId  String?
+  hasPaymentMethod      Boolean  @default(false)
 
   leadsCreated    Lead[]        @relation("ClientLeads")
   leadsAccepted   Lead[]        @relation("CleanerLeads")
