@@ -17,6 +17,7 @@ function createClient(): PrismaClient {
     max:                     3,
     connectionTimeoutMillis: 15_000,
     idleTimeoutMillis:       30_000,
+    ssl:                     { rejectUnauthorized: false },
   });
 
   const client = new PrismaClient({
