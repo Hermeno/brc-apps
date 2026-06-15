@@ -14,6 +14,7 @@ import CleanerNav from '@/components/cleaner-nav';
 import { toaster } from '@/lib/toaster';
 import { motion, AnimatePresence } from 'motion/react';
 import { useRouter } from 'next/navigation';
+import { useT } from '@/lib/i18n';
 
 type Lead = {
   id: string;
@@ -42,8 +43,6 @@ type MyConversation = {
   lead: Lead & { clientPhone?: string | null; client: { name: string; phone?: string | null } | null };
 };
 
-// ─── Section panel ────────────────────────────────────────────────────────────
-
 function SectionPanel({ title, count, accentColor, extra, children }: {
   title: string;
   count?: number;
@@ -56,10 +55,7 @@ function SectionPanel({ title, count, accentColor, extra, children }: {
       <Box px={5} py={3} bg="#F6F9FC" borderBottom="1px solid #E3E8EE">
         <Flex align="center" justify="space-between">
           <HStack gap={2.5}>
-            <Text
-              fontSize="10.5px" fontWeight="700" color="#697386"
-              fontFamily="heading" textTransform="uppercase" letterSpacing="0.07em"
-            >
+            <Text fontSize="10.5px" fontWeight="700" color="#697386" fontFamily="heading" textTransform="uppercase" letterSpacing="0.07em">
               {title}
             </Text>
             {!!count && count > 0 && (
@@ -82,8 +78,6 @@ function SectionPanel({ title, count, accentColor, extra, children }: {
   );
 }
 
-// ─── Chip label ───────────────────────────────────────────────────────────────
-
 function Chip({ label, bg, color }: { label: string; bg: string; color: string }) {
   return (
     <Text
@@ -96,10 +90,9 @@ function Chip({ label, bg, color }: { label: string; bg: string; color: string }
   );
 }
 
-// ─── Page ─────────────────────────────────────────────────────────────────────
-
 export default function CleanerDashboard() {
   const router = useRouter();
+  const t = useT();
   const [available, setAvailable]         = useState<Lead[]>([]);
   const [accepted, setAccepted]           = useState<Lead[]>([]);
   const [verifyStatus, setVerifyStatus]   = useState<string | null>(null);
@@ -120,7 +113,7 @@ export default function CleanerDashboard() {
         setConversations(data.conversations ?? []);
       }
     } catch {
-      // network error — keep current state, do not crash
+      // network error — keep current state
     } finally { if (!silent) setLoading(false); }
   }, []);
 
@@ -138,12 +131,11 @@ export default function CleanerDashboard() {
       const p = new URLSearchParams(window.location.search);
       if (p.get('lead_paid') === '1') {
         toaster.create({
-          title: 'Payment confirmed!',
-          description: 'Lead unlocked. You can now message this client below.',
+          title: t('cleaner.dashboard.paidToastTitle'),
+          description: t('cleaner.dashboard.paidToastDesc'),
           type: 'success',
         });
         window.history.replaceState({}, '', window.location.pathname);
-        // Poll silently until the Stripe webhook creates the conversation (up to ~10 s)
         let tries = 0;
         const poll = setInterval(() => {
           tries++;
@@ -173,9 +165,7 @@ export default function CleanerDashboard() {
 
   const activeJobs    = accepted.filter(l => l.status !== 'COMPLETED');
   const completedJobs = accepted.filter(l => l.status === 'COMPLETED');
-  // Conversations waiting for client response (lead IN_REVIEW)
   const pendingConversations = conversations.filter(c => c.lead.status === 'IN_REVIEW');
-  // Conversations for accepted leads (client already accepted — show chat + contact in Accepted Jobs)
   const activeAcceptedConvMap = new Map(
     conversations.filter(c => c.lead.status === 'ACCEPTED').map(c => [c.lead.id, c])
   );
@@ -186,21 +176,20 @@ export default function CleanerDashboard() {
 
       <Box maxW="1080px" mx="auto" px={{ base: 4, md: 6 }} py={5}>
 
-        {/* ── Account setup checklist — shown while any step is incomplete ── */}
+        {/* ── Account setup checklist ── */}
         {(hasCard === false || (verifyStatus !== null && verifyStatus !== 'APPROVED')) && (
           <Box mb={5} border="2px solid #F59E0B" bg="white" style={{ borderRadius: 8 }} overflow="hidden">
             <Box px={5} py={3} bg="#FFFBEB" borderBottom="1px solid #FDE68A">
               <HStack gap={2}>
                 <Icon as={LucideAlertTriangle} w={4} h={4} color="#D97706" />
-                <Text fontSize="12px" fontWeight="700" color="#92400E" fontFamily="heading"
-                  textTransform="uppercase" letterSpacing="0.07em">
-                  Complete your setup to receive leads
+                <Text fontSize="12px" fontWeight="700" color="#92400E" fontFamily="heading" textTransform="uppercase" letterSpacing="0.07em">
+                  {t('cleaner.dashboard.setupTitle')}
                 </Text>
               </HStack>
             </Box>
 
             <VStack gap={0} align="stretch">
-              {/* Step 1 — Payment card */}
+              {/* Payment card */}
               <Flex px={5} py={4} align="center" justify="space-between" gap={3} flexWrap="wrap"
                 borderBottom="1px solid #F1F5F9">
                 <HStack gap={3}>
@@ -210,12 +199,10 @@ export default function CleanerDashboard() {
                   }
                   <Box>
                     <Text fontSize="13px" fontWeight="700" color={hasCard ? '#047857' : '#0F172A'} fontFamily="heading">
-                      {hasCard ? 'Payment card saved' : 'Add a payment card'}
+                      {hasCard ? t('cleaner.dashboard.cardSaved') : t('cleaner.dashboard.cardAdd')}
                     </Text>
                     <Text fontSize="11.5px" color={hasCard ? '#059669' : '#697386'} mt={0.5}>
-                      {hasCard
-                        ? 'You will be charged automatically when a client accepts you.'
-                        : 'Required. You are only charged when a client accepts your proposal — not before.'}
+                      {hasCard ? t('cleaner.dashboard.cardSavedDesc') : t('cleaner.dashboard.cardAddDesc')}
                     </Text>
                   </Box>
                 </HStack>
@@ -226,12 +213,12 @@ export default function CleanerDashboard() {
                     _hover={{ bg: '#B45309' }}
                     onClick={() => router.push('/dashboard/payment-methods')}
                   >
-                    <Icon as={LucideCreditCard} w={3.5} h={3.5} mr={1.5} />Add card
+                    <Icon as={LucideCreditCard} w={3.5} h={3.5} mr={1.5} />{t('cleaner.dashboard.addCardBtn')}
                   </Button>
                 )}
               </Flex>
 
-              {/* Step 2 — Identity / document verification */}
+              {/* Identity verification */}
               <Flex px={5} py={4} align="center" justify="space-between" gap={3} flexWrap="wrap">
                 <HStack gap={3}>
                   {verifyStatus === 'APPROVED'
@@ -252,19 +239,16 @@ export default function CleanerDashboard() {
                         : '#0F172A'
                       }
                     >
-                      {verifyStatus === 'APPROVED' ? 'Identity verified'
-                       : verifyStatus === 'PENDING' ? 'Verification under review'
-                       : verifyStatus === 'REJECTED' ? 'Verification declined'
-                       : 'Verify your identity'}
+                      {verifyStatus === 'APPROVED' ? t('cleaner.dashboard.identityVerified')
+                       : verifyStatus === 'PENDING' ? t('cleaner.dashboard.identityReview')
+                       : verifyStatus === 'REJECTED' ? t('cleaner.dashboard.identityDeclined')
+                       : t('cleaner.dashboard.identityNone')}
                     </Text>
                     <Text fontSize="11.5px" color="#697386" mt={0.5}>
-                      {verifyStatus === 'APPROVED'
-                        ? 'Your documents were approved. You appear to clients as verified.'
-                        : verifyStatus === 'PENDING'
-                        ? 'We\'ll review your documents within 48 hours. You\'ll be notified.'
-                        : verifyStatus === 'REJECTED'
-                        ? 'Your documents were not accepted. Please resubmit for review.'
-                        : 'Required. Submit your documents to start receiving leads from clients.'}
+                      {verifyStatus === 'APPROVED' ? t('cleaner.dashboard.identityVerifiedDesc')
+                       : verifyStatus === 'PENDING' ? t('cleaner.dashboard.identityReviewDesc')
+                       : verifyStatus === 'REJECTED' ? t('cleaner.dashboard.identityDeclinedDesc')
+                       : t('cleaner.dashboard.identityNoneDesc')}
                     </Text>
                   </Box>
                 </HStack>
@@ -278,7 +262,7 @@ export default function CleanerDashboard() {
                     onClick={() => router.push('/dashboard/cleaner/verify')}
                   >
                     <Icon as={LucideShield} w={3.5} h={3.5} mr={1.5} />
-                    {verifyStatus === 'REJECTED' ? 'Resubmit' : 'Get verified'}
+                    {verifyStatus === 'REJECTED' ? t('cleaner.dashboard.resubmit') : t('cleaner.dashboard.verifyNow')}
                   </Button>
                 )}
               </Flex>
@@ -288,7 +272,7 @@ export default function CleanerDashboard() {
 
         {/* ── Available Leads ── */}
         <SectionPanel
-          title="Available Leads"
+          title={t('cleaner.dashboard.sectionAvailable')}
           count={available.length}
           accentColor="#F59E0B"
           extra={
@@ -297,21 +281,21 @@ export default function CleanerDashboard() {
               _hover={{ color: '#0A80DB', bg: 'rgba(26,127,160,0.06)' }}
               onClick={() => fetchLeads()} loading={loading}
             >
-              <Icon as={LucideRefreshCw} w={3} h={3} mr={1.5} />Refresh
+              <Icon as={LucideRefreshCw} w={3} h={3} mr={1.5} />{t('cleaner.dashboard.refresh')}
             </Button>
           }
         >
           {loading ? (
             <Box px={6} py={8} textAlign="center">
-              <Text fontSize="13px" color="#697386" fontFamily="heading">Loading…</Text>
+              <Text fontSize="13px" color="#697386" fontFamily="heading">{t('common.loading')}</Text>
             </Box>
           ) : available.length === 0 ? (
             <Box px={6} py={10} textAlign="center">
               <Text fontSize="13px" color="#CBD5E1" fontFamily="heading" fontWeight="500">
-                No new leads right now
+                {t('cleaner.dashboard.noLeadsNow')}
               </Text>
               <Text fontSize="12px" color="#697386" mt={1}>
-                We'll notify you as soon as a client in your area posts a request.
+                {t('cleaner.dashboard.noLeadsHintNow')}
               </Text>
             </Box>
           ) : (
@@ -321,8 +305,7 @@ export default function CleanerDashboard() {
                 : null;
               return (
                 <Box
-                  key={lead.id}
-                  bg="white"
+                  key={lead.id} bg="white"
                   borderBottom={i < available.length - 1 ? '1px solid #F1F5F9' : 'none'}
                   position="relative"
                 >
@@ -330,19 +313,14 @@ export default function CleanerDashboard() {
                   <Flex px={6} pl={8} py={4} gap={6} align="flex-start" justify="space-between">
                     <Box flex={1} minW={0}>
                       <HStack gap={2.5} mb={1.5} flexWrap="wrap">
-                        <Text
-                          fontSize="14px" fontWeight="700" color="#0F172A"
-                          fontFamily="heading" letterSpacing="-0.01em"
-                        >
-                          {lead.serviceType}
+                        <Text fontSize="14px" fontWeight="700" color="#0F172A" fontFamily="heading" letterSpacing="-0.01em">
+                          {t(`services.${lead.serviceType}`) || lead.serviceType}
                         </Text>
-                        <Chip label="NEW" bg="#FEF3C7" color="#92400E" />
+                        <Chip label={t('cleaner.dashboard.chipNew')} bg="#FEF3C7" color="#92400E" />
                         {lead.client?.name && (
                           <HStack gap={1}>
                             <Icon as={LucideUser} w="10px" h="10px" color="#697386" />
-                            <Text fontSize="11.5px" color="#425466" fontFamily="heading">
-                              {lead.client.name}
-                            </Text>
+                            <Text fontSize="11.5px" color="#425466" fontFamily="heading">{lead.client.name}</Text>
                           </HStack>
                         )}
                       </HStack>
@@ -365,7 +343,7 @@ export default function CleanerDashboard() {
                           {lead.bedrooms   && <Text fontSize="12px" color="#475569">🛏 {lead.bedrooms}bd</Text>}
                           {lead.bathrooms  && <Text fontSize="12px" color="#475569">🚿 {lead.bathrooms}ba</Text>}
                           {(lead.squareMeters ?? 0) > 0 && <Text fontSize="12px" color="#475569">📐 {lead.squareMeters}m²</Text>}
-                          {freqLabel       && (
+                          {freqLabel && (
                             <Text fontSize="12px" color="#0A80DB" fontWeight="600" fontFamily="heading">↻ {freqLabel}</Text>
                           )}
                         </HStack>
@@ -375,9 +353,7 @@ export default function CleanerDashboard() {
                         <HStack gap={3} mb={1.5} flexWrap="wrap">
                           {lead.extras.map(exId => {
                             const ex = EXTRAS.find(e => e.id === exId);
-                            return ex
-                              ? <Text key={exId} fontSize="12px" color="#425466">{ex.icon} {ex.labelEn}</Text>
-                              : null;
+                            return ex ? <Text key={exId} fontSize="12px" color="#425466">{ex.icon} {ex.labelEn}</Text> : null;
                           })}
                         </HStack>
                       )}
@@ -386,10 +362,7 @@ export default function CleanerDashboard() {
                         <HStack gap={4} mt={2}>
                           <HStack gap={1.5}>
                             <Icon as={LucideBanknote} w="13px" h="13px" color="#0A80DB" />
-                            <Text
-                              fontSize="15px" fontWeight="800" color="#047857"
-                              fontFamily="heading" letterSpacing="-0.02em"
-                            >
+                            <Text fontSize="15px" fontWeight="800" color="#047857" fontFamily="heading" letterSpacing="-0.02em">
                               ${lead.estimatedMinPrice}–${lead.estimatedMaxPrice}
                             </Text>
                           </HStack>
@@ -405,9 +378,7 @@ export default function CleanerDashboard() {
                       )}
 
                       {lead.notes && (
-                        <Text color="#697386" fontSize="11.5px" fontStyle="italic" mt={1.5}>
-                          {lead.notes}
-                        </Text>
+                        <Text color="#697386" fontSize="11.5px" fontStyle="italic" mt={1.5}>{lead.notes}</Text>
                       )}
                     </Box>
 
@@ -417,10 +388,9 @@ export default function CleanerDashboard() {
                       flexShrink={0} alignSelf="center"
                       _hover={{ bg: '#0870C2' }} transition="background 0.15s"
                       onClick={() => handleRespond(lead.id)}
-                      loading={responding === lead.id}
-                      loadingText="…"
+                      loading={responding === lead.id} loadingText="…"
                     >
-                      Accept lead
+                      {t('cleaner.dashboard.accept')}
                     </Button>
                   </Flex>
                 </Box>
@@ -432,28 +402,25 @@ export default function CleanerDashboard() {
         {/* ── Awaiting Client Response ── */}
         {pendingConversations.length > 0 && (
           <SectionPanel
-            title="Awaiting Client Response"
+            title={t('cleaner.dashboard.sectionAwaiting')}
             count={pendingConversations.length}
             accentColor="#60A5FA"
           >
             {pendingConversations.map((conv, i) => (
               <Box
-                key={conv.id}
-                bg="white"
+                key={conv.id} bg="white"
                 borderBottom={i < pendingConversations.length - 1 ? '1px solid #F1F5F9' : 'none'}
-                position="relative"
-                cursor="pointer"
+                position="relative" cursor="pointer"
                 onClick={() => router.push(`/dashboard/chat/${conv.id}`)}
-                _hover={{ bg: '#FAFBFD' }}
-                transition="background 0.12s"
+                _hover={{ bg: '#FAFBFD' }} transition="background 0.12s"
               >
                 <Box position="absolute" left={0} top={0} bottom={0} w="3px" bg="#60A5FA" />
                 <Flex px={6} pl={8} py={3.5} gap={6} align="center" justify="space-between">
                   <Box>
                     <HStack gap={2.5} mb={1} flexWrap="wrap">
-                      <Chip label="Waiting for client" bg="#F6F9FC" color="#0A80DB" />
+                      <Chip label={t('cleaner.dashboard.chipWaiting')} bg="#F6F9FC" color="#0A80DB" />
                       <Text fontSize="14px" fontWeight="700" color="#0F172A" fontFamily="heading" letterSpacing="-0.01em">
-                        {conv.lead.serviceType}
+                        {t(`services.${conv.lead.serviceType}`) || conv.lead.serviceType}
                       </Text>
                     </HStack>
                     <HStack gap={4} flexWrap="wrap">
@@ -482,7 +449,7 @@ export default function CleanerDashboard() {
                     onClick={e => { e.stopPropagation(); router.push(`/dashboard/chat/${conv.id}`); }}
                   >
                     <Icon as={LucideMessageCircle} w={3.5} h={3.5} mr={1.5} />
-                    Open chat
+                    {t('cleaner.dashboard.openChat')}
                   </Button>
                 </Flex>
               </Box>
@@ -493,7 +460,7 @@ export default function CleanerDashboard() {
         {/* ── Accepted Jobs ── */}
         {activeJobs.length > 0 && (
           <SectionPanel
-            title="Accepted Jobs"
+            title={t('cleaner.dashboard.sectionActive')}
             count={activeJobs.length}
             accentColor="#10B981"
           >
@@ -503,8 +470,7 @@ export default function CleanerDashboard() {
               const contactPhone = conv && (conv.lead.clientPhone || conv.lead.client?.phone);
               return (
                 <Box
-                  key={lead.id}
-                  bg="white"
+                  key={lead.id} bg="white"
                   borderBottom={i < activeJobs.length - 1 ? '1px solid #F1F5F9' : 'none'}
                   position="relative"
                 >
@@ -513,9 +479,9 @@ export default function CleanerDashboard() {
                     <Flex gap={6} align="flex-start">
                       <Box flex={1}>
                         <HStack gap={2.5} mb={1} flexWrap="wrap">
-                          <Chip label="Accepted" bg="#F0FDF4" color="#047857" />
+                          <Chip label={t('cleaner.dashboard.chipAccepted')} bg="#F0FDF4" color="#047857" />
                           <Text fontSize="14px" fontWeight="700" color="#0F172A" fontFamily="heading" letterSpacing="-0.01em">
-                            {lead.serviceType}
+                            {t(`services.${lead.serviceType}`) || lead.serviceType}
                           </Text>
                         </HStack>
                         <HStack gap={4} flexWrap="wrap">
@@ -550,43 +516,30 @@ export default function CleanerDashboard() {
                           onClick={() => router.push(`/dashboard/chat/${conv.id}`)}
                         >
                           <Icon as={LucideMessageCircle} w={3.5} h={3.5} mr={1.5} />
-                          Chat
+                          {t('cleaner.dashboard.chat')}
                         </Button>
                       )}
                     </Flex>
 
-                    {/* Client contact — shown as soon as fee is paid */}
                     {feePaid && contactPhone ? (
-                      <Box
-                        mt={3} px={4} py={3}
-                        bg="#F0FDF4" border="1px solid #BBF7D0"
-                        style={{ borderRadius: 6 }}
-                      >
+                      <Box mt={3} px={4} py={3} bg="#F0FDF4" border="1px solid #BBF7D0" style={{ borderRadius: 6 }}>
                         <HStack gap={2}>
                           <Icon as={LucidePhone} w={4} h={4} color="#059669" flexShrink={0} />
-                          <Text fontSize="11px" fontWeight="700" color="#047857" fontFamily="heading"
-                            textTransform="uppercase" letterSpacing="0.06em">
-                            Client contact
+                          <Text fontSize="11px" fontWeight="700" color="#047857" fontFamily="heading" textTransform="uppercase" letterSpacing="0.06em">
+                            {t('cleaner.dashboard.clientContact')}
                           </Text>
-                          <Text
-                            fontSize="15px" fontWeight="800" color="#065F46"
-                            fontFamily="heading" letterSpacing="-0.01em"
-                          >
+                          <Text fontSize="15px" fontWeight="800" color="#065F46" fontFamily="heading" letterSpacing="-0.01em">
                             {contactPhone}
                           </Text>
                         </HStack>
                       </Box>
                     ) : conv && !feePaid ? (
-                      <Box
-                        mt={3} px={4} py={3}
-                        bg="#FFFBEB" border="1px solid #FDE68A"
-                        style={{ borderRadius: 6 }}
-                      >
+                      <Box mt={3} px={4} py={3} bg="#FFFBEB" border="1px solid #FDE68A" style={{ borderRadius: 6 }}>
                         <Flex align="center" justify="space-between" gap={3} flexWrap="wrap">
                           <HStack gap={2}>
                             <Icon as={LucidePhone} w={4} h={4} color="#D97706" flexShrink={0} />
                             <Text fontSize="12px" color="#92400E" fontWeight="600" fontFamily="heading">
-                              Pay the lead fee to unlock the client's contact
+                              {t('cleaner.dashboard.payToUnlock')}
                             </Text>
                           </HStack>
                           <Button
@@ -595,7 +548,7 @@ export default function CleanerDashboard() {
                             _hover={{ bg: '#B45309' }}
                             onClick={() => router.push(`/dashboard/chat/${conv.id}`)}
                           >
-                            Pay ${conv.leadFee} to unlock
+                            {t('cleaner.dashboard.payBtn', { fee: String(conv.leadFee) })}
                           </Button>
                         </Flex>
                       </Box>
@@ -615,18 +568,14 @@ export default function CleanerDashboard() {
               borderBottom={showHistory ? '1px solid #E3E8EE' : 'none'}
               cursor="pointer"
               onClick={() => setShowHistory(h => !h)}
-              _hover={{ bg: '#F8FAFC' }}
-              transition="background 0.12s"
+              _hover={{ bg: '#F8FAFC' }} transition="background 0.12s"
               style={{ textAlign: 'left' }}
             >
               <Flex align="center" justify="space-between">
                 <HStack gap={2.5}>
                   <Icon as={LucideBriefcase} w="12px" h="12px" color="#697386" />
-                  <Text
-                    fontSize="10.5px" fontWeight="700" color="#697386"
-                    fontFamily="heading" textTransform="uppercase" letterSpacing="0.07em"
-                  >
-                    Past jobs
+                  <Text fontSize="10.5px" fontWeight="700" color="#697386" fontFamily="heading" textTransform="uppercase" letterSpacing="0.07em">
+                    {t('cleaner.dashboard.pastJobs')}
                   </Text>
                   <Box
                     bg="#475569" color="white" px={2} h="16px" minW="16px"
@@ -651,19 +600,17 @@ export default function CleanerDashboard() {
                 >
                   {completedJobs.map((lead, i) => (
                     <Box
-                      key={lead.id}
-                      bg="white"
+                      key={lead.id} bg="white"
                       borderBottom={i < completedJobs.length - 1 ? '1px solid #F1F5F9' : 'none'}
-                      position="relative"
-                      opacity={0.7}
+                      position="relative" opacity={0.7}
                     >
                       <Box position="absolute" left={0} top={0} bottom={0} w="3px" bg="#CBD5E1" />
                       <Flex px={6} pl={8} py={3.5} gap={6} align="flex-start">
                         <Box flex={1}>
                           <HStack gap={2.5} mb={1} flexWrap="wrap">
-                            <Chip label="Completed" bg="#F1F5F9" color="#475569" />
+                            <Chip label={t('cleaner.dashboard.chipCompleted')} bg="#F1F5F9" color="#475569" />
                             <Text fontSize="14px" fontWeight="600" color="#475569" fontFamily="heading" letterSpacing="-0.01em">
-                              {lead.serviceType}
+                              {t(`services.${lead.serviceType}`) || lead.serviceType}
                             </Text>
                           </HStack>
                           <HStack gap={4} flexWrap="wrap">

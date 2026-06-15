@@ -10,18 +10,11 @@ import { useSession, signOut } from 'next-auth/react';
 import NextLink from 'next/link';
 import { usePathname } from 'next/navigation';
 import NotificationBell from '@/components/notification-bell';
+import LanguageSwitcher from '@/components/language-switcher';
 import { useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import Image from 'next/image';
-
-const NAV_ITEMS = [
-  { name: 'Dashboard',  icon: LucideLayoutDashboard, href: '/dashboard/cleaner' },
-  { name: 'Schedule',   icon: LucideCalendar,         href: '/dashboard/schedule' },
-  { name: 'Finances',   icon: LucideWallet,           href: '/dashboard/finances' },
-  { name: 'Plan',       icon: LucideCrown,            href: '/dashboard/plan' },
-  { name: 'Profile',    icon: LucideUser,             href: '/dashboard/profile' },
-  { name: 'Payments',   icon: LucideCreditCard,       href: '/dashboard/payment-methods' },
-];
+import { useT } from '@/lib/i18n';
 
 const NAV_BG = '#0B1120';
 
@@ -29,8 +22,18 @@ export default function CleanerNav() {
   const { data: session } = useSession();
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
-  const firstName = session?.user?.name?.split(' ')[0] ?? 'Cleaner';
+  const t = useT();
+  const firstName = session?.user?.name?.split(' ')[0] ?? t('common.role_cleaner');
   const initial = firstName[0]?.toUpperCase() ?? 'P';
+
+  const NAV_ITEMS = [
+    { key: 'dashboard', icon: LucideLayoutDashboard, href: '/dashboard/cleaner' },
+    { key: 'schedule',  icon: LucideCalendar,         href: '/dashboard/schedule' },
+    { key: 'finances',  icon: LucideWallet,           href: '/dashboard/finances' },
+    { key: 'plan',      icon: LucideCrown,            href: '/dashboard/plan' },
+    { key: 'profile',   icon: LucideUser,             href: '/dashboard/profile' },
+    { key: 'payments',  icon: LucideCreditCard,       href: '/dashboard/payment-methods' },
+  ];
 
   return (
     <Box
@@ -53,7 +56,7 @@ export default function CleanerNav() {
         {/* Logo */}
         <NextLink href="/dashboard/cleaner" style={{ flexShrink: 0, textDecoration: 'none' }}>
           <HStack gap={2}>
-            <Image src="/2.png" alt="BrazilianClean" width={32} height={32} style={{ borderRadius: "50%", objectFit: "cover", flexShrink: 0 }} />
+            <Image src="/2.png" alt="BrazilianClean" width={32} height={32} style={{ borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }} />
             <Text fontWeight="700" fontSize={{ base: '13px', md: '15px' }} letterSpacing="-0.02em" color="white" fontFamily="heading">
               Brazilian<Text as="span" color="brand.400">Clean</Text>
             </Text>
@@ -70,7 +73,7 @@ export default function CleanerNav() {
               (item.href !== '/dashboard/cleaner' && pathname.startsWith(item.href));
             return (
               <NextLink
-                key={item.name}
+                key={item.key}
                 href={item.href}
                 style={{ display: 'flex', height: '60px', alignItems: 'center', textDecoration: 'none' }}
               >
@@ -86,7 +89,7 @@ export default function CleanerNav() {
                     _hover={{ color: isActive ? 'white' : '#CBD5E1' }}
                   >
                     <Icon as={item.icon} w="14px" h="14px" />
-                    <Text>{item.name}</Text>
+                    <Text>{t(`nav.cleaner.${item.key}`)}</Text>
                   </HStack>
                   {isActive && (
                     <Box
@@ -119,13 +122,14 @@ export default function CleanerNav() {
             </Text>
           </HStack>
 
+          <LanguageSwitcher dark />
           <NotificationBell dark />
 
           <Button
             size="sm" variant="ghost" color="#6B7280" px={2} h="34px" borderRadius="lg"
             _hover={{ color: '#F43F5E', bg: 'rgba(244,63,94,0.1)' }} transition="all 0.15s"
             onClick={() => signOut({ callbackUrl: '/auth/login' })}
-            title="Sign out"
+            title={t('common.signOut')}
             display={{ base: 'none', sm: 'flex' }}
           >
             <Icon as={LucideLogOut} w={4} h={4} />
@@ -158,7 +162,7 @@ export default function CleanerNav() {
                   pathname === item.href ||
                   (item.href !== '/dashboard/cleaner' && pathname.startsWith(item.href));
                 return (
-                  <NextLink key={item.name} href={item.href} style={{ textDecoration: 'none' }} onClick={() => setMobileOpen(false)}>
+                  <NextLink key={item.key} href={item.href} style={{ textDecoration: 'none' }} onClick={() => setMobileOpen(false)}>
                     <HStack
                       gap={3} px={3} py={2.5} borderRadius="4px" mb={0.5}
                       bg={isActive ? 'rgba(26,127,160,0.15)' : 'transparent'}
@@ -171,7 +175,7 @@ export default function CleanerNav() {
                       _hover={{ bg: 'rgba(255,255,255,0.06)', color: '#CBD5E1' }}
                     >
                       <Icon as={item.icon} w={4} h={4} />
-                      <Text>{item.name}</Text>
+                      <Text>{t(`nav.cleaner.${item.key}`)}</Text>
                     </HStack>
                   </NextLink>
                 );
@@ -187,14 +191,17 @@ export default function CleanerNav() {
                   </Box>
                   <Box>
                     <Text fontSize="13px" fontWeight="600" color="white" fontFamily="heading">{firstName}</Text>
-                    <Text fontSize="11px" color="#475569">Cleaner</Text>
+                    <Text fontSize="11px" color="#475569">{t('common.role_cleaner')}</Text>
                   </Box>
                 </HStack>
-                <Button size="sm" variant="ghost" color="#6B7280" px={2}
-                  _hover={{ color: '#F43F5E', bg: 'rgba(244,63,94,0.1)' }}
-                  onClick={() => signOut({ callbackUrl: '/auth/login' })}>
-                  <Icon as={LucideLogOut} w={4} h={4} />
-                </Button>
+                <HStack gap={2}>
+                  <LanguageSwitcher dark />
+                  <Button size="sm" variant="ghost" color="#6B7280" px={2}
+                    _hover={{ color: '#F43F5E', bg: 'rgba(244,63,94,0.1)' }}
+                    onClick={() => signOut({ callbackUrl: '/auth/login' })}>
+                    <Icon as={LucideLogOut} w={4} h={4} />
+                  </Button>
+                </HStack>
               </HStack>
             </Box>
           </motion.div>

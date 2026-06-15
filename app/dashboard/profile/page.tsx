@@ -17,6 +17,8 @@ import { ImageUpload } from '@/components/image-upload';
 /* ─── types ──────────────────────────────────────────────────── */
 type Photo = { id: string; url: string; caption?: string | null; createdAt: string };
 
+const PLAN_MAX: Record<string, number> = { FREE: 25, BASIC: 60, PRO: 110, PREMIUM: 110 };
+
 const SERVICE_LIST = [
   'Standard Cleaning', 'Deep Cleaning', 'Post-Construction', 'Move-In/Out',
   'Office', 'Condo/Apartment', 'Airbnb', 'Window Cleaning',
@@ -47,8 +49,6 @@ export default function ProfilePage() {
   const [deletingId,    setDeletingId]    = useState<string | null>(null);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
-
-  const PLAN_MAX: Record<string, number> = { FREE: 25, BASIC: 60, PRO: 110, PREMIUM: 110 };
 
   useEffect(() => {
     fetch('/api/plan')

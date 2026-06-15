@@ -253,7 +253,7 @@ function PaymentMethodsContent() {
                                   )}
                                 </HStack>
                                 <Text fontSize="xs" color="slate.400" mt={0.5}>
-                                  {BRAND_LABELS[card.brand] ?? card.brand} · expires {String(card.expMonth).padStart(2, '0')}/{String(card.expYear).slice(-2)}
+                                  {BRAND_LABELS[card.brand] ?? card.brand} · expires {card.expMonth != null ? String(card.expMonth).padStart(2, '0') : '??'}/{card.expYear != null ? String(card.expYear).slice(-2) : '??'}
                                 </Text>
                               </Box>
                             </HStack>

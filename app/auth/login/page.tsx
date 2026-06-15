@@ -10,12 +10,15 @@ import { toaster } from '@/lib/toaster';
 import NextLink from 'next/link';
 import { LucideArrowRight, LucideArrowLeft, LucideCheckCircle } from 'lucide-react';
 import Image from 'next/image';
+import { useT } from '@/lib/i18n';
+import LanguageSwitcher from '@/components/language-switcher';
 
 export default function LoginPage() {
   const [email, setEmail]       = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading]   = useState(false);
   const router = useRouter();
+  const t = useT();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -25,15 +28,15 @@ export default function LoginPage() {
     if (result?.error) {
       if (result.error.includes('EMAIL_NOT_VERIFIED')) {
         toaster.create({
-          title: 'Check your inbox',
-          description: 'You need to verify your email before signing in. We\'ll send a new code.',
+          title: t('auth.login.errorVerifyTitle'),
+          description: t('auth.login.errorVerifyDesc'),
           type: 'warning',
         });
         router.push(`/auth/verify-email?email=${encodeURIComponent(email)}`);
       } else if (result.error.includes('ACCOUNT_SUSPENDED')) {
-        toaster.create({ title: 'Account suspended', description: 'Your account has been suspended. Please reach out to our support team for help.', type: 'error' });
+        toaster.create({ title: t('auth.login.errorSuspendedTitle'), description: t('auth.login.errorSuspendedDesc'), type: 'error' });
       } else {
-        toaster.create({ title: 'Incorrect email or password', description: 'Double-check your details and try again, or reset your password below.', type: 'error' });
+        toaster.create({ title: t('auth.login.errorBadTitle'), description: t('auth.login.errorBadDesc'), type: 'error' });
       }
       setLoading(false);
     } else {
@@ -49,46 +52,32 @@ export default function LoginPage() {
         display={{ base: 'none', lg: 'flex' }} flexDirection="column"
         w="480px" flexShrink={0} bg="#0B1120" position="relative" overflow="hidden"
       >
-        <Box
-          position="absolute" inset={0}
-          style={{
-            backgroundImage: "url('/abc.png')",
-            // backgroundImage: "url('https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=1200&q=80')",
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-          }}
-        />
+        <Box position="absolute" inset={0} style={{ backgroundImage: "url('/abc.png')", backgroundSize: 'cover', backgroundPosition: 'center' }} />
         <Box position="absolute" inset={0} style={{ background: 'linear-gradient(180deg, rgba(11,17,32,0.88) 0%, rgba(11,17,32,0.60) 50%, rgba(11,17,32,0.88) 100%)' }} />
 
         <Flex direction="column" justify="space-between" h="full" position="relative" p={10}>
           <HStack gap={2.5}>
-            <Image src="/2.png" alt="BrazilianClean" width={32} height={32} style={{ borderRadius: "50%", objectFit: "cover", flexShrink: 0 }} />
+            <Image src="/2.png" alt="BrazilianClean" width={32} height={32} style={{ borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }} />
             <Text fontWeight="700" fontSize="15px" letterSpacing="-0.02em" color="white" fontFamily="heading">
               Brazilian<Text as="span" color="#0A80DB">Clean</Text>
             </Text>
           </HStack>
 
           <Box>
-            <Text
-              fontSize="10.5px" fontWeight="700" letterSpacing="0.14em"
-              color="#0A80DB" textTransform="uppercase" fontFamily="heading" mb={4}
-              style={{ borderLeft: '2px solid #0A80DB', paddingLeft: 10 }}
-            >
-              Trusted by homeowners across the US
+            <Text fontSize="10.5px" fontWeight="700" letterSpacing="0.14em" color="#0A80DB"
+              textTransform="uppercase" fontFamily="heading" mb={4}
+              style={{ borderLeft: '2px solid #0A80DB', paddingLeft: 10 }}>
+              {t('auth.login.tagline')}
             </Text>
             <Text fontSize="26px" fontWeight="800" color="white" fontFamily="heading"
-              letterSpacing="-0.03em" lineHeight="1.15" mb={6}>
-              Your home,<br />in trusted hands.
+              letterSpacing="-0.03em" lineHeight="1.15" mb={6} whiteSpace="pre-line">
+              {t('auth.login.hero')}
             </Text>
             <VStack align="stretch" gap={2.5}>
-              {[
-                'Background-checked cleaners',
-                'Secure payments & satisfaction guarantee',
-                '4.9 stars across 1,000+ reviews',
-              ].map(t => (
-                <HStack key={t} gap={2}>
+              {(['feature1', 'feature2', 'feature3'] as const).map(k => (
+                <HStack key={k} gap={2}>
                   <Icon as={LucideCheckCircle} w="14px" h="14px" color="#0A80DB" flexShrink={0} />
-                  <Text fontSize="13px" color="rgba(255,255,255,0.65)" fontFamily="heading">{t}</Text>
+                  <Text fontSize="13px" color="rgba(255,255,255,0.65)" fontFamily="heading">{t(`auth.login.${k}`)}</Text>
                 </HStack>
               ))}
             </VStack>
@@ -96,36 +85,35 @@ export default function LoginPage() {
         </Flex>
       </Box>
 
-      {/* ── Right panel — form ── */}
+      {/* ── Right panel ── */}
       <Flex flex={1} bg="white" alignItems="center" justifyContent="center" px={{ base: 5, md: 12 }} py={12}>
         <Box w="full" maxW="340px">
 
-          {/* Back to home */}
-          <Box mb={6}>
+          <Flex justify="space-between" align="center" mb={6}>
             <NextLink href="/" style={{ textDecoration: 'none' }}>
               <HStack gap={1.5} display="inline-flex"
                 _hover={{ color: '#0A80DB' }} color="#697386" transition="color 0.15s">
                 <Icon as={LucideArrowLeft} w={3.5} h={3.5} />
-                <Text fontSize="13px" fontFamily="heading" fontWeight="500">Back to home</Text>
+                <Text fontSize="13px" fontFamily="heading" fontWeight="500">{t('common.backToHome')}</Text>
               </HStack>
             </NextLink>
-          </Box>
+            <LanguageSwitcher />
+          </Flex>
 
           {/* Mobile logo */}
           <HStack gap={2.5} mb={10} display={{ base: 'flex', lg: 'none' }}>
-            <Image src="/2.png" alt="BrazilianClean" width={28} height={28} style={{ borderRadius: "50%", objectFit: "cover", flexShrink: 0 }} />
+            <Image src="/2.png" alt="BrazilianClean" width={28} height={28} style={{ borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }} />
             <Text fontWeight="700" fontSize="14px" letterSpacing="-0.02em" color="#0A2540" fontFamily="heading">
               Brazilian<Text as="span" color="#0A80DB">Clean</Text>
             </Text>
           </HStack>
 
           <Box mb={8}>
-            <Text fontSize="24px" fontWeight="800" color="#0A2540" fontFamily="heading"
-              letterSpacing="-0.025em" mb={1}>
-              Welcome back
+            <Text fontSize="24px" fontWeight="800" color="#0A2540" fontFamily="heading" letterSpacing="-0.025em" mb={1}>
+              {t('auth.login.title')}
             </Text>
             <Text fontSize="14px" color="#425466" fontFamily="heading">
-              Sign in to manage your bookings and cleaners.
+              {t('auth.login.subtitle')}
             </Text>
           </Box>
 
@@ -133,74 +121,47 @@ export default function LoginPage() {
             <VStack gap={5} align="stretch">
 
               <Box>
-                <Text fontSize="12px" fontWeight="500" color="#425466" letterSpacing="-0.01em"
-                  fontFamily="heading" mb={1.5}>Email address</Text>
+                <Text fontSize="12px" fontWeight="500" color="#425466" letterSpacing="-0.01em" fontFamily="heading" mb={1.5}>
+                  {t('auth.login.email')}
+                </Text>
                 <Input
-                  placeholder="name@email.com"
-                  value={email}
-                  onChange={e => setEmail(e.target.value)}
-                  bg="white"
-                  border="1.5px solid"
-                  borderColor="#E3E8EE"
-                  h="38px"
-                  borderRadius="8px"
-                  fontFamily="heading"
-                  fontSize="13.5px"
-                  color="#0A2540"
-                  px={4}
-                  _placeholder={{ color: '#B0BAC9' }}
-                  _focus={{ borderColor: '#0A80DB', boxShadow: 'none', outline: 'none' }}
-                  type="email"
-                  required
+                  placeholder={t('auth.login.emailPlaceholder')}
+                  value={email} onChange={e => setEmail(e.target.value)}
+                  bg="white" border="1.5px solid" borderColor="#E3E8EE" h="38px" borderRadius="8px"
+                  fontFamily="heading" fontSize="13.5px" color="#0A2540" px={4}
+                  _placeholder={{ color: '#B0BAC9' }} _focus={{ borderColor: '#0A80DB', boxShadow: 'none', outline: 'none' }}
+                  type="email" required
                 />
               </Box>
 
               <Box>
                 <Flex justify="space-between" align="center" mb={1.5}>
-                  <Text fontSize="12px" fontWeight="500" color="#425466" letterSpacing="-0.01em"
-                    fontFamily="heading">Password</Text>
+                  <Text fontSize="12px" fontWeight="500" color="#425466" letterSpacing="-0.01em" fontFamily="heading">
+                    {t('auth.login.password')}
+                  </Text>
                   <NextLink href="/auth/forgot-password">
-                    <Text fontSize="12px" color="#0A80DB" fontWeight="500" cursor="pointer"
-                      fontFamily="heading" _hover={{ color: '#0870C2' }}>Forgot your password?</Text>
+                    <Text fontSize="12px" color="#0A80DB" fontWeight="500" cursor="pointer" fontFamily="heading" _hover={{ color: '#0870C2' }}>
+                      {t('auth.login.forgotPassword')}
+                    </Text>
                   </NextLink>
                 </Flex>
                 <Input
-                  type="password"
-                  placeholder="••••••••"
-                  value={password}
-                  onChange={e => setPassword(e.target.value)}
-                  bg="white"
-                  border="1.5px solid"
-                  borderColor="#E3E8EE"
-                  h="38px"
-                  borderRadius="8px"
-                  fontFamily="heading"
-                  fontSize="13.5px"
-                  color="#0A2540"
-                  px={4}
-                  _placeholder={{ color: '#B0BAC9' }}
-                  _focus={{ borderColor: '#0A80DB', boxShadow: 'none', outline: 'none' }}
+                  type="password" placeholder={t('auth.login.passwordPlaceholder')}
+                  value={password} onChange={e => setPassword(e.target.value)}
+                  bg="white" border="1.5px solid" borderColor="#E3E8EE" h="38px" borderRadius="8px"
+                  fontFamily="heading" fontSize="13.5px" color="#0A2540" px={4}
+                  _placeholder={{ color: '#B0BAC9' }} _focus={{ borderColor: '#0A80DB', boxShadow: 'none', outline: 'none' }}
                   required
                 />
               </Box>
 
               <Button
-                type="submit"
-                bg="#0A80DB"
-                color="white"
-                h="40px"
-                borderRadius="9999px"
-                fontWeight="600"
-                fontSize="13.5px"
-                letterSpacing="-0.01em"
-                fontFamily="heading"
-                _hover={{ bg: '#0870C2' }}
-                transition="background 0.15s"
-                loading={loading}
-                loadingText="Signing you in…"
-                mt={1}
+                type="submit" bg="#0A80DB" color="white" h="40px" borderRadius="9999px"
+                fontWeight="600" fontSize="13.5px" letterSpacing="-0.01em" fontFamily="heading"
+                _hover={{ bg: '#0870C2' }} transition="background 0.15s"
+                loading={loading} loadingText={t('auth.login.submitting')} mt={1}
               >
-                Sign in to my account
+                {t('auth.login.submit')}
                 <Icon as={LucideArrowRight} w={3.5} h={3.5} ml={1.5} />
               </Button>
 
@@ -209,10 +170,11 @@ export default function LoginPage() {
 
           <Box mt={7} pt={6} borderTop="1px solid #E3E8EE">
             <Text fontSize="13px" color="#425466" fontFamily="heading" textAlign="center">
-              New to BrazilianClean?{' '}
+              {t('auth.login.noAccount')}{' '}
               <NextLink href="/auth/register">
-                <Text as="span" color="#0A80DB" fontWeight="700" cursor="pointer"
-                  _hover={{ color: '#0870C2' }}>Create a free account</Text>
+                <Text as="span" color="#0A80DB" fontWeight="700" cursor="pointer" _hover={{ color: '#0870C2' }}>
+                  {t('auth.login.createAccount')}
+                </Text>
               </NextLink>
             </Text>
           </Box>

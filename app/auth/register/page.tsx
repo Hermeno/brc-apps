@@ -9,6 +9,8 @@ import { toaster } from '@/lib/toaster';
 import NextLink from 'next/link';
 import { LucideArrowRight, LucideArrowLeft, LucideCheckCircle } from 'lucide-react';
 import Image from 'next/image';
+import { useT } from '@/lib/i18n';
+import LanguageSwitcher from '@/components/language-switcher';
 
 function formatUSPhone(raw: string) {
   const digits = raw.replace(/\D/g, '').slice(0, 10);
@@ -24,6 +26,7 @@ export default function RegisterPage() {
   const [phone, setPhone]       = useState('');
   const [loading, setLoading]   = useState(false);
   const router = useRouter();
+  const t = useT();
 
   const handlePhone = (e: React.ChangeEvent<HTMLInputElement>) => {
     setPhone(formatUSPhone(e.target.value));
@@ -33,7 +36,7 @@ export default function RegisterPage() {
     e.preventDefault();
     const phoneDigits = phone.replace(/\D/g, '');
     if (phoneDigits.length !== 10) {
-      toaster.create({ title: 'Phone number looks off', description: 'Please enter a valid 10-digit US phone number, e.g. (555) 123-4567.', type: 'error' });
+      toaster.create({ title: t('auth.register.errorPhone'), type: 'error' });
       return;
     }
     setLoading(true);
@@ -44,14 +47,14 @@ export default function RegisterPage() {
         body: JSON.stringify({ name, email, password, role: 'CLEANER', phone: `+1${phoneDigits}` }),
       });
       if (res.ok) {
-        toaster.create({ title: 'Account created!', description: 'Check your inbox for a 6-digit code to activate your account.', type: 'success' });
+        toaster.create({ title: t('auth.register.successTitle'), description: t('auth.register.successDesc'), type: 'success' });
         router.push(`/auth/verify-email?email=${encodeURIComponent(email)}`);
       } else {
         const data = await res.json();
-        throw new Error(data.error || 'Registration failed');
+        throw new Error(data.error || t('auth.register.errorFailed'));
       }
     } catch (error: any) {
-      toaster.create({ title: 'Something went wrong', description: error.message, type: 'error' });
+      toaster.create({ title: t('common.error'), description: error.message, type: 'error' });
     } finally {
       setLoading(false);
     }
@@ -79,17 +82,12 @@ export default function RegisterPage() {
         display={{ base: 'none', lg: 'flex' }} flexDirection="column"
         w="480px" flexShrink={0} bg="#0B1120" position="relative" overflow="hidden"
       >
-        <Box
-          position="absolute" inset={0}
-          style={{ backgroundImage: "url('/abc.png')", backgroundSize: 'cover', backgroundPosition: 'center' }}
-        />
-        <Box position="absolute" inset={0}
-          style={{ background: 'linear-gradient(180deg, rgba(11,17,32,0.88) 0%, rgba(11,17,32,0.60) 50%, rgba(11,17,32,0.88) 100%)' }} />
+        <Box position="absolute" inset={0} style={{ backgroundImage: "url('/abc.png')", backgroundSize: 'cover', backgroundPosition: 'center' }} />
+        <Box position="absolute" inset={0} style={{ background: 'linear-gradient(180deg, rgba(11,17,32,0.88) 0%, rgba(11,17,32,0.60) 50%, rgba(11,17,32,0.88) 100%)' }} />
 
         <Flex direction="column" justify="space-between" h="full" position="relative" p={10}>
           <HStack gap={2.5}>
-            <Image src="/2.png" alt="BrazilianClean" width={32} height={32}
-              style={{ borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }} />
+            <Image src="/2.png" alt="BrazilianClean" width={32} height={32} style={{ borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }} />
             <Text fontWeight="700" fontSize="15px" letterSpacing="-0.02em" color="white" fontFamily="heading">
               Brazilian<Text as="span" color="#0A80DB">Clean</Text>
             </Text>
@@ -99,21 +97,17 @@ export default function RegisterPage() {
             <Text fontSize="10.5px" fontWeight="700" letterSpacing="0.14em" color="#0A80DB"
               textTransform="uppercase" fontFamily="heading" mb={4}
               style={{ borderLeft: '2px solid #0A80DB', paddingLeft: 10 }}>
-              Built for cleaning professionals
+              {t('auth.register.tagline')}
             </Text>
             <Text fontSize="26px" fontWeight="800" color="white" fontFamily="heading"
-              letterSpacing="-0.03em" lineHeight="1.15" mb={6}>
-              Earn on your<br />own schedule.
+              letterSpacing="-0.03em" lineHeight="1.15" mb={6} whiteSpace="pre-line">
+              {t('auth.register.hero')}
             </Text>
             <VStack align="stretch" gap={2.5}>
-              {[
-                'Get matched with local clients daily',
-                'Secure payments, every job',
-                'Stand out with a verified badge',
-              ].map(t => (
-                <HStack key={t} gap={2}>
+              {(['feature1', 'feature2', 'feature3'] as const).map(k => (
+                <HStack key={k} gap={2}>
                   <Icon as={LucideCheckCircle} w="14px" h="14px" color="#0A80DB" flexShrink={0} />
-                  <Text fontSize="13px" color="rgba(255,255,255,0.65)" fontFamily="heading">{t}</Text>
+                  <Text fontSize="13px" color="rgba(255,255,255,0.65)" fontFamily="heading">{t(`auth.register.${k}`)}</Text>
                 </HStack>
               ))}
             </VStack>
@@ -125,33 +119,31 @@ export default function RegisterPage() {
       <Flex flex={1} bg="white" alignItems="center" justifyContent="center" px={{ base: 5, md: 12 }} py={12}>
         <Box w="full" maxW="340px">
 
-          {/* Back to home */}
-          <Box mb={6}>
+          <Flex justify="space-between" align="center" mb={6}>
             <NextLink href="/" style={{ textDecoration: 'none' }}>
               <HStack gap={1.5} display="inline-flex"
                 _hover={{ color: '#0A80DB' }} color="#697386" transition="color 0.15s">
                 <Icon as={LucideArrowLeft} w={3.5} h={3.5} />
-                <Text fontSize="13px" fontFamily="heading" fontWeight="500">Back to home</Text>
+                <Text fontSize="13px" fontFamily="heading" fontWeight="500">{t('common.backToHome')}</Text>
               </HStack>
             </NextLink>
-          </Box>
+            <LanguageSwitcher />
+          </Flex>
 
           {/* Mobile logo */}
           <HStack gap={2.5} mb={10} display={{ base: 'flex', lg: 'none' }}>
-            <Image src="/2.png" alt="BrazilianClean" width={28} height={28}
-              style={{ borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }} />
+            <Image src="/2.png" alt="BrazilianClean" width={28} height={28} style={{ borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }} />
             <Text fontWeight="700" fontSize="14px" letterSpacing="-0.02em" color="#0A2540" fontFamily="heading">
               Brazilian<Text as="span" color="#0A80DB">Clean</Text>
             </Text>
           </HStack>
 
           <Box mb={8}>
-            <Text fontSize="24px" fontWeight="800" color="#0A2540" fontFamily="heading"
-              letterSpacing="-0.025em" mb={1}>
-              Join as a cleaner
+            <Text fontSize="24px" fontWeight="800" color="#0A2540" fontFamily="heading" letterSpacing="-0.025em" mb={1}>
+              {t('auth.register.title')}
             </Text>
-            <Text fontSize="14px" color="#425466" fontFamily="heading">
-              Set up your profile in minutes and start earning on your schedule.
+            <Text fontSize="13px" color="#425466" fontFamily="heading">
+              {t('auth.register.subtitle')}
             </Text>
           </Box>
 
@@ -159,55 +151,44 @@ export default function RegisterPage() {
             <VStack gap={4} align="stretch">
 
               <Box>
-                <Text fontSize="12px" fontWeight="500" color="#425466" letterSpacing="-0.01em"
-                  fontFamily="heading" mb={1.5}>Full name</Text>
-                <Input placeholder="e.g. Jane Smith" value={name} onChange={e => setName(e.target.value)}
-                  required {...inputStyle} />
+                <Text fontSize="12px" fontWeight="500" color="#425466" fontFamily="heading" mb={1.5}>
+                  {t('auth.register.fullName')}
+                </Text>
+                <Input {...inputStyle} placeholder={t('auth.register.fullNamePlaceholder')}
+                  value={name} onChange={e => setName(e.target.value)} required />
               </Box>
 
               <Box>
-                <Text fontSize="12px" fontWeight="500" color="#425466" letterSpacing="-0.01em"
-                  fontFamily="heading" mb={1.5}>Email address</Text>
-                <Input type="email" placeholder="name@email.com" value={email}
-                  onChange={e => setEmail(e.target.value)} required {...inputStyle} />
+                <Text fontSize="12px" fontWeight="500" color="#425466" fontFamily="heading" mb={1.5}>
+                  {t('auth.register.email')}
+                </Text>
+                <Input {...inputStyle} type="email" placeholder={t('auth.register.emailPlaceholder')}
+                  value={email} onChange={e => setEmail(e.target.value)} required />
               </Box>
 
               <Box>
-                <Text fontSize="12px" fontWeight="500" color="#425466" letterSpacing="-0.01em"
-                  fontFamily="heading" mb={1.5}>US phone number</Text>
-                <Flex align="center" border="1px solid" borderColor="#E3E8EE" borderRadius="8px"
-                  h="38px" px={4} bg="white" _focusWithin={{ borderColor: '#0A80DB' }} gap={2}>
-                  <Text fontSize="13.5px" color="#425466" fontFamily="heading" flexShrink={0}
-                    borderRight="1px solid #E3E8EE" pr={2}>+1</Text>
-                  <input
-                    type="tel"
-                    placeholder="(555) 123-4567"
-                    value={phone}
-                    onChange={handlePhone}
-                    required
-                    style={{
-                      flex: 1, border: 'none', outline: 'none', background: 'transparent',
-                      fontSize: '13.5px', fontFamily: 'inherit', color: '#0A2540',
-                    }}
-                  />
-                </Flex>
+                <Text fontSize="12px" fontWeight="500" color="#425466" fontFamily="heading" mb={1.5}>
+                  {t('auth.register.phone')}
+                </Text>
+                <Input {...inputStyle} type="tel" placeholder={t('auth.register.phonePlaceholder')}
+                  value={phone} onChange={handlePhone} required />
               </Box>
 
               <Box>
-                <Text fontSize="12px" fontWeight="500" color="#425466" letterSpacing="-0.01em"
-                  fontFamily="heading" mb={1.5}>Create a password</Text>
-                <Input type="password" placeholder="At least 8 characters" value={password}
-                  onChange={e => setPassword(e.target.value)} required {...inputStyle} />
+                <Text fontSize="12px" fontWeight="500" color="#425466" fontFamily="heading" mb={1.5}>
+                  {t('auth.register.password')}
+                </Text>
+                <Input {...inputStyle} type="password" placeholder={t('auth.register.passwordPlaceholder')}
+                  value={password} onChange={e => setPassword(e.target.value)} minLength={6} required />
               </Box>
 
               <Button
-                type="submit"
-                bg="#0A80DB" color="white" h="40px" borderRadius="9999px"
+                type="submit" bg="#0A80DB" color="white" h="40px" borderRadius="9999px"
                 fontWeight="600" fontSize="13.5px" letterSpacing="-0.01em" fontFamily="heading"
                 _hover={{ bg: '#0870C2' }} transition="background 0.15s"
-                loading={loading} loadingText="Creating your account…" mt={1}
+                loading={loading} loadingText={t('auth.register.submitting')} mt={1}
               >
-                Create my account
+                {t('auth.register.submit')}
                 <Icon as={LucideArrowRight} w={3.5} h={3.5} ml={1.5} />
               </Button>
 
@@ -216,17 +197,17 @@ export default function RegisterPage() {
 
           <Box mt={7} pt={6} borderTop="1px solid #E3E8EE">
             <Text fontSize="13px" color="#425466" fontFamily="heading" textAlign="center">
-              Already have an account?{' '}
+              {t('auth.register.hasAccount')}{' '}
               <NextLink href="/auth/login">
-                <Text as="span" color="#0A80DB" fontWeight="700" cursor="pointer"
-                  _hover={{ color: '#0870C2' }}>Sign in instead</Text>
+                <Text as="span" color="#0A80DB" fontWeight="700" cursor="pointer" _hover={{ color: '#0870C2' }}>
+                  {t('auth.register.signIn')}
+                </Text>
               </NextLink>
             </Text>
           </Box>
 
         </Box>
       </Flex>
-
     </Flex>
   );
 }

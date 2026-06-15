@@ -12,6 +12,7 @@ import { EXTRAS, FREQUENCY_OPTIONS } from '@/lib/estimate';
 import CleanerNav from '@/components/cleaner-nav';
 import { toaster } from '@/lib/toaster';
 import { useRouter } from 'next/navigation';
+import { useLocale } from '@/lib/i18n';
 
 type Distribution = {
   wave: number;
@@ -90,6 +91,8 @@ function WaveTimer({ lead }: { lead: Lead }) {
 /* ─── Main page ─────────────────────────────────────────────────────── */
 export default function MarketplacePage() {
   const router = useRouter();
+  const { locale } = useLocale();
+  const dateLocale = locale === 'pt' ? 'pt-BR' : 'en-US';
   const [leads, setLeads]           = useState<Lead[]>([]);
   const [loading, setLoading]       = useState(true);
   const [responding, setResponding] = useState<string | null>(null);
@@ -233,7 +236,7 @@ export default function MarketplacePage() {
                             <HStack gap={1.5} color="slate.500" fontSize="sm">
                               <Icon as={LucideCalendar} w={4} h={4} color="brand.400" />
                               <Text>
-                                {new Date(lead.dateTime).toLocaleString('en-US', { dateStyle: 'full', timeStyle: 'short' })}
+                                {new Date(lead.dateTime).toLocaleString(dateLocale, { dateStyle: 'full', timeStyle: 'short' })}
                               </Text>
                             </HStack>
                           </HStack>
@@ -261,7 +264,7 @@ export default function MarketplacePage() {
                                     fontWeight: 700,
                                     color: '#0A80DB',
                                   }}>
-                                  🔄 {FREQUENCY_OPTIONS.find(f => f.id === lead.frequency)?.labelEn}
+                                  🔄 {locale === 'pt' ? FREQUENCY_OPTIONS.find(f => f.id === lead.frequency)?.label : FREQUENCY_OPTIONS.find(f => f.id === lead.frequency)?.labelEn}
                                 </Text>
                               )}
                             </HStack>
@@ -273,7 +276,7 @@ export default function MarketplacePage() {
                               {lead.extras.map(exId => {
                                 const ex = EXTRAS.find(e => e.id === exId);
                                 return ex ? (
-                                  <Text key={exId} fontSize="xs" color="slate.600">{ex.icon} {ex.labelEn}</Text>
+                                  <Text key={exId} fontSize="xs" color="slate.600">{ex.icon} {locale === 'pt' ? ex.label : ex.labelEn}</Text>
                                 ) : null;
                               })}
                             </HStack>

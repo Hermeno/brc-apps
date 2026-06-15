@@ -11,9 +11,11 @@ import {
   LucideLock, LucideLoader, LucideXCircle,
 } from 'lucide-react';
 import { useRouter, useParams, useSearchParams } from 'next/navigation';
+import { Suspense } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { toaster } from '@/lib/toaster';
 import { LeadFeePayment } from '@/components/lead-fee-payment';
+import { useLocale } from '@/lib/i18n';
 
 type Message = {
   id: string;
@@ -46,10 +48,12 @@ type ConversationData = {
   messages: Message[];
 };
 
-export default function ChatPage() {
+function ChatInner() {
   const { id } = useParams<{ id: string }>();
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { locale } = useLocale();
+  const dateLocale = locale === 'pt' ? 'pt-BR' : 'en-US';
 
   const [conv, setConv]           = useState<ConversationData | null>(null);
   const [userId, setUserId]       = useState<string>('');
@@ -234,9 +238,9 @@ export default function ChatPage() {
     }
 
     const isWaitingForClient = conv.lead.status === 'IN_REVIEW';
-    const jobDate = new Date(conv.lead.dateTime).toLocaleString('en-US', {
+    const jobDate = new Date(conv.lead.dateTime).toLocaleString(dateLocale, {
       weekday: 'short', month: 'short', day: 'numeric',
-      hour: 'numeric', minute: '2-digit', hour12: true,
+      hour: 'numeric', minute: '2-digit', hour12: locale !== 'pt',
     });
 
     return (
@@ -397,7 +401,7 @@ export default function ChatPage() {
             display="flex" alignItems="center" justifyContent="center"
             fontWeight="black" color="white" fontSize="md" flexShrink={0}
           >
-            {otherName[0].toUpperCase()}
+            {(otherName?.[0] ?? '?').toUpperCase()}
           </Box>
 
           <Box flex={1}>
@@ -462,7 +466,7 @@ export default function ChatPage() {
             <HStack gap={1.5} color="slate.500" fontSize="sm">
               <Icon as={LucideCalendar} w={4} h={4} color="brand.400" />
               <Text>
-                {new Date(conv.lead.dateTime).toLocaleString('en-US', { dateStyle: 'short', timeStyle: 'short' })}
+                {new Date(conv.lead.dateTime).toLocaleString(dateLocale, { dateStyle: 'short', timeStyle: 'short' })}
               </Text>
             </HStack>
             {conv.lead.estimatedMinPrice && (
@@ -546,7 +550,7 @@ export default function ChatPage() {
                               color={isMine ? 'brand.100' : 'slate.400'}
                               textAlign="right" mt={1}
                             >
-                              {new Date(msg.createdAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
+                              {new Date(msg.createdAt).toLocaleTimeString(dateLocale, { hour: '2-digit', minute: '2-digit' })}
                             </Text>
                           </Box>
                         </Box>
@@ -637,5 +641,17 @@ export default function ChatPage() {
         </Box>
       )}
     </Flex>
+  );
+}
+
+export default function ChatPage() {
+  return (
+    <Suspense fallback={
+      <Flex h="100vh" align="center" justify="center" bg="slate.50">
+        <Box w="32px" h="32px" border="3px solid" borderColor="brand.100" borderTopColor="brand.500" borderRadius="full" />
+      </Flex>
+    }>
+      <ChatInner />
+    </Suspense>
   );
 }

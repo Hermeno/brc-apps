@@ -5,14 +5,17 @@ import { system } from '@/lib/theme';
 import { ReactNode } from 'react';
 import { Toaster } from './ui/toaster';
 import { SessionProvider } from 'next-auth/react';
+import { LocaleProvider, type Locale } from '@/lib/i18n';
 
-export function Providers({ children }: { children: ReactNode }) {
+export function Providers({ children, locale }: { children: ReactNode; locale: Locale }) {
   return (
     <SessionProvider>
-      <ChakraProvider value={system}>
-        {children}
-        <Toaster />
-      </ChakraProvider>
+      <LocaleProvider initialLocale={locale}>
+        <ChakraProvider value={system}>
+          {children}
+          <Toaster />
+        </ChakraProvider>
+      </LocaleProvider>
     </SessionProvider>
   );
 }

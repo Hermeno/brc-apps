@@ -9,6 +9,7 @@ import {
   LucideClock, LucidePhone, LucideStar, LucideCalendarDays,
 } from 'lucide-react';
 import CleanerNav from '@/components/cleaner-nav';
+import { useLocale } from '@/lib/i18n';
 
 type Job = {
   id: string; serviceType: string; address: string; dateTime: string;
@@ -30,6 +31,8 @@ function StarRow({ rating }: { rating: number }) {
 }
 
 export default function SchedulePage() {
+  const { locale } = useLocale();
+  const dateLocale = locale === 'pt' ? 'pt-BR' : 'en-US';
   const [jobs, setJobs]     = useState<Job[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -46,8 +49,8 @@ export default function SchedulePage() {
   useEffect(() => { fetchJobs(); }, [fetchJobs]);
 
   const now = new Date();
-  const upcoming = jobs.filter(j => j.status === 'ACCEPTED' && new Date(j.dateTime) >= now);
-  const today    = jobs.filter(j => j.status === 'ACCEPTED' && new Date(j.dateTime) < now && new Date(j.dateTime).toDateString() === now.toDateString());
+  const today    = jobs.filter(j => j.status === 'ACCEPTED' && new Date(j.dateTime).toDateString() === now.toDateString());
+  const upcoming = jobs.filter(j => j.status === 'ACCEPTED' && new Date(j.dateTime) > now && new Date(j.dateTime).toDateString() !== now.toDateString());
   const completed = jobs.filter(j => j.status === 'COMPLETED');
 
   const accentColor = (job: Job) => {
@@ -123,7 +126,7 @@ export default function SchedulePage() {
                       <HStack gap={1.5} color="slate.500" fontSize="sm">
                         <Icon as={LucideCalendar} w={4} h={4} color="#0A80DB" />
                         <Text fontWeight="semibold" color={isPast ? '#94A3B8' : 'slate.700'}>
-                          {dt.toLocaleString('en-US', { dateStyle: 'full', timeStyle: 'short' })}
+                          {dt.toLocaleString(dateLocale, { dateStyle: 'full', timeStyle: 'short' })}
                         </Text>
                       </HStack>
                     </HStack>
@@ -187,7 +190,7 @@ export default function SchedulePage() {
                       </Text>
                     )}
                     <Text fontSize="xs" color="slate.400" mt={0.5}>
-                      {dt.toLocaleDateString('en-US', { day: '2-digit', month: 'short' })}
+                      {dt.toLocaleDateString(dateLocale, { day: '2-digit', month: 'short' })}
                     </Text>
                   </Box>
                 </Flex>

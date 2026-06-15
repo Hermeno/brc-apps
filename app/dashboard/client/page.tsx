@@ -26,19 +26,23 @@ import { signOut } from 'next-auth/react';
 import { LucideLogOut } from 'lucide-react';
 import { AddressInput } from '@/components/address-input';
 import Image from 'next/image';
+import { useT } from '@/lib/i18n';
+import LanguageSwitcher from '@/components/language-switcher';
 
 /* ─── types ──────────────────────────────────────────────────── */
-const STATUS_MAP: Record<string, { label: string; bg: string; color: string; border: string }> = {
-  NEW:       { label: 'Awaiting match',          bg: '#F8FAFC', color: '#64748B', border: '#E3E8EE' },
-  WAVE1:     { label: 'Finding cleaners…',       bg: '#F8FAFC', color: '#0A80DB', border: '#E3E8EE' },
-  WAVE2:     { label: 'Finding cleaners…',       bg: '#F8FAFC', color: '#0A80DB', border: '#E3E8EE' },
-  WAVE3:     { label: 'Finding cleaners…',       bg: '#F8FAFC', color: '#0A80DB', border: '#E3E8EE' },
-  IN_REVIEW: { label: 'Cleaners available',      bg: '#ECFDF5', color: '#059669', border: '#A7F3D0' },
-  ACCEPTED:  { label: 'Booked ✓',               bg: '#ECFDF5', color: '#059669', border: '#A7F3D0' },
-  COMPLETED: { label: 'Completed ✓',            bg: '#ECFDF5', color: '#047857', border: '#A7F3D0' },
-  CANCELLED: { label: 'Cancelled',              bg: '#FEF2F2', color: '#DC2626', border: '#FECACA' },
-  UNMATCHED: { label: 'No cleaners found',       bg: '#FEF2F2', color: '#DC2626', border: '#FECACA' },
-};
+function makeStatusMap(t: (k: string) => string): Record<string, { label: string; bg: string; color: string; border: string }> {
+  return {
+    NEW:       { label: t('client.dashboard.statusAwaiting'),  bg: '#F8FAFC', color: '#64748B', border: '#E3E8EE' },
+    WAVE1:     { label: t('client.dashboard.statusFinding'),   bg: '#F8FAFC', color: '#0A80DB', border: '#E3E8EE' },
+    WAVE2:     { label: t('client.dashboard.statusFinding'),   bg: '#F8FAFC', color: '#0A80DB', border: '#E3E8EE' },
+    WAVE3:     { label: t('client.dashboard.statusFinding'),   bg: '#F8FAFC', color: '#0A80DB', border: '#E3E8EE' },
+    IN_REVIEW: { label: t('client.dashboard.statusReady'),     bg: '#ECFDF5', color: '#059669', border: '#A7F3D0' },
+    ACCEPTED:  { label: t('client.dashboard.statusBooked'),    bg: '#ECFDF5', color: '#059669', border: '#A7F3D0' },
+    COMPLETED: { label: t('client.dashboard.statusCompleted'), bg: '#ECFDF5', color: '#047857', border: '#A7F3D0' },
+    CANCELLED: { label: t('client.dashboard.statusCancelled'), bg: '#FEF2F2', color: '#DC2626', border: '#FECACA' },
+    UNMATCHED: { label: t('client.dashboard.statusNoMatch'),   bg: '#FEF2F2', color: '#DC2626', border: '#FECACA' },
+  };
+}
 
 type ConvEntry = { id: string; cleanerId: string; status: string; feeStatus: string; cleaner: { id: string; name: string; avatarUrl?: string | null; isVerified?: boolean } };
 type Lead = {
@@ -61,14 +65,14 @@ const emptyForm = {
   address: '', date: '', time: '', notes: '',
 };
 
-const CANCEL_REASONS = [
-  'Changed my plans',
-  'Found a different cleaner',
-  'Wrong date or time',
-  'Address issue',
-  'Price concerns',
-  'Other',
-];
+const CANCEL_REASONS_KEYS = [
+  'cancelReasonChanged',
+  'cancelReasonOther',
+  'cancelReasonWrong',
+  'cancelReasonAddress',
+  'cancelReasonPrice',
+  'cancelReasonOtherOpt',
+] as const;
 
 /* ─── Helpers ─────────────────────────────────────────────────── */
 function formatPhone(raw: string | null): string {
@@ -169,9 +173,8 @@ function StarRating({ value, onChange }: { value: number; onChange: (v: number) 
 }
 
 /* ─── Status Timeline ─────────────────────────────────────────── */
-function StatusTimeline({ status }: { status: string }) {
-  const step   = getStatusStep(status);
-  const labels = ['Requested', 'Matching', 'Ready', 'Confirmed'];
+function StatusTimeline({ status, labels }: { status: string; labels: string[] }) {
+  const step = getStatusStep(status);
   return (
     <Box w="full" pt={1} pb={3}>
       <Flex align="center" w="full" gap={0}>
@@ -220,6 +223,15 @@ function Avatar({ name, src, size = 28 }: { name: string; src?: string | null; s
 export default function ClientPage() {
   const { data: session } = useSession();
   const router = useRouter();
+  const t = useT();
+  const STATUS_MAP = makeStatusMap(t);
+  const CANCEL_REASONS = CANCEL_REASONS_KEYS.map(k => t(`client.dashboard.${k}`));
+  const TIMELINE_LABELS = [
+    t('client.dashboard.timelineRequested'),
+    t('client.dashboard.timelineMatching'),
+    t('client.dashboard.timelineReady'),
+    t('client.dashboard.timelineConfirmed'),
+  ];
 
   const [profile, setProfile]       = useState<ClientProfile | null>(null);
   const [leads, setLeads]           = useState<Lead[]>([]);
@@ -358,7 +370,7 @@ export default function ClientPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.address || !form.date || !form.time) {
-      toaster.create({ title: 'Please fill in the address, date, and time.', type: 'error' }); return;
+      toaster.create({ title: t('client.dashboard.fillAddressDate'), type: 'error' }); return;
     }
     setSubmitting(true);
     try {
@@ -374,7 +386,7 @@ export default function ClientPage() {
       });
       if (res.ok) {
         saveAddress(form.address);
-        toaster.create({ title: 'Booking request sent!', description: "We're finding the best cleaner for you.", type: 'success' });
+        toaster.create({ title: t('client.dashboard.bookingSent'), description: t('client.dashboard.bookingSentDesc'), type: 'success' });
         setShowForm(false); setForm(emptyForm); fetchLeads();
       } else { const err = await res.json(); throw new Error(err.error); }
     } catch (error: any) {
@@ -401,7 +413,7 @@ export default function ClientPage() {
 
   const handleSaveEdit = async (leadId: string) => {
     if (!editForm.address || !editForm.date || !editForm.time) {
-      toaster.create({ title: 'Please fill in the address, date, and time.', type: 'error' }); return;
+      toaster.create({ title: t('client.dashboard.fillAddressDate'), type: 'error' }); return;
     }
     setSaving(true);
     try {
@@ -416,7 +428,7 @@ export default function ClientPage() {
           extras: editForm.extras, frequency: editForm.frequency,
           estimatedMinPrice: est?.minPrice, estimatedMaxPrice: est?.maxPrice, estimatedHours: est?.hours }),
       });
-      if (res.ok) { toaster.create({ title: 'Booking updated!', type: 'success' }); setEditingId(null); fetchLeads(); }
+      if (res.ok) { toaster.create({ title: t('client.dashboard.bookingUpdated'), type: 'success' }); setEditingId(null); fetchLeads(); }
       else { const err = await res.json(); throw new Error(err.error); }
     } catch (e: any) { toaster.create({ title: e.message, type: 'error' }); }
     finally { setSaving(false); }
@@ -428,7 +440,7 @@ export default function ClientPage() {
     try {
       const res = await fetch(`/api/leads/${leadId}/cancel`, { method: 'POST' });
       if (res.ok) {
-        toaster.create({ title: 'Booking cancelled', description: "You can book again anytime.", type: 'success' });
+        toaster.create({ title: t('client.dashboard.bookingCancelled'), description: t('client.dashboard.bookingCancelledDesc'), type: 'success' });
         setCancelReasonModal(null); setCancelReason(''); fetchLeads();
       } else { const err = await res.json(); throw new Error(err.error); }
     } catch (e: any) { toaster.create({ title: e.message, type: 'error' }); }
@@ -441,7 +453,7 @@ export default function ClientPage() {
     try {
       const res = await fetch(`/api/leads/${leadId}/complete`, { method: 'POST' });
       if (res.ok) {
-        toaster.create({ title: "Job marked as complete!", description: "Don't forget to leave a rating.", type: 'success' });
+        toaster.create({ title: t('client.dashboard.jobComplete'), description: t('client.dashboard.jobCompleteDesc'), type: 'success' });
         setConfirmComplete(null); fetchLeads();
       } else { const err = await res.json(); throw new Error(err.error); }
     } catch (e: any) { toaster.create({ title: e.message, type: 'error' }); }
@@ -453,7 +465,7 @@ export default function ClientPage() {
     setDeclining(convId);
     try {
       const res = await fetch(`/api/conversations/${convId}/decline`, { method: 'POST' });
-      if (res.ok) { toaster.create({ title: "Cleaner declined", description: "We'll keep looking.", type: 'success' }); fetchLeads(); }
+      if (res.ok) { toaster.create({ title: t('client.dashboard.cleanerDeclined'), description: t('client.dashboard.cleanerDeclinedDesc'), type: 'success' }); fetchLeads(); }
       else { const err = await res.json(); throw new Error(err.error); }
     } catch (e: any) { toaster.create({ title: e.message, type: 'error' }); }
     finally { setDeclining(null); }
@@ -466,7 +478,7 @@ export default function ClientPage() {
       const res  = await fetch(`/api/conversations/${convId}/confirm`, { method: 'POST' });
       const data = await res.json();
       if (res.ok) {
-        toaster.create({ title: "Cleaner confirmed!", description: "Opening your chat now.", type: 'success' });
+        toaster.create({ title: t('client.dashboard.cleanerConfirmed'), description: t('client.dashboard.cleanerConfirmedDesc'), type: 'success' });
         fetchLeads(); router.push(`/dashboard/chat/${convId}`);
       } else { throw new Error(data.error); }
     } catch (e: any) { toaster.create({ title: e.message, type: 'error' }); }
@@ -476,11 +488,11 @@ export default function ClientPage() {
   /* ── reactivate ── */
   const handleReactivate = async (leadId: string) => {
     if (!reactivateDate || !reactivateTime) {
-      toaster.create({ title: 'Choose a new date and time.', type: 'error' }); return;
+      toaster.create({ title: t('client.dashboard.pickDateFirst'), type: 'error' }); return;
     }
     const dateTime = new Date(`${reactivateDate}T${reactivateTime}`);
     if (dateTime <= new Date()) {
-      toaster.create({ title: 'The date must be in the future.', type: 'error' }); return;
+      toaster.create({ title: t('client.dashboard.mustBeFuture'), type: 'error' }); return;
     }
     setReactivating(true);
     try {
@@ -489,7 +501,7 @@ export default function ClientPage() {
         body: JSON.stringify({ dateTime: dateTime.toISOString() }),
       });
       if (res.ok) {
-        toaster.create({ title: "Booking reactivated!", description: "Finding available cleaners.", type: 'success' });
+        toaster.create({ title: t('client.dashboard.bookingReactivated'), description: t('client.dashboard.bookingReactivatedDesc'), type: 'success' });
         setReactivateId(null); fetchLeads();
       } else { const err = await res.json(); throw new Error(err.error); }
     } catch (e: any) { toaster.create({ title: e.message, type: 'error' }); }
@@ -519,7 +531,7 @@ export default function ClientPage() {
         }),
       });
       if (res.ok) {
-        toaster.create({ title: 'New booking created!', description: "Same service, fresh start — date set to next week.", type: 'success' });
+        toaster.create({ title: t('client.dashboard.newBookingCreated'), description: t('client.dashboard.newBookingCreatedDesc'), type: 'success' });
         fetchLeads(); setShowHistory(false);
         window.scrollTo({ top: 0, behavior: 'smooth' });
       } else { const err = await res.json(); throw new Error(err.error); }
@@ -530,7 +542,7 @@ export default function ClientPage() {
   /* ── review ── */
   const handleSubmitRating = async () => {
     if (!ratingLead || starValue === 0) {
-      toaster.create({ title: 'Tap a star to rate your experience.', type: 'error' }); return;
+      toaster.create({ title: t('client.dashboard.rateModal_selectStar'), type: 'error' }); return;
     }
     setSendingRating(true);
     try {
@@ -539,7 +551,7 @@ export default function ClientPage() {
         body: JSON.stringify({ rating: starValue, comment: ratingComment }),
       });
       if (res.ok) {
-        toaster.create({ title: 'Thanks for the review!', description: 'Your feedback helps the community.', type: 'success' });
+        toaster.create({ title: t('client.dashboard.reviewThanks'), description: t('client.dashboard.reviewThanksDesc'), type: 'success' });
         setRatingLead(null); setStarValue(0); setRatingComment(''); fetchLeads();
       } else { const err = await res.json(); throw new Error(err.error); }
     } catch (e: any) { toaster.create({ title: e.message, type: 'error' }); }
@@ -577,10 +589,12 @@ export default function ClientPage() {
                 {firstName}
               </Text>
             </HStack>
+
+            <LanguageSwitcher />
             <NotificationBell dark />
             <Button size="sm" variant="ghost" color="#6B7280" px={2} h="34px" borderRadius="lg"
               _hover={{ color: '#F43F5E', bg: 'rgba(244,63,94,0.1)' }} transition="all 0.15s"
-              onClick={() => signOut({ callbackUrl: '/auth/login' })} title="Sign out">
+              onClick={() => signOut({ callbackUrl: '/auth/login' })} title={t('common.signOut')}>
               <Icon as={LucideLogOut} w={4} h={4} />
             </Button>
           </HStack>
@@ -613,7 +627,7 @@ export default function ClientPage() {
                   transition="all 0.15s"
                   onClick={() => router.push('/dashboard/client/profile')}>
                   <Icon as={LucideSettings} w={3.5} h={3.5} mr={1.5} />
-                  Edit profile
+                  {t('client.dashboard.editProfile')}
                 </Button>
               </Flex>
 
@@ -632,24 +646,24 @@ export default function ClientPage() {
                 <HStack gap={0} borderLeft="1px solid #E3E8EE" flexShrink={0} flexWrap="wrap">
                   <Box textAlign="center" px={4}>
                     <Text fontWeight="black" fontSize="lg" color="brand.600" fontFamily="heading">{leads.length}</Text>
-                    <Text fontSize="10px" color="slate.400" fontWeight="700" textTransform="uppercase" letterSpacing="wider" fontFamily="heading">bookings</Text>
+                    <Text fontSize="10px" color="slate.400" fontWeight="700" textTransform="uppercase" letterSpacing="wider" fontFamily="heading">{t('client.dashboard.statBookings')}</Text>
                   </Box>
                   <Box textAlign="center" px={4} borderLeft="1px solid #E3E8EE">
                     <Text fontWeight="black" fontSize="lg" color="#0A80DB" fontFamily="heading">
                       {leads.filter(l => l.status === 'COMPLETED').length}
                     </Text>
-                    <Text fontSize="10px" color="slate.400" fontWeight="700" textTransform="uppercase" letterSpacing="wider" fontFamily="heading">completed</Text>
+                    <Text fontSize="10px" color="slate.400" fontWeight="700" textTransform="uppercase" letterSpacing="wider" fontFamily="heading">{t('client.dashboard.statCompleted')}</Text>
                   </Box>
                   {totalSpent > 0 && (
                     <Box textAlign="center" px={4} borderLeft="1px solid #E3E8EE">
                       <Text fontWeight="black" fontSize="lg" color="slate.800" fontFamily="heading">${totalSpent}</Text>
-                      <Text fontSize="10px" color="slate.400" fontWeight="700" textTransform="uppercase" letterSpacing="wider" fontFamily="heading">invested</Text>
+                      <Text fontSize="10px" color="slate.400" fontWeight="700" textTransform="uppercase" letterSpacing="wider" fontFamily="heading">{t('client.dashboard.statInvested')}</Text>
                     </Box>
                   )}
                   {avgRating !== null && (
                     <Box textAlign="center" px={4} borderLeft="1px solid #E3E8EE">
                       <Text fontWeight="black" fontSize="lg" color="#F59E0B" fontFamily="heading">{avgRating}★</Text>
-                      <Text fontSize="10px" color="slate.400" fontWeight="700" textTransform="uppercase" letterSpacing="wider" fontFamily="heading">avg given</Text>
+                      <Text fontSize="10px" color="slate.400" fontWeight="700" textTransform="uppercase" letterSpacing="wider" fontFamily="heading">{t('client.dashboard.statAvgGiven')}</Text>
                     </Box>
                   )}
                 </HStack>
@@ -668,7 +682,7 @@ export default function ClientPage() {
                   <Box>
                     <Text fontSize="9.5px" fontWeight="700" color="#697386" textTransform="uppercase"
                       letterSpacing="0.1em" fontFamily="heading" mb={1}>
-                      Next cleaning
+                      {t('client.dashboard.nextCleaning')}
                     </Text>
                     <HStack gap={2} mb={0.5}>
                       {cleanerConv && (
@@ -677,7 +691,7 @@ export default function ClientPage() {
                       <Text fontWeight="bold" color="slate.900" fontSize="sm" fontFamily="heading">
                         {nextCleaning.serviceType}
                         {nextCleaning.cleaner && (
-                          <Text as="span" fontWeight="400" color="slate.500"> with {nextCleaning.cleaner.name}</Text>
+                          <Text as="span" fontWeight="400" color="slate.500"> {t('client.dashboard.with')} {nextCleaning.cleaner.name}</Text>
                         )}
                       </Text>
                     </HStack>
@@ -693,7 +707,7 @@ export default function ClientPage() {
                     </HStack>
                   </Box>
                   <Box textAlign="right" flexShrink={0}>
-                    <Text fontSize="10px" color="slate.400" fontWeight="600" mb={0.5}>Starts in</Text>
+                    <Text fontSize="10px" color="slate.400" fontWeight="600" mb={0.5}>{t('client.dashboard.startsIn')}</Text>
                     <Text fontWeight="black" fontSize="2xl" color="#0A80DB" fontFamily="heading" lineHeight={1}>
                       {formatCountdown(diff)}
                     </Text>
@@ -706,11 +720,14 @@ export default function ClientPage() {
           {/* ── Title Row ── */}
           <Flex justify="space-between" align="center">
             <Box>
-              <Heading size="lg" fontWeight="black" color="slate.900" fontFamily="heading">My Bookings</Heading>
+              <Heading size="lg" fontWeight="black" color="slate.900" fontFamily="heading">{t('client.dashboard.myBookings')}</Heading>
               <Text color="slate.500" fontSize="sm" mt={1}>
-                {leads.filter(l => !['COMPLETED', 'CANCELLED'].includes(l.status)).length === 1
-                  ? '1 active booking'
-                  : `${leads.filter(l => !['COMPLETED', 'CANCELLED'].includes(l.status)).length} active bookings`}
+                {(() => {
+                  const n = leads.filter(l => !['COMPLETED', 'CANCELLED'].includes(l.status)).length;
+                  return n === 1
+                    ? t('client.dashboard.activeBookings_one')
+                    : t('client.dashboard.activeBookings_other').replace('{{n}}', String(n));
+                })()}
               </Text>
             </Box>
             <Button
@@ -720,7 +737,7 @@ export default function ClientPage() {
               transition="background 0.15s"
               onClick={() => { setShowForm(v => !v); if (showForm) setForm(emptyForm); }}>
               <Icon as={showForm ? LucideX : LucidePlus} w={4} h={4} mr={2} />
-              {showForm ? 'Discard request' : 'Book a cleaning'}
+              {showForm ? t('client.dashboard.discardRequest') : t('client.dashboard.bookCleaning')}
             </Button>
           </Flex>
 
@@ -755,23 +772,23 @@ export default function ClientPage() {
                   <Box border="1px solid #E3E8EE" p={12} textAlign="center" bg="white">
                     <Box fontSize="4xl" mb={4} lineHeight={1}>🧹</Box>
                     <Text fontWeight="black" fontSize="xl" color="slate.900" fontFamily="heading" mb={2}>
-                      {historyLeads.length > 0 ? 'All caught up' : 'Your home is waiting'}
+                      {historyLeads.length > 0 ? t('client.dashboard.allCaughtUp') : t('client.dashboard.homeWaiting')}
                     </Text>
                     <Text color="slate.500" fontSize="sm" maxW="340px" mx="auto" lineHeight="1.6" mb={6}>
                       {historyLeads.length > 0
-                        ? "All your bookings are wrapped up. Check your history below, or book again for a fresh clean."
-                        : 'Ready for a sparkling home? Book your first cleaning in under 2 minutes.'}
+                        ? t('client.dashboard.allCaughtUpDesc')
+                        : t('client.dashboard.homeWaitingDesc')}
                     </Text>
                     <Button bg="#0A80DB" color="white" borderRadius="4px" fontWeight="bold" px={6}
                       _hover={{ bg: '#0870C2' }} transition="background 0.15s"
                       onClick={() => setShowForm(true)}>
                       <Icon as={LucidePlus} w={4} h={4} mr={2} />
-                      Book a cleaning
+                      {t('client.dashboard.bookCleaning')}
                     </Button>
                     {historyLeads.length > 0 && (
                       <Button variant="ghost" color="slate.500" ml={3} borderRadius="4px" fontWeight="semibold"
                         onClick={() => setShowHistory(v => !v)}>
-                        View history
+                        {t('client.dashboard.viewHistory')}
                       </Button>
                     )}
                   </Box>
@@ -831,7 +848,7 @@ export default function ClientPage() {
 
                                 {/* Status timeline (only for non-terminal active statuses) */}
                                 {isActive && !['ACCEPTED', 'IN_REVIEW'].includes(lead.status) && (
-                                  <StatusTimeline status={lead.status} />
+                                  <StatusTimeline status={lead.status} labels={TIMELINE_LABELS} />
                                 )}
 
                                 {/* Address + date */}
@@ -919,7 +936,7 @@ export default function ClientPage() {
                                         _hover={{ bg: 'brand.50', borderColor: 'brand.200', color: 'brand.600' }}
                                         onClick={() => router.push(`/dashboard/profile/${lead.cleanerId}`)}>
                                         <Icon as={LucideExternalLink} w={3} h={3} mr={1} />
-                                        View profile
+                                        {t('client.dashboard.viewProfile')}
                                       </Button>
                                       {acceptedConv && (
                                         <Button size="xs" bg="brand.500" color="white" borderRadius="4px" fontWeight="bold"
@@ -938,8 +955,8 @@ export default function ClientPage() {
                                   <Box w="full">
                                     <Text fontSize="xs" color="brand.600" fontWeight="bold" mb={2}>
                                       {activeConvs.length === 1
-                                        ? '1 cleaner is ready — accept or decline below:'
-                                        : `${activeConvs.length} cleaners are ready — choose the one you prefer:`}
+                                        ? t('client.dashboard.cleanerReady_one')
+                                        : t('client.dashboard.cleanerReady_other').replace('{{n}}', String(activeConvs.length))}
                                     </Text>
                                     <VStack align="start" gap={2}>
                                       {activeConvs.map(conv => (
@@ -959,14 +976,14 @@ export default function ClientPage() {
                                             _hover={{ bg: 'brand.50', borderColor: 'brand.200', color: 'brand.600' }}
                                             onClick={() => router.push(`/dashboard/profile/${conv.cleaner.id}`)}>
                                             <Icon as={LucideExternalLink} w={3} h={3} mr={1} />
-                                            View profile
+                                            {t('client.dashboard.viewProfile')}
                                           </Button>
                                           <Button size="xs" bg="#0A80DB" color="white" borderRadius="4px" fontWeight="bold"
                                             _hover={{ bg: '#0870C2' }}
                                             loading={accepting === conv.id}
                                             onClick={() => handleAccept(conv.id)}>
                                             <Icon as={LucideCheckCircle} w={3} h={3} mr={1} />
-                                            Accept
+                                            {t('client.dashboard.acceptCleaner')}
                                           </Button>
                                           <Button size="xs" variant="outline" color="red.500" borderColor="red.200"
                                             borderRadius="4px" fontWeight="bold"
@@ -974,7 +991,7 @@ export default function ClientPage() {
                                             loading={declining === conv.id}
                                             onClick={() => handleDecline(conv.id)}>
                                             <Icon as={LucideThumbsDown} w={3} h={3} mr={1} />
-                                            Not a fit
+                                            {t('client.dashboard.notAFit')}
                                           </Button>
                                         </HStack>
                                       ))}
@@ -1007,7 +1024,7 @@ export default function ClientPage() {
                                         color={lead.review!.rating >= st ? '#F59E0B' : '#E5E7EB'}
                                         fill={lead.review!.rating >= st ? '#F59E0B' : 'none'} />
                                     ))}
-                                    <Text fontSize="xs" color="#0A80DB" fontWeight="semibold">Rated</Text>
+                                    <Text fontSize="xs" color="#0A80DB" fontWeight="semibold">{t('client.dashboard.rated')}</Text>
                                   </HStack>
                                 )}
 
@@ -1034,7 +1051,7 @@ export default function ClientPage() {
                                     disabled={saving}
                                     onClick={() => editingId === lead.id ? setEditingId(null) : openEdit(lead)}>
                                     <Icon as={editingId === lead.id ? LucideChevronUp : LucidePencil} w={4} h={4} mr={1.5} />
-                                    {editingId === lead.id ? 'Close editor' : 'Edit booking'}
+                                    {editingId === lead.id ? t('client.dashboard.closeEditor') : t('client.dashboard.editBooking')}
                                   </Button>
                                 )}
 
@@ -1044,7 +1061,7 @@ export default function ClientPage() {
                                     borderRadius="4px" fontWeight="semibold"
                                     _hover={{ bg: 'red.50' }} transition="background 0.15s"
                                     onClick={() => { setCancelReasonModal(lead.id); setCancelReason(''); }}>
-                                    ✕ Cancel booking
+                                    {t('client.dashboard.cancelBookingBtn')}
                                   </Button>
                                 )}
 
@@ -1063,7 +1080,7 @@ export default function ClientPage() {
                                       }
                                     }}>
                                     <Icon as={LucideRotateCcw} w={4} h={4} mr={1.5} />
-                                    {reactivateId === lead.id ? 'Close' : 'Reschedule & reactivate'}
+                                    {reactivateId === lead.id ? t('client.dashboard.reactivateClose') : t('client.dashboard.reschedule')}
                                   </Button>
                                 )}
 
@@ -1073,18 +1090,18 @@ export default function ClientPage() {
                                     _hover={{ bg: '#0870C2' }} transition="background 0.15s"
                                     onClick={() => setConfirmComplete(lead.id)}>
                                     <Icon as={LucideCheckCircle} w={4} h={4} mr={1.5} />
-                                    Mark as complete
+                                    {t('client.dashboard.markComplete')}
                                   </Button>
                                 )}
 
                                 {confirmComplete === lead.id && (
                                   <HStack gap={2} bg="#F6F9FC" px={3} py={2} border="1px solid #E3E8EE">
-                                    <Text fontSize="sm" color="#0A80DB" fontWeight="semibold">All done with this cleaning?</Text>
+                                    <Text fontSize="sm" color="#0A80DB" fontWeight="semibold">{t('client.dashboard.confirmCompleteQ')}</Text>
                                     <Button size="xs" bg="#0A80DB" color="white" borderRadius="4px"
                                       loading={completing === lead.id}
-                                      onClick={() => handleComplete(lead.id)}>Yes, complete</Button>
+                                      onClick={() => handleComplete(lead.id)}>{t('client.dashboard.yesComplete')}</Button>
                                     <Button size="xs" variant="ghost" color="slate.500"
-                                      onClick={() => setConfirmComplete(null)}>Not yet</Button>
+                                      onClick={() => setConfirmComplete(null)}>{t('client.dashboard.notYet')}</Button>
                                   </HStack>
                                 )}
 
@@ -1094,7 +1111,7 @@ export default function ClientPage() {
                                     _hover={{ bg: '#0870C2' }} transition="background 0.15s"
                                     onClick={() => setRatingLead(lead)}>
                                     <Icon as={LucideStar} w={4} h={4} mr={1.5} />
-                                    Rate professional
+                                    {t('client.dashboard.ratePro')}
                                   </Button>
                                 )}
 
@@ -1105,7 +1122,7 @@ export default function ClientPage() {
                           {/* ── Reactivate Form (inline) ── */}
                           {reactivateId === lead.id && (
                             <Box borderTop="1px solid #FED7AA" bg="#FFF7ED" p={5}>
-                              <Text fontSize="sm" fontWeight="bold" color="#0A80DB" mb={4}>Pick a new date and time</Text>
+                              <Text fontSize="sm" fontWeight="bold" color="#0A80DB" mb={4}>{t('client.dashboard.pickNewDateTitle')}</Text>
                               <VStack gap={3} align="stretch">
                                 <HStack gap={3}>
                                   <Box position="relative" flex={1} cursor="pointer"
@@ -1130,12 +1147,12 @@ export default function ClientPage() {
                                     border="1px solid" borderColor="#E3E8EE" />
                                 </HStack>
                                 <HStack gap={3} justify="flex-end">
-                                  <Button size="sm" variant="ghost" color="slate.500" onClick={() => setReactivateId(null)}>Discard</Button>
+                                  <Button size="sm" variant="ghost" color="slate.500" onClick={() => setReactivateId(null)}>{t('client.dashboard.discard')}</Button>
                                   <Button size="sm" bg="#0A80DB" color="white" borderRadius="4px" fontWeight="bold"
-                                    _hover={{ bg: '#0870C2' }} loading={reactivating} loadingText="Reactivating…"
+                                    _hover={{ bg: '#0870C2' }} loading={reactivating} loadingText={t('client.dashboard.reactivatingLabel')}
                                     onClick={() => handleReactivate(lead.id)}>
                                     <Icon as={LucideRotateCcw} w={4} h={4} mr={1.5} />
-                                    Confirm new date
+                                    {t('client.dashboard.confirmDate')}
                                   </Button>
                                 </HStack>
                               </VStack>
@@ -1145,7 +1162,7 @@ export default function ClientPage() {
                           {/* ── Edit Form (inline) ── */}
                           {editingId === lead.id && (
                             <Box borderTop="1px solid #E3E8EE" bg="#F6F9FC" p={5}>
-                              <Text fontSize="sm" fontWeight="bold" color="brand.700" mb={4}>Update booking details</Text>
+                              <Text fontSize="sm" fontWeight="bold" color="brand.700" mb={4}>{t('client.dashboard.updateDetails')}</Text>
                               <VStack gap={4} align="stretch">
                                 <SimpleGrid columns={2} gap={3}>
                                   {SERVICE_TYPES.map(sv => (
@@ -1192,11 +1209,11 @@ export default function ClientPage() {
                                     border="1px solid" borderColor="slate.200" />
                                 </HStack>
                                 <HStack gap={3} justify="flex-end">
-                                  <Button size="sm" variant="ghost" color="slate.500" onClick={() => setEditingId(null)}>Discard</Button>
+                                  <Button size="sm" variant="ghost" color="slate.500" onClick={() => setEditingId(null)}>{t('client.dashboard.discard')}</Button>
                                   <Button size="sm" bg="brand.500" color="white" borderRadius="4px" fontWeight="bold"
-                                    _hover={{ bg: 'brand.600' }} loading={saving} loadingText="Saving…"
+                                    _hover={{ bg: 'brand.600' }} loading={saving} loadingText={t('client.dashboard.savingLabel')}
                                     onClick={() => handleSaveEdit(lead.id)}>
-                                    Save changes
+                                    {t('client.dashboard.saveChanges')}
                                   </Button>
                                 </HStack>
                               </VStack>
@@ -1220,7 +1237,7 @@ export default function ClientPage() {
                       cursor="pointer" _hover={{ bg: '#F1F5F9' }} transition="background 0.12s">
                       <Text fontSize="10.5px" fontWeight={700} color="#697386" textTransform="uppercase"
                         fontFamily="heading" letterSpacing="0.07em">
-                        History ({historyLeads.length})
+                        {t('client.dashboard.history')} ({historyLeads.length})
                       </Text>
                       <Icon as={showHistory ? LucideChevronUp : LucideChevronDown} w={4} h={4} color="#697386" />
                     </Box>
@@ -1295,7 +1312,7 @@ export default function ClientPage() {
                                             color={lead.review!.rating >= st ? '#F59E0B' : '#E5E7EB'}
                                             fill={lead.review!.rating >= st ? '#F59E0B' : 'none'} />
                                         ))}
-                                        <Text fontSize="xs" color="#0A80DB" fontWeight="semibold" ml={0.5}>Your rating</Text>
+                                        <Text fontSize="xs" color="#0A80DB" fontWeight="semibold" ml={0.5}>{t('client.dashboard.yourRating')}</Text>
                                       </HStack>
                                     )}
 
@@ -1306,7 +1323,7 @@ export default function ClientPage() {
                                           _hover={{ bg: '#0870C2' }} transition="background 0.15s"
                                           onClick={() => setRatingLead(lead)}>
                                           <Icon as={LucideStar} w={3} h={3} mr={1} />
-                                          Rate professional
+                                          {t('client.dashboard.ratePro')}
                                         </Button>
                                       )}
                                       {lead.status === 'COMPLETED' && (
@@ -1316,7 +1333,7 @@ export default function ClientPage() {
                                           loading={rebooking === lead.id}
                                           onClick={() => handleRebook(lead)}>
                                           <Icon as={LucideRepeat2} w={3} h={3} mr={1} />
-                                          Book again
+                                          {t('client.dashboard.bookAgain')}
                                         </Button>
                                       )}
                                       {lead.status === 'CANCELLED' && (
@@ -1333,7 +1350,7 @@ export default function ClientPage() {
                                             }
                                           }}>
                                           <Icon as={LucideRotateCcw} w={3} h={3} mr={1} />
-                                          {reactivateId === lead.id ? 'Close' : 'Reactivate'}
+                                          {reactivateId === lead.id ? t('client.dashboard.reactivateClose') : t('client.dashboard.reactivate')}
                                         </Button>
                                       )}
                                     </HStack>
@@ -1342,7 +1359,7 @@ export default function ClientPage() {
                                     {reactivateId === lead.id && lead.status === 'CANCELLED' && (
                                       <Box bg="#F6F9FC" border="1px solid #E3E8EE" p={3} mt={1}>
                                         <Text fontSize="xs" fontWeight="bold" color="#0A80DB" mb={2}>
-                                          Pick a new date and time to reactivate
+                                          {t('client.dashboard.reactivatePickTitle')}
                                         </Text>
                                         <HStack gap={2} mb={2}>
                                           <Box position="relative" flex={1}>
@@ -1366,11 +1383,11 @@ export default function ClientPage() {
                                         </HStack>
                                         <HStack gap={2} justify="flex-end">
                                           <Button size="xs" variant="ghost" color="slate.500"
-                                            onClick={() => setReactivateId(null)}>Cancel</Button>
+                                            onClick={() => setReactivateId(null)}>{t('common.cancel')}</Button>
                                           <Button size="xs" bg="#0A80DB" color="white" borderRadius="4px" fontWeight="bold"
-                                            _hover={{ bg: '#0870C2' }} loading={reactivating} loadingText="Reactivating…"
+                                            _hover={{ bg: '#0870C2' }} loading={reactivating} loadingText={t('client.dashboard.reactivatingLabel')}
                                             onClick={() => handleReactivate(lead.id)}>
-                                            Confirm date
+                                            {t('client.dashboard.confirmDate')}
                                           </Button>
                                         </HStack>
                                       </Box>
@@ -1396,7 +1413,7 @@ export default function ClientPage() {
                       <Icon as={LucideUsers} w={4} h={4} color="slate.400" />
                       <Text fontSize="10.5px" fontWeight={700} color="#697386" textTransform="uppercase"
                         fontFamily="heading" letterSpacing="0.07em">
-                        Your cleaners ({myCleaners.length})
+                        {t('client.dashboard.yourCleaners')} ({myCleaners.length})
                       </Text>
                     </HStack>
                     <HStack gap={3} flexWrap="wrap">
@@ -1442,17 +1459,17 @@ export default function ClientPage() {
                     <Text fontSize="2xl">⭐</Text>
                   </Box>
                   <Box>
-                    <Heading size="md" fontWeight="black" color="slate.900" fontFamily="heading">How did it go?</Heading>
+                    <Heading size="md" fontWeight="black" color="slate.900" fontFamily="heading">{t('client.dashboard.rateModal_title')}</Heading>
                     <Text color="slate.500" fontSize="sm" mt={1}>
-                      Share your experience with {ratingLead.cleaner?.name ?? 'your cleaner'}
+                      {t('client.dashboard.rateModal_shareExp').replace('{{name}}', ratingLead.cleaner?.name ?? '')}
                     </Text>
                   </Box>
                   <StarRating value={starValue} onChange={setStarValue} />
                   <Text fontSize="xs" color="slate.400">
-                    {starValue === 0 ? 'Tap a star to share your rating' : ['','Poor','Fair','Good','Great','Excellent!'][starValue]}
+                    {starValue === 0 ? t('client.dashboard.rateModal_prompt') : ['','Poor','Fair','Good','Great','Excellent!'][starValue]}
                   </Text>
                   <Textarea
-                    placeholder="Leave a comment — e.g. punctual, thorough, very friendly"
+                    placeholder={t('client.dashboard.rateCommentPlaceholder')}
                     value={ratingComment}
                     onChange={e => setRatingComment(e.target.value)}
                     bg="slate.50" border="1px solid" borderColor="slate.200"
@@ -1463,13 +1480,13 @@ export default function ClientPage() {
                   <HStack gap={3} w="full">
                     <Button flex={1} variant="outline" borderColor="slate.200" color="slate.500"
                       borderRadius="4px" onClick={() => setRatingLead(null)}>
-                      Maybe later
+                      {t('client.dashboard.rateModal_laterBtn')}
                     </Button>
                     <Button flex={1} bg="#0A80DB" color="white" borderRadius="4px" fontWeight="bold"
                       _hover={{ bg: '#0870C2' }}
-                      loading={sendingRating} loadingText="Submitting…"
+                      loading={sendingRating} loadingText={t('client.dashboard.rateModal_submitting')}
                       onClick={handleSubmitRating} disabled={starValue === 0}>
-                      Submit review
+                      {t('client.dashboard.rateModal_submitBtn')}
                     </Button>
                   </HStack>
                 </VStack>
@@ -1495,7 +1512,7 @@ export default function ClientPage() {
                 style={{ boxShadow: '0 16px 48px rgba(0,0,0,0.14)' }}>
                 <Flex justify="space-between" align="center" mb={5}>
                   <Heading size="sm" fontWeight="black" color="slate.900" fontFamily="heading">
-                    Cancel booking
+                    {t('client.dashboard.cancelModal_title')}
                   </Heading>
                   <Button size="sm" variant="ghost" color="slate.400" borderRadius="4px" px={1.5}
                     onClick={() => setCancelReasonModal(null)}>
@@ -1503,7 +1520,7 @@ export default function ClientPage() {
                   </Button>
                 </Flex>
                 <Text fontSize="sm" color="slate.600" mb={4}>
-                  Help us improve — what's the reason for cancelling?
+                  {t('client.dashboard.cancelModal_reason')}
                 </Text>
                 <VStack gap={2} align="stretch" mb={6}>
                   {CANCEL_REASONS.map(reason => (
@@ -1532,15 +1549,15 @@ export default function ClientPage() {
                 <HStack gap={3}>
                   <Button flex={1} variant="outline" borderColor="slate.200" color="slate.500"
                     borderRadius="4px" onClick={() => setCancelReasonModal(null)}>
-                    Keep booking
+                    {t('client.dashboard.cancelModal_keepBtn')}
                   </Button>
                   <Button flex={1} bg="red.500" color="white" borderRadius="4px" fontWeight="bold"
                     _hover={{ bg: 'red.600' }}
                     loading={cancelling === cancelReasonModal}
-                    loadingText="Cancelling…"
+                    loadingText={t('client.dashboard.cancelModal_cancelling')}
                     disabled={!cancelReason}
                     onClick={() => handleCancelWithReason(cancelReasonModal!)}>
-                    Confirm cancel
+                    {t('client.dashboard.cancelModal_confirmBtn')}
                   </Button>
                 </HStack>
               </Box>
@@ -1555,6 +1572,7 @@ export default function ClientPage() {
 
 /* ─── OrderForm component ──────────────────────────────────────── */
 function OrderForm({ form, setField, toggleExtra, estimate, progress, onSubmit, submitting, onCancel, addressBook, onSelectAddress }: any) {
+  const t = useT();
   const serviceLabel = SERVICE_TYPES.find(s => s.id === form.serviceType)?.labelEn ?? '';
   return (
     <Box bg="white" border="1px solid #E3E8EE">
@@ -1563,7 +1581,7 @@ function OrderForm({ form, setField, toggleExtra, estimate, progress, onSubmit, 
         <Flex justify="space-between" align="center">
           <Text fontSize="10.5px" fontWeight={700} color="#697386" textTransform="uppercase"
             letterSpacing="0.07em" fontFamily="heading">
-            New Booking Request
+            {t('client.dashboard.formTitle')}
           </Text>
           <Button size="sm" variant="ghost" color="slate.400" onClick={onCancel} borderRadius="4px" minW={0} px={1.5}>
             <Icon as={LucideX} w={4} h={4} />
@@ -1576,8 +1594,8 @@ function OrderForm({ form, setField, toggleExtra, estimate, progress, onSubmit, 
         <Box mb={6}>
           <Flex justify="space-between" mb={2}>
             <Text fontSize="sm" fontWeight="bold" color="slate.700">
-              {progress < 100 ? `${progress}% complete` : (
-                <HStack gap={1.5} as="span"><Icon as={LucideSparkles} w={4} h={4} color="#0A80DB" /><Text as="span" color="#0A80DB">Ready!</Text></HStack>
+              {progress < 100 ? t('client.dashboard.progressPct').replace('{{n}}', String(progress)) : (
+                <HStack gap={1.5} as="span"><Icon as={LucideSparkles} w={4} h={4} color="#0A80DB" /><Text as="span" color="#0A80DB">{t('client.dashboard.progressComplete')}</Text></HStack>
               )}
             </Text>
             <Text fontSize="sm" fontWeight="black" color='#0A80DB'>{progress}%</Text>
@@ -1593,7 +1611,7 @@ function OrderForm({ form, setField, toggleExtra, estimate, progress, onSubmit, 
             {/* Service type */}
             <Box>
               <Text fontSize="10.5px" fontWeight={700} color="#697386" textTransform="uppercase" mb={3}
-                letterSpacing="0.07em" fontFamily="heading">Service type</Text>
+                letterSpacing="0.07em" fontFamily="heading">{t('client.dashboard.serviceType')}</Text>
               <SimpleGrid columns={2} gap={3}>
                 {SERVICE_TYPES.map(s => (
                   <Box key={s.id} as="button" w="full" p={3.5} textAlign="left"
@@ -1615,13 +1633,13 @@ function OrderForm({ form, setField, toggleExtra, estimate, progress, onSubmit, 
             {/* Property size */}
             <Box>
               <Text fontSize="10.5px" fontWeight={700} color="#697386" textTransform="uppercase" mb={4}
-                letterSpacing="0.07em" fontFamily="heading">Property size</Text>
+                letterSpacing="0.07em" fontFamily="heading">{t('client.dashboard.propertySize')}</Text>
               <SimpleGrid columns={{ base: 1, sm: 3 }} gap={4}>
-                <Box><Text fontSize="sm" color="slate.600" mb={2} fontWeight="medium">🛏 Bedrooms</Text><Stepper value={form.bedrooms} onChange={v => setField('bedrooms', v)} /></Box>
-                <Box><Text fontSize="sm" color="slate.600" mb={2} fontWeight="medium">🚿 Bathrooms</Text><Stepper value={form.bathrooms} onChange={v => setField('bathrooms', v)} /></Box>
+                <Box><Text fontSize="sm" color="slate.600" mb={2} fontWeight="medium">🛏 {t('client.dashboard.bedroomsLabel')}</Text><Stepper value={form.bedrooms} onChange={v => setField('bedrooms', v)} /></Box>
+                <Box><Text fontSize="sm" color="slate.600" mb={2} fontWeight="medium">🚿 {t('client.dashboard.bathroomsLabel')}</Text><Stepper value={form.bathrooms} onChange={v => setField('bathrooms', v)} /></Box>
                 <Box>
-                  <Text fontSize="sm" color="slate.600" mb={2} fontWeight="medium">📐 Area (sq ft)</Text>
-                  <Input type="number" placeholder="e.g. 900" value={form.squareMeters || ''}
+                  <Text fontSize="sm" color="slate.600" mb={2} fontWeight="medium">📐 {t('client.dashboard.areaLabel')}</Text>
+                  <Input type="number" placeholder={t('client.dashboard.areaPlaceholder')} value={form.squareMeters || ''}
                     onChange={e => setField('squareMeters', Number(e.target.value))}
                     bg="slate.50" border="1px solid" borderColor={form.squareMeters > 0 ? 'brand.300' : 'slate.200'}
                     h="10" borderRadius="4px" fontSize="sm"
@@ -1634,8 +1652,8 @@ function OrderForm({ form, setField, toggleExtra, estimate, progress, onSubmit, 
             <Box>
               <HStack gap={2} mb={3}>
                 <Text fontSize="10.5px" fontWeight={700} color="#697386" textTransform="uppercase"
-                  letterSpacing="0.07em" fontFamily="heading">Add-ons</Text>
-                <Text fontSize="xs" color="slate.400">(optional)</Text>
+                  letterSpacing="0.07em" fontFamily="heading">{t('client.dashboard.addons')}</Text>
+                <Text fontSize="xs" color="slate.400">{t('client.dashboard.addonsOptional')}</Text>
               </HStack>
               <SimpleGrid columns={2} gap={3}>
                 {EXTRAS.map(ex => {
@@ -1660,7 +1678,7 @@ function OrderForm({ form, setField, toggleExtra, estimate, progress, onSubmit, 
             {/* Frequency */}
             <Box>
               <Text fontSize="10.5px" fontWeight={700} color="#697386" textTransform="uppercase" mb={3}
-                letterSpacing="0.07em" fontFamily="heading">Frequency</Text>
+                letterSpacing="0.07em" fontFamily="heading">{t('client.dashboard.frequency')}</Text>
               <SimpleGrid columns={3} gap={3}>
                 {FREQUENCY_OPTIONS.map(f => (
                   <Box key={f.id} as="button" w="full" p={3} textAlign="center"
@@ -1677,14 +1695,14 @@ function OrderForm({ form, setField, toggleExtra, estimate, progress, onSubmit, 
             {/* Location & date */}
             <Box>
               <Text fontSize="10.5px" fontWeight={700} color="#697386" textTransform="uppercase" mb={4}
-                letterSpacing="0.07em" fontFamily="heading">Location & date</Text>
+                letterSpacing="0.07em" fontFamily="heading">{t('client.dashboard.locationDate')}</Text>
               <VStack gap={4} align="stretch">
                 {/* Address book */}
                 {addressBook.length > 0 && (
                   <Box>
                     <HStack gap={1.5} mb={2}>
                       <Icon as={LucideBookmark} w={3} h={3} color="slate.400" />
-                      <Text fontSize="10px" color="slate.400" fontWeight="600" textTransform="uppercase" letterSpacing="0.06em">Saved addresses</Text>
+                      <Text fontSize="10px" color="slate.400" fontWeight="600" textTransform="uppercase" letterSpacing="0.06em">{t('client.dashboard.savedAddresses')}</Text>
                     </HStack>
                     <HStack gap={2} flexWrap="wrap">
                       {(addressBook as string[]).map((addr: string, i: number) => (
@@ -1741,7 +1759,7 @@ function OrderForm({ form, setField, toggleExtra, estimate, progress, onSubmit, 
                     _focus={{ bg: 'white', borderColor: 'brand.400' }} transition="all 0.15s" />
                 </HStack>
                 <textarea value={form.notes} onChange={e => setField('notes', e.target.value)}
-                  placeholder="Any special instructions or notes for the cleaner (optional)" rows={2}
+                  placeholder={t('client.dashboard.notesPlaceholder')} rows={2}
                   style={{ background: '#F9FAFB', border: '1px solid #E5E7EB', borderRadius: '4px', padding: '12px 16px',
                     width: '100%', fontSize: '14px', color: '#1F2937', resize: 'vertical', outline: 'none', fontFamily: 'inherit' }} />
               </VStack>
@@ -1754,7 +1772,7 @@ function OrderForm({ form, setField, toggleExtra, estimate, progress, onSubmit, 
                   <Icon as={LucideSparkles} w={4} h={4} color="brand.500" />
                   <Text fontSize="10.5px" fontWeight={700} color="#697386" textTransform="uppercase"
                     letterSpacing="0.07em" fontFamily="heading">
-                    Estimate — {serviceLabel}
+                    {t('client.dashboard.estimateLabel')} — {serviceLabel}
                   </Text>
                   {estimate.discountPct > 0 && (
                     <Text style={{ borderRadius: 2, background: '#F6F9FC', padding: '2px 6px', fontSize: '9.5px', fontWeight: 700, color: '#0A80DB' }}>
@@ -1765,22 +1783,22 @@ function OrderForm({ form, setField, toggleExtra, estimate, progress, onSubmit, 
                 <Flex gap={6} align="center" flexWrap="wrap">
                   <HStack gap={2}>
                     <Icon as={LucideBanknote} w={5} h={5} color="#0A80DB" />
-                    <Box><Text fontSize="xs" color="slate.500">Price</Text><Text fontSize="xl" fontWeight="black" color="#0A80DB" fontFamily="heading">${estimate.minPrice} – ${estimate.maxPrice}</Text></Box>
+                    <Box><Text fontSize="xs" color="slate.500">{t('client.dashboard.priceLabel')}</Text><Text fontSize="xl" fontWeight="black" color="#0A80DB" fontFamily="heading">${estimate.minPrice} – ${estimate.maxPrice}</Text></Box>
                   </HStack>
                   <HStack gap={2}>
                     <Icon as={LucideClock} w={5} h={5} color="brand.500" />
-                    <Box><Text fontSize="xs" color="slate.500">Duration</Text><Text fontSize="xl" fontWeight="black" color="brand.700" fontFamily="heading">~{estimate.hours}h</Text></Box>
+                    <Box><Text fontSize="xs" color="slate.500">{t('client.dashboard.durationLabel')}</Text><Text fontSize="xl" fontWeight="black" color="brand.700" fontFamily="heading">~{estimate.hours}h</Text></Box>
                   </HStack>
                 </Flex>
-                <Text fontSize="xs" color="slate.400" mt={3}>* Estimate only — final price may vary slightly.</Text>
+                <Text fontSize="xs" color="slate.400" mt={3}>{t('client.dashboard.estimateNote')}</Text>
               </Box>
             )}
 
             <Button type="submit" bg='#0A80DB' color="white"
               h="12" borderRadius="4px" fontWeight="bold" fontSize="md"
               _hover={{ bg: '#0870C2' }}
-              transition="background 0.15s" loading={submitting} loadingText="Submitting…">
-              {progress === 100 ? '✓ Submit booking request' : 'Submit booking request'}
+              transition="background 0.15s" loading={submitting} loadingText={t('client.dashboard.submitting')}>
+              {progress === 100 ? `✓ ${t('client.dashboard.submitBooking')}` : t('client.dashboard.submitBooking')}
             </Button>
           </VStack>
         </form>
