@@ -1,7 +1,17 @@
 import { PrismaClient } from '@prisma/client';
 import { PrismaPg } from '@prisma/adapter-pg';
+import { readFileSync } from 'fs';
+import { join } from 'path';
 
 const globalForPrisma = global as unknown as { prisma: PrismaClient };
+
+function loadCACert(): string | undefined {
+  try {
+    return readFileSync(join(process.cwd(), 'ca', 'ca-certificate.crt')).toString();
+  } catch {
+    return undefined;
+  }
+}
 
 function createClient(): PrismaClient {
   const connectionString = process.env.DATABASE_URL;
@@ -9,15 +19,14 @@ function createClient(): PrismaClient {
     console.error('[prisma] DATABASE_URL is not set — all DB calls will fail');
   }
 
-  // PrismaPg accepts a PoolConfig directly — no need for a separate Pool instance.
-  // Keep max connections small so multiple DO instances don't exhaust the DB limit
-  // (3 per instance supports up to ~6 simultaneous instances on a 20-connection DB).
+  const ca = loadCACert();
+
   const adapter = new PrismaPg({
     connectionString:        connectionString ?? '',
     max:                     3,
     connectionTimeoutMillis: 15_000,
     idleTimeoutMillis:       30_000,
-    ssl:                     { rejectUnauthorized: false },
+    ssl:                     ca ? { rejectUnauthorized: true, ca } : { rejectUnauthorized: false },
   });
 
   const client = new PrismaClient({
