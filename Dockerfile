@@ -13,6 +13,11 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 RUN mkdir -p /app/public
 RUN npx prisma generate
+# DATABASE_URL is passed as a Docker build-arg by App Platform (build-time env var).
+# It must be declared here so RUN steps can access it via process.env.
+ARG DATABASE_URL
+ENV DATABASE_URL=$DATABASE_URL
+RUN npx prisma db push
 RUN npm run build
 
 FROM base AS runner
