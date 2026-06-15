@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "prisma generate && next build",
+    "build": "prisma db push && next build",
     "start": "next start",
     "lint": "next lint"
   },
@@ -13,7 +13,9 @@
     "@chakra-ui/react": "latest",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.11.5",
-    "@prisma/client": "^6.2.1",
+    "@prisma/adapter-pg": "^7.0.0",
+    "@prisma/client": "^7.0.0",
+    "pg": "^8.13.0",
     "@stripe/react-stripe-js": "^6.6.0",
     "@stripe/stripe-js": "^9.8.0",
     "@types/nodemailer": "^8.0.0",
@@ -36,9 +38,10 @@
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",
     "@types/node": "^20.17.23",
+    "@types/pg": "^8.11.0",
     "@types/react": "^19.0.10",
     "@types/react-dom": "^19.0.4",
-    "prisma": "^6.2.1",
+    "prisma": "^7.0.0",
     "typescript": "^5.8.2"
   }
 }
