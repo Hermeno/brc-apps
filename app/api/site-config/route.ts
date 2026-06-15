@@ -1,7 +1,7 @@
 import { prisma } from '@/lib/prisma';
 import { NextResponse } from 'next/server';
 
-export const revalidate = 60; // cache for 60 s
+export const dynamic = 'force-dynamic';
 
 export async function GET() {
   const config = await prisma.siteConfig.findUnique({ where: { id: 'singleton' } });
