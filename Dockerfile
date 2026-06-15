@@ -13,11 +13,6 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 RUN mkdir -p /app/public
 RUN npx prisma generate
-# DATABASE_URL is passed as a Docker build-arg by App Platform (build-time env var).
-# It must be declared here so RUN steps can access it via process.env.
-ARG DATABASE_URL
-ENV DATABASE_URL=$DATABASE_URL
-RUN npx prisma db push
 RUN npm run build
 
 FROM base AS runner
@@ -28,14 +23,19 @@ ENV NODE_ENV=production
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
+# Install prisma CLI so we can run db push at container startup
+# (DATABASE_URL is only available at runtime on DO App Platform)
+RUN npm install -g prisma@7 --silent
+
 COPY --from=builder /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 COPY --from=builder /app/prisma ./prisma
+COPY --from=builder /app/prisma.config.ts ./prisma.config.ts
 
 USER nextjs
 EXPOSE 3000
 ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
 
-CMD ["node", "server.js"]
+CMD ["sh", "-c", "prisma db push && node server.js"]
