@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { ensureRadiusColumn } from '@/lib/geo';
 import { logError } from '@/lib/logger';
 
-const PLAN_MAX_RADIUS: Record<string, number> = { FREE: 25, BASIC: 60, PRO: 110, PREMIUM: 110 };
+const PLAN_MAX_RADIUS: Record<string, number> = { FREE: 60, BASIC: 60, PRO: 110, PREMIUM: 110 };
 
 export async function PUT(req: NextRequest) {
   const session = await auth();
