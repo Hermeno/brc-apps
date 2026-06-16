@@ -137,13 +137,40 @@ export default function CleanerDashboard() {
         });
         window.history.replaceState({}, '', window.location.pathname);
         let tries = 0;
-        const poll = setInterval(() => {
+        const postPay = setInterval(() => {
           tries++;
           fetchLeads(true);
-          if (tries >= 5) clearInterval(poll);
+          if (tries >= 5) clearInterval(postPay);
         }, 2000);
       }
     }
+
+    // ── Auto-refresh: poll every 30s + refetch immediately when tab regains focus ──
+    const interval = setInterval(() => fetchLeads(true), 30_000);
+
+    const onVisibility = () => {
+      if (document.visibilityState === 'visible') fetchLeads(true);
+    };
+    document.addEventListener('visibilitychange', onVisibility);
+
+    // ── SSE: trigger instant refresh when a new-lead notification arrives ──
+    let sse: EventSource | null = null;
+    try {
+      sse = new EventSource('/api/notifications/stream');
+      sse.onmessage = (e) => {
+        try {
+          const data = JSON.parse(e.data);
+          if (data?.latest?.type === 'lead_received') fetchLeads(true);
+        } catch {}
+      };
+      sse.onerror = () => { sse?.close(); };
+    } catch {}
+
+    return () => {
+      clearInterval(interval);
+      document.removeEventListener('visibilitychange', onVisibility);
+      sse?.close();
+    };
   }, [fetchLeads]);
 
   const handleRespond = async (leadId: string) => {

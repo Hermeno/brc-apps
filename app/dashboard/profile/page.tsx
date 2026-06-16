@@ -63,7 +63,7 @@ export default function ProfilePage() {
       .then(r => r.ok ? r.json() : null)
       .then(d => {
         if (!d) return;
-        const maxR = PLAN_MAX[d.plan ?? 'FREE'] ?? 25;
+        const maxR = PLAN_MAX[d.plan ?? 'FREE'] ?? 60;
         setPlanMaxRadius(maxR);
         setZipCode(d.zipCode ?? '');
         if (d.id) fetchProfile(d.id);

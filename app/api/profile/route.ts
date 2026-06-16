@@ -22,7 +22,7 @@ export async function PUT(req: NextRequest) {
     const { bio, serviceTypes, avatarUrl, latitude, longitude, serviceRadiusMiles, zipCode, phone } = await req.json();
 
     if (serviceRadiusMiles !== undefined) {
-      const maxRadius = PLAN_MAX_RADIUS[user.plan ?? 'FREE'] ?? 25;
+      const maxRadius = PLAN_MAX_RADIUS[user.plan ?? 'FREE'] ?? 60;
       if (Number(serviceRadiusMiles) > maxRadius) {
         return NextResponse.json(
           { error: `Your ${user.plan} plan allows a maximum radius of ${maxRadius} mi. Upgrade to increase it.` },

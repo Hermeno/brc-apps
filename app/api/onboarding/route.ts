@@ -59,7 +59,7 @@ export async function POST(req: NextRequest) {
       if (data.longitude != null) updates.longitude = Number(data.longitude);
       if (data.zipCode   != null) updates.zipCode   = String(data.zipCode);
       if (data.serviceRadiusMiles != null) {
-        const maxRadius = PLAN_MAX_RADIUS[user.plan ?? 'FREE'] ?? 25;
+        const maxRadius = PLAN_MAX_RADIUS[user.plan ?? 'FREE'] ?? 60;
         updates.serviceRadiusMiles = Math.min(Number(data.serviceRadiusMiles), maxRadius);
       }
     }

@@ -7,7 +7,7 @@ import { haversineDistance, resolveCoords, ensureRadiusColumn } from './geo';
 // Max 100 points: Plan(30) + Service(40) + Rating(20) + Proximity(10)
 //
 // Plan tiers:
-//   FREE  →  0 pts  | max radius  25 mi
+//   FREE  →  0 pts  | max radius  60 mi
 //   BASIC → 15 pts  | max radius  60 mi
 //   PRO   → 30 pts  | Instant Book eligible | max radius 110 mi
 
@@ -16,7 +16,7 @@ const PLAN_BONUS: Record<string, number> = {
 };
 
 const PLAN_MAX_RADIUS: Record<string, number> = {
-  FREE: 25, BASIC: 60, PRO: 110, PREMIUM: 110,
+  FREE: 60, BASIC: 60, PRO: 110, PREMIUM: 110,
 };
 
 function isInstantBookEligible(plan: string): boolean {
@@ -66,7 +66,7 @@ function filterByRadius(
         ? haversineDistance(cleanerCoords.lat, cleanerCoords.lng, leadCoords.lat, leadCoords.lng)
         : null;
 
-      const planMax     = PLAN_MAX_RADIUS[c.plan ?? 'FREE'] ?? 25;
+      const planMax     = PLAN_MAX_RADIUS[c.plan ?? 'FREE'] ?? 60;
       const radiusMiles = Math.min(c.serviceRadiusMiles ?? 25, planMax);
 
       if (distanceMiles !== null && distanceMiles > radiusMiles) return null;
