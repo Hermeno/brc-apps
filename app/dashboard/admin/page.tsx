@@ -124,6 +124,13 @@ function Stars({ n }: { n: number }) {
 
 function isSuspended(u: UserRow) { return !!u.suspendedUntil && new Date(u.suspendedUntil) > new Date(); }
 
+function formatUSPhone(raw: string) {
+  const digits = raw.replace(/\D/g, '').slice(0, 10);
+  if (digits.length < 4) return digits;
+  if (digits.length < 7) return `(${digits.slice(0,3)}) ${digits.slice(3)}`;
+  return `(${digits.slice(0,3)}) ${digits.slice(3,6)}-${digits.slice(6)}`;
+}
+
 // ─── Sidebar ──────────────────────────────────────────────────────────────────
 
 const NAV: { id: Tab; label: string; icon: any; section?: string }[] = [
@@ -406,7 +413,7 @@ function UserTableRow({ user, onRefresh }: { user: UserRow; onRefresh: () => voi
             <VStack gap={1.5} align="stretch">
               <Input size="sm" value={name}  onChange={e => setName(e.target.value)}  placeholder="Name"  borderRadius="4px" />
               <Input size="sm" value={email} onChange={e => setEmail(e.target.value)} placeholder="Email" borderRadius="4px" />
-              <Input size="sm" value={phone} onChange={e => setPhone(e.target.value)} placeholder="Phone" borderRadius="4px" />
+              <Input size="sm" value={phone} onChange={e => setPhone(formatUSPhone(e.target.value))} placeholder="(555) 123-4567" borderRadius="4px" type="tel" />
               <Input size="sm" value={zipCode} onChange={e => setZipCode(e.target.value)}
                 placeholder="ZIP code (e.g. 33101)" borderRadius="4px" maxLength={10} />
             </VStack>
@@ -472,7 +479,12 @@ function UserTableRow({ user, onRefresh }: { user: UserRow; onRefresh: () => voi
             {editing ? (
               <>
                 <Button size="xs" bg="brand.500" color="white" borderRadius="4px" loading={loading}
-                  onClick={() => { call({ name, email, phone, zipCode: zipCode.trim() || null }); setEditing(false); }}>
+                  onClick={() => {
+                    const digits = phone.replace(/\D/g, '');
+                    const formattedPhone = digits.length === 10 ? `+1${digits}` : phone || null;
+                    call({ name, email, phone: formattedPhone, zipCode: zipCode.trim() || null });
+                    setEditing(false);
+                  }}>
                   <Icon as={LucideSave} w={3} h={3} />
                 </Button>
                 <Button size="xs" variant="ghost" borderRadius="4px" onClick={() => setEditing(false)}>

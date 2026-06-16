@@ -17,7 +17,7 @@ import { ImageUpload } from '@/components/image-upload';
 /* ─── types ──────────────────────────────────────────────────── */
 type Photo = { id: string; url: string; caption?: string | null; createdAt: string };
 
-const PLAN_MAX: Record<string, number> = { FREE: 25, BASIC: 60, PRO: 110, PREMIUM: 110 };
+const PLAN_MAX: Record<string, number> = { FREE: 60, BASIC: 60, PRO: 110, PREMIUM: 110 };
 
 const SERVICE_LIST = [
   'Standard Cleaning', 'Deep Cleaning', 'Post-Construction', 'Move-In/Out',

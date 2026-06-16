@@ -37,7 +37,7 @@ const SERVICES = [
   { id: 'Commercial Cleaning',        icon: '🏬' },
 ];
 
-const RADIUS_OPTIONS = [5, 10, 15, 20, 25, 35, 50, 75, 110];
+const RADIUS_OPTIONS = [5, 10, 15, 20, 25, 35, 50, 60];
 
 function StepDots({ current, steps }: { current: number; steps: string[] }) {
   return (
