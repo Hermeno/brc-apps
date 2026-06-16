@@ -123,7 +123,7 @@ export default function CleanerDashboard() {
       .then(r => r.json())
       .then(d => setVerifyStatus(d.verification?.status ?? 'NONE'));
     fetch('/api/stripe/payment-methods')
-      .then(r => r.json())
+      .then(r => r.ok ? r.json() : Promise.reject())
       .then(d => setHasCard(Array.isArray(d.paymentMethods) && d.paymentMethods.length > 0))
       .catch(() => setHasCard(false));
 
@@ -177,7 +177,7 @@ export default function CleanerDashboard() {
       <Box maxW="1080px" mx="auto" px={{ base: 4, md: 6 }} py={5}>
 
         {/* ── Account setup checklist ── */}
-        {(hasCard === false || (verifyStatus !== null && verifyStatus !== 'APPROVED')) && (
+        {((hasCard === false) || (verifyStatus !== null && verifyStatus !== 'APPROVED')) && (
           <Box mb={5} border="2px solid #F59E0B" bg="white" style={{ borderRadius: 8 }} overflow="hidden">
             <Box px={5} py={3} bg="#FFFBEB" borderBottom="1px solid #FDE68A">
               <HStack gap={2}>
@@ -190,33 +190,35 @@ export default function CleanerDashboard() {
 
             <VStack gap={0} align="stretch">
               {/* Payment card */}
-              <Flex px={5} py={4} align="center" justify="space-between" gap={3} flexWrap="wrap"
-                borderBottom="1px solid #F1F5F9">
-                <HStack gap={3}>
-                  {hasCard
-                    ? <Icon as={LucideCheckCircle} w={5} h={5} color="#10B981" flexShrink={0} />
-                    : <Icon as={LucideCreditCard} w={5} h={5} color="#D97706" flexShrink={0} />
-                  }
-                  <Box>
-                    <Text fontSize="13px" fontWeight="700" color={hasCard ? '#047857' : '#0F172A'} fontFamily="heading">
-                      {hasCard ? t('cleaner.dashboard.cardSaved') : t('cleaner.dashboard.cardAdd')}
-                    </Text>
-                    <Text fontSize="11.5px" color={hasCard ? '#059669' : '#697386'} mt={0.5}>
-                      {hasCard ? t('cleaner.dashboard.cardSavedDesc') : t('cleaner.dashboard.cardAddDesc')}
-                    </Text>
-                  </Box>
-                </HStack>
-                {!hasCard && (
-                  <Button
-                    size="sm" bg="#D97706" color="white" borderRadius="4px"
-                    fontWeight="700" fontFamily="heading" flexShrink={0}
-                    _hover={{ bg: '#B45309' }}
-                    onClick={() => router.push('/dashboard/payment-methods')}
-                  >
-                    <Icon as={LucideCreditCard} w={3.5} h={3.5} mr={1.5} />{t('cleaner.dashboard.addCardBtn')}
-                  </Button>
-                )}
-              </Flex>
+              {hasCard !== null && (
+                <Flex px={5} py={4} align="center" justify="space-between" gap={3} flexWrap="wrap"
+                  borderBottom="1px solid #F1F5F9">
+                  <HStack gap={3}>
+                    {hasCard
+                      ? <Icon as={LucideCheckCircle} w={5} h={5} color="#10B981" flexShrink={0} />
+                      : <Icon as={LucideCreditCard} w={5} h={5} color="#D97706" flexShrink={0} />
+                    }
+                    <Box>
+                      <Text fontSize="13px" fontWeight="700" color={hasCard ? '#047857' : '#0F172A'} fontFamily="heading">
+                        {hasCard ? t('cleaner.dashboard.cardSaved') : t('cleaner.dashboard.cardAdd')}
+                      </Text>
+                      <Text fontSize="11.5px" color={hasCard ? '#059669' : '#697386'} mt={0.5}>
+                        {hasCard ? t('cleaner.dashboard.cardSavedDesc') : t('cleaner.dashboard.cardAddDesc')}
+                      </Text>
+                    </Box>
+                  </HStack>
+                  {!hasCard && (
+                    <Button
+                      size="sm" bg="#D97706" color="white" borderRadius="4px"
+                      fontWeight="700" fontFamily="heading" flexShrink={0}
+                      _hover={{ bg: '#B45309' }}
+                      onClick={() => router.push('/dashboard/payment-methods')}
+                    >
+                      <Icon as={LucideCreditCard} w={3.5} h={3.5} mr={1.5} />{t('cleaner.dashboard.addCardBtn')}
+                    </Button>
+                  )}
+                </Flex>
+              )}
 
               {/* Identity verification */}
               <Flex px={5} py={4} align="center" justify="space-between" gap={3} flexWrap="wrap">
