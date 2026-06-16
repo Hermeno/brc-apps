@@ -7,12 +7,19 @@ import {
 } from '@chakra-ui/react';
 import {
   LucideCamera, LucidePlus, LucideTrash2, LucideSave,
-  LucideUser, LucideMapPin, LucideNavigation, LucideX,
+  LucideUser, LucideMapPin, LucideNavigation, LucideX, LucidePhone,
 } from 'lucide-react';
 import CleanerNav from '@/components/cleaner-nav';
 import { toaster } from '@/lib/toaster';
 import { AnimatePresence } from 'motion/react';
 import { ImageUpload } from '@/components/image-upload';
+
+function formatUSPhone(raw: string) {
+  const digits = raw.replace(/\D/g, '').slice(0, 10);
+  if (digits.length < 4) return digits;
+  if (digits.length < 7) return `(${digits.slice(0,3)}) ${digits.slice(3)}`;
+  return `(${digits.slice(0,3)}) ${digits.slice(3,6)}-${digits.slice(6)}`;
+}
 
 /* ─── types ──────────────────────────────────────────────────── */
 type Photo = { id: string; url: string; caption?: string | null; createdAt: string };
@@ -27,6 +34,7 @@ const SERVICE_LIST = [
 ];
 
 export default function ProfilePage() {
+  const [phone,             setPhone]        = useState('');
   const [bio,               setBio]          = useState('');
   const [serviceTypes,      setServiceTypes] = useState<string[]>([]);
   const [avatarUrl,         setAvatarUrl]    = useState('');
@@ -69,6 +77,10 @@ export default function ProfilePage() {
       if (!res.ok) return;
       const d = await res.json();
       if (d.cleaner) {
+        if (d.cleaner.phone) {
+          const digits = d.cleaner.phone.replace(/\D/g, '').slice(-10);
+          setPhone(formatUSPhone(digits));
+        }
         setBio(d.cleaner.bio ?? '');
         setServiceTypes(d.cleaner.serviceTypes ?? []);
         setAvatarUrl(d.cleaner.avatarUrl ?? '');
@@ -138,7 +150,10 @@ export default function ProfilePage() {
       const res = await fetch('/api/profile', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ bio, serviceTypes, avatarUrl, latitude, longitude, serviceRadiusMiles, zipCode }),
+        body: JSON.stringify({
+          bio, serviceTypes, avatarUrl, latitude, longitude, serviceRadiusMiles, zipCode,
+          phone: phone ? `+1${phone.replace(/\D/g, '')}` : null,
+        }),
       });
       if (res.ok) {
         toaster.create({ title: 'Profile saved successfully.', type: 'success' });
@@ -290,6 +305,27 @@ export default function ProfilePage() {
                     resize="vertical" maxLength={500}
                   />
                   <Text fontSize="xs" color="slate.400" mt={1} textAlign="right">{bio.length}/500</Text>
+                </Box>
+
+                {/* Phone */}
+                <Box>
+                  <Text fontSize="xs" fontWeight="bold" color="slate.500" mb={2}
+                    textTransform="uppercase" letterSpacing="wider">Contact phone</Text>
+                  <HStack>
+                    <Icon as={LucidePhone} w={4} h={4} color="slate.400" flexShrink={0} />
+                    <Input
+                      type="tel"
+                      value={phone}
+                      onChange={e => setPhone(formatUSPhone(e.target.value))}
+                      placeholder="(555) 123-4567"
+                      bg="slate.50" border="1px solid" borderColor="slate.200"
+                      borderRadius="4px" fontSize="sm" h="10"
+                      _focus={{ borderColor: 'brand.300', bg: 'white' }}
+                    />
+                  </HStack>
+                  <Text fontSize="xs" color="slate.400" mt={1}>
+                    Shared with clients only after a booking is accepted.
+                  </Text>
                 </Box>
 
                 {/* Service types */}

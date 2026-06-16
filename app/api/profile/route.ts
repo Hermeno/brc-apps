@@ -19,7 +19,7 @@ export async function PUT(req: NextRequest) {
 
     await ensureRadiusColumn();
 
-    const { bio, serviceTypes, avatarUrl, latitude, longitude, serviceRadiusMiles, zipCode } = await req.json();
+    const { bio, serviceTypes, avatarUrl, latitude, longitude, serviceRadiusMiles, zipCode, phone } = await req.json();
 
     if (serviceRadiusMiles !== undefined) {
       const maxRadius = PLAN_MAX_RADIUS[user.plan ?? 'FREE'] ?? 25;
@@ -41,6 +41,7 @@ export async function PUT(req: NextRequest) {
         ...(longitude          !== undefined && longitude !== null && { longitude: Number(longitude) }),
         ...(serviceRadiusMiles !== undefined && { serviceRadiusMiles: Number(serviceRadiusMiles) }),
         ...(zipCode             !== undefined && { zipCode: zipCode || null }),
+        ...(phone               !== undefined && { phone: phone || null }),
       },
       select: { bio: true, serviceTypes: true, avatarUrl: true, latitude: true, longitude: true, serviceRadiusMiles: true, zipCode: true },
     });

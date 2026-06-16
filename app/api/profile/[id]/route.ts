@@ -60,6 +60,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
 
     // Check if the viewer is a client with an accepted conversation with this cleaner
     let canSeeContact = false;
+    let isOwner = false;
     try {
       const session = await auth();
       if (session?.user?.email) {
@@ -67,7 +68,9 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
           where: { email: session.user.email },
           select: { id: true, role: true },
         });
-        if (viewer?.role === 'CLIENT') {
+        if (viewer?.id === id) {
+          isOwner = true;
+        } else if (viewer?.role === 'CLIENT') {
           const acceptedConv = await prisma.conversation.findFirst({
             where: {
               cleanerId: id,
@@ -87,7 +90,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
     return NextResponse.json({
       cleaner: {
         ...cleanerData,
-        phone:    canSeeContact ? (user as any).phone ?? null : undefined,
+        phone:    (canSeeContact || isOwner) ? (user as any).phone ?? null : undefined,
         workPhotos,
         cleanerReviews,
         completedJobs,
