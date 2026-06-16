@@ -227,6 +227,8 @@ export default function PlanPage() {
                         <Text fontWeight="black" color="slate.900" fontSize="lg" fontFamily="heading">{plan.name}</Text>
                         {plan.price === 0 ? (
                           <Text fontSize="sm" color="slate.400">Free</Text>
+                        ) : loading ? (
+                          <Text fontWeight="black" fontSize="xl" color="slate.200" fontFamily="heading">—</Text>
                         ) : (
                           <HStack gap={1} align="baseline">
                             <Text fontWeight="black" fontSize="xl" color={c.text} fontFamily="heading" letterSpacing="-0.03em">

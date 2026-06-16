@@ -10,12 +10,12 @@ export const PLANS = [
     perks: [
       'Basic profile listing',
       'Wave 2 access only',
-      'Limited range (25 mi)',
+      'Limited range (60 mi)',
       'No verified badge',
       'No ranking priority',
     ],
     rankingBonus: 0,
-    maxRadiusMiles: 25,
+    maxRadiusMiles: 60,
   },
   {
     id:    'BASIC' as PlanId,
