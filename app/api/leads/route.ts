@@ -113,7 +113,7 @@ export async function POST(request: NextRequest) {
     const activeCount = await prisma.lead.count({
       where: {
         clientId: dbUser.id,
-        status:   { in: ['NEW', 'WAVE1', 'WAVE2', 'WAVE3', 'IN_REVIEW', 'ACCEPTED'] },
+        status:   { in: ['NEW', 'WAVE2', 'WAVE3', 'IN_REVIEW', 'ACCEPTED'] },
       },
     });
     if (activeCount >= 5) {

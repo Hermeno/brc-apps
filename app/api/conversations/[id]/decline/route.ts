@@ -48,7 +48,7 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
     data: { status: 'declined', feeStatus: resolvedFeeStatus },
   });
 
-  // If no other active conversations → revert lead to WAVE1 for redistribution
+  // If no other active conversations → revert lead to NEW and re-run matching
   const remaining = await prisma.conversation.count({
     where: { leadId: conv.leadId, status: 'active', id: { not: id } },
   });

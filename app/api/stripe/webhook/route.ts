@@ -117,18 +117,6 @@ export async function POST(req: NextRequest) {
                 }
               }
 
-              // Wave 1: verify the 90-second window hasn't expired
-              if (waveNum === 1) {
-                const dist = await tx.leadDistribution.findFirst({
-                  where:  { leadId, cleanerId, wave: 1, status: 'INVITED' },
-                  select: { expiresAt: true },
-                });
-                if (!dist || (dist.expiresAt && dist.expiresAt < new Date())) {
-                  refund = true;
-                  return;
-                }
-              }
-
               // Wave 2 race: another cleaner already won — refund this payment.
               // Status is IN_REVIEW (not ACCEPTED) immediately after a cleaner wins.
               if (waveNum === 2 && (lead.status === 'IN_REVIEW' || lead.status === 'ACCEPTED') && lead.cleanerId !== cleanerId) {

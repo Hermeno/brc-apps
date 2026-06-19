@@ -77,7 +77,6 @@ const SIDEBAR_W    = '216px';
 
 const LEAD_STATUS: Record<string, { label: string; color: string; dot: string }> = {
   NEW:       { label: 'New',            color: '#92400E', dot: '#F59E0B' },
-  WAVE1:     { label: 'Matching',       color: '#0A80DB', dot: '#60A5FA' },
   WAVE2:     { label: 'Matching',       color: '#0A80DB', dot: '#60A5FA' },
   WAVE3:     { label: 'Last wave',      color: '#0A80DB', dot: '#60A5FA' },
   IN_REVIEW: { label: 'Pending',        color: '#0369A1', dot: '#38BDF8' },

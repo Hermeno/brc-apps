@@ -25,7 +25,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     const lead = await prisma.lead.findUnique({ where: { id } });
     if (!lead || lead.clientId !== dbUser.id) return NextResponse.json({ error: 'Not found' }, { status: 404 });
 
-    const reactivatable = ['NEW', 'WAVE1', 'WAVE2', 'WAVE3', 'UNMATCHED', 'CANCELLED'];
+    const reactivatable = ['NEW', 'WAVE2', 'WAVE3', 'UNMATCHED', 'CANCELLED'];
     if (!reactivatable.includes(lead.status)) {
       return NextResponse.json({ error: 'This booking cannot be reactivated' }, { status: 400 });
     }

@@ -55,12 +55,11 @@ function WaveTimer({ lead }: { lead: Lead }) {
   const secsLeft = useCountdown(dist?.expiresAt);
   if (!dist) return null;
 
-  const isWave1 = dist.wave === 1;
   const isWave2 = dist.wave === 2;
   const urgent  = secsLeft <= 30 && secsLeft > 0;
   const expired = secsLeft === 0;
 
-  const label = isWave1 ? 'Wave 1 · Exclusive' : isWave2 ? 'Wave 2 · Open' : `Wave ${dist.wave}`;
+  const label = isWave2 ? 'Wave 2 · Open' : `Wave ${dist.wave}`;
   const chipBg = urgent ? '#FEF2F2' : '#F8FAFC';
   const chipColor = urgent ? '#B91C1C' : '#0A80DB';
 
@@ -77,7 +76,7 @@ function WaveTimer({ lead }: { lead: Lead }) {
           letterSpacing: '0.04em',
           textTransform: 'uppercase',
         }}>
-        {isWave1 ? '⚡ ' : '👥 '}{label}
+        {'👥 '}{label}
       </Text>
       {!expired && (
         <Text fontSize="xs" color={urgent ? 'red.600' : 'slate.500'} fontFamily="mono" fontVariantNumeric="tabular-nums">
@@ -128,7 +127,7 @@ export default function MarketplacePage() {
     } finally { setResponding(null); }
   };
 
-  const w1Count = leads.filter(l => l.distributions?.[0]?.wave === 1).length;
+  const w0Count = leads.filter(l => l.distributions?.[0]?.wave === 0).length;
   const w2Count = leads.filter(l => l.distributions?.[0]?.wave === 2).length;
 
   return (
@@ -162,10 +161,10 @@ export default function MarketplacePage() {
               <Text
                 fontSize="10.5px" fontWeight={700} color="#697386"
                 textTransform="uppercase" letterSpacing="0.06em" fontFamily="heading" mb={1}>
-                Wave 1 Exclusive
+                Instant Book
               </Text>
               <Text fontSize="2xl" fontWeight="black" color="#0A80DB" fontFamily="heading" letterSpacing="-0.03em">
-                {w1Count}
+                {w0Count}
               </Text>
             </Box>
             <Box px={6} py={4} flex={1}>
@@ -202,8 +201,7 @@ export default function MarketplacePage() {
               {leads.map((lead, i) => {
                 const dist  = lead.distributions?.[0];
                 const wave  = dist?.wave ?? 0;
-                const isW1  = wave === 1;
-                const accentColor = isW1 ? '#0A80DB' : '#7C3AED';
+                const accentColor = wave === 0 ? '#0A80DB' : '#7C3AED';
 
                 return (
                   <Box
@@ -333,7 +331,7 @@ export default function MarketplacePage() {
                           onClick={() => handleRespond(lead.id)}
                           loading={responding === lead.id}
                           loadingText="Sending…">
-                          <Icon as={isW1 ? LucideZap : LucideUsers} w={5} h={5} />
+                          <Icon as={wave === 0 ? LucideZap : LucideUsers} w={5} h={5} />
                           <Text>Accept lead</Text>
                           {lead.leadPrice && (
                             <Text fontSize="10px" opacity={0.8}>${lead.leadPrice}</Text>

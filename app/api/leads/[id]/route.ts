@@ -5,7 +5,7 @@ import { after } from 'next/server';
 import { runMatching } from '@/lib/matching';
 import { logError } from '@/lib/logger';
 
-const EDITABLE_STATUSES = ['NEW', 'WAVE1', 'WAVE2', 'WAVE3', 'UNMATCHED'];
+const EDITABLE_STATUSES = ['NEW', 'WAVE2', 'WAVE3', 'UNMATCHED'];
 
 export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const session = await auth();

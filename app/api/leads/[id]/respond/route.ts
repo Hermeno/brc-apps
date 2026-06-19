@@ -36,7 +36,7 @@ export async function POST(
   if (!lead) return NextResponse.json({ error: 'Lead not found' }, { status: 404 });
 
   // Only accept if lead is still in an open (un-claimed) state
-  const openStatuses = ['NEW', 'WAVE1', 'WAVE2', 'WAVE3'];
+  const openStatuses = ['NEW', 'WAVE2', 'WAVE3'];
   if (!openStatuses.includes(lead.status)) {
     return NextResponse.json({ error: 'This lead has already been claimed' }, { status: 409 });
   }
@@ -57,7 +57,7 @@ export async function POST(
       // Atomically claim the lead — only succeeds if status is still open.
       // If another cleaner won the race, this update matches 0 rows and we throw.
       const claimed = await tx.lead.updateMany({
-        where: { id: leadId, status: { in: ['NEW', 'WAVE1', 'WAVE2', 'WAVE3'] } },
+        where: { id: leadId, status: { in: ['NEW', 'WAVE2', 'WAVE3'] } },
         data:  { status: 'IN_REVIEW', cleanerId: cleaner.id },
       });
       if (claimed.count === 0) {

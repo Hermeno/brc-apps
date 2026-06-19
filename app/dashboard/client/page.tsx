@@ -33,7 +33,6 @@ import LanguageSwitcher from '@/components/language-switcher';
 function makeStatusMap(t: (k: string) => string): Record<string, { label: string; bg: string; color: string; border: string }> {
   return {
     NEW:       { label: t('client.dashboard.statusAwaiting'),  bg: '#F8FAFC', color: '#64748B', border: '#E3E8EE' },
-    WAVE1:     { label: t('client.dashboard.statusFinding'),   bg: '#F8FAFC', color: '#0A80DB', border: '#E3E8EE' },
     WAVE2:     { label: t('client.dashboard.statusFinding'),   bg: '#F8FAFC', color: '#0A80DB', border: '#E3E8EE' },
     WAVE3:     { label: t('client.dashboard.statusFinding'),   bg: '#F8FAFC', color: '#0A80DB', border: '#E3E8EE' },
     IN_REVIEW: { label: t('client.dashboard.statusReady'),     bg: '#ECFDF5', color: '#059669', border: '#A7F3D0' },
@@ -105,7 +104,7 @@ function isoDateToUs(iso: string): string {
 
 function getStatusStep(status: string): number {
   if (['NEW'].includes(status))                            return 0;
-  if (['WAVE1', 'WAVE2', 'WAVE3', 'UNMATCHED'].includes(status)) return 1;
+  if (['WAVE2', 'WAVE3', 'UNMATCHED'].includes(status)) return 1;
   if (status === 'IN_REVIEW')                              return 2;
   if (status === 'ACCEPTED')                               return 3;
   if (status === 'COMPLETED')                              return 4;
@@ -804,7 +803,7 @@ export default function ClientPage() {
                       const feePaid        = acceptedConv?.feeStatus === 'charged' || acceptedConv?.feeStatus === 'waived';
                       const canCancel      = isActive && !timeHasPassed && !feePaid;
                       const canTerminate   = isActive && timeHasPassed && lead.status === 'ACCEPTED' && feePaid;
-                      const canReactivate  = isActive && timeHasPassed && ['NEW', 'WAVE1', 'WAVE2', 'WAVE3', 'UNMATCHED'].includes(lead.status);
+                      const canReactivate  = isActive && timeHasPassed && ['NEW', 'WAVE2', 'WAVE3', 'UNMATCHED'].includes(lead.status);
                       const canRate        = lead.status === 'COMPLETED' && lead.cleanerId && !lead.review;
                       const freqLabel      = FREQUENCY_OPTIONS.find(f => f.id === lead.frequency)?.labelEn;
                       const activeConvs    = lead.status === 'IN_REVIEW'
@@ -1038,12 +1037,12 @@ export default function ClientPage() {
 
                           {/* ── Action Bar ── */}
                           {(canCancel || canTerminate || canRate || canReactivate ||
-                            (isActive && !timeHasPassed && !feePaid && ['NEW','WAVE1','WAVE2','WAVE3','UNMATCHED'].includes(lead.status))) && (
+                            (isActive && !timeHasPassed && !feePaid && ['NEW','WAVE2','WAVE3','UNMATCHED'].includes(lead.status))) && (
                             <Box borderTop="1px solid #F1F5F9" px={5} py={3}>
                               <Flex gap={2} align="center" flexWrap="wrap">
 
                                 {/* Edit */}
-                                {isActive && !timeHasPassed && ['NEW','WAVE1','WAVE2','WAVE3','UNMATCHED'].includes(lead.status) && (
+                                {isActive && !timeHasPassed && ['NEW','WAVE2','WAVE3','UNMATCHED'].includes(lead.status) && (
                                   <Button size="sm" variant="outline" borderColor="slate.200" color="slate.600"
                                     borderRadius="4px" fontWeight="semibold"
                                     _hover={{ bg: 'slate.50', borderColor: 'brand.300', color: 'brand.600' }}
