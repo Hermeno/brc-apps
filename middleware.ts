@@ -8,10 +8,13 @@ export default auth((req) => {
   const { pathname } = req.nextUrl;
   const isLoggedIn = !!req.auth;
 
-  const publicRoutes = ['/auth/login', '/auth/register', '/', '/request', '/app'];
+  const publicRoutes = [
+    '/auth/login', '/auth/register',
+    '/', '/request', '/about', '/privacy', '/terms', '/app',
+  ];
 
   if (publicRoutes.includes(pathname)) {
-    if (isLoggedIn && pathname !== '/') {
+    if (isLoggedIn && ['/auth/login', '/auth/register'].includes(pathname)) {
       return NextResponse.redirect(new URL('/dashboard', req.nextUrl));
     }
     return NextResponse.next();

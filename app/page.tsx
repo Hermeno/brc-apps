@@ -51,7 +51,7 @@ export default function HomePage() {
             </a>
           </div>
           <div className={styles['top-bar-track']}>
-            <Link href="/dashboard" className={styles['top-contact-item']}>
+            <Link href="/auth/login" className={styles['top-contact-item']}>
               <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
               <span>Track Your Booking</span>
               <small>Spot Your Cleaner</small>
@@ -366,7 +366,7 @@ export default function HomePage() {
             </div>
             <div className={styles['footer-col']}>
               <h4>Quick Links</h4>
-              <Link href="/dashboard">Track Your Booking</Link>
+              <Link href="/auth/login">Track Your Booking</Link>
               <Link href="/request">Get a Quote</Link>
               <Link href="/auth/login">Sign In</Link>
               <Link href="/auth/register?role=cleaner">Become a Cleaner</Link>
