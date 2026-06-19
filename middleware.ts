@@ -8,11 +8,6 @@ export default auth((req) => {
   const { pathname } = req.nextUrl;
   const isLoggedIn = !!req.auth;
 
-  // Public routes — always accessible (auth/* excluded from matcher below)
-  if (['/', '/request', '/privacy', '/terms', '/about'].includes(pathname)) {
-    return NextResponse.next();
-  }
-
   // /app → logged-in: dashboard, guest: landing page
   if (pathname === '/app') {
     return NextResponse.redirect(new URL(isLoggedIn ? '/dashboard' : '/', req.nextUrl));
@@ -39,9 +34,10 @@ export default auth((req) => {
 });
 
 export const config = {
-  // Exclude: Next.js internals, static assets, NextAuth API routes, and auth pages.
-  // Auth pages (/auth/*) MUST be excluded — if the NextAuth wrapper runs for /auth/login
-  // and encounters a proxy/HTTPS detection error, it redirects to the error page (/auth/login)
-  // which triggers the middleware again → infinite redirect loop.
-  matcher: ['/((?!_next/static|_next/image|favicon\\.ico|api/auth|auth/).*)',],
+  // Only run middleware on routes that actually need auth checking.
+  // A broad matcher that includes public routes (like /) causes the NextAuth
+  // wrapper to run for those requests; behind DO App Platform's proxy it emits
+  // a 307 redirect to the same URL before our callback is reached → redirect loop.
+  // /auth/* and /api/auth/* are handled directly by NextAuth handlers — no middleware needed.
+  matcher: ['/app', '/dashboard/:path*'],
 };
