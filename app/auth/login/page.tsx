@@ -3,8 +3,8 @@
 import {
   Box, Text, VStack, HStack, Input, Button, Flex, Icon,
 } from '@chakra-ui/react';
-import { useState } from 'react';
-import { signIn } from 'next-auth/react';
+import { useState, useEffect } from 'react';
+import { signIn, useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { toaster } from '@/lib/toaster';
 import NextLink from 'next/link';
@@ -18,6 +18,11 @@ export default function LoginPage() {
   const [password, setPassword] = useState('');
   const [loading, setLoading]   = useState(false);
   const router = useRouter();
+  const { status } = useSession();
+
+  useEffect(() => {
+    if (status === 'authenticated') router.replace('/dashboard');
+  }, [status, router]);
   const t = useT();
 
   const handleLogin = async (e: React.FormEvent) => {

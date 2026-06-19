@@ -8,17 +8,12 @@ export default auth((req) => {
   const { pathname } = req.nextUrl;
   const isLoggedIn = !!req.auth;
 
-  // Public routes — always accessible
-  const publicRoutes = ['/', '/auth/login', '/auth/register', '/request', '/privacy', '/terms', '/about'];
-  if (publicRoutes.includes(pathname)) {
-    // Logged-in users trying to reach login/register → send to dashboard
-    if (isLoggedIn && ['/auth/login', '/auth/register'].includes(pathname)) {
-      return NextResponse.redirect(new URL('/dashboard', req.nextUrl));
-    }
+  // Public routes — always accessible (auth/* excluded from matcher below)
+  if (['/', '/request', '/privacy', '/terms', '/about'].includes(pathname)) {
     return NextResponse.next();
   }
 
-  // /app → logged-in goes to dashboard, guest goes to landing page
+  // /app → logged-in: dashboard, guest: landing page
   if (pathname === '/app') {
     return NextResponse.redirect(new URL(isLoggedIn ? '/dashboard' : '/', req.nextUrl));
   }
@@ -44,5 +39,9 @@ export default auth((req) => {
 });
 
 export const config = {
-  matcher: ['/((?!api|_next/static|_next/image|favicon.ico).*)'],
+  // Exclude: Next.js internals, static assets, NextAuth API routes, and auth pages.
+  // Auth pages (/auth/*) MUST be excluded — if the NextAuth wrapper runs for /auth/login
+  // and encounters a proxy/HTTPS detection error, it redirects to the error page (/auth/login)
+  // which triggers the middleware again → infinite redirect loop.
+  matcher: ['/((?!_next/static|_next/image|favicon\\.ico|api/auth|auth/).*)',],
 };
