@@ -44,4 +44,4 @@ services:
         scope: RUN_TIME
         value: no-reply@brazilianclean.org
     health_check:
-      http_path: /
+      http_path: /api/health

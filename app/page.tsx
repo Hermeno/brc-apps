@@ -1,42 +1,11 @@
-'use client';
-
-import { useState } from 'react';
 import Link from 'next/link';
 import styles from './landing-page.module.css';
-
-type ServiceTab = 'standard' | 'deep' | 'moveout' | 'post' | 'office';
-type WhyTab = 'knowledge' | 'excellence' | 'pricing';
-
-const SERVICE_TABS: { id: ServiceTab; label: string; sub: string; hasArrow?: boolean; icon: React.ReactNode }[] = [
-  {
-    id: 'standard', label: 'Standard Cleaning', sub: 'Regular Home Care', hasArrow: true,
-    icon: <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>,
-  },
-  {
-    id: 'deep', label: 'Deep Cleaning', sub: 'Thorough Service',
-    icon: <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>,
-  },
-  {
-    id: 'moveout', label: 'Move In/Out', sub: 'Transition Cleaning',
-    icon: <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>,
-  },
-  {
-    id: 'post', label: 'Post-Construction', sub: "Builder's Clean",
-    icon: <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>,
-  },
-  {
-    id: 'office', label: 'Office Cleaning', sub: 'Commercial Service',
-    icon: <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>,
-  },
-];
+import { NavBar } from './_landing/nav-bar';
+import { ServiceTabs } from './_landing/service-tabs';
+import { WhyTabs } from './_landing/why-tabs';
+import { SubscribeColumn } from './_landing/subscribe-form';
 
 export default function HomePage() {
-  const [activeTab, setActiveTab] = useState<ServiceTab>('standard');
-  const [activeWhy, setActiveWhy] = useState<WhyTab>('knowledge');
-  const [mobileOpen, setMobileOpen] = useState(false);
-
-  const closeMobile = () => setMobileOpen(false);
-
   return (
     <div className={styles.wrapper}>
 
@@ -60,39 +29,8 @@ export default function HomePage() {
         </div>
       </div>
 
-      {/* ── Navbar ── */}
-      <nav className={styles.navbar}>
-        <div className={styles['nav-inner']}>
-          <Link href="/" className={styles.brand}>
-            Brazilian<span>Clean</span>
-          </Link>
-          <div className={styles['nav-links']}>
-            <Link href="/">Home</Link>
-            <a href="#about">About Us</a>
-            <a href="#services">Our Services</a>
-            <a href="#why-us">Why Us</a>
-            <Link href="/request" className={styles['nav-quote']}>Get a Quote</Link>
-            <a href="#testimonials">Reviews</a>
-            <a href="mailto:support@brazilianclean.com">Contact Us</a>
-          </div>
-          <button
-            className={`${styles.hamburger} ${mobileOpen ? styles.active : ''}`}
-            onClick={() => setMobileOpen(v => !v)}
-            aria-label="Menu"
-          >
-            <span /><span /><span />
-          </button>
-        </div>
-        <div className={`${styles['mobile-menu']} ${mobileOpen ? styles.open : ''}`}>
-          <Link href="/" onClick={closeMobile}>Home</Link>
-          <a href="#about" onClick={closeMobile}>About Us</a>
-          <a href="#services" onClick={closeMobile}>Our Services</a>
-          <a href="#why-us" onClick={closeMobile}>Why Us</a>
-          <Link href="/request" onClick={closeMobile}>Get a Quote</Link>
-          <a href="#testimonials" onClick={closeMobile}>Reviews</a>
-          <a href="mailto:support@brazilianclean.com" onClick={closeMobile}>Contact Us</a>
-        </div>
-      </nav>
+      {/* ── Navbar (client — hamburger state) ── */}
+      <NavBar />
 
       {/* ── Hero ── */}
       <section className={styles.hero}>
@@ -110,75 +48,11 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── Services Tab Bar ── */}
-      <section className={styles['services-bar']} id="services">
-        <div className={styles['services-bar-inner']}>
-          {SERVICE_TABS.map(tab => (
-            <div
-              key={tab.id}
-              className={`${styles['svc-tab']} ${activeTab === tab.id ? styles.active : ''}`}
-              onClick={() => setActiveTab(tab.id)}
-            >
-              <div className={styles['svc-tab-icon']}>{tab.icon}</div>
-              <strong>{tab.label}</strong>
-              <span>{tab.sub}</span>
-              {tab.hasArrow && (
-                <div className={styles['svc-tab-arrow']}>
-                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
-      </section>
+      {/* ── Services Tab Bar (client — tab state) ── */}
+      <ServiceTabs />
 
-      {/* ── Why Choose Us ── */}
-      <section className={styles['why-us']} id="why-us">
-        <div className={styles.container}>
-          <h2 className={styles['section-center-title']}>Why Choose Us?</h2>
-          <div className={styles['why-tabs']}>
-            {([
-              { id: 'knowledge', label: 'In-Depth Knowledge', icon: <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg> },
-              { id: 'excellence', label: 'Excellence & Leadership', icon: <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg> },
-              { id: 'pricing', label: 'Competitive Pricing', icon: <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg> },
-            ] as { id: WhyTab; label: string; icon: React.ReactNode }[]).map(tab => (
-              <button
-                key={tab.id}
-                className={`${styles['why-tab']} ${activeWhy === tab.id ? styles.active : ''}`}
-                onClick={() => setActiveWhy(tab.id)}
-              >
-                {tab.icon}
-                {tab.label}
-              </button>
-            ))}
-          </div>
-          <div className={styles['why-body']}>
-            <div className={styles['why-images']}>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=500&q=80" alt="Professional cleaning team" className={styles['why-img-main']} />
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=300&q=80" alt="Cleaning supplies" className={styles['why-img-side']} />
-            </div>
-            <div className={styles['why-content']}>
-              <div className={`${styles['why-panel']} ${activeWhy === 'knowledge' ? styles.active : ''}`}>
-                <h3>Years of Cleaning Expertise</h3>
-                <p>BrazilianClean is built on decades of professional cleaning knowledge. Our network of vetted cleaners brings deep expertise in residential and commercial spaces — delivering spotless results backed by real experience.</p>
-                <p>Every cleaner on our platform is background-checked, trained in modern cleaning techniques, and equipped with the best products to keep your home safe and sparkling clean.</p>
-              </div>
-              <div className={`${styles['why-panel']} ${activeWhy === 'excellence' ? styles.active : ''}`}>
-                <h3>Excellence &amp; Leadership in Cleaning</h3>
-                <p>BrazilianClean is positioned in the United States as a leader in professional home cleaning services, backed by professionals who have decades of global experience in the cleaning industry.</p>
-                <p>Where our headquarters is located in Miami, Florida, and we have branches operating across Connecticut, New York, Massachusetts, and expanding nationwide.</p>
-              </div>
-              <div className={`${styles['why-panel']} ${activeWhy === 'pricing' ? styles.active : ''}`}>
-                <h3>Transparent, Competitive Pricing</h3>
-                <p>No hidden fees, no surprises. We believe in clear, upfront pricing that works for every budget. Our platform ensures you always know exactly what you&apos;re paying before you confirm a booking.</p>
-                <p>Flexible plans for one-time cleans, recurring visits, and specialized services — all priced fairly so quality is never out of reach.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* ── Why Choose Us (client — tab state) ── */}
+      <WhyTabs />
 
       {/* ── Difference Section ── */}
       <section className={styles.difference} id="about">
@@ -232,7 +106,7 @@ export default function HomePage() {
             </Link>
           </div>
           <div className={styles['dark-services-grid']}>
-            {[
+            {([
               {
                 label: 'STANDARD CLEANING',
                 desc: 'Provides professional cleaning services to meet up with your household needs, delivering your home fresh and safe to its top condition.',
@@ -258,7 +132,7 @@ export default function HomePage() {
                 desc: 'Provides commercial cleaning services to meet up with your office needs, delivering your workspace clean and safe to its finest standard.',
                 icon: <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>,
               },
-            ].map(svc => (
+            ] as { label: string; desc: string; icon: React.ReactNode }[]).map(svc => (
               <div key={svc.label} className={styles['dark-svc-card']}>
                 <div className={styles['dark-svc-icon']}>{svc.icon}</div>
                 <h4>{svc.label}</h4>
@@ -273,15 +147,17 @@ export default function HomePage() {
       <section className={styles['stats-section']}>
         <div className={`${styles.container} ${styles['stats-grid']}`}>
           <div className={styles['stats-numbers']}>
-            {[
+            {([
               { val: '12',    label: 'Cities\nCovered' },
               { val: '2,400+', label: 'Satisfied\nClients' },
               { val: '500+',  label: 'Verified\nCleaners' },
               { val: '4.9★',  label: 'Average\nRating' },
-            ].map(s => (
+            ] as { val: string; label: string }[]).map(s => (
               <div key={s.val} className={styles['stat-item']}>
                 <span className={styles['stat-val']}>{s.val}</span>
-                <span className={styles['stat-label']}>{s.label.split('\n').map((line, i) => <span key={i}>{line}{i === 0 && <br />}</span>)}</span>
+                <span className={styles['stat-label']}>
+                  {s.label.split('\n').map((line, i) => <span key={i}>{line}{i === 0 && <br />}</span>)}
+                </span>
               </div>
             ))}
           </div>
@@ -314,11 +190,11 @@ export default function HomePage() {
           <h2 className={styles['section-center-title']}>What Our Clients Say</h2>
           <p className={styles['section-center-sub']}>Homeowners across the US trust BrazilianClean for consistent, high-quality results — every time.</p>
           <div className={styles['testimonials-grid']}>
-            {[
+            {([
               { initials: 'SM', name: 'Sarah M.', location: 'Miami, FL · Standard Cleaning', text: "I've been using BrazilianClean for 6 months and it's completely changed my routine. The cleaner is always on time, professional, and my home looks spotless every single time." },
               { initials: 'MR', name: 'Michael R.', location: 'Hartford, CT · Deep Cleaning', text: 'Booked a deep clean before hosting a family gathering. They exceeded every expectation — areas I forgot existed were cleaned. Booking took 2 minutes. Highly recommend.' },
               { initials: 'JK', name: 'Jennifer K.', location: 'Boston, MA · Move-Out Cleaning', text: 'Used BrazilianClean for a move-out clean. Got my full security deposit back. The platform makes everything so simple — booking, communication, payment. No stress at all.' },
-            ].map(t => (
+            ] as { initials: string; name: string; location: string; text: string }[]).map(t => (
               <div key={t.name} className={styles['testimonial-card']}>
                 <div className={styles.stars}>★★★★★</div>
                 <p>&ldquo;{t.text}&rdquo;</p>
@@ -371,16 +247,8 @@ export default function HomePage() {
               <Link href="/auth/login">Sign In</Link>
               <Link href="/auth/register?role=cleaner">Become a Cleaner</Link>
             </div>
-            <div className={`${styles['footer-col']} ${styles['footer-subscribe']}`}>
-              <h4>Subscribe</h4>
-              <p>Get to know about BrazilianClean, our updates and all news, straight to your inbox.</p>
-              <form className={styles['subscribe-form']} onSubmit={e => e.preventDefault()}>
-                <input type="email" placeholder="Your email address" />
-                <button type="submit">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-                </button>
-              </form>
-            </div>
+            {/* Subscribe column — client for form submit handler */}
+            <SubscribeColumn />
           </div>
         </div>
         <div className={styles['footer-bottom']}>
