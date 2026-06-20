@@ -31,9 +31,11 @@ function createClient(): PrismaClient {
   // options other than connectionString when building the pool internally.
   const pool = new Pool({
     connectionString,
-    max:                     3,
-    connectionTimeoutMillis: 15_000,
-    idleTimeoutMillis:       30_000,
+    max:                          3,
+    connectionTimeoutMillis:      15_000,
+    idleTimeoutMillis:            10_000,
+    keepAlive:                    true,
+    keepAliveInitialDelayMillis:  10_000,
     ssl: { rejectUnauthorized: false },
   });
 

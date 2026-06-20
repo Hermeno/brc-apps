@@ -11,10 +11,16 @@ async function requireAdmin() {
 }
 
 const PRICE_DEFAULTS = [
-  { id: 'standard',  price: 10 },
-  { id: 'deep',      price: 20 },
-  { id: 'post-work', price: 32 },
-  { id: 'moving',    price: 32 },
+  { id: 'standard',          price: 10 },
+  { id: 'deep',              price: 20 },
+  { id: 'post-work',         price: 32 },
+  { id: 'moving',            price: 32 },
+  { id: 'gutter-cleaning',   price: 20 },
+  { id: 'flashing-cleaning', price: 14 },
+  { id: 'tile-grout',        price: 16 },
+  { id: 'home-organizing',   price: 20 },
+  { id: 'garage-attic',      price: 20 },
+  { id: 'commercial',        price: 32 },
 ];
 
 const PLATFORM_DEFAULTS = [
@@ -89,7 +95,7 @@ export async function PATCH(req: NextRequest) {
 
     if (body.type === 'price') {
       const { id, price } = body;
-      if (!['standard', 'deep', 'post-work', 'moving'].includes(id)) {
+      if (!['standard', 'deep', 'post-work', 'moving', 'gutter-cleaning', 'flashing-cleaning', 'tile-grout', 'home-organizing', 'garage-attic', 'commercial'].includes(id)) {
         return NextResponse.json({ error: 'Invalid service type' }, { status: 400 });
       }
       if (typeof price !== 'number' || price < 0) {
