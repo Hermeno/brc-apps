@@ -15,6 +15,8 @@ const PRICE_DEFAULTS = [
   { id: 'deep',              price: 20 },
   { id: 'post-work',         price: 32 },
   { id: 'moving',            price: 32 },
+  { id: 'deck-cleaning',     price: 14 },
+  { id: 'pressure-washing',  price: 16 },
   { id: 'gutter-cleaning',   price: 20 },
   { id: 'flashing-cleaning', price: 14 },
   { id: 'tile-grout',        price: 16 },
@@ -95,7 +97,7 @@ export async function PATCH(req: NextRequest) {
 
     if (body.type === 'price') {
       const { id, price } = body;
-      if (!['standard', 'deep', 'post-work', 'moving', 'gutter-cleaning', 'flashing-cleaning', 'tile-grout', 'home-organizing', 'garage-attic', 'commercial'].includes(id)) {
+      if (!['standard', 'deep', 'post-work', 'moving', 'deck-cleaning', 'pressure-washing', 'gutter-cleaning', 'flashing-cleaning', 'tile-grout', 'home-organizing', 'garage-attic', 'commercial'].includes(id)) {
         return NextResponse.json({ error: 'Invalid service type' }, { status: 400 });
       }
       if (typeof price !== 'number' || price < 0) {

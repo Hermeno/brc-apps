@@ -688,6 +688,63 @@
   .dark-services-grid { grid-template-columns: 1fr; }
 }
 
+/* ── Video Section ── */
+.video-section {
+  background: #F4F7FB;
+  padding: 80px 0;
+  border-bottom: 1px solid #D8E2EE;
+}
+
+.video-section-inner {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 0 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 32px;
+}
+
+.video-section-header {
+  text-align: center;
+}
+
+.video-section-header h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #0B1E3D;
+  margin: 0 0 12px;
+  line-height: 1.2;
+}
+
+.video-section-header p {
+  font-size: 1rem;
+  color: #4B5C72;
+  margin: 0;
+  max-width: 520px;
+}
+
+.video-wrapper {
+  width: 100%;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 8px 40px rgba(11, 30, 61, 0.14);
+  background: #000;
+  aspect-ratio: 16 / 9;
+}
+
+.video-wrapper video {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+}
+
+@media (max-width: 600px) {
+  .video-section { padding: 52px 0; }
+  .video-section-header h2 { font-size: 1.5rem; }
+}
+
 /* ── Stats Section ── */
 .stats-section {
   background: #fff;

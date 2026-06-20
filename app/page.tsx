@@ -4,8 +4,20 @@ import { NavBar } from './_landing/nav-bar';
 import { ServiceTabs } from './_landing/service-tabs';
 import { WhyTabs } from './_landing/why-tabs';
 import { SubscribeColumn } from './_landing/subscribe-form';
+import { prisma } from '@/lib/prisma';
 
-export default function HomePage() {
+async function getHeroVideoUrl(): Promise<string | null> {
+  try {
+    const config = await prisma.siteConfig.findUnique({ where: { id: 'singleton' } });
+    return config?.heroVideoUrl ?? null;
+  } catch {
+    return null;
+  }
+}
+
+export default async function HomePage() {
+  const heroVideoUrl = await getHeroVideoUrl();
+
   return (
     <div className={styles.wrapper}>
 
@@ -53,6 +65,21 @@ export default function HomePage() {
 
       {/* ── Why Choose Us (client — tab state) ── */}
       <WhyTabs />
+
+      {/* ── Hero Video Section ── */}
+      {heroVideoUrl && (
+        <section className={styles['video-section']}>
+          <div className={styles['video-section-inner']}>
+            <div className={styles['video-section-header']}>
+              <h2>See Us in Action</h2>
+              <p>Watch how our professional cleaners deliver spotless results — every single time.</p>
+            </div>
+            <div className={styles['video-wrapper']}>
+              <video src={heroVideoUrl} controls playsInline preload="metadata" />
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* ── Difference Section ── */}
       <section className={styles.difference} id="about">
