@@ -74,7 +74,7 @@ export default function SetupAdminPage() {
             <button
               type="submit"
               disabled={status === 'loading'}
-              style={{ padding: '0.75rem', background: '#1a1a1a', color: '#fff', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: 600 }}
+              style={{ padding: '0.75rem', background: '#0A80DB', color: '#fff', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: 600 }}
             >
               {status === 'loading' ? 'Creating...' : 'Create Admin'}
             </button>

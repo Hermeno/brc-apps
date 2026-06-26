@@ -54,7 +54,7 @@ function ResetPasswordForm() {
         <HStack gap={2.5} mb={10} justify="space-between">
           <HStack gap={2.5}>
             <Image src="/2.png" alt="BrazilianClean" width={32} height={32} style={{ borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }} />
-            <Text fontWeight="700" fontSize="15px" letterSpacing="-0.02em" color="#0A2540" fontFamily="heading">
+            <Text fontWeight="700" fontSize="15px" letterSpacing="-0.02em" color="#0A3D7A" fontFamily="heading">
               Brazilian<Text as="span" color="#0A80DB">Clean</Text>
             </Text>
           </HStack>
@@ -64,7 +64,7 @@ function ResetPasswordForm() {
         <Box bg="white" border="1px solid #E3E8EE" p={8} style={{ borderRadius: 8 }}>
 
           <Box mb={7}>
-            <Text fontSize="22px" fontWeight="800" color="#0A2540" fontFamily="heading" letterSpacing="-0.025em" mb={1}>
+            <Text fontSize="22px" fontWeight="800" color="#0A3D7A" fontFamily="heading" letterSpacing="-0.025em" mb={1}>
               {t('auth.reset.title')}
             </Text>
             <Text fontSize="14px" color="#425466" fontFamily="heading">

@@ -16,7 +16,7 @@ import { AnimatePresence, motion } from 'motion/react';
 import Image from 'next/image';
 import { useT } from '@/lib/i18n';
 
-const NAV_BG = '#0B1120';
+const NAV_BG = '#ffffff';
 
 export default function CleanerNav() {
   const { data: session } = useSession();
@@ -39,11 +39,11 @@ export default function CleanerNav() {
     <Box
       as="nav"
       bg={NAV_BG}
-      borderBottom="1px solid rgba(255,255,255,0.06)"
+      borderBottom="1px solid #E2E8F0"
       position="sticky"
       top={0}
       zIndex={50}
-      style={{ boxShadow: '0 1px 8px rgba(0,0,0,0.2)' }}
+      style={{ boxShadow: '0 1px 6px rgba(0,0,0,0.06)' }}
     >
       <Flex
         align="center"
@@ -57,13 +57,13 @@ export default function CleanerNav() {
         <NextLink href="/dashboard/cleaner" style={{ flexShrink: 0, textDecoration: 'none' }}>
           <HStack gap={2}>
             <Image src="/2.png" alt="BrazilianClean" width={32} height={32} style={{ borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }} />
-            <Text fontWeight="700" fontSize={{ base: '13px', md: '15px' }} letterSpacing="-0.02em" color="white" fontFamily="heading">
-              Brazilian<Text as="span" color="brand.400">Clean</Text>
+            <Text fontWeight="700" fontSize={{ base: '13px', md: '15px' }} letterSpacing="-0.02em" color="#0A3D7A" fontFamily="heading">
+              Brazilian<Text as="span" color="#0A80DB">Clean</Text>
             </Text>
           </HStack>
         </NextLink>
 
-        <Box w="1px" h="22px" bg="rgba(255,255,255,0.1)" flexShrink={0} mx={2} display={{ base: 'none', md: 'block' }} />
+        <Box w="1px" h="22px" bg="#E2E8F0" flexShrink={0} mx={2} display={{ base: 'none', md: 'block' }} />
 
         {/* Desktop nav */}
         <HStack h="60px" gap={0} flex={1} display={{ base: 'none', md: 'flex' }} align="center">
@@ -80,13 +80,13 @@ export default function CleanerNav() {
                 <Box position="relative" h="full" px={3} display="flex" alignItems="center" cursor="pointer">
                   <HStack
                     gap={1.5}
-                    color={isActive ? 'white' : '#94A3B8'}
+                    color={isActive ? '#0A3D7A' : '#64748B'}
                     fontWeight={isActive ? '600' : '400'}
                     fontSize="13.5px"
                     fontFamily="heading"
                     letterSpacing="-0.01em"
                     transition="color 0.15s"
-                    _hover={{ color: isActive ? 'white' : '#CBD5E1' }}
+                    _hover={{ color: '#0A3D7A' }}
                   >
                     <Icon as={item.icon} w="14px" h="14px" />
                     <Text>{t(`nav.cleaner.${item.key}`)}</Text>
@@ -107,7 +107,7 @@ export default function CleanerNav() {
         <HStack gap={1.5} flexShrink={0} ml={{ base: 'auto', md: 0 }}>
           <HStack
             gap={2} display={{ base: 'none', lg: 'flex' }}
-            bg="rgba(255,255,255,0.06)" border="1px solid" borderColor="rgba(255,255,255,0.1)"
+            bg="#F8FAFC" border="1px solid" borderColor="#E2E8F0"
             borderRadius="full" px={3} py={1.5}
           >
             <Box
@@ -117,17 +117,17 @@ export default function CleanerNav() {
             >
               {initial}
             </Box>
-            <Text fontSize="13px" fontWeight="500" color="#CBD5E1" fontFamily="heading" letterSpacing="-0.01em">
+            <Text fontSize="13px" fontWeight="500" color="#0A3D7A" fontFamily="heading" letterSpacing="-0.01em">
               {firstName}
             </Text>
           </HStack>
 
-          <LanguageSwitcher dark />
-          <NotificationBell dark />
+          <LanguageSwitcher />
+          <NotificationBell />
 
           <Button
-            size="sm" variant="ghost" color="#6B7280" px={2} h="34px" borderRadius="lg"
-            _hover={{ color: '#F43F5E', bg: 'rgba(244,63,94,0.1)' }} transition="all 0.15s"
+            size="sm" variant="ghost" color="#64748B" px={2} h="34px" borderRadius="lg"
+            _hover={{ color: '#F43F5E', bg: 'rgba(244,63,94,0.08)' }} transition="all 0.15s"
             onClick={() => signOut({ callbackUrl: '/auth/login' })}
             title={t('common.signOut')}
             display={{ base: 'none', sm: 'flex' }}
@@ -136,8 +136,8 @@ export default function CleanerNav() {
           </Button>
 
           <Button
-            size="sm" variant="ghost" color="#94A3B8" px={2} h="34px" borderRadius="lg"
-            _hover={{ bg: 'rgba(255,255,255,0.08)' }}
+            size="sm" variant="ghost" color="#64748B" px={2} h="34px" borderRadius="lg"
+            _hover={{ bg: '#F1F5F9' }}
             display={{ base: 'flex', md: 'none' }}
             onClick={() => setMobileOpen(v => !v)}
           >
@@ -156,7 +156,7 @@ export default function CleanerNav() {
             transition={{ duration: 0.2, ease: 'easeInOut' }}
             style={{ overflow: 'hidden' }}
           >
-            <Box borderTop="1px solid rgba(255,255,255,0.06)" bg={NAV_BG} px={4} py={3}>
+            <Box borderTop="1px solid #E2E8F0" bg={NAV_BG} px={4} py={3}>
               {NAV_ITEMS.map(item => {
                 const isActive =
                   pathname === item.href ||
@@ -165,14 +165,14 @@ export default function CleanerNav() {
                   <NextLink key={item.key} href={item.href} style={{ textDecoration: 'none' }} onClick={() => setMobileOpen(false)}>
                     <HStack
                       gap={3} px={3} py={2.5} borderRadius="4px" mb={0.5}
-                      bg={isActive ? 'rgba(26,127,160,0.15)' : 'transparent'}
-                      color={isActive ? 'white' : '#94A3B8'}
+                      bg={isActive ? '#EFF6FF' : 'transparent'}
+                      color={isActive ? '#0A3D7A' : '#64748B'}
                       fontWeight={isActive ? '600' : '400'}
                       fontSize="14px" fontFamily="heading"
                       border="1px solid"
-                      borderColor={isActive ? 'rgba(26,127,160,0.25)' : 'transparent'}
+                      borderColor={isActive ? '#BFDBFE' : 'transparent'}
                       transition="all 0.15s"
-                      _hover={{ bg: 'rgba(255,255,255,0.06)', color: '#CBD5E1' }}
+                      _hover={{ bg: '#F8FAFC', color: '#0A3D7A' }}
                     >
                       <Icon as={item.icon} w={4} h={4} />
                       <Text>{t(`nav.cleaner.${item.key}`)}</Text>
@@ -180,7 +180,7 @@ export default function CleanerNav() {
                   </NextLink>
                 );
               })}
-              <HStack justify="space-between" px={3} pt={3} mt={1} borderTop="1px solid rgba(255,255,255,0.06)">
+              <HStack justify="space-between" px={3} pt={3} mt={1} borderTop="1px solid #E2E8F0">
                 <HStack gap={2}>
                   <Box
                     w="28px" h="28px" bg="brand.500" borderRadius="full"
@@ -190,14 +190,14 @@ export default function CleanerNav() {
                     {initial}
                   </Box>
                   <Box>
-                    <Text fontSize="13px" fontWeight="600" color="white" fontFamily="heading">{firstName}</Text>
-                    <Text fontSize="11px" color="#475569">{t('common.role_cleaner')}</Text>
+                    <Text fontSize="13px" fontWeight="600" color="#0A3D7A" fontFamily="heading">{firstName}</Text>
+                    <Text fontSize="11px" color="#64748B">{t('common.role_cleaner')}</Text>
                   </Box>
                 </HStack>
                 <HStack gap={2}>
-                  <LanguageSwitcher dark />
-                  <Button size="sm" variant="ghost" color="#6B7280" px={2}
-                    _hover={{ color: '#F43F5E', bg: 'rgba(244,63,94,0.1)' }}
+                  <LanguageSwitcher />
+                  <Button size="sm" variant="ghost" color="#64748B" px={2}
+                    _hover={{ color: '#F43F5E', bg: 'rgba(244,63,94,0.08)' }}
                     onClick={() => signOut({ callbackUrl: '/auth/login' })}>
                     <Icon as={LucideLogOut} w={4} h={4} />
                   </Button>

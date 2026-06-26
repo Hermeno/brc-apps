@@ -19,28 +19,29 @@ export default function AboutPage() {
       {/* Navbar */}
       <Box
         position="fixed" top={0} left={0} right={0} zIndex={100} h="64px"
-        style={{ background: 'rgba(11,17,32,0.92)', backdropFilter: 'blur(10px)', borderBottom: '1px solid rgba(255,255,255,0.06)' }}
+        bg="white" borderBottom="1px solid #E2E8F0"
+        style={{ boxShadow: '0 1px 6px rgba(0,0,0,0.06)' }}
       >
         <Flex align="center" h="full" px={{ base: 5, md: 10, lg: 16 }} maxW="1440px" mx="auto" justify="space-between">
           <HStack gap={4}>
             <NextLink href="/" style={{ textDecoration: 'none' }}>
               <HStack gap={1.5}
-                color="rgba(255,255,255,0.5)" fontSize="13px" fontFamily="heading" fontWeight="500"
+                color="#64748B" fontSize="13px" fontFamily="heading" fontWeight="500"
                 px={2} h="34px" borderRadius="4px"
                 border="1px solid transparent"
                 transition="all 0.15s"
-                _hover={{ color: 'white', borderColor: 'rgba(255,255,255,0.12)', bg: 'rgba(255,255,255,0.05)' }}
+                _hover={{ color: '#0A3D7A', borderColor: '#E2E8F0', bg: '#F8FAFC' }}
                 style={{ cursor: 'pointer' }}
               >
                 <Icon as={LucideArrowLeft} w="13px" h="13px" />
                 <Text>Home</Text>
               </HStack>
             </NextLink>
-            <Box w="1px" h="18px" bg="rgba(255,255,255,0.08)" />
+            <Box w="1px" h="18px" bg="#E2E8F0" />
             <NextLink href="/" style={{ textDecoration: 'none' }}>
               <HStack gap={2.5}>
                 <Image src="/2.png" alt="BrazilianClean" width={28} height={28} style={{ borderRadius: "50%", objectFit: "cover", flexShrink: 0 }} />
-                <Text fontWeight="700" fontSize="15px" letterSpacing="-0.02em" color="white" fontFamily="heading">
+                <Text fontWeight="700" fontSize="15px" letterSpacing="-0.02em" color="#0A3D7A" fontFamily="heading">
                   Brazilian<Text as="span" color="#0A80DB">Clean</Text>
                 </Text>
               </HStack>
@@ -58,18 +59,18 @@ export default function AboutPage() {
       </Box>
 
       {/* Hero */}
-      <Box bg="#0B1120" pt="120px" pb={20} px={{ base: 5, md: 10, lg: 16 }}>
+      <Box bg="#EBF4FF" pt="120px" pb={20} px={{ base: 5, md: 10, lg: 16 }} borderBottom="1px solid #BFDBFE">
         <Box maxW="760px" mx="auto" textAlign="center">
           <Text fontSize="10.5px" fontWeight="700" letterSpacing="0.14em" color="#0A80DB"
             textTransform="uppercase" fontFamily="heading" mb={4}>
             Our story
           </Text>
           <Text as="h1" fontSize={{ base: '36px', md: '50px' }} fontWeight="800" lineHeight="1.1"
-            letterSpacing="-0.03em" color="white" fontFamily="heading" mb={6}>
+            letterSpacing="-0.03em" color="#0A3D7A" fontFamily="heading" mb={6}>
             Built on trust,{' '}
             <Text as="span" color="#0A80DB">driven by community</Text>
           </Text>
-          <Text fontSize={{ base: '15px', md: '17px' }} color="rgba(255,255,255,0.65)"
+          <Text fontSize={{ base: '15px', md: '17px' }} color="#4A7AA3"
             lineHeight="1.7" maxW="600px" mx="auto" fontFamily="heading">
             BrazilianClean was born from a simple belief: skilled, hardworking cleaning professionals
             deserve a platform that treats them fairly — and homeowners deserve service they can trust.
@@ -291,7 +292,7 @@ export default function AboutPage() {
       </Box>
 
       {/* CTA */}
-      <Box bg="#0B1120" borderTop="1px solid rgba(255,255,255,0.06)">
+      <Box bg="linear-gradient(140deg, #0A3D7A 0%, #0A56A0 45%, #0A80DB 100%)" style={{ background: 'linear-gradient(140deg, #0A3D7A 0%, #0A56A0 45%, #0A80DB 100%)' }}>
         <Flex px={{ base: 5, md: 10, lg: 16 }} py={16} maxW="1440px" mx="auto"
           align="center" justify="space-between" gap={8} flexWrap="wrap">
           <Box>
@@ -299,23 +300,23 @@ export default function AboutPage() {
               fontFamily="heading" letterSpacing="-0.025em" mb={1.5}>
               Ready to experience the difference?
             </Text>
-            <Text fontSize="14px" color="rgba(255,255,255,0.5)" fontFamily="heading">
+            <Text fontSize="14px" color="rgba(255,255,255,0.75)" fontFamily="heading">
               Book a cleaning today or join our network as a professional.
             </Text>
           </Box>
           <HStack gap={3} flexWrap="wrap">
             <NextLink href="/request">
-              <Button bg="#0A80DB" color="white" h="44px" px={6} borderRadius="4px"
+              <Button bg="white" color="#0A3D7A" h="44px" px={6} borderRadius="4px"
                 fontWeight="700" fontSize="13px" fontFamily="heading"
-                _hover={{ bg: '#0870C2' }} transition="background 0.15s" flexShrink={0}>
+                _hover={{ bg: '#EFF6FF' }} transition="background 0.15s" flexShrink={0}>
                 Book a cleaning
                 <Icon as={LucideArrowRight} w={4} h={4} ml={2} />
               </Button>
             </NextLink>
             <NextLink href="/auth/register?role=cleaner">
-              <Button variant="outline" borderColor="rgba(255,255,255,0.2)" color="white" h="44px" px={6}
+              <Button variant="outline" borderColor="rgba(255,255,255,0.35)" color="white" h="44px" px={6}
                 borderRadius="4px" fontWeight="700" fontSize="13px" fontFamily="heading"
-                _hover={{ bg: 'rgba(255,255,255,0.06)', borderColor: 'rgba(255,255,255,0.4)' }}
+                _hover={{ bg: 'rgba(255,255,255,0.1)', borderColor: 'rgba(255,255,255,0.6)' }}
                 transition="all 0.15s" flexShrink={0}>
                 Become a cleaner
               </Button>
@@ -325,12 +326,12 @@ export default function AboutPage() {
       </Box>
 
       {/* Footer */}
-      <Box bg="#0B1120" borderTop="1px solid rgba(255,255,255,0.06)" py={8}>
+      <Box bg="#F0F7FF" borderTop="1px solid #BFDBFE" py={8}>
         <Flex px={{ base: 5, md: 10, lg: 16 }} maxW="1440px" mx="auto"
           align="center" justify="space-between" flexWrap="wrap" gap={4}>
           <HStack gap={2}>
             <Image src="/2.png" alt="BrazilianClean" width={28} height={28} style={{ borderRadius: "50%", objectFit: "cover", flexShrink: 0 }} />
-            <Text fontSize="12px" color="rgba(255,255,255,0.35)" fontFamily="heading">
+            <Text fontSize="12px" color="#6A95BC" fontFamily="heading">
               © 2026 BrazilianClean. All rights reserved.
             </Text>
           </HStack>
@@ -341,12 +342,12 @@ export default function AboutPage() {
               { label: 'Terms', href: '/terms' },
             ].map(l => (
               <NextLink key={l.label} href={l.href}>
-                <Text fontSize="12px" color="rgba(255,255,255,0.35)" cursor="pointer" fontFamily="heading"
-                  _hover={{ color: 'rgba(255,255,255,0.7)' }} transition="color 0.15s">{l.label}</Text>
+                <Text fontSize="12px" color="#4A7AA3" cursor="pointer" fontFamily="heading"
+                  _hover={{ color: '#0A3D7A' }} transition="color 0.15s">{l.label}</Text>
               </NextLink>
             ))}
             <a href="mailto:support@brazilianclean.com"
-              style={{ fontSize: '12px', color: 'rgba(255,255,255,0.35)', transition: 'color 0.15s', textDecoration: 'none' }}>
+              style={{ fontSize: '12px', color: '#4A7AA3', transition: 'color 0.15s', textDecoration: 'none' }}>
               support@brazilianclean.com
             </a>
           </HStack>

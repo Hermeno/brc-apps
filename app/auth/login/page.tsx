@@ -55,10 +55,10 @@ export default function LoginPage() {
       {/* ── Left panel ── */}
       <Box
         display={{ base: 'none', lg: 'flex' }} flexDirection="column"
-        w="480px" flexShrink={0} bg="#0B1120" position="relative" overflow="hidden"
+        w="480px" flexShrink={0} bg="#0A4B8F" position="relative" overflow="hidden"
       >
         <Box position="absolute" inset={0} style={{ backgroundImage: "url('/abc.png')", backgroundSize: 'cover', backgroundPosition: 'center' }} />
-        <Box position="absolute" inset={0} style={{ background: 'linear-gradient(180deg, rgba(11,17,32,0.88) 0%, rgba(11,17,32,0.60) 50%, rgba(11,17,32,0.88) 100%)' }} />
+        <Box position="absolute" inset={0} style={{ background: 'linear-gradient(180deg, rgba(10,75,143,0.88) 0%, rgba(10,128,219,0.50) 50%, rgba(10,75,143,0.88) 100%)' }} />
 
         <Flex direction="column" justify="space-between" h="full" position="relative" p={10}>
           <HStack gap={2.5}>
@@ -69,9 +69,9 @@ export default function LoginPage() {
           </HStack>
 
           <Box>
-            <Text fontSize="10.5px" fontWeight="700" letterSpacing="0.14em" color="#0A80DB"
+            <Text fontSize="10.5px" fontWeight="700" letterSpacing="0.14em" color="rgba(255,255,255,0.55)"
               textTransform="uppercase" fontFamily="heading" mb={4}
-              style={{ borderLeft: '2px solid #0A80DB', paddingLeft: 10 }}>
+              style={{ borderLeft: '2px solid rgba(255,255,255,0.3)', paddingLeft: 10 }}>
               {t('auth.login.tagline')}
             </Text>
             <Text fontSize="26px" fontWeight="800" color="white" fontFamily="heading"
@@ -108,13 +108,13 @@ export default function LoginPage() {
           {/* Mobile logo */}
           <HStack gap={2.5} mb={10} display={{ base: 'flex', lg: 'none' }}>
             <Image src="/2.png" alt="BrazilianClean" width={28} height={28} style={{ borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }} />
-            <Text fontWeight="700" fontSize="14px" letterSpacing="-0.02em" color="#0A2540" fontFamily="heading">
+            <Text fontWeight="700" fontSize="14px" letterSpacing="-0.02em" color="#0A3D7A" fontFamily="heading">
               Brazilian<Text as="span" color="#0A80DB">Clean</Text>
             </Text>
           </HStack>
 
           <Box mb={8}>
-            <Text fontSize="24px" fontWeight="800" color="#0A2540" fontFamily="heading" letterSpacing="-0.025em" mb={1}>
+            <Text fontSize="24px" fontWeight="800" color="#0A3D7A" fontFamily="heading" letterSpacing="-0.025em" mb={1}>
               {t('auth.login.title')}
             </Text>
             <Text fontSize="14px" color="#425466" fontFamily="heading">
@@ -133,7 +133,7 @@ export default function LoginPage() {
                   placeholder={t('auth.login.emailPlaceholder')}
                   value={email} onChange={e => setEmail(e.target.value)}
                   bg="white" border="1.5px solid" borderColor="#E3E8EE" h="38px" borderRadius="8px"
-                  fontFamily="heading" fontSize="13.5px" color="#0A2540" px={4}
+                  fontFamily="heading" fontSize="13.5px" color="#0A3D7A" px={4}
                   _placeholder={{ color: '#B0BAC9' }} _focus={{ borderColor: '#0A80DB', boxShadow: 'none', outline: 'none' }}
                   type="email" required
                 />
@@ -154,7 +154,7 @@ export default function LoginPage() {
                   type="password" placeholder={t('auth.login.passwordPlaceholder')}
                   value={password} onChange={e => setPassword(e.target.value)}
                   bg="white" border="1.5px solid" borderColor="#E3E8EE" h="38px" borderRadius="8px"
-                  fontFamily="heading" fontSize="13.5px" color="#0A2540" px={4}
+                  fontFamily="heading" fontSize="13.5px" color="#0A3D7A" px={4}
                   _placeholder={{ color: '#B0BAC9' }} _focus={{ borderColor: '#0A80DB', boxShadow: 'none', outline: 'none' }}
                   required
                 />

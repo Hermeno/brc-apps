@@ -28,8 +28,17 @@ export async function register() {
         ? prisma.$executeRawUnsafe(sql, ...params).catch((e: unknown) => console.error('[boot sql]', e))
         : prisma.$executeRawUnsafe(sql).catch((e: unknown) => console.error('[boot sql]', e));
 
-    // Defer boot SQL by 5s so the connection pool settles before we run migrations/seeds
-    setTimeout(async () => {
+    const retry = async (fn: () => Promise<void>, attempts = 4, delayMs = 8_000) => {
+      for (let i = 0; i < attempts; i++) {
+        try { await fn(); return; } catch (e) {
+          if (i < attempts - 1) await new Promise(r => setTimeout(r, delayMs));
+          else console.error('[boot sql] giving up after', attempts, 'attempts:', e);
+        }
+      }
+    };
+
+    // Defer boot SQL by 12s so the connection pool settles before we run migrations/seeds
+    setTimeout(async () => { await retry(async () => {
       // Add serviceRadiusMiles if not yet in DB (idempotent — Prisma schema also declares it)
       await run(`ALTER TABLE "User" ADD COLUMN IF NOT EXISTS "serviceRadiusMiles" DOUBLE PRECISION DEFAULT 25`);
 
@@ -64,6 +73,6 @@ export async function register() {
           update: {},
         }).catch(() => {});
       }
-    }, 5000);
+    }); }, 12_000);
   }
 }

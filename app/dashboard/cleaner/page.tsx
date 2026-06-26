@@ -60,7 +60,7 @@ function SectionPanel({ title, count, accentColor, extra, children }: {
             </Text>
             {!!count && count > 0 && (
               <Box
-                bg={accentColor ?? '#0B1120'} color="white"
+                bg={accentColor ?? '#0A80DB'} color="white"
                 px={2} h="16px" minW="16px"
                 display="inline-flex" alignItems="center" justifyContent="center"
                 fontSize="9px" fontWeight="700" fontFamily="heading"

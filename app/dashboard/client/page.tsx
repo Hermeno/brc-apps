@@ -564,33 +564,33 @@ export default function ClientPage() {
 
       {/* ── Client header ── */}
       <Box
-        bg="#0B1120" borderBottom="1px solid rgba(255,255,255,0.06)"
+        bg="white" borderBottom="1px solid #E2E8F0"
         position="sticky" top={0} zIndex={50}
-        style={{ boxShadow: '0 1px 8px rgba(0,0,0,0.2)' }}
+        style={{ boxShadow: '0 1px 6px rgba(0,0,0,0.06)' }}
       >
         <Flex align="center" h="60px" px={{ base: 4, md: 6, lg: 8 }} maxW="1440px" mx="auto" justify="space-between">
           <HStack gap={2}>
             <Image src="/2.png" alt="BrazilianClean" width={32} height={32} style={{ borderRadius: "50%", objectFit: "cover", flexShrink: 0 }} />
-            <Text fontWeight="700" fontSize={{ base: '13px', sm: '15px' }} letterSpacing="-0.02em" color="white" fontFamily="heading">
-              Brazilian<Text as="span" color="brand.400">Clean</Text>
+            <Text fontWeight="700" fontSize={{ base: '13px', sm: '15px' }} letterSpacing="-0.02em" color="#0A3D7A" fontFamily="heading">
+              Brazilian<Text as="span" color="#0A80DB">Clean</Text>
             </Text>
           </HStack>
           <HStack gap={1.5}>
             <HStack gap={2} display={{ base: 'none', lg: 'flex' }}
-              bg="rgba(255,255,255,0.06)" border="1px solid" borderColor="rgba(255,255,255,0.1)"
+              bg="#F8FAFC" border="1px solid" borderColor="#E2E8F0"
               borderRadius="full" px={3} py={1.5}>
               <Box w="22px" h="22px" bg="brand.500" borderRadius="full"
                 display="flex" alignItems="center" justifyContent="center"
                 fontSize="9px" fontWeight="700" color="white">
                 {firstName[0]?.toUpperCase() ?? 'C'}
               </Box>
-              <Text fontSize="13px" fontWeight="500" color="#CBD5E1" fontFamily="heading" letterSpacing="-0.01em">
+              <Text fontSize="13px" fontWeight="500" color="#0A3D7A" fontFamily="heading" letterSpacing="-0.01em">
                 {firstName}
               </Text>
             </HStack>
 
             <LanguageSwitcher />
-            <NotificationBell dark />
+            <NotificationBell />
             <Button size="sm" variant="ghost" color="#6B7280" px={2} h="34px" borderRadius="lg"
               _hover={{ color: '#F43F5E', bg: 'rgba(244,63,94,0.1)' }} transition="all 0.15s"
               onClick={() => signOut({ callbackUrl: '/auth/login' })} title={t('common.signOut')}>
@@ -1129,7 +1129,7 @@ export default function ClientPage() {
                                     <Box h="11" bg="white" border="1px solid" borderColor="#E3E8EE"
                                       borderRadius="4px" px={3} display="flex" alignItems="center"
                                       style={{ pointerEvents:'none' }}>
-                                      <Text fontSize="sm" color={reactivateDate ? '#0B1120' : '#A0AEC0'}>
+                                      <Text fontSize="sm" color={reactivateDate ? '#0A3D7A' : '#A0AEC0'}>
                                         {reactivateDate ? isoDateToUs(reactivateDate) : 'MM/DD/YYYY'}
                                       </Text>
                                     </Box>
@@ -1191,7 +1191,7 @@ export default function ClientPage() {
                                     <Box h="11" bg="white" border="1px solid" borderColor="slate.200"
                                       borderRadius="4px" px={3} display="flex" alignItems="center"
                                       style={{ pointerEvents:'none' }}>
-                                      <Text fontSize="sm" color={editForm.date ? '#0B1120' : '#A0AEC0'}>
+                                      <Text fontSize="sm" color={editForm.date ? '#0A3D7A' : '#A0AEC0'}>
                                         {editForm.date ? isoDateToUs(editForm.date) : 'MM/DD/YYYY'}
                                       </Text>
                                     </Box>
@@ -1365,7 +1365,7 @@ export default function ClientPage() {
                                             <Box h="9" bg="white" border="1px solid" borderColor="#E3E8EE"
                                               borderRadius="4px" px={3} display="flex" alignItems="center"
                                               style={{ pointerEvents:'none' }}>
-                                              <Text fontSize="xs" color={reactivateDate ? '#0B1120' : '#A0AEC0'}>
+                                              <Text fontSize="xs" color={reactivateDate ? '#0A3D7A' : '#A0AEC0'}>
                                                 {reactivateDate ? isoDateToUs(reactivateDate) : 'MM/DD/YYYY'}
                                               </Text>
                                             </Box>
@@ -1742,7 +1742,7 @@ function OrderForm({ form, setField, toggleExtra, estimate, progress, onSubmit, 
                       borderColor={form.date ? 'brand.300' : 'slate.200'}
                       borderRadius="4px" px={3} display="flex" alignItems="center"
                       style={{ pointerEvents:'none' }}>
-                      <Text fontSize="sm" color={form.date ? '#0B1120' : '#A0AEC0'}>
+                      <Text fontSize="sm" color={form.date ? '#0A3D7A' : '#A0AEC0'}>
                         {form.date ? isoDateToUs(form.date) : 'MM/DD/YYYY'}
                       </Text>
                     </Box>

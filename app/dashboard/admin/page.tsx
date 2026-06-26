@@ -72,7 +72,7 @@ interface ReviewRow {
 
 // ─── Design tokens ────────────────────────────────────────────────────────────
 
-const SIDEBAR_BG   = '#0B1120';
+const SIDEBAR_BG   = '#ffffff';
 const SIDEBAR_W    = '216px';
 
 const LEAD_STATUS: Record<string, { label: string; color: string; dot: string }> = {
@@ -153,11 +153,11 @@ function Sidebar({ tab, setTab, pendingVerifs, onRefresh, user }: {
       display="flex" flexDirection="column" h="100vh" overflow="auto"
     >
       {/* Logo */}
-      <Box px={5} pt={6} pb={5} borderBottom="1px solid rgba(255,255,255,0.06)">
+      <Box px={5} pt={6} pb={5} borderBottom="1px solid #E2E8F0">
         <HStack gap={2.5}>
           <Image src="/2.png" alt="BrazilianClean" width={32} height={32} style={{ borderRadius: "50%", objectFit: "cover", flexShrink: 0 }} />
-          <Text fontWeight="700" fontSize="14px" letterSpacing="-0.02em" color="white" fontFamily="heading">
-            Brazilian<Text as="span" color="#60A5FA">Clean</Text>
+          <Text fontWeight="700" fontSize="14px" letterSpacing="-0.02em" color="#0A3D7A" fontFamily="heading">
+            Brazilian<Text as="span" color="#0A80DB">Clean</Text>
           </Text>
         </HStack>
       </Box>
@@ -170,7 +170,7 @@ function Sidebar({ tab, setTab, pendingVerifs, onRefresh, user }: {
             <Box key={item.id}>
               {item.section && (
                 <Text
-                  fontSize="9px" fontWeight="700" color="#334155"
+                  fontSize="9px" fontWeight="700" color="#94A3B8"
                   letterSpacing="0.12em" fontFamily="heading"
                   px={3} pt={4} pb={1.5} textTransform="uppercase"
                 >
@@ -185,8 +185,8 @@ function Sidebar({ tab, setTab, pendingVerifs, onRefresh, user }: {
                 cursor="pointer"
                 borderLeft="2px solid"
                 borderLeftColor={isActive ? 'brand.500' : 'transparent'}
-                bg={isActive ? 'rgba(26,127,160,0.12)' : 'transparent'}
-                color={isActive ? 'white' : '#94A3B8'}
+                bg={isActive ? '#EFF6FF' : 'transparent'}
+                color={isActive ? '#0A3D7A' : '#64748B'}
                 fontWeight={isActive ? '600' : '400'}
                 fontSize="13px"
                 fontFamily="heading"
@@ -194,7 +194,7 @@ function Sidebar({ tab, setTab, pendingVerifs, onRefresh, user }: {
                 transition="all 0.12s"
                 textAlign="left"
                 borderRadius="0"
-                _hover={{ color: '#E3E8EE', bg: 'rgba(255,255,255,0.04)' }}
+                _hover={{ color: '#0A3D7A', bg: '#F8FAFC' }}
                 onClick={() => setTab(item.id)}
               >
                 <Icon as={item.icon} w="14px" h="14px" flexShrink={0} />
@@ -215,7 +215,7 @@ function Sidebar({ tab, setTab, pendingVerifs, onRefresh, user }: {
       </Box>
 
       {/* Bottom */}
-      <Box px={3} pb={5} pt={3} borderTop="1px solid rgba(255,255,255,0.06)">
+      <Box px={3} pb={5} pt={3} borderTop="1px solid #E2E8F0">
         <HStack gap={2} px={2} py={2} mb={1}>
           <Box
             w="28px" h="28px" bg="brand.500" borderRadius="full"
@@ -225,8 +225,8 @@ function Sidebar({ tab, setTab, pendingVerifs, onRefresh, user }: {
             {user[0]?.toUpperCase() ?? 'A'}
           </Box>
           <Box flex={1} minW={0}>
-            <Text fontSize="12px" fontWeight="600" color="white" fontFamily="heading" lineClamp={1}>{user}</Text>
-            <Text fontSize="10px" color="#475569" fontFamily="heading">Administrator</Text>
+            <Text fontSize="12px" fontWeight="600" color="#0A3D7A" fontFamily="heading" lineClamp={1}>{user}</Text>
+            <Text fontSize="10px" color="#64748B" fontFamily="heading">Administrator</Text>
           </Box>
         </HStack>
         <Box
@@ -234,9 +234,9 @@ function Sidebar({ tab, setTab, pendingVerifs, onRefresh, user }: {
           px={3} py={2} cursor="pointer" fontSize="12px"
           fontFamily="heading" fontWeight="500" borderRadius="0"
           transition="all 0.12s"
-          color={tab === 'landing' ? 'white' : '#6B7280'}
-          bg={tab === 'landing' ? 'rgba(26,127,160,0.15)' : 'transparent'}
-          _hover={{ color: '#E3E8EE', bg: 'rgba(255,255,255,0.04)' }}
+          color={tab === 'landing' ? '#0A3D7A' : '#64748B'}
+          bg={tab === 'landing' ? '#EFF6FF' : 'transparent'}
+          _hover={{ color: '#0A3D7A', bg: '#F8FAFC' }}
           onClick={() => setTab('landing')}
         >
           <Icon as={LucideVideo} w={3} h={3} />
@@ -247,9 +247,9 @@ function Sidebar({ tab, setTab, pendingVerifs, onRefresh, user }: {
           px={3} py={2} cursor="pointer" fontSize="12px"
           fontFamily="heading" fontWeight="500" borderRadius="0"
           transition="all 0.12s"
-          color={tab === 'settings' ? 'white' : '#6B7280'}
-          bg={tab === 'settings' ? 'rgba(26,127,160,0.15)' : 'transparent'}
-          _hover={{ color: '#E3E8EE', bg: 'rgba(255,255,255,0.04)' }}
+          color={tab === 'settings' ? '#0A3D7A' : '#64748B'}
+          bg={tab === 'settings' ? '#EFF6FF' : 'transparent'}
+          _hover={{ color: '#0A3D7A', bg: '#F8FAFC' }}
           onClick={() => setTab('settings')}
         >
           <Icon as={LucideSettings} w={3} h={3} />
@@ -257,10 +257,10 @@ function Sidebar({ tab, setTab, pendingVerifs, onRefresh, user }: {
         </Box>
         <Box
           as="button" w="full" display="flex" alignItems="center" gap={2}
-          px={3} py={2} cursor="pointer" color="#6B7280" fontSize="12px"
+          px={3} py={2} cursor="pointer" color="#64748B" fontSize="12px"
           fontFamily="heading" fontWeight="500" borderRadius="0"
           transition="color 0.12s"
-          _hover={{ color: '#E3E8EE' }}
+          _hover={{ color: '#0A3D7A' }}
           onClick={onRefresh}
         >
           <Icon as={LucideRefreshCw} w={3} h={3} />
@@ -268,7 +268,7 @@ function Sidebar({ tab, setTab, pendingVerifs, onRefresh, user }: {
         </Box>
         <Box
           as="button" w="full" display="flex" alignItems="center" gap={2}
-          px={3} py={2} cursor="pointer" color="#6B7280" fontSize="12px"
+          px={3} py={2} cursor="pointer" color="#64748B" fontSize="12px"
           fontFamily="heading" fontWeight="500" borderRadius="0"
           transition="color 0.12s"
           _hover={{ color: '#F43F5E' }}

@@ -19,25 +19,26 @@ export default function PrivacyPage() {
       {/* ── Navbar ── */}
       <Box
         position="fixed" top={0} left={0} right={0} zIndex={100} h="64px"
-        style={{ background: 'rgba(11,17,32,0.95)', backdropFilter: 'blur(10px)', borderBottom: '1px solid rgba(255,255,255,0.06)' }}
+        bg="white" borderBottom="1px solid #E2E8F0"
+        style={{ boxShadow: '0 1px 6px rgba(0,0,0,0.06)' }}
       >
         <Flex align="center" h="full" px={{ base: 5, md: 10, lg: 16 }} maxW="1440px" mx="auto" justify="space-between">
           <NextLink href="/" style={{ textDecoration: 'none' }}>
             <HStack gap={2.5}>
               <Image src="/2.png" alt="BrazilianClean" width={28} height={28} style={{ borderRadius: '50%', objectFit: 'cover' }} />
-              <Text fontWeight="700" fontSize="15px" letterSpacing="-0.02em" color="white" fontFamily="heading">
-                Brazilian<Text as="span" color="#1F6FEA">Clean</Text>
+              <Text fontWeight="700" fontSize="15px" letterSpacing="-0.02em" color="#0A3D7A" fontFamily="heading">
+                Brazilian<Text as="span" color="#0A80DB">Clean</Text>
               </Text>
             </HStack>
           </NextLink>
           <HStack gap={3}>
             <NextLink href="/terms" style={{ textDecoration: 'none' }}>
-              <Text fontSize="12px" color="rgba(255,255,255,0.45)" fontFamily="heading"
-                _hover={{ color: 'rgba(255,255,255,0.8)' }} transition="color 0.15s" cursor="pointer">
+              <Text fontSize="12px" color="#64748B" fontFamily="heading"
+                _hover={{ color: '#0A3D7A' }} transition="color 0.15s" cursor="pointer">
                 Terms of Service
               </Text>
             </NextLink>
-            <HStack gap={0} border="1px solid rgba(255,255,255,0.18)" borderRadius="4px" overflow="hidden">
+            <HStack gap={0} border="1px solid #E2E8F0" borderRadius="4px" overflow="hidden">
               {(['en', 'pt'] as Locale[]).map((lang) => (
                 <Box
                   key={lang}
@@ -46,12 +47,12 @@ export default function PrivacyPage() {
                   px={3} py={1}
                   fontSize="11px" fontWeight="700" fontFamily="heading"
                   textTransform="uppercase" letterSpacing="0.06em"
-                  bg={locale === lang ? '#1F6FEA' : 'transparent'}
-                  color={locale === lang ? 'white' : 'rgba(255,255,255,0.45)'}
+                  bg={locale === lang ? '#0A80DB' : 'transparent'}
+                  color={locale === lang ? 'white' : '#64748B'}
                   transition="all 0.15s"
                   cursor="pointer"
                   border="none"
-                  _hover={{ color: locale === lang ? 'white' : 'rgba(255,255,255,0.8)' }}
+                  _hover={{ color: locale === lang ? 'white' : '#0A3D7A' }}
                 >
                   {lang.toUpperCase()}
                 </Box>
@@ -62,27 +63,27 @@ export default function PrivacyPage() {
       </Box>
 
       {/* ── Header ── */}
-      <Box bg="#0B1E3D" pt="100px" pb={14} px={{ base: 5, md: 10, lg: 16 }}>
+      <Box bg="#EBF4FF" pt="100px" pb={14} px={{ base: 5, md: 10, lg: 16 }} borderBottom="1px solid #BFDBFE">
         <Box maxW="860px" mx="auto">
-          <Text fontSize="10px" fontWeight="700" letterSpacing="0.16em" color="#1F6FEA"
+          <Text fontSize="10px" fontWeight="700" letterSpacing="0.16em" color="#0A80DB"
             textTransform="uppercase" fontFamily="heading" mb={3}>
             Legal
           </Text>
           <Text as="h1" fontSize={{ base: '30px', md: '44px' }} fontWeight="800"
-            letterSpacing="-0.03em" color="white" fontFamily="heading" mb={3}>
+            letterSpacing="-0.03em" color="#0A3D7A" fontFamily="heading" mb={3}>
             {content.pageTitle}
           </Text>
           <HStack gap={4} flexWrap="wrap">
-            <Text fontSize="12px" color="rgba(255,255,255,0.38)" fontFamily="heading">
+            <Text fontSize="12px" color="#7AAED6" fontFamily="heading">
               {content.lastUpdated}
             </Text>
-            <Text fontSize="12px" color="rgba(255,255,255,0.22)" fontFamily="heading">·</Text>
-            <Text fontSize="12px" color="rgba(255,255,255,0.38)" fontFamily="heading">
+            <Text fontSize="12px" color="#BFDBFE" fontFamily="heading">·</Text>
+            <Text fontSize="12px" color="#7AAED6" fontFamily="heading">
               {content.effectiveDate}
             </Text>
           </HStack>
-          <Box mt={5} p={4} borderRadius="4px" style={{ background: 'rgba(31,111,234,0.12)', borderLeft: '3px solid #1F6FEA' }}>
-            <Text fontSize="13px" color="rgba(255,255,255,0.65)" lineHeight="1.7" fontFamily="heading">
+          <Box mt={5} p={4} borderRadius="4px" style={{ background: 'rgba(10,128,219,0.08)', borderLeft: '3px solid #0A80DB' }}>
+            <Text fontSize="13px" color="#4A7AA3" lineHeight="1.7" fontFamily="heading">
               {content.intro}
             </Text>
           </Box>
@@ -249,12 +250,12 @@ export default function PrivacyPage() {
       </Box>
 
       {/* ── Footer ── */}
-      <Box bg="#0B1E3D" borderTop="1px solid rgba(255,255,255,0.06)" py={8}>
+      <Box bg="#F0F7FF" borderTop="1px solid #BFDBFE" py={8}>
         <Flex px={{ base: 5, md: 10, lg: 16 }} maxW="1440px" mx="auto"
           align="center" justify="space-between" flexWrap="wrap" gap={4}>
           <HStack gap={2.5}>
             <Image src="/2.png" alt="BrazilianClean" width={24} height={24} style={{ borderRadius: '50%', objectFit: 'cover' }} />
-            <Text fontSize="12px" color="rgba(255,255,255,0.3)" fontFamily="heading">
+            <Text fontSize="12px" color="#6A95BC" fontFamily="heading">
               © 2026 BrazilianClean. {locale === 'pt' ? 'Todos os direitos reservados.' : 'All rights reserved.'}
             </Text>
           </HStack>
@@ -264,14 +265,14 @@ export default function PrivacyPage() {
               { label: 'Terms of Service', href: '/terms' },
             ].map((l) => (
               <NextLink key={l.href} href={l.href}>
-                <Text fontSize="12px" color="rgba(255,255,255,0.3)" cursor="pointer" fontFamily="heading"
-                  _hover={{ color: 'rgba(255,255,255,0.65)' }} transition="color 0.15s">
+                <Text fontSize="12px" color="#4A7AA3" cursor="pointer" fontFamily="heading"
+                  _hover={{ color: '#0A3D7A' }} transition="color 0.15s">
                   {l.label}
                 </Text>
               </NextLink>
             ))}
             <a href="mailto:support@brazilianclean.com"
-              style={{ fontSize: '12px', color: 'rgba(255,255,255,0.3)', textDecoration: 'none' }}>
+              style={{ fontSize: '12px', color: '#4A7AA3', textDecoration: 'none' }}>
               support@brazilianclean.com
             </a>
           </HStack>

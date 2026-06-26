@@ -47,7 +47,7 @@ export default function ForgotPasswordPage() {
         <HStack gap={2.5} mb={10} justify="space-between">
           <HStack gap={2.5}>
             <Image src="/2.png" alt="BrazilianClean" width={32} height={32} style={{ borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }} />
-            <Text fontWeight="700" fontSize="15px" letterSpacing="-0.02em" color="#0A2540" fontFamily="heading">
+            <Text fontWeight="700" fontSize="15px" letterSpacing="-0.02em" color="#0A3D7A" fontFamily="heading">
               Brazilian<Text as="span" color="#0A80DB">Clean</Text>
             </Text>
           </HStack>
@@ -57,7 +57,7 @@ export default function ForgotPasswordPage() {
         <Box bg="white" border="1px solid #E3E8EE" p={8} style={{ borderRadius: 8 }}>
 
           <Box mb={7}>
-            <Text fontSize="22px" fontWeight="800" color="#0A2540" fontFamily="heading" letterSpacing="-0.025em" mb={1}>
+            <Text fontSize="22px" fontWeight="800" color="#0A3D7A" fontFamily="heading" letterSpacing="-0.025em" mb={1}>
               {t('auth.forgot.title')}
             </Text>
             <Text fontSize="14px" color="#425466" fontFamily="heading">
@@ -76,7 +76,7 @@ export default function ForgotPasswordPage() {
                   type="email" placeholder={t('auth.forgot.emailPlaceholder')}
                   value={email} onChange={e => setEmail(e.target.value)}
                   bg="white" border="1.5px solid" borderColor="#E3E8EE" h="38px" borderRadius="8px"
-                  fontFamily="heading" fontSize="13.5px" color="#0A2540" px={4}
+                  fontFamily="heading" fontSize="13.5px" color="#0A3D7A" px={4}
                   _placeholder={{ color: '#B0BAC9' }} _focus={{ borderColor: '#0A80DB', boxShadow: 'none', outline: 'none' }}
                   required
                 />

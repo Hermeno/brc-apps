@@ -155,21 +155,22 @@ export default function RequestPage() {
 
       {/* Navbar */}
       <Box
-        bg="#0B1120" borderBottom="1px solid rgba(255,255,255,0.06)"
+        bg="white" borderBottom="1px solid #E2E8F0"
         position="sticky" top={0} zIndex={50} h="64px"
+        style={{ boxShadow: '0 1px 6px rgba(0,0,0,0.06)' }}
       >
         <Flex align="center" h="full" px={{ base: 5, md: 10, lg: 16 }} maxW="1440px" mx="auto" justify="space-between">
           <NextLink href="/">
             <HStack gap={2.5} cursor="pointer">
               <Image src="/2.png" alt="BrazilianClean" width={28} height={28} style={{ borderRadius: "50%", objectFit: "cover", flexShrink: 0 }} />
-              <Text fontWeight="700" fontSize="14px" letterSpacing="-0.02em" color="white" fontFamily="heading">
+              <Text fontWeight="700" fontSize="14px" letterSpacing="-0.02em" color="#0A3D7A" fontFamily="heading">
                 Brazilian<Text as="span" color="#0A80DB">Clean</Text>
               </Text>
             </HStack>
           </NextLink>
           <NextLink href="/auth/login">
-            <Text fontSize="13px" fontWeight="600" color="rgba(255,255,255,0.55)" cursor="pointer" fontFamily="heading"
-              _hover={{ color: 'white' }} transition="color 0.15s">
+            <Text fontSize="13px" fontWeight="600" color="#64748B" cursor="pointer" fontFamily="heading"
+              _hover={{ color: '#0A3D7A' }} transition="color 0.15s">
               Already have an account? Sign in →
             </Text>
           </NextLink>
@@ -220,7 +221,7 @@ export default function RequestPage() {
                         <Text fontSize="xl">{s.icon}</Text>
                         <Box>
                           <Text fontSize="13px" fontWeight="700" fontFamily="heading"
-                            color={serviceType === s.id ? '#0A80DB' : '#0B1120'}>{s.labelEn}</Text>
+                            color={serviceType === s.id ? '#0A80DB' : '#0A3D7A'}>{s.labelEn}</Text>
                           <Text fontSize="12px" color="#697386" fontFamily="heading">{s.descEn}</Text>
                         </Box>
                       </HStack>
@@ -253,7 +254,7 @@ export default function RequestPage() {
                       style={{ pointerEvents: 'none' }}
                     >
                       <Text fontFamily="heading" fontSize="14px"
-                        color={dateVal ? '#0B1120' : '#A0AEC0'}>
+                        color={dateVal ? '#0A3D7A' : '#A0AEC0'}>
                         {dateVal
                           ? (() => { const [y,m,d] = dateVal.split('-'); return `${m}/${d}/${y}`; })()
                           : 'MM/DD/YYYY'}
@@ -309,17 +310,17 @@ export default function RequestPage() {
                       key={f.id}
                       size="sm"
                       onClick={() => setFrequency(f.id)}
-                      bg={frequency === f.id ? '#0B1120' : '#F8FAFC'}
+                      bg={frequency === f.id ? '#0A80DB' : '#F8FAFC'}
                       color={frequency === f.id ? 'white' : '#64748B'}
                       borderRadius="4px"
                       border="1px solid"
-                      borderColor={frequency === f.id ? '#0B1120' : '#E3E8EE'}
+                      borderColor={frequency === f.id ? '#0A80DB' : '#E3E8EE'}
                       fontWeight="600"
                       fontSize="13px"
                       fontFamily="heading"
                       h="34px"
                       px={4}
-                      _hover={{ borderColor: '#0B1120' }}
+                      _hover={{ borderColor: '#0A80DB' }}
                       transition="all 0.15s"
                     >
                       {f.labelEn}
@@ -358,7 +359,7 @@ export default function RequestPage() {
                         <Text fontSize="lg" lineHeight={1}>{ex.icon}</Text>
                         <Box flex={1}>
                           <Text fontSize="12px" fontWeight="700" fontFamily="heading"
-                            color={extras.includes(ex.id) ? '#92400E' : '#0B1120'}>{ex.labelEn}</Text>
+                            color={extras.includes(ex.id) ? '#92400E' : '#0A3D7A'}>{ex.labelEn}</Text>
                           <Text fontSize="11px" color="#697386" fontFamily="heading">+${ex.price}</Text>
                         </Box>
                         {extras.includes(ex.id) && (
