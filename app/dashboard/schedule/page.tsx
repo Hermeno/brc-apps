@@ -31,7 +31,7 @@ function StarRow({ rating }: { rating: number }) {
 }
 
 export default function SchedulePage() {
-  const { locale } = useLocale();
+  const { locale, t } = useLocale();
   const dateLocale = locale === 'pt' ? 'pt-BR' : 'en-US';
   const [jobs, setJobs]     = useState<Job[]>([]);
   const [loading, setLoading] = useState(true);
@@ -113,7 +113,7 @@ export default function SchedulePage() {
                           fontWeight: 700,
                           color: job.status === 'COMPLETED' ? '#0A80DB' : '#0A80DB',
                         }}>
-                        {job.status === 'COMPLETED' ? '✓ Completed' : 'Confirmed'}
+                        {job.status === 'COMPLETED' ? t('cleaner.schedule.statusCompleted') : t('cleaner.schedule.statusConfirmed')}
                       </Text>
                       <Text fontWeight="bold" color="slate.900" fontFamily="heading">{job.serviceType}</Text>
                     </HStack>
@@ -203,9 +203,9 @@ export default function SchedulePage() {
 
   // StatStrip counts
   const statItems = [
-    { label: 'TODAY', value: today.length, color: '#F97316' },
-    { label: 'UPCOMING', value: upcoming.length, color: '#0A80DB' },
-    { label: 'COMPLETED', value: completed.length, color: '#22C55E' },
+    { label: t('cleaner.schedule.statToday'), value: today.length, color: '#F97316' },
+    { label: t('cleaner.schedule.statUpcoming'), value: upcoming.length, color: '#0A80DB' },
+    { label: t('cleaner.schedule.statCompleted'), value: completed.length, color: '#22C55E' },
   ];
 
   return (
@@ -214,7 +214,7 @@ export default function SchedulePage() {
       <Box p={6} maxW="1200px" mx="auto">
 
         <HStack gap={2.5} mb={6}>
-          <Heading size="md" fontWeight="bold" color="slate.900" fontFamily="heading">My Schedule</Heading>
+          <Heading size="md" fontWeight="bold" color="slate.900" fontFamily="heading">{t('cleaner.schedule.title')}</Heading>
         </HStack>
 
         <VStack gap={6} align="stretch">
@@ -255,21 +255,21 @@ export default function SchedulePage() {
 
           {loading ? (
             <Box textAlign="center" py={16}>
-              <Text color="slate.400">Loading schedule…</Text>
+              <Text color="slate.400">{t('cleaner.schedule.loading')}</Text>
             </Box>
           ) : jobs.length === 0 ? (
             <Box border="1px solid #E3E8EE" p={16} textAlign="center" bg="white">
               <Icon as={LucideCalendarDays} w={14} h={14} color="slate.300" mb={4} />
-              <Text color="slate.600" fontWeight="bold" fontSize="lg" fontFamily="heading">No jobs scheduled</Text>
+              <Text color="slate.600" fontWeight="bold" fontSize="lg" fontFamily="heading">{t('cleaner.schedule.noJobs')}</Text>
               <Text color="slate.400" fontSize="sm" mt={1}>
-                Accept leads in the Marketplace to see your jobs here.
+                {t('cleaner.schedule.noJobsHint')}
               </Text>
             </Box>
           ) : (
             <>
-              <SectionPanel label="TODAY" items={today} accentBg="#F97316" />
-              <SectionPanel label="UPCOMING JOBS" items={upcoming} accentBg="#0A80DB" />
-              <SectionPanel label="HISTORY" items={completed} accentBg="#22C55E" />
+              <SectionPanel label={t('cleaner.schedule.sectionToday')} items={today} accentBg="#F97316" />
+              <SectionPanel label={t('cleaner.schedule.sectionUpcoming')} items={upcoming} accentBg="#0A80DB" />
+              <SectionPanel label={t('cleaner.schedule.sectionHistory')} items={completed} accentBg="#22C55E" />
             </>
           )}
 

@@ -13,6 +13,7 @@ import CleanerNav from '@/components/cleaner-nav';
 import { toaster } from '@/lib/toaster';
 import { AnimatePresence } from 'motion/react';
 import { ImageUpload } from '@/components/image-upload';
+import { useT } from '@/lib/i18n';
 
 function formatUSPhone(raw: string) {
   const digits = raw.replace(/\D/g, '').slice(0, 10);
@@ -34,6 +35,7 @@ const SERVICE_LIST = [
 ];
 
 export default function ProfilePage() {
+  const t = useT();
   const [phone,             setPhone]        = useState('');
   const [bio,               setBio]          = useState('');
   const [serviceTypes,      setServiceTypes] = useState<string[]>([]);
@@ -114,7 +116,7 @@ export default function ProfilePage() {
 
   const handleDetectLocation = () => {
     if (!navigator.geolocation) {
-      toaster.create({ title: 'Location detection is not supported in this browser.', type: 'error' });
+      toaster.create({ title: t('cleaner.profile.toastLocationUnsupported'), type: 'error' });
       return;
     }
     setGeoLoading(true);
@@ -125,7 +127,7 @@ export default function ProfilePage() {
       setLongitude(lng);
       setGeoLoading(false);
       await reverseGeocode(lat, lng);
-      toaster.create({ title: 'Location updated successfully.', type: 'success' });
+      toaster.create({ title: t('cleaner.profile.toastLocationUpdated'), type: 'success' });
     };
     const onError = () => {
       // Retry with low accuracy (IP/WiFi-based) if high accuracy fails
@@ -133,7 +135,7 @@ export default function ProfilePage() {
         onSuccess,
         () => {
           setGeoLoading(false);
-          toaster.create({ title: 'Could not detect your location.', description: 'Please allow location access in your browser settings and try again.', type: 'error' });
+          toaster.create({ title: t('cleaner.profile.toastLocationFailed'), description: t('cleaner.profile.toastLocationFailedDesc'), type: 'error' });
         },
         { enableHighAccuracy: false, timeout: 15000 }
       );
@@ -156,7 +158,7 @@ export default function ProfilePage() {
         }),
       });
       if (res.ok) {
-        toaster.create({ title: 'Profile saved successfully.', type: 'success' });
+        toaster.create({ title: t('cleaner.profile.toastSaved'), type: 'success' });
       } else {
         const err = await res.json();
         throw new Error(err.error);
@@ -203,7 +205,7 @@ export default function ProfilePage() {
       if (res.ok) {
         setPhotos(prev => [d.photo, ...prev]);
         setPendingUrl(''); setPhotoCaption(''); setShowPhotoForm(false);
-        toaster.create({ title: 'Photo added to your gallery.', type: 'success' });
+        toaster.create({ title: t('cleaner.profile.toastPhotoAdded'), type: 'success' });
       } else {
         throw new Error(d.error);
       }
@@ -220,7 +222,7 @@ export default function ProfilePage() {
       const res = await fetch(`/api/photos/${photoId}`, { method: 'DELETE' });
       if (res.ok) {
         setPhotos(prev => prev.filter(p => p.id !== photoId));
-        toaster.create({ title: 'Photo removed from your gallery.', type: 'success' });
+        toaster.create({ title: t('cleaner.profile.toastPhotoRemoved'), type: 'success' });
       } else {
         const err = await res.json();
         throw new Error(err.error);
@@ -249,9 +251,9 @@ export default function ProfilePage() {
 
           {/* Header */}
           <Box>
-            <Heading size="lg" fontWeight="black" color="slate.900" fontFamily="heading">My public profile</Heading>
+            <Heading size="lg" fontWeight="black" color="slate.900" fontFamily="heading">{t('cleaner.profile.title')}</Heading>
             <Text color="slate.500" fontSize="sm" mt={1}>
-              This is what clients see when they view your listing — make it count.
+              {t('cleaner.profile.subtitle')}
             </Text>
           </Box>
           {/* ── Avatar + About card ── */}
@@ -263,7 +265,7 @@ export default function ProfilePage() {
                 <Text
                   fontSize="10.5px" fontWeight={700} color="#697386"
                   textTransform="uppercase" letterSpacing="0.07em" fontFamily="heading">
-                  About you
+                  {t('cleaner.profile.sectionAbout')}
                 </Text>
               </HStack>
             </Box>
@@ -277,15 +279,15 @@ export default function ProfilePage() {
                   onChange={setAvatarUrl}
                   shape="circle"
                   size={88}
-                  placeholder="Profile photo"
+                  placeholder={t('cleaner.profile.photoLabel')}
                 />
                 <Box flex={1}>
-                  <Text fontWeight="bold" color="slate.800" fontSize="sm">Profile photo</Text>
+                  <Text fontWeight="bold" color="slate.800" fontSize="sm">{t('cleaner.profile.photoLabel')}</Text>
                   <Text fontSize="xs" color="slate.400" mt={0.5}>
-                    Tap the circle to choose a photo from your device.
+                    {t('cleaner.profile.photoHint')}
                   </Text>
                   <Text fontSize="xs" color="slate.300" mt={0.5}>
-                    JPG, PNG, or WEBP · max 8 MB
+                    {t('cleaner.profile.photoFormats')}
                   </Text>
                 </Box>
               </Flex>
@@ -294,11 +296,11 @@ export default function ProfilePage() {
                 {/* Bio */}
                 <Box>
                   <Text fontSize="xs" fontWeight="bold" color="slate.500" mb={2}
-                    textTransform="uppercase" letterSpacing="wider">About you</Text>
+                    textTransform="uppercase" letterSpacing="wider">{t('cleaner.profile.bioLabel')}</Text>
                   <Textarea
                     value={bio}
                     onChange={e => setBio(e.target.value)}
-                    placeholder="Describe your experience, the services you specialize in, and what clients can expect when they book you..."
+                    placeholder={t('cleaner.profile.bioPlaceholder')}
                     bg="slate.50" border="1px solid" borderColor="slate.200"
                     borderRadius="4px" rows={4} fontSize="sm"
                     _focus={{ borderColor: 'brand.300', bg: 'white' }}
@@ -310,7 +312,7 @@ export default function ProfilePage() {
                 {/* Phone */}
                 <Box>
                   <Text fontSize="xs" fontWeight="bold" color="slate.500" mb={2}
-                    textTransform="uppercase" letterSpacing="wider">Contact phone</Text>
+                    textTransform="uppercase" letterSpacing="wider">{t('cleaner.profile.phoneLabel')}</Text>
                   <HStack>
                     <Icon as={LucidePhone} w={4} h={4} color="slate.400" flexShrink={0} />
                     <Input
@@ -324,14 +326,14 @@ export default function ProfilePage() {
                     />
                   </HStack>
                   <Text fontSize="xs" color="slate.400" mt={1}>
-                    Shared with clients only after a booking is accepted.
+                    {t('cleaner.profile.phoneShared')}
                   </Text>
                 </Box>
 
                 {/* Service types */}
                 <Box>
                   <Text fontSize="xs" fontWeight="bold" color="slate.500" mb={3}
-                    textTransform="uppercase" letterSpacing="wider">Services you offer</Text>
+                    textTransform="uppercase" letterSpacing="wider">{t('cleaner.profile.servicesLabel')}</Text>
                   <SimpleGrid columns={{ base: 2, sm: 3 }} gap={2}>
                     {SERVICE_LIST.map(s => {
                       const sel = serviceTypes.includes(s);
@@ -341,7 +343,7 @@ export default function ProfilePage() {
                           bg={sel ? '#F0F9FF' : 'white'} cursor="pointer"
                           onClick={() => toggleService(s)} transition="all 0.15s">
                           <Text fontSize="xs" fontWeight={sel ? 'bold' : 'medium'}
-                            color={sel ? '#0A80DB' : 'slate.600'}>{s}</Text>
+                            color={sel ? '#0A80DB' : 'slate.600'}>{t(`services.${s}`)}</Text>
                         </Box>
                       );
                     })}
@@ -352,11 +354,11 @@ export default function ProfilePage() {
                   bg="#0A80DB" color="white" borderRadius="4px" fontWeight="bold"
                   _hover={{ bg: '#0870C2' }}
                   transition="all 0.2s"
-                  loading={saving} loadingText="Saving profile..."
+                  loading={saving} loadingText={t('cleaner.profile.savingProfile')}
                   onClick={handleSave}
                   alignSelf="flex-end">
                   <Icon as={LucideSave} w={4} h={4} mr={2} />
-                  Save profile
+                  {t('cleaner.profile.saveProfile')}
                 </Button>
               </VStack>
             </Box>
@@ -371,17 +373,17 @@ export default function ProfilePage() {
                 <Text
                   fontSize="10.5px" fontWeight={700} color="#697386"
                   textTransform="uppercase" letterSpacing="0.07em" fontFamily="heading">
-                  Location
+                  {t('cleaner.profile.sectionLocation')}
                 </Text>
                 <Text style={{ borderRadius: 2, background: '#F1F5F9', padding: '2px 6px', fontSize: '9.5px', fontWeight: 700, color: '#94A3B8' }}>
-                  optional
+                  {t('cleaner.profile.locationOptional')}
                 </Text>
               </HStack>
             </Box>
 
             <Box p={6}>
               <Text fontSize="xs" color="slate.400" mb={5}>
-                Your location helps clients see how far you are and helps us send you nearby job leads. Your exact address is never shown publicly.
+                {t('cleaner.profile.locationHint')}
               </Text>
 
               <VStack gap={4} align="stretch">
@@ -390,13 +392,13 @@ export default function ProfilePage() {
                   <HStack mb={1.5} gap={2}>
                     <Text fontSize="xs" fontWeight="700" color="slate.500"
                       textTransform="uppercase" letterSpacing="0.07em">
-                      ZIP Code
+                      {t('cleaner.profile.zipLabel')}
                     </Text>
                     <Text style={{
                       borderRadius: 2, background: '#EFF6FF',
                       padding: '2px 6px', fontSize: '9.5px', fontWeight: 700, color: '#0A80DB',
                     }}>
-                      +10 pts in your score
+                      {t('cleaner.profile.zipBonus')}
                     </Text>
                   </HStack>
                   <Input
@@ -409,7 +411,7 @@ export default function ProfilePage() {
                     _focus={{ bg: 'white', borderColor: 'brand.300' }}
                   />
                   <Text fontSize="xs" color="slate.400" mt={1}>
-                    Earns you 10 points and helps us match you with nearby clients first.
+                    {t('cleaner.profile.zipHint')}
                   </Text>
                 </Box>
 
@@ -419,10 +421,10 @@ export default function ProfilePage() {
                   borderRadius="4px" fontWeight="semibold" fontSize="sm"
                   _hover={{ borderColor: 'brand.300', color: 'brand.600', bg: 'brand.50' }}
                   transition="all 0.15s"
-                  loading={geoLoading} loadingText="Detecting your location..."
+                  loading={geoLoading} loadingText={t('cleaner.profile.detectLoading')}
                   onClick={handleDetectLocation}>
                   <Icon as={LucideNavigation} w={4} h={4} mr={2} />
-                  {latitude ? 'Update my location' : 'Use my current location'}
+                  {latitude ? t('cleaner.profile.updateLocation') : t('cleaner.profile.useLocation')}
                 </Button>
 
                 {/* Location label */}
@@ -462,13 +464,13 @@ export default function ProfilePage() {
                   <HStack justify="space-between" mb={2}>
                     <Text fontSize="xs" fontWeight="700" color="slate.500"
                       textTransform="uppercase" letterSpacing="0.07em">
-                      Service radius
+                      {t('cleaner.profile.radiusLabel')}
                     </Text>
                     <Text style={{
                       fontSize: '9.5px', fontWeight: 700, padding: '2px 7px',
                       background: '#EFF6FF', color: '#0A80DB', borderRadius: 2,
                     }}>
-                      Your plan allows up to {planMaxRadius} miles
+                      {t('cleaner.profile.radiusPlan', { max: planMaxRadius })}
                     </Text>
                   </HStack>
                   <Box display="flex" gap={2} flexWrap="wrap">
@@ -492,15 +494,15 @@ export default function ProfilePage() {
                           _hover={locked ? {} : { borderColor: '#0A80DB', color: active ? 'white' : '#0A80DB' }}
                           onClick={() => !locked && setServiceRadius(miles)}
                         >
-                          {miles} {miles === 1 ? 'mile' : 'miles'}{locked ? ' 🔒' : ''}
+                          {miles} {miles === 1 ? t('cleaner.profile.mile') : t('cleaner.profile.miles')}{locked ? ' 🔒' : ''}
                         </Box>
                       );
                     })}
                   </Box>
                   <Text fontSize="11px" color="slate.400" mt={1.5}>
-                    We will only send you job leads within this distance from your location.
+                    {t('cleaner.profile.radiusHint')}
                     {planMaxRadius < 110 && (
-                      <> Upgrade your plan to reach more clients across a wider area.</>
+                      <> {t('cleaner.profile.radiusUpgrade')}</>
                     )}
                   </Text>
                 </Box>
@@ -510,11 +512,11 @@ export default function ProfilePage() {
                   bg="#0A80DB" color="white" borderRadius="4px" fontWeight="bold"
                   _hover={{ bg: '#0870C2' }}
                   transition="all 0.2s"
-                  loading={saving} loadingText="Saving location..."
+                  loading={saving} loadingText={t('cleaner.profile.savingLocation')}
                   onClick={handleSave}
                   alignSelf="flex-end">
                   <Icon as={LucideSave} w={4} h={4} mr={2} />
-                  Save location and radius
+                  {t('cleaner.profile.saveLocation')}
                 </Button>
               </VStack>
             </Box>
@@ -530,7 +532,7 @@ export default function ProfilePage() {
                   <Text
                     fontSize="10.5px" fontWeight={700} color="#697386"
                     textTransform="uppercase" letterSpacing="0.07em" fontFamily="heading">
-                    Work gallery
+                    {t('cleaner.profile.sectionGallery')}
                   </Text>
                   <Text style={{ borderRadius: 2, background: '#F1F5F9', padding: '2px 6px', fontSize: '9.5px', fontWeight: 700, color: '#94A3B8' }}>
                     {photos.length}/20
@@ -539,10 +541,10 @@ export default function ProfilePage() {
                 {photos.length < 20 && !showPhotoForm && (
                   <Button size="sm" bg="#0A80DB" color="white" borderRadius="4px" fontWeight="bold"
                     _hover={{ bg: '#0870C2' }}
-                    loading={uploading} loadingText="Uploading photo..."
+                    loading={uploading} loadingText={t('cleaner.profile.uploadingPhoto')}
                     onClick={() => fileInputRef.current?.click()}>
                     <Icon as={LucidePlus} w={3.5} h={3.5} mr={1.5} />
-                    Add work photo
+                    {t('cleaner.profile.addPhoto')}
                   </Button>
                 )}
               </Flex>
@@ -554,7 +556,7 @@ export default function ProfilePage() {
                 {showPhotoForm && pendingUrl && (
                   <Box bg="brand.50" border="1px solid" borderColor="brand.200" borderRadius="4px" p={4} mb={5}>
                     <Text fontSize="sm" fontWeight="bold" color="brand.700" mb={3}>
-                      Photo uploaded — add a short caption so clients know what they are looking at (optional)
+                      {t('cleaner.profile.captionTitle')}
                     </Text>
                     <Flex gap={3} align="flex-start">
                       <Box w="80px" h="80px" borderRadius="4px" overflow="hidden" flexShrink={0}
@@ -564,7 +566,7 @@ export default function ProfilePage() {
                       </Box>
                       <VStack gap={3} flex={1} align="stretch">
                         <Input
-                          placeholder="e.g., Kitchen deep clean — before and after"
+                          placeholder={t('cleaner.profile.captionPlaceholder')}
                           value={photoCaption}
                           onChange={e => setPhotoCaption(e.target.value)}
                           bg="white" borderRadius="4px" h="10" border="1px solid"
@@ -574,13 +576,13 @@ export default function ProfilePage() {
                         <HStack gap={2} justify="flex-end">
                           <Button size="sm" variant="ghost" color="slate.500"
                             onClick={() => { setShowPhotoForm(false); setPendingUrl(''); setPhotoCaption(''); }}>
-                            Cancel
+                            {t('common.cancel')}
                           </Button>
                           <Button size="sm" bg="#0A80DB" color="white" borderRadius="4px" fontWeight="bold"
                             _hover={{ bg: '#0870C2' }}
-                            loading={addingPhoto} loadingText="Adding photo..."
+                            loading={addingPhoto} loadingText={t('cleaner.profile.addingPhoto')}
                             onClick={handleAddPhoto}>
-                            Add to gallery
+                            {t('cleaner.profile.addToGallery')}
                           </Button>
                         </HStack>
                       </VStack>
@@ -594,9 +596,9 @@ export default function ProfilePage() {
                   cursor="pointer" onClick={() => fileInputRef.current?.click()}
                   _hover={{ borderColor: 'brand.300', bg: 'brand.50' }} transition="all 0.15s">
                   <Text fontSize="3xl" mb={2}>📷</Text>
-                  <Text color="slate.500" fontSize="sm" fontWeight="semibold">Your gallery is empty</Text>
+                  <Text color="slate.500" fontSize="sm" fontWeight="semibold">{t('cleaner.profile.galleryEmpty')}</Text>
                   <Text color="slate.400" fontSize="xs" mt={1}>
-                    Add before-and-after photos to show clients the quality of your work
+                    {t('cleaner.profile.galleryEmptyHint')}
                   </Text>
                 </Box>
               ) : (

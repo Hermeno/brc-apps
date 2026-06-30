@@ -35,7 +35,7 @@ type FinanceData = {
 };
 
 export default function FinancesPage() {
-  const { locale } = useLocale();
+  const { locale, t } = useLocale();
   const dateLocale = locale === 'pt' ? 'pt-BR' : 'en-US';
   const [data, setData]     = useState<FinanceData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -54,22 +54,22 @@ export default function FinancesPage() {
 
   const statItems = [
     {
-      label: 'FEES PAID',
+      label: t('cleaner.finances.statFeesPaid'),
       value: data ? `$${data.totalFeesPaid.toFixed(2)}` : '—',
       color: '#EF4444',
     },
     {
-      label: 'JOBS',
+      label: t('cleaner.finances.statJobs'),
       value: data ? String(data.totalJobsCompleted) : '—',
       color: '#22C55E',
     },
     {
-      label: 'EST. EARNINGS',
+      label: t('cleaner.finances.statEarnings'),
       value: data ? `$${data.estimatedEarnings.toFixed(2)}` : '—',
       color: '#0A80DB',
     },
     {
-      label: 'RATING',
+      label: t('cleaner.finances.statRating'),
       value: data?.ratingAvg ? `${data.ratingAvg.toFixed(1)} ⭐` : '—',
       color: '#F59E0B',
     },
@@ -80,7 +80,7 @@ export default function FinancesPage() {
       <CleanerNav />
       <Box p={6} maxW="1200px" mx="auto">
         <HStack gap={2.5} mb={6}>
-          <Heading size="md" fontWeight="bold" color="slate.900" fontFamily="heading">Finances</Heading>
+          <Heading size="md" fontWeight="bold" color="slate.900" fontFamily="heading">{t('cleaner.finances.title')}</Heading>
         </HStack>
 
         <VStack gap={6} align="stretch">
@@ -132,14 +132,15 @@ export default function FinancesPage() {
                   <Icon as={LucideTrendingUp} w={5} h={5} color="#0A80DB" />
                 </Box>
                 <Box>
-                  <Text fontWeight="bold" color="slate.800" fontSize="sm">Return on investment</Text>
+                  <Text fontWeight="bold" color="slate.800" fontSize="sm">{t('cleaner.finances.roiTitle')}</Text>
                   <Text color="slate.500" fontSize="sm">
-                    For every <Text as="span" fontWeight="bold" color="red.600">${data.totalFeesPaid.toFixed(0)}</Text> invested in leads,
-                    you generated approximately{' '}
-                    <Text as="span" fontWeight="black" color="#0A80DB">${data.estimatedEarnings.toFixed(0)}</Text> in jobs.
+                    {t('cleaner.finances.roiPrefix')} <Text as="span" fontWeight="bold" color="red.600">${data.totalFeesPaid.toFixed(0)}</Text>{' '}
+                    {t('cleaner.finances.roiMid')}{' '}
+                    <Text as="span" fontWeight="black" color="#0A80DB">${data.estimatedEarnings.toFixed(0)}</Text>{' '}
+                    {t('cleaner.finances.roiSuffix')}
                     {data.totalFeesPaid > 0 && data.estimatedEarnings > 0 && (
                       <Text as="span" fontWeight="bold" color="#0A80DB">
-                        {' '}({Math.round((data.estimatedEarnings / data.totalFeesPaid) * 100)}% return)
+                        {' '}{t('cleaner.finances.roiReturn', { pct: Math.round((data.estimatedEarnings / data.totalFeesPaid) * 100) })}
                       </Text>
                     )}
                   </Text>
@@ -160,7 +161,7 @@ export default function FinancesPage() {
                   textTransform="uppercase"
                   fontFamily="heading"
                   letterSpacing="0.07em">
-                  TRANSACTION HISTORY
+                  {t('cleaner.finances.sectionHistory')}
                 </Text>
                 {data && (
                   <Text
@@ -173,14 +174,14 @@ export default function FinancesPage() {
 
             {loading ? (
               <Box textAlign="center" py={12} bg="white">
-                <Text color="slate.400">Loading…</Text>
+                <Text color="slate.400">{t('cleaner.finances.loading')}</Text>
               </Box>
             ) : !data || data.transactions.length === 0 ? (
               <Box bg="white" p={12} textAlign="center">
                 <Icon as={LucideBanknote} w={12} h={12} color="slate.300" mb={3} />
-                <Text color="slate.600" fontWeight="bold">No transactions yet</Text>
+                <Text color="slate.600" fontWeight="bold">{t('cleaner.finances.noTransactions')}</Text>
                 <Text color="slate.400" fontSize="sm" mt={1}>
-                  Lead fees will appear here when you accept leads.
+                  {t('cleaner.finances.noTransactionsHint')}
                 </Text>
               </Box>
             ) : (
@@ -234,8 +235,8 @@ export default function FinancesPage() {
                               fontWeight: 700,
                               color: tx.lead.status === 'COMPLETED' ? '#0A80DB' : '#64748B',
                             }}>
-                            {tx.lead.status === 'COMPLETED' ? 'Completed' :
-                             tx.lead.status === 'ACCEPTED' ? 'In progress' : tx.lead.status}
+                            {tx.lead.status === 'COMPLETED' ? t('cleaner.finances.statusCompleted') :
+                             tx.lead.status === 'ACCEPTED' ? t('cleaner.finances.statusInProgress') : tx.lead.status}
                           </Text>
                         </VStack>
                       </Flex>

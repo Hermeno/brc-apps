@@ -12,6 +12,7 @@ import CleanerNav from '@/components/cleaner-nav';
 import { toaster } from '@/lib/toaster';
 import { AnimatePresence, motion } from 'motion/react';
 import { useSearchParams } from 'next/navigation';
+import { useT } from '@/lib/i18n';
 
 type SavedCard = {
   id: string;
@@ -48,6 +49,7 @@ function CardIcon({ brand }: { brand: string }) {
 }
 
 function PaymentMethodsContent() {
+  const t = useT();
   const searchParams = useSearchParams();
   const [cards, setCards]         = useState<SavedCard[]>([]);
   const [loading, setLoading]     = useState(true);
@@ -57,7 +59,7 @@ function PaymentMethodsContent() {
 
   useEffect(() => {
     if (searchParams.get('setup') === '1') {
-      toaster.create({ title: 'Card added successfully.', type: 'success' });
+      toaster.create({ title: t('cleaner.payments.toastAdded'), type: 'success' });
     }
     fetchCards();
 
@@ -98,7 +100,7 @@ function PaymentMethodsContent() {
       const res = await fetch(`/api/stripe/payment-methods/${id}`, { method: 'DELETE' });
       if (res.ok) {
         setCards(prev => prev.filter(c => c.id !== id));
-        toaster.create({ title: 'Card removed from your account.', type: 'success' });
+        toaster.create({ title: t('cleaner.payments.toastRemoved'), type: 'success' });
       } else {
         const err = await res.json();
         throw new Error(err.error);
@@ -114,7 +116,7 @@ function PaymentMethodsContent() {
       const res = await fetch(`/api/stripe/payment-methods/${id}`, { method: 'POST' });
       if (res.ok) {
         setCards(prev => prev.map(c => ({ ...c, isDefault: c.id === id })));
-        toaster.create({ title: 'Default card updated. Lead charges will use this card.', type: 'success' });
+        toaster.create({ title: t('cleaner.payments.toastDefault'), type: 'success' });
       } else {
         const err = await res.json();
         throw new Error(err.error);
@@ -135,19 +137,19 @@ function PaymentMethodsContent() {
           <Flex justify="space-between" align="center">
             <Box>
               <Heading size="lg" fontWeight="black" color="slate.900" fontFamily="heading">
-                Payment methods
+                {t('cleaner.payments.title')}
               </Heading>
               <Text color="slate.500" fontSize="sm" mt={1}>
-                Your saved cards are charged automatically when you accept a lead.
+                {t('cleaner.payments.subtitle')}
               </Text>
             </Box>
             <Button
               bg="#0A80DB" color="white" borderRadius="4px" fontWeight="bold"
               _hover={{ bg: '#0870C2' }}
-              loading={adding} loadingText="Redirecting to Stripe..."
+              loading={adding} loadingText={t('cleaner.payments.redirecting')}
               onClick={handleAdd}>
               <Icon as={LucidePlus} w={4} h={4} mr={2} />
-              Add a card
+              {t('cleaner.payments.addCard')}
             </Button>
           </Flex>
 
@@ -156,10 +158,9 @@ function PaymentMethodsContent() {
             <HStack gap={3} align="start">
               <Icon as={LucideShieldCheck} w={5} h={5} color="blue.600" flexShrink={0} mt={0.5} />
               <Box>
-                <Text fontWeight="bold" color="blue.800" fontSize="sm">How lead payments work</Text>
+                <Text fontWeight="bold" color="blue.800" fontSize="sm">{t('cleaner.payments.howTitle')}</Text>
                 <Text color="blue.700" fontSize="xs" mt={1} lineHeight="1.6">
-                  When you accept a lead, the fee is automatically charged to your default card.
-                  Your card details are stored securely by Stripe and never touch our servers.
+                  {t('cleaner.payments.howDesc')}
                 </Text>
               </Box>
             </HStack>
@@ -176,7 +177,7 @@ function PaymentMethodsContent() {
                 textTransform="uppercase"
                 fontFamily="heading"
                 letterSpacing="0.07em">
-                SAVED CARDS
+                {t('cleaner.payments.savedCards')}
               </Text>
             </Box>
 
@@ -195,17 +196,17 @@ function PaymentMethodsContent() {
                   display="flex" alignItems="center" justifyContent="center">
                   <Icon as={LucideCreditCard} w={7} h={7} color="slate.400" />
                 </Box>
-                <Text color="slate.600" fontWeight="semibold">No cards saved yet</Text>
+                <Text color="slate.600" fontWeight="semibold">{t('cleaner.payments.noCards')}</Text>
                 <Text color="slate.400" fontSize="xs" maxW="280px">
-                  Add a card so you can accept leads instantly — no manual payment needed each time.
+                  {t('cleaner.payments.noCardsHint')}
                 </Text>
                 <Button
                   mt={2} bg="#0A80DB" color="white" borderRadius="4px" fontWeight="bold"
                   _hover={{ bg: '#0870C2' }}
-                  loading={adding} loadingText="Redirecting to Stripe..."
+                  loading={adding} loadingText={t('cleaner.payments.redirecting')}
                   onClick={handleAdd}>
                   <Icon as={LucidePlus} w={4} h={4} mr={2} />
-                  Add your first card
+                  {t('cleaner.payments.addFirst')}
                 </Button>
               </VStack>
             ) : (
@@ -248,12 +249,12 @@ function PaymentMethodsContent() {
                                         fontWeight: 700,
                                         color: '#fff',
                                       }}>
-                                      Default
+                                      {t('cleaner.payments.defaultBadge')}
                                     </Text>
                                   )}
                                 </HStack>
                                 <Text fontSize="xs" color="slate.400" mt={0.5}>
-                                  {BRAND_LABELS[card.brand] ?? card.brand} · expires {card.expMonth != null ? String(card.expMonth).padStart(2, '0') : '??'}/{card.expYear != null ? String(card.expYear).slice(-2) : '??'}
+                                  {BRAND_LABELS[card.brand] ?? card.brand} · {t('cleaner.payments.expires')} {card.expMonth != null ? String(card.expMonth).padStart(2, '0') : '??'}/{card.expYear != null ? String(card.expYear).slice(-2) : '??'}
                                 </Text>
                               </Box>
                             </HStack>
@@ -265,7 +266,7 @@ function PaymentMethodsContent() {
                                   loading={settingId === card.id}
                                   onClick={() => handleSetDefault(card.id)}>
                                   <Icon as={LucideStar} w={3} h={3} mr={1} />
-                                  Make default
+                                  {t('cleaner.payments.makeDefault')}
                                 </Button>
                               )}
                               <Button size="xs" variant="ghost" color="red.400" borderRadius="4px"
@@ -287,10 +288,10 @@ function PaymentMethodsContent() {
                     variant="outline" borderColor="#E3E8EE" color="slate.500"
                     borderRadius="4px" fontWeight="semibold" fontSize="sm"
                     _hover={{ borderColor: '#0A80DB', color: '#0A80DB', bg: '#F0F9FF' }}
-                    loading={adding} loadingText="Redirecting to Stripe..."
+                    loading={adding} loadingText={t('cleaner.payments.redirecting')}
                     onClick={handleAdd}>
                     <Icon as={LucidePlus} w={4} h={4} mr={2} />
-                    Add another card
+                    {t('cleaner.payments.addAnother')}
                   </Button>
                 </Box>
               </VStack>
@@ -300,7 +301,7 @@ function PaymentMethodsContent() {
           {/* Security note: flat HStack */}
           <HStack gap={2} justify="center" color="slate.400">
             <Icon as={LucideShieldCheck} w={4} h={4} />
-            <Text fontSize="xs">Your card is stored securely via Stripe — we never see your full card number</Text>
+            <Text fontSize="xs">{t('cleaner.payments.secureNote')}</Text>
           </HStack>
 
         </VStack>

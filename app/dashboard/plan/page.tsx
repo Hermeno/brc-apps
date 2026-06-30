@@ -11,6 +11,7 @@ import {
 import CleanerNav from '@/components/cleaner-nav';
 import { toaster } from '@/lib/toaster';
 import { PLANS } from '@/lib/plans';
+import { useT } from '@/lib/i18n';
 
 type PlanId = 'FREE' | 'BASIC' | 'PRO';
 
@@ -27,6 +28,7 @@ const PLAN_COLORS: Record<PlanId, { bg: string; border: string; text: string; bt
 };
 
 export default function PlanPage() {
+  const t = useT();
   const [currentPlan, setCurrentPlan]     = useState<PlanId>('FREE');
   const [hasSubscription, setHasSubscription] = useState(false);
   const [redirecting, setRedirecting]     = useState(false);
@@ -59,7 +61,7 @@ export default function PlanPage() {
     load();
     // Check if returning from successful payment
     if (typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('upgraded')) {
-      toaster.create({ title: 'Plan activated!', description: 'Your ranking has been updated. You\'ll start getting better leads right away.', type: 'success' });
+      toaster.create({ title: t('cleaner.plan.toastActivated'), description: t('cleaner.plan.toastActivatedDesc'), type: 'success' });
       window.history.replaceState({}, '', '/dashboard/plan');
     }
   }, [load]);
@@ -77,8 +79,8 @@ export default function PlanPage() {
           body: JSON.stringify({ plan: 'FREE' }),
         });
         setCurrentPlan('FREE');
-        toaster.create({ title: 'Switched to Free plan.', description: 'No commitment required — upgrade again anytime.', type: 'success' });
-      } catch { toaster.create({ title: 'Something went wrong. Please try again.', type: 'error' }); }
+        toaster.create({ title: t('cleaner.plan.toastFree'), description: t('cleaner.plan.toastFreeDesc'), type: 'success' });
+      } catch { toaster.create({ title: t('cleaner.plan.toastError'), type: 'error' }); }
       finally { setSaving(false); }
       return;
     }
@@ -125,7 +127,7 @@ export default function PlanPage() {
       <CleanerNav />
       <Box p={6} maxW="960px" mx="auto">
         <Heading size="md" fontWeight="bold" color="slate.900" fontFamily="heading" mb={6}>
-          Plan &amp; Visibility
+          {t('cleaner.plan.title')}
         </Heading>
 
         <VStack gap={8} align="stretch">
@@ -137,19 +139,19 @@ export default function PlanPage() {
                 <Icon as={LucideTrendingUp} w={4} h={4} color="brand.500" />
                 <Box>
                   <Text fontSize="10.5px" fontWeight={700} color="#697386" textTransform="uppercase" letterSpacing="0.06em" fontFamily="heading">
-                    How you rank for new leads
+                    {t('cleaner.plan.rankTitle')}
                   </Text>
-                  <Text fontSize="xs" color="slate.500">Your score determines how early you see each lead</Text>
+                  <Text fontSize="xs" color="slate.500">{t('cleaner.plan.rankSubtitle')}</Text>
                 </Box>
               </HStack>
             </Box>
             <Box p={5}>
               <SimpleGrid columns={{ base: 2, sm: 4 }} gap={3}>
                 {[
-                  { label: 'Plan', max: '30 pts', icon: '💎', desc: 'Pro ranks highest' },
-                  { label: 'Service', max: '40 pts', icon: '🧹', desc: 'Services matched' },
-                  { label: 'Rating', max: '20 pts', icon: '⭐', desc: 'Client reviews' },
-                  { label: 'Area', max: '10 pts', icon: '📍', desc: 'Near client zip code' },
+                  { label: t('cleaner.plan.factorPlan'), max: '30 pts', icon: '💎', desc: t('cleaner.plan.factorPlanDesc') },
+                  { label: t('cleaner.plan.factorService'), max: '40 pts', icon: '🧹', desc: t('cleaner.plan.factorServiceDesc') },
+                  { label: t('cleaner.plan.factorRating'), max: '20 pts', icon: '⭐', desc: t('cleaner.plan.factorRatingDesc') },
+                  { label: t('cleaner.plan.factorArea'), max: '10 pts', icon: '📍', desc: t('cleaner.plan.factorAreaDesc') },
                 ].map(item => (
                   <Box key={item.label} border="1px solid #E3E8EE" p={3} textAlign="center">
                     <Text fontSize="lg" mb={1}>{item.icon}</Text>
@@ -167,10 +169,10 @@ export default function PlanPage() {
           {/* Plan Cards */}
           <Box>
             <Text fontWeight="black" color="slate.900" fontSize="lg" mb={1} fontFamily="heading">
-              Choose your plan
+              {t('cleaner.plan.choosePlan')}
             </Text>
             <Text color="slate.500" fontSize="sm" mb={5}>
-              A higher plan boosts your score — so you see leads sooner and win more jobs. Start earning today.
+              {t('cleaner.plan.choosePlanSub')}
             </Text>
 
             <SimpleGrid columns={{ base: 1, sm: 2, lg: 4 }} gap={4}>
@@ -252,7 +254,7 @@ export default function PlanPage() {
                         <Box w="full" py={2} px={4} bg={accentColor} textAlign="center">
                           <HStack gap={1.5} justify="center">
                             <Icon as={LucideZap} w={3.5} h={3.5} color="white" />
-                            <Text fontSize="xs" fontWeight="bold" color="white">Current plan</Text>
+                            <Text fontSize="xs" fontWeight="bold" color="white">{t('cleaner.plan.currentPlan')}</Text>
                           </HStack>
                         </Box>
                       ) : (
@@ -263,7 +265,7 @@ export default function PlanPage() {
                           onClick={() => handleSelectPlan(pid)}
                           loading={redirecting || saving}
                           disabled={redirecting}>
-                          {plan.price === 0 ? 'Switch to Free' : `Upgrade to ${plan.name}`}
+                          {plan.price === 0 ? t('cleaner.plan.switchFree') : t('cleaner.plan.upgradeTo', { name: plan.name })}
                         </Button>
                       )}
                     </VStack>
@@ -277,24 +279,24 @@ export default function PlanPage() {
           <Box border="1px solid #E3E8EE" style={{ borderRadius: 8 }} overflow="hidden">
             <Box bg="#F6F9FC" px={5} py={3} borderBottom="1px solid #E3E8EE">
               <Text fontSize="10.5px" fontWeight={700} color="#697386" textTransform="uppercase" letterSpacing="0.06em" fontFamily="heading">
-                How leads reach you
+                {t('cleaner.plan.leadsTitle')}
               </Text>
             </Box>
             <VStack gap={0} align="stretch">
               {[
                 {
-                  wave: 'Instant Book',
-                  time: 'Immediately',
-                  cleaners: '1 cleaner',
-                  desc: 'Score 85+ — the system books you directly. No competition, no waiting.',
+                  wave: t('cleaner.plan.instantBook'),
+                  time: t('cleaner.plan.instantTime'),
+                  cleaners: t('cleaner.plan.instantCleaners'),
+                  desc: t('cleaner.plan.instantDesc'),
                   chipBg: '#FEFCE8',
                   chipColor: '#854D0E',
                 },
                 {
-                  wave: 'Wave 2',
-                  time: 'First 90 seconds',
-                  cleaners: '2 cleaners',
-                  desc: 'The top 2 ranked cleaners compete. The first to accept wins — the other pays nothing.',
+                  wave: t('cleaner.plan.wave2'),
+                  time: t('cleaner.plan.wave2Time'),
+                  cleaners: t('cleaner.plan.wave2Cleaners'),
+                  desc: t('cleaner.plan.wave2Desc'),
                   chipBg: '#F5F3FF',
                   chipColor: '#0A80DB',
                 },
@@ -338,9 +340,9 @@ export default function PlanPage() {
             <Box bg="white" border="1px solid #E3E8EE" p={5} style={{ borderRadius: 8 }}>
               <Flex justify="space-between" align="center">
                 <Box>
-                  <Text fontWeight="bold" color="slate.800">Billing & subscription</Text>
+                  <Text fontWeight="bold" color="slate.800">{t('cleaner.plan.billingTitle')}</Text>
                   <Text fontSize="sm" color="slate.500" mt={0.5}>
-                    Update your payment method, view past invoices, or cancel anytime. No commitment required.
+                    {t('cleaner.plan.billingDesc')}
                   </Text>
                 </Box>
                 <Button
@@ -350,7 +352,7 @@ export default function PlanPage() {
                   onClick={handleManageSubscription}
                   loading={redirecting}>
                   <Icon as={LucideSettings} w={4} h={4} mr={1.5} />
-                  Manage billing
+                  {t('cleaner.plan.manageBilling')}
                 </Button>
               </Flex>
             </Box>
