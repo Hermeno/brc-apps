@@ -658,5 +658,9 @@ export const pt: Messages = {
     ctaDesc: 'Junte-se a milhares de proprietários e profissionais de limpeza que já usam o BrazilianClean toda semana.',
     ctaBtn: 'Começar — é gratuito',
     ctaSignIn: 'Já tem uma conta? Entrar',
+    testimonialsLabel: 'O que nossos clientes dizem',
+    t1: 'Uso o BrazilianClean há 6 meses e transformou minha rotina. O profissional é sempre pontual, atencioso, e minha casa fica impecável toda vez.',
+    t2: 'Contratei uma limpeza profunda antes de receber a família. Superou todas as expectativas — partes que eu tinha esquecido foram limpas. Agendamento em 2 minutos. Super indico.',
+    t3: 'Usei o BrazilianClean para limpeza de mudança. Recebi meu depósito de volta integralmente. A plataforma facilita tudo — agendamento, comunicação, pagamento. Zero estresse.',
   },
 };

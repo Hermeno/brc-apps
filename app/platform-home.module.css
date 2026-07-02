@@ -239,9 +239,38 @@
 }
 .footerCopy { font-size: 12px; color: #9ABDD8; }
 
+/* ── Testimonials ── */
+.testimonials { padding: 100px 32px; background: #F9F9F9; border-bottom: 1px solid #E5E5E5; }
+.testimonialsInner { max-width: 1080px; margin: 0 auto; }
+.testimonialsLabel {
+  font-size: 12px; font-weight: 500; color: #888; letter-spacing: 0.06em;
+  text-transform: uppercase; margin-bottom: 48px;
+  display: flex; align-items: center; gap: 12px;
+}
+.testimonialsLabel::after { content: ''; flex: 1; height: 1px; background: #E5E5E5; }
+.testimonialsGrid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 0;
+  border-top: 1px solid #E5E5E5; border-left: 1px solid #E5E5E5;
+}
+.testimonialCard {
+  padding: 36px 32px; border-right: 1px solid #E5E5E5;
+  border-bottom: 1px solid #E5E5E5; background: #fff;
+}
+.testimonialStars { color: #F59E0B; font-size: 13px; letter-spacing: 2px; margin-bottom: 14px; }
+.testimonialText { font-size: 14px; color: #555; line-height: 1.7; margin-bottom: 24px; }
+.testimonialReviewer { display: flex; align-items: center; gap: 10px; }
+.testimonialAvatar {
+  width: 34px; height: 34px; border-radius: 50%; background: #0A80DB;
+  color: #fff; font-size: 11px; font-weight: 700; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+}
+.testimonialName { font-size: 13px; font-weight: 600; color: #111; }
+.testimonialLocation { font-size: 12px; color: #999; margin-top: 2px; }
+
 /* ── Responsive ── */
 @media (max-width: 900px) {
   .navLinks { display: none; }
+  .testimonialsGrid { grid-template-columns: 1fr; }
   .statementInner { grid-template-columns: 1fr; gap: 40px; }
   .featuresHeader { grid-template-columns: 1fr; gap: 20px; }
   .featuresGrid { grid-template-columns: 1fr 1fr; }
@@ -251,6 +280,7 @@
   .stepItem:first-child { border-top: none; padding-top: 0; }
   .ctaInner { grid-template-columns: 1fr; gap: 32px; }
   .footerInner { grid-template-columns: 1fr 1fr; }
+  .testimonialsGrid { grid-template-columns: 1fr; }
 }
 @media (max-width: 560px) {
   .featuresGrid { grid-template-columns: 1fr; }

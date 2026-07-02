@@ -213,6 +213,32 @@ export default function PlatformHomePage() {
         </div>
       </section>
 
+      {/* ── Testimonials ── */}
+      <section className={styles.testimonials}>
+        <div className={styles.testimonialsInner}>
+          <p className={styles.testimonialsLabel}>{t('home.testimonialsLabel')}</p>
+          <div className={styles.testimonialsGrid}>
+            {[
+              { initials: 'SM', name: 'Sarah M.', location: 'Miami, FL · Standard Cleaning', textKey: 'home.t1' },
+              { initials: 'MR', name: 'Michael R.', location: 'Hartford, CT · Deep Cleaning', textKey: 'home.t2' },
+              { initials: 'JK', name: 'Jennifer K.', location: 'Boston, MA · Move-Out Cleaning', textKey: 'home.t3' },
+            ].map(item => (
+              <div key={item.initials} className={styles.testimonialCard}>
+                <div className={styles.testimonialStars}>★★★★★</div>
+                <p className={styles.testimonialText}>&ldquo;{t(item.textKey as any)}&rdquo;</p>
+                <div className={styles.testimonialReviewer}>
+                  <div className={styles.testimonialAvatar}>{item.initials}</div>
+                  <div>
+                    <p className={styles.testimonialName}>{item.name}</p>
+                    <p className={styles.testimonialLocation}>{item.location}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ── CTA ── */}
       <section className={styles.cta}>
         <div className={styles.ctaInner}>
@@ -257,8 +283,7 @@ export default function PlatformHomePage() {
           </div>
           <div>
             <p className={styles.footerColTitle}>Company</p>
-            <NextLink href="/landing" className={styles.footerColLink}>Public website</NextLink>
-            <NextLink href="/terms"   className={styles.footerColLink}>Terms of service</NextLink>
+<NextLink href="/terms"   className={styles.footerColLink}>Terms of service</NextLink>
             <NextLink href="/privacy" className={styles.footerColLink}>Privacy policy</NextLink>
             <a href="mailto:support@brazilianclean.com" className={styles.footerColLink}>Support</a>
           </div>

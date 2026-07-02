@@ -656,6 +656,10 @@ export const en = {
     ctaDesc: 'Join thousands of homeowners and cleaning professionals already using BrazilianClean every week.',
     ctaBtn: 'Get started — it\'s free',
     ctaSignIn: 'Already have an account? Sign in',
+    testimonialsLabel: 'What our clients say',
+    t1: "I've been using BrazilianClean for 6 months and it's completely changed my routine. The cleaner is always on time, professional, and my home looks spotless every single time.",
+    t2: 'Booked a deep clean before hosting a family gathering. They exceeded every expectation — areas I forgot existed were cleaned. Booking took 2 minutes. Highly recommend.',
+    t3: 'Used BrazilianClean for a move-out clean. Got my full security deposit back. The platform makes everything so simple — booking, communication, payment. No stress at all.',
   },
 };
 
