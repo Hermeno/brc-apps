@@ -173,11 +173,11 @@ function ChatInner() {
         <Box bg="white" px={4} py={3} flexShrink={0} borderBottom="1px solid #E2E8F0" style={{ boxShadow: '0 1px 6px rgba(0,0,0,0.05)' }}>
           <Flex align="center" gap={3} maxW="760px" mx="auto">
             <Button size="sm" variant="ghost" color="#64748B"
-              _hover={{ color: '#0A3D7A', bg: '#EFF6FF' }} onClick={() => router.back()} px={2}>
+              _hover={{ color: '#1E3A5F', bg: '#E9F3F5' }} onClick={() => router.back()} px={2}>
               <Icon as={LucideArrowLeft} w={5} h={5} />
             </Button>
             <Box flex={1}>
-              <Text fontWeight="semibold" fontSize="sm" color="#0A3D7A">{conv.lead.serviceType}</Text>
+              <Text fontWeight="semibold" fontSize="sm" color="#1E3A5F">{conv.lead.serviceType}</Text>
               <Text fontSize="xs" color="#94A3B8">{conv.lead.address}</Text>
             </Box>
           </Flex>
@@ -192,8 +192,8 @@ function ChatInner() {
               Keep an eye on your dashboard — the next lead could be yours.
             </Text>
             <Button
-              w="full" bg="#0A80DB" color="white" h="44px" borderRadius="4px"
-              fontWeight="bold" fontSize="sm" _hover={{ bg: '#0870C2' }}
+              w="full" bg="#1E3A5F" color="white" h="44px" borderRadius="4px"
+              fontWeight="bold" fontSize="sm" _hover={{ bg: '#172F4D' }}
               onClick={() => router.push('/dashboard/cleaner')}
             >
               Back to dashboard
@@ -213,7 +213,7 @@ function ChatInner() {
           <Box bg="white" px={5} h="52px" display="flex" alignItems="center" flexShrink={0}
             borderBottom="1px solid #E2E8F0" style={{ boxShadow: '0 1px 6px rgba(0,0,0,0.05)' }}>
             <Button size="sm" variant="ghost" color="#64748B"
-              _hover={{ color: '#0A3D7A', bg: '#EFF6FF' }}
+              _hover={{ color: '#1E3A5F', bg: '#E9F3F5' }}
               onClick={() => router.back()} px={2} h="32px">
               <Icon as={LucideArrowLeft} w={4} h={4} />
             </Button>
@@ -223,7 +223,7 @@ function ChatInner() {
               <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 1.2, ease: 'linear' }}>
                 <Icon as={LucideLoader} w={8} h={8} color="brand.500" />
               </motion.div>
-              <Text fontSize="lg" fontWeight="700" color="#0A3D7A">Verifying payment…</Text>
+              <Text fontSize="lg" fontWeight="700" color="#1E3A5F">Verifying payment…</Text>
               <Text fontSize="sm" color="#64748B">This should only take a moment.</Text>
               <Button size="sm" variant="outline" borderColor="slate.300" color="slate.600"
                 borderRadius="4px" mt={2}
@@ -250,7 +250,7 @@ function ChatInner() {
         <Box bg="white" px={5} h="52px" display="flex" alignItems="center" flexShrink={0}
           borderBottom="1px solid #E2E8F0" style={{ boxShadow: '0 1px 6px rgba(0,0,0,0.05)' }}>
           <Button size="sm" variant="ghost" color="#64748B"
-            _hover={{ color: '#0A3D7A', bg: '#EFF6FF' }}
+            _hover={{ color: '#1E3A5F', bg: '#E9F3F5' }}
             onClick={() => router.back()} px={2} h="32px">
             <Icon as={LucideArrowLeft} w={4} h={4} />
           </Button>
@@ -271,7 +271,7 @@ function ChatInner() {
                   </Text>
                 </HStack>
 
-                <Text fontSize="28px" fontWeight="900" color="#0A3D7A" lineHeight="1.15"
+                <Text fontSize="28px" fontWeight="900" color="#1E3A5F" lineHeight="1.15"
                   letterSpacing="-0.025em" mb={4}>
                   Waiting for the<br />client's choice
                 </Text>
@@ -304,7 +304,7 @@ function ChatInner() {
                       letterSpacing="0.05em" textTransform="uppercase">
                       Lead fee
                     </Text>
-                    <Text fontSize="15px" fontWeight="800" color="#0A3D7A">
+                    <Text fontSize="15px" fontWeight="800" color="#1E3A5F">
                       ${conv.leadFee}
                     </Text>
                   </Flex>
@@ -325,7 +325,7 @@ function ChatInner() {
                   </Text>
                 </HStack>
 
-                <Text fontSize="28px" fontWeight="900" color="#0A3D7A" lineHeight="1.15"
+                <Text fontSize="28px" fontWeight="900" color="#1E3A5F" lineHeight="1.15"
                   letterSpacing="-0.025em" mb={4}>
                   The client<br />chose you
                 </Text>
@@ -359,7 +359,7 @@ function ChatInner() {
                       letterSpacing="0.05em" textTransform="uppercase">
                       Lead fee
                     </Text>
-                    <Text fontSize="32px" fontWeight="900" color="#0A3D7A"
+                    <Text fontSize="32px" fontWeight="900" color="#1E3A5F"
                       letterSpacing="-0.04em" lineHeight="1">
                       ${conv.leadFee}
                     </Text>
@@ -428,8 +428,8 @@ function ChatInner() {
           {/* Client confirms cleaner — only while lead is IN_REVIEW */}
           {isConfirmable && (
             <Button
-              size="sm" bg="#0A80DB" color="white" borderRadius="4px" fontWeight="bold"
-              _hover={{ bg: '#0870C2' }}
+              size="sm" bg="#1E3A5F" color="white" borderRadius="4px" fontWeight="bold"
+              _hover={{ bg: '#172F4D' }}
               onClick={confirmCleaner} loading={confirming}
               loadingText="Confirming…"
             >
@@ -442,12 +442,12 @@ function ChatInner() {
 
       {/* ── Client contact card (visible to cleaner after fee paid + accepted) ── */}
       {!isClient && feePaid && isAccepted && (conv.client.phone || conv.lead.clientPhone) && (
-        <Box bg="#F6F9FC" borderBottom="1px solid" borderColor="#E3E8EE" px={4} py={2.5} flexShrink={0}>
+        <Box bg="#F7F8FA" borderBottom="1px solid" borderColor="#E3E8EE" px={4} py={2.5} flexShrink={0}>
           <Container maxW="760px">
             <HStack gap={2}>
-              <Icon as={LucidePhone} w={4} h={4} color="#0A80DB" />
+              <Icon as={LucidePhone} w={4} h={4} color="#1E3A5F" />
               <Text fontSize="sm" fontWeight="bold" color="#064882">Client's contact:</Text>
-              <Text fontSize="sm" color="#0A80DB" fontWeight="semibold">
+              <Text fontSize="sm" color="#1E3A5F" fontWeight="semibold">
                 {conv.client.phone || conv.lead.clientPhone}
               </Text>
             </HStack>
@@ -471,8 +471,8 @@ function ChatInner() {
             </HStack>
             {conv.lead.estimatedMinPrice && (
               <HStack gap={1.5}>
-                <Icon as={LucideBanknote} w={4} h={4} color="#0A80DB" />
-                <Text fontSize="sm" fontWeight="bold" color="#0A80DB">
+                <Icon as={LucideBanknote} w={4} h={4} color="#1E3A5F" />
+                <Text fontSize="sm" fontWeight="bold" color="#1E3A5F">
                   ${conv.lead.estimatedMinPrice} – ${conv.lead.estimatedMaxPrice}
                 </Text>
               </HStack>

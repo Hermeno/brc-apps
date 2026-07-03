@@ -22,11 +22,11 @@ export default function GlobalError({
 
         <HStack gap={2.5}>
           <Image
-            src="/2.png" alt="BrazilianClean" width={32} height={32}
-            style={{ borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }}
+            src="/logo-blue.png" alt="Verliks" width={32} height={32}
+            style={{ objectFit: 'contain', flexShrink: 0 }}
           />
           <Text fontWeight="700" fontSize="15px" letterSpacing="-0.02em" color="#0A2540" fontFamily="heading">
-            Brazilian<Text as="span" color="#0A80DB">Clean</Text>
+            Verliks
           </Text>
         </HStack>
 
@@ -50,9 +50,9 @@ export default function GlobalError({
         <HStack gap={3}>
           <Button
             onClick={reset}
-            bg="#0A80DB" color="white" h="44px" px={6}
+            bg="#1E3A5F" color="white" h="44px" px={6}
             borderRadius="4px" fontWeight="700" fontSize="14px" fontFamily="heading"
-            _hover={{ bg: '#0870C2' }} transition="background 0.15s"
+            _hover={{ bg: '#172F4D' }} transition="background 0.15s"
           >
             Try again
           </Button>
@@ -61,7 +61,7 @@ export default function GlobalError({
               variant="outline" h="44px" px={6} borderRadius="4px"
               fontWeight="700" fontSize="14px" fontFamily="heading"
               borderColor="#E3E8EE" color="#425466"
-              _hover={{ bg: '#F6F9FC', borderColor: '#CBD5E1' }}
+              _hover={{ bg: '#F7F8FA', borderColor: '#CBD5E1' }}
               transition="all 0.15s"
             >
               Go home

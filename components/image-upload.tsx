@@ -74,7 +74,7 @@ export function ImageUpload({
             <img
               src={value}
               alt={placeholder}
-              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+              style={{ width: '100%', height: '100%', objectFit: 'contain' }}
             />
             {/* Overlay on hover */}
             <Box
@@ -172,7 +172,7 @@ export function MultiImageUpload({ values, onChange, max = 4 }: MultiImageUpload
           <Box key={i} position="relative" w="72px" h="72px" borderRadius="xl" overflow="hidden"
             border="1px solid" borderColor="slate.200" flexShrink={0}>
             <img src={url} alt={`foto ${i + 1}`}
-              style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
             <Box
               position="absolute" top="3px" right="3px"
               w="18px" h="18px" borderRadius="full"

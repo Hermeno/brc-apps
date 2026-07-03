@@ -52,7 +52,7 @@ export async function POST(request: NextRequest) {
         const code = await createVerificationCode(user.id, email, 'EMAIL_VERIFICATION');
         await sendMail({
           to:      email,
-          subject: 'Confirm your email — BrazilianClean',
+          subject: 'Confirm your email — Verliks',
           html:    emailVerificationHtml(code, name),
         });
       } catch (mailErr: any) {

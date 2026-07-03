@@ -23,7 +23,7 @@ interface MailOptions {
 
 export async function sendMail({ to, subject, html }: MailOptions) {
   const transport = createTransport();
-  const from = `"${process.env.MAIL_FROM_NAME ?? 'BrazilianClean'}" <${process.env.MAIL_FROM_ADDRESS ?? 'no-reply@brazilianclean.org'}>`;
+  const from = `"${process.env.MAIL_FROM_NAME ?? 'Verliks'}" <${process.env.MAIL_FROM_ADDRESS ?? 'no-reply@verliks.com'}>`;
 
   const info = await transport.sendMail({ from, to, subject, html });
 
@@ -35,7 +35,7 @@ export async function sendMail({ to, subject, html }: MailOptions) {
 export function emailVerificationHtml(code: string, name: string) {
   return `
     <div style="font-family:sans-serif;max-width:480px;margin:auto">
-      <h2 style="color:#2563eb">Email verification — BrazilianClean</h2>
+      <h2 style="color:#2563eb">Email verification — Verliks</h2>
       <p>Hi <strong>${name}</strong>,</p>
       <p>Use the code below to confirm your email address. It expires in <strong>10 minutes</strong>.</p>
       <div style="font-size:36px;font-weight:bold;letter-spacing:8px;text-align:center;
@@ -50,15 +50,15 @@ export function emailVerificationHtml(code: string, name: string) {
 export function verificationApprovedHtml(name: string) {
   return `
     <div style="font-family:sans-serif;max-width:520px;margin:auto">
-      <div style="background:#0A80DB;padding:24px 32px;border-radius:8px 8px 0 0">
-        <h1 style="color:white;margin:0;font-size:20px;font-weight:700">BrazilianClean</h1>
+      <div style="background:#1E3A5F;padding:24px 32px;border-radius:8px 8px 0 0">
+        <h1 style="color:white;margin:0;font-size:20px;font-weight:700">Verliks</h1>
       </div>
       <div style="padding:32px;background:#ffffff;border:1px solid #E3E8EE;border-top:none;border-radius:0 0 8px 8px">
         <h2 style="color:#0A2540;margin:0 0 16px">Your documents have been approved! ✅</h2>
         <p style="color:#425466;line-height:1.6">Hi <strong>${name}</strong>,</p>
         <p style="color:#425466;line-height:1.6">
           Great news! Your identity documents have been reviewed and <strong style="color:#16a34a">approved</strong> by our team.
-          Your account is now fully verified and you can start accepting cleaning jobs on BrazilianClean.
+          Your account is now fully verified and you can start accepting cleaning jobs on Verliks.
         </p>
         <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:6px;padding:16px;margin:24px 0">
           <p style="color:#15803d;margin:0;font-weight:600">✓ Account verified — you're ready to go!</p>
@@ -67,7 +67,7 @@ export function verificationApprovedHtml(name: string) {
           Log in to your dashboard to update your profile, set your availability, and start receiving leads.
         </p>
         <p style="color:#697386;font-size:13px;margin-top:32px">
-          — The BrazilianClean Team
+          — The Verliks Team
         </p>
       </div>
     </div>
@@ -77,8 +77,8 @@ export function verificationApprovedHtml(name: string) {
 export function verificationRejectedHtml(name: string, reason?: string) {
   return `
     <div style="font-family:sans-serif;max-width:520px;margin:auto">
-      <div style="background:#0A80DB;padding:24px 32px;border-radius:8px 8px 0 0">
-        <h1 style="color:white;margin:0;font-size:20px;font-weight:700">BrazilianClean</h1>
+      <div style="background:#1E3A5F;padding:24px 32px;border-radius:8px 8px 0 0">
+        <h1 style="color:white;margin:0;font-size:20px;font-weight:700">Verliks</h1>
       </div>
       <div style="padding:32px;background:#ffffff;border:1px solid #E3E8EE;border-top:none;border-radius:0 0 8px 8px">
         <h2 style="color:#0A2540;margin:0 0 16px">Document verification update</h2>
@@ -96,7 +96,7 @@ export function verificationRejectedHtml(name: string, reason?: string) {
           If you believe this is a mistake, please contact our support team.
         </p>
         <p style="color:#697386;font-size:13px;margin-top:32px">
-          — The BrazilianClean Team
+          — The Verliks Team
         </p>
       </div>
     </div>
@@ -106,7 +106,7 @@ export function verificationRejectedHtml(name: string, reason?: string) {
 export function passwordResetHtml(code: string, name: string) {
   return `
     <div style="font-family:sans-serif;max-width:480px;margin:auto">
-      <h2 style="color:#2563eb">Password reset — BrazilianClean</h2>
+      <h2 style="color:#2563eb">Password reset — Verliks</h2>
       <p>Hi <strong>${name}</strong>,</p>
       <p>Use the code below to reset your password. It expires in <strong>10 minutes</strong>.</p>
       <div style="font-size:36px;font-weight:bold;letter-spacing:8px;text-align:center;

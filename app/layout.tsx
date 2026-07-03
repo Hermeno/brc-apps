@@ -20,10 +20,10 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: 'BrazilianClean — Professional Cleaning Services',
+  title: 'Verliks — Professional Cleaning Services',
   description: 'The #1 platform to find background-checked cleaners near you. Book in minutes, relax all day.',
   openGraph: {
-    title: 'BrazilianClean — Professional Cleaning Services',
+    title: 'Verliks — Professional Cleaning Services',
     description: 'Connect with vetted, background-checked cleaners in your area. Secure booking, satisfaction guaranteed.',
     type: 'website',
   },

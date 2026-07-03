@@ -4,18 +4,18 @@ const config = defineConfig({
   theme: {
     tokens: {
       colors: {
-        /* ── Sky Blue — signature brand color ── */
+        /* ── Navy/Teal — new brand palette ── */
         brand: {
-          50:  { value: "#EBF5FE" },
-          100: { value: "#D0E9FC" },
-          200: { value: "#A2D3F9" },
-          300: { value: "#60B5F5" },
-          400: { value: "#2D9AEC" },
-          500: { value: "#0A80DB" },
-          600: { value: "#0870C2" },
-          700: { value: "#065594" },
-          800: { value: "#043A65" },
-          900: { value: "#022039" },
+          50:  { value: "#E9F3F5" },
+          100: { value: "#CEE8EB" },
+          200: { value: "#A7C9C7" },
+          300: { value: "#7AADB0" },
+          400: { value: "#4D8895" },
+          500: { value: "#1E3A5F" },
+          600: { value: "#182F4D" },
+          700: { value: "#12243B" },
+          800: { value: "#0C1929" },
+          900: { value: "#060D14" },
         },
 
         /* ── Emerald — confirmation / success only ── */

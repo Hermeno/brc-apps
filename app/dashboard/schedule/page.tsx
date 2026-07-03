@@ -57,14 +57,14 @@ export default function SchedulePage() {
     if (job.status === 'COMPLETED') return '#22C55E';
     const dt = new Date(job.dateTime);
     if (dt.toDateString() === now.toDateString()) return '#F97316';
-    return '#0A80DB';
+    return '#1E3A5F';
   };
 
   const SectionPanel = ({ label, items, accentBg }: { label: string; items: Job[]; accentBg: string }) =>
     items.length === 0 ? null : (
       <Box border="1px solid #E3E8EE" style={{ borderRadius: 8 }} overflow="hidden">
         {/* Section header */}
-        <Box bg="#F6F9FC" px={5} py={3} borderBottom="1px solid #E3E8EE">
+        <Box bg="#F7F8FA" px={5} py={3} borderBottom="1px solid #E3E8EE">
           <HStack gap={2}>
             <Text
               fontSize="10.5px"
@@ -107,11 +107,11 @@ export default function SchedulePage() {
                       <Text
                         style={{
                           borderRadius: 2,
-                          background: job.status === 'COMPLETED' ? '#F8FAFC' : '#DBEAFE',
+                          background: job.status === 'COMPLETED' ? '#F8FAFC' : '#E9F3F5',
                           padding: '2px 6px',
                           fontSize: 9.5,
                           fontWeight: 700,
-                          color: job.status === 'COMPLETED' ? '#0A80DB' : '#0A80DB',
+                          color: job.status === 'COMPLETED' ? '#1E3A5F' : '#1E3A5F',
                         }}>
                         {job.status === 'COMPLETED' ? t('cleaner.schedule.statusCompleted') : t('cleaner.schedule.statusConfirmed')}
                       </Text>
@@ -120,11 +120,11 @@ export default function SchedulePage() {
 
                     <HStack gap={4} flexWrap="wrap">
                       <HStack gap={1.5} color="slate.500" fontSize="sm">
-                        <Icon as={LucideMapPin} w={4} h={4} color="#0A80DB" />
+                        <Icon as={LucideMapPin} w={4} h={4} color="#1E3A5F" />
                         <Text>{job.address}</Text>
                       </HStack>
                       <HStack gap={1.5} color="slate.500" fontSize="sm">
-                        <Icon as={LucideCalendar} w={4} h={4} color="#0A80DB" />
+                        <Icon as={LucideCalendar} w={4} h={4} color="#1E3A5F" />
                         <Text fontWeight="semibold" color={isPast ? '#94A3B8' : 'slate.700'}>
                           {dt.toLocaleString(dateLocale, { dateStyle: 'full', timeStyle: 'short' })}
                         </Text>
@@ -185,7 +185,7 @@ export default function SchedulePage() {
 
                   <Box textAlign="right" flexShrink={0}>
                     {job.estimatedMinPrice && (
-                      <Text fontWeight="black" fontSize="lg" color="#0A80DB" fontFamily="heading">
+                      <Text fontWeight="black" fontSize="lg" color="#1E3A5F" fontFamily="heading">
                         ${job.estimatedMinPrice}–${job.estimatedMaxPrice}
                       </Text>
                     )}
@@ -204,7 +204,7 @@ export default function SchedulePage() {
   // StatStrip counts
   const statItems = [
     { label: t('cleaner.schedule.statToday'), value: today.length, color: '#F97316' },
-    { label: t('cleaner.schedule.statUpcoming'), value: upcoming.length, color: '#0A80DB' },
+    { label: t('cleaner.schedule.statUpcoming'), value: upcoming.length, color: '#1E3A5F' },
     { label: t('cleaner.schedule.statCompleted'), value: completed.length, color: '#22C55E' },
   ];
 
@@ -268,7 +268,7 @@ export default function SchedulePage() {
           ) : (
             <>
               <SectionPanel label={t('cleaner.schedule.sectionToday')} items={today} accentBg="#F97316" />
-              <SectionPanel label={t('cleaner.schedule.sectionUpcoming')} items={upcoming} accentBg="#0A80DB" />
+              <SectionPanel label={t('cleaner.schedule.sectionUpcoming')} items={upcoming} accentBg="#1E3A5F" />
               <SectionPanel label={t('cleaner.schedule.sectionHistory')} items={completed} accentBg="#22C55E" />
             </>
           )}

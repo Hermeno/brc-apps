@@ -54,7 +54,7 @@ function UploadBox({
 
   return (
     <Box
-      border="2px dashed" borderColor={value ? '#0A80DB' : 'slate.200'}
+      border="2px dashed" borderColor={value ? '#1E3A5F' : 'slate.200'}
       borderRadius="4px" p={4} bg={value ? '#F8FAFC' : 'slate.50'}
       cursor="pointer" onClick={() => ref.current?.click()}
       transition="all 0.2s" _hover={{ borderColor: 'brand.300', bg: 'brand.50' }}
@@ -65,10 +65,10 @@ function UploadBox({
         {value ? (
           <>
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={value} alt={label} style={{ width: '100%', maxHeight: 140, objectFit: 'cover', borderRadius: 4 }} />
+            <img src={value} alt={label} style={{ width: '100%', maxHeight: 140, objectFit: 'contain', borderRadius: 4 }} />
             <HStack gap={1}>
-              <Icon as={LucideCheckCircle} w={4} h={4} color="#0A80DB" />
-              <Text fontSize="xs" color="#0A80DB" fontWeight="bold">{uploadedLabel}</Text>
+              <Icon as={LucideCheckCircle} w={4} h={4} color="#1E3A5F" />
+              <Text fontSize="xs" color="#1E3A5F" fontWeight="bold">{uploadedLabel}</Text>
             </HStack>
           </>
         ) : (
@@ -159,12 +159,12 @@ export default function CleanerVerifyPage() {
       </HStack>
     </Box>
   ) : existing?.status === 'PENDING' ? (
-    <Box bg="#F6F9FC" border="1px solid" borderColor="#E3E8EE" borderRadius="4px" p={6}>
+    <Box bg="#F7F8FA" border="1px solid" borderColor="#E3E8EE" borderRadius="4px" p={6}>
       <HStack gap={3}>
-        <Icon as={LucideClock} w={7} h={7} color="#0A80DB" />
+        <Icon as={LucideClock} w={7} h={7} color="#1E3A5F" />
         <Box>
-          <Text fontWeight="black" color="#0A80DB" fontSize="lg">{t('cleaner.verify.statusPending_title')}</Text>
-          <Text color="#0A80DB" fontSize="sm">{t('cleaner.verify.statusPending_desc')}</Text>
+          <Text fontWeight="black" color="#1E3A5F" fontSize="lg">{t('cleaner.verify.statusPending_title')}</Text>
+          <Text color="#1E3A5F" fontSize="sm">{t('cleaner.verify.statusPending_desc')}</Text>
         </Box>
       </HStack>
     </Box>
@@ -290,7 +290,7 @@ export default function CleanerVerifyPage() {
                 <VStack gap={5} align="stretch">
                   <HStack justify="space-between">
                     <Text fontWeight="black" color="slate.900" fontSize="lg">{t('cleaner.verify.step2Title')}</Text>
-                    <Badge bg="#F6F9FC" color="#0A80DB" borderRadius="4px" px={3}>
+                    <Badge bg="#F7F8FA" color="#1E3A5F" borderRadius="4px" px={3}>
                       <Icon as={LucideCamera} w={3} h={3} mr={1} />All required
                     </Badge>
                   </HStack>

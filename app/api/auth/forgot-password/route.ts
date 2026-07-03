@@ -26,7 +26,7 @@ export async function POST(request: NextRequest) {
     try {
       await sendMail({
         to:      email,
-        subject: 'Password reset — BrazilianClean',
+        subject: 'Password reset — Verliks',
         html:    passwordResetHtml(code, user.name ?? 'there'),
       });
     } catch (mailErr: any) {

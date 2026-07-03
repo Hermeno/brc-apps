@@ -66,7 +66,7 @@ export default function FinancesPage() {
     {
       label: t('cleaner.finances.statEarnings'),
       value: data ? `$${data.estimatedEarnings.toFixed(2)}` : '—',
-      color: '#0A80DB',
+      color: '#1E3A5F',
     },
     {
       label: t('cleaner.finances.statRating'),
@@ -121,7 +121,7 @@ export default function FinancesPage() {
 
           {/* ROI callout: flat panel, no gradient */}
           {data && data.totalFeesPaid > 0 && (
-            <Box bg="#F6F9FC" border="1px solid #E3E8EE" p={5} style={{ borderRadius: 8 }}>
+            <Box bg="#F7F8FA" border="1px solid #E3E8EE" p={5} style={{ borderRadius: 8 }}>
               <HStack gap={3}>
                 <Box
                   w="40px" h="40px"
@@ -129,17 +129,17 @@ export default function FinancesPage() {
                   border="1px solid #E3E8EE"
                   display="flex" alignItems="center" justifyContent="center"
                   flexShrink={0}>
-                  <Icon as={LucideTrendingUp} w={5} h={5} color="#0A80DB" />
+                  <Icon as={LucideTrendingUp} w={5} h={5} color="#1E3A5F" />
                 </Box>
                 <Box>
                   <Text fontWeight="bold" color="slate.800" fontSize="sm">{t('cleaner.finances.roiTitle')}</Text>
                   <Text color="slate.500" fontSize="sm">
                     {t('cleaner.finances.roiPrefix')} <Text as="span" fontWeight="bold" color="red.600">${data.totalFeesPaid.toFixed(0)}</Text>{' '}
                     {t('cleaner.finances.roiMid')}{' '}
-                    <Text as="span" fontWeight="black" color="#0A80DB">${data.estimatedEarnings.toFixed(0)}</Text>{' '}
+                    <Text as="span" fontWeight="black" color="#1E3A5F">${data.estimatedEarnings.toFixed(0)}</Text>{' '}
                     {t('cleaner.finances.roiSuffix')}
                     {data.totalFeesPaid > 0 && data.estimatedEarnings > 0 && (
-                      <Text as="span" fontWeight="bold" color="#0A80DB">
+                      <Text as="span" fontWeight="bold" color="#1E3A5F">
                         {' '}{t('cleaner.finances.roiReturn', { pct: Math.round((data.estimatedEarnings / data.totalFeesPaid) * 100) })}
                       </Text>
                     )}
@@ -152,7 +152,7 @@ export default function FinancesPage() {
           {/* Transactions section panel */}
           <Box border="1px solid #E3E8EE" style={{ borderRadius: 8 }} overflow="hidden">
             {/* Section header */}
-            <Box bg="#F6F9FC" px={5} py={3} borderBottom="1px solid #E3E8EE">
+            <Box bg="#F7F8FA" px={5} py={3} borderBottom="1px solid #E3E8EE">
               <HStack gap={2}>
                 <Text
                   fontSize="10.5px"
@@ -190,7 +190,7 @@ export default function FinancesPage() {
                   const isLast = i === data.transactions.length - 1;
                   const leftColor =
                     tx.lead.status === 'COMPLETED' ? '#22C55E' :
-                    tx.lead.status === 'ACCEPTED'  ? '#0A80DB' : '#CBD5E1';
+                    tx.lead.status === 'ACCEPTED'  ? '#1E3A5F' : '#CBD5E1';
                   return (
                     <Box
                       key={tx.id}
@@ -207,7 +207,7 @@ export default function FinancesPage() {
                           {/* Status dot */}
                           <Box
                             w="7px" h="7px" borderRadius="full" flexShrink={0}
-                            bg={tx.lead.status === 'COMPLETED' ? '#22C55E' : tx.lead.status === 'ACCEPTED' ? '#0A80DB' : '#CBD5E1'} />
+                            bg={tx.lead.status === 'COMPLETED' ? '#22C55E' : tx.lead.status === 'ACCEPTED' ? '#1E3A5F' : '#CBD5E1'} />
 
                           <VStack align="start" gap={0.5}>
                             <Text fontWeight="semibold" color="slate.800" fontSize="sm">{tx.lead.serviceType}</Text>
@@ -233,7 +233,7 @@ export default function FinancesPage() {
                               padding: '2px 6px',
                               fontSize: 9.5,
                               fontWeight: 700,
-                              color: tx.lead.status === 'COMPLETED' ? '#0A80DB' : '#64748B',
+                              color: tx.lead.status === 'COMPLETED' ? '#1E3A5F' : '#64748B',
                             }}>
                             {tx.lead.status === 'COMPLETED' ? t('cleaner.finances.statusCompleted') :
                              tx.lead.status === 'ACCEPTED' ? t('cleaner.finances.statusInProgress') : tx.lead.status}

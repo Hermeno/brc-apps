@@ -32,7 +32,7 @@ export async function POST(request: NextRequest) {
 
     await sendMail({
       to:      email,
-      subject: 'Your new verification code — BrazilianClean',
+      subject: 'Your new verification code — Verliks',
       html:    emailVerificationHtml(code, user.name ?? 'there'),
     });
 

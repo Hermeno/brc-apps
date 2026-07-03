@@ -56,10 +56,7 @@ export default function CleanerNav() {
         {/* Logo */}
         <NextLink href="/dashboard/cleaner" style={{ flexShrink: 0, textDecoration: 'none' }}>
           <HStack gap={2}>
-            <Image src="/2.png" alt="BrazilianClean" width={32} height={32} style={{ borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }} />
-            <Text fontWeight="700" fontSize={{ base: '13px', md: '15px' }} letterSpacing="-0.02em" color="#0A3D7A" fontFamily="heading">
-              Brazilian<Text as="span" color="#0A80DB">Clean</Text>
-            </Text>
+            <Image src="/logo-blue.png" alt="Verliks" width={120} height={40} style={{ objectFit: 'contain' }} />
           </HStack>
         </NextLink>
 
@@ -80,13 +77,13 @@ export default function CleanerNav() {
                 <Box position="relative" h="full" px={3} display="flex" alignItems="center" cursor="pointer">
                   <HStack
                     gap={1.5}
-                    color={isActive ? '#0A3D7A' : '#64748B'}
+                    color={isActive ? '#1E3A5F' : '#64748B'}
                     fontWeight={isActive ? '600' : '400'}
                     fontSize="13.5px"
                     fontFamily="heading"
                     letterSpacing="-0.01em"
                     transition="color 0.15s"
-                    _hover={{ color: '#0A3D7A' }}
+                    _hover={{ color: '#1E3A5F' }}
                   >
                     <Icon as={item.icon} w="14px" h="14px" />
                     <Text>{t(`nav.cleaner.${item.key}`)}</Text>
@@ -117,7 +114,7 @@ export default function CleanerNav() {
             >
               {initial}
             </Box>
-            <Text fontSize="13px" fontWeight="500" color="#0A3D7A" fontFamily="heading" letterSpacing="-0.01em">
+            <Text fontSize="13px" fontWeight="500" color="#1E3A5F" fontFamily="heading" letterSpacing="-0.01em">
               {firstName}
             </Text>
           </HStack>
@@ -165,14 +162,14 @@ export default function CleanerNav() {
                   <NextLink key={item.key} href={item.href} style={{ textDecoration: 'none' }} onClick={() => setMobileOpen(false)}>
                     <HStack
                       gap={3} px={3} py={2.5} borderRadius="4px" mb={0.5}
-                      bg={isActive ? '#EFF6FF' : 'transparent'}
-                      color={isActive ? '#0A3D7A' : '#64748B'}
+                      bg={isActive ? '#E9F3F5' : 'transparent'}
+                      color={isActive ? '#1E3A5F' : '#64748B'}
                       fontWeight={isActive ? '600' : '400'}
                       fontSize="14px" fontFamily="heading"
                       border="1px solid"
-                      borderColor={isActive ? '#BFDBFE' : 'transparent'}
+                      borderColor={isActive ? '#A7C9C7' : 'transparent'}
                       transition="all 0.15s"
-                      _hover={{ bg: '#F8FAFC', color: '#0A3D7A' }}
+                      _hover={{ bg: '#F8FAFC', color: '#1E3A5F' }}
                     >
                       <Icon as={item.icon} w={4} h={4} />
                       <Text>{t(`nav.cleaner.${item.key}`)}</Text>
@@ -190,7 +187,7 @@ export default function CleanerNav() {
                     {initial}
                   </Box>
                   <Box>
-                    <Text fontSize="13px" fontWeight="600" color="#0A3D7A" fontFamily="heading">{firstName}</Text>
+                    <Text fontSize="13px" fontWeight="600" color="#1E3A5F" fontFamily="heading">{firstName}</Text>
                     <Text fontSize="11px" color="#64748B">{t('common.role_cleaner')}</Text>
                   </Box>
                 </HStack>

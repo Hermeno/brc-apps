@@ -134,7 +134,7 @@ export default function PlanPage() {
 
           {/* CFS explainer — flat section panel */}
           <Box border="1px solid #E3E8EE" style={{ borderRadius: 8 }} overflow="hidden">
-            <Box bg="#F6F9FC" px={5} py={3} borderBottom="1px solid #E3E8EE">
+            <Box bg="#F7F8FA" px={5} py={3} borderBottom="1px solid #E3E8EE">
               <HStack gap={3}>
                 <Icon as={LucideTrendingUp} w={4} h={4} color="brand.500" />
                 <Box>
@@ -181,7 +181,7 @@ export default function PlanPage() {
                 const c = PLAN_COLORS[pid];
                 const isActive = currentPlan === pid;
                 const PlanIcon = PLAN_ICONS[pid];
-                const accentColor = pid === 'FREE' ? '#64748B' : pid === 'PRO' ? '#D97706' : '#0A80DB';
+                const accentColor = pid === 'FREE' ? '#64748B' : pid === 'PRO' ? '#D97706' : '#1E3A5F';
 
                 return (
                   <Box
@@ -277,7 +277,7 @@ export default function PlanPage() {
 
           {/* Wave info — flat section panel */}
           <Box border="1px solid #E3E8EE" style={{ borderRadius: 8 }} overflow="hidden">
-            <Box bg="#F6F9FC" px={5} py={3} borderBottom="1px solid #E3E8EE">
+            <Box bg="#F7F8FA" px={5} py={3} borderBottom="1px solid #E3E8EE">
               <Text fontSize="10.5px" fontWeight={700} color="#697386" textTransform="uppercase" letterSpacing="0.06em" fontFamily="heading">
                 {t('cleaner.plan.leadsTitle')}
               </Text>
@@ -298,7 +298,7 @@ export default function PlanPage() {
                   cleaners: t('cleaner.plan.wave2Cleaners'),
                   desc: t('cleaner.plan.wave2Desc'),
                   chipBg: '#F5F3FF',
-                  chipColor: '#0A80DB',
+                  chipColor: '#1E3A5F',
                 },
               ].map((w, i, arr) => (
                 <HStack

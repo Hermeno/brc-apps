@@ -69,8 +69,7 @@ export default function PlatformHomePage() {
       <nav className={styles.nav}>
         <div className={styles.navInner}>
           <NextLink href="/" className={styles.navLogo}>
-            <Image src="/2.png" alt="BrazilianClean" width={28} height={28} className={styles.navLogoImg} />
-            <span className={styles.navLogoText}>Brazilian<span>Clean</span></span>
+            <Image src="/logo-blue.png" alt="Verliks" width={130} height={44} style={{ objectFit: 'contain' }} />
           </NextLink>
           <ul className={styles.navLinks}>
             <li><a href="#features">{t('home.featuresLabel')}</a></li>
@@ -262,8 +261,7 @@ export default function PlatformHomePage() {
         <div className={styles.footerInner}>
           <div>
             <NextLink href="/" className={styles.footerLogo}>
-              <Image src="/2.png" alt="BrazilianClean" width={26} height={26} className={styles.footerLogoImg} />
-              <span className={styles.footerLogoText}>Brazilian<span>Clean</span></span>
+              <Image src="/logo-blue.png" alt="Verliks" width={110} height={37} style={{ objectFit: 'contain' }} />
             </NextLink>
             <p className={styles.footerDesc}>
               The professional cleaning platform trusted by homeowners and cleaners across the US.
@@ -285,11 +283,11 @@ export default function PlatformHomePage() {
             <p className={styles.footerColTitle}>Company</p>
 <NextLink href="/terms"   className={styles.footerColLink}>Terms of service</NextLink>
             <NextLink href="/privacy" className={styles.footerColLink}>Privacy policy</NextLink>
-            <a href="mailto:support@brazilianclean.com" className={styles.footerColLink}>Support</a>
+            <a href="mailto:support@verliks.com" className={styles.footerColLink}>Support</a>
           </div>
         </div>
         <div className={styles.footerBottom}>
-          <span className={styles.footerCopy}>© {new Date().getFullYear()} BrazilianClean. All rights reserved.</span>
+          <span className={styles.footerCopy}>© {new Date().getFullYear()} Verliks. All rights reserved.</span>
           <span className={styles.footerCopy}>Built for professionals.</span>
         </div>
       </footer>

@@ -147,7 +147,7 @@ export default function RequestPage() {
     borderRadius: '4px',
     fontFamily: 'heading',
     fontSize: '14px',
-    _focus: { bg: 'white', borderColor: '#0A80DB' },
+    _focus: { bg: 'white', borderColor: '#1E3A5F' },
   } as const;
 
   return (
@@ -162,15 +162,15 @@ export default function RequestPage() {
         <Flex align="center" h="full" px={{ base: 5, md: 10, lg: 16 }} maxW="1440px" mx="auto" justify="space-between">
           <NextLink href="/">
             <HStack gap={2.5} cursor="pointer">
-              <Image src="/2.png" alt="BrazilianClean" width={28} height={28} style={{ borderRadius: "50%", objectFit: "cover", flexShrink: 0 }} />
-              <Text fontWeight="700" fontSize="14px" letterSpacing="-0.02em" color="#0A3D7A" fontFamily="heading">
-                Brazilian<Text as="span" color="#0A80DB">Clean</Text>
+              <Image src="/logo-blue.png" alt="Verliks" width={28} height={28} style={{ borderRadius: "50%", objectFit: "cover", flexShrink: 0 }} />
+              <Text fontWeight="700" fontSize="14px" letterSpacing="-0.02em" color="#1E3A5F" fontFamily="heading">
+                Verliks
               </Text>
             </HStack>
           </NextLink>
           <NextLink href="/auth/login">
             <Text fontSize="13px" fontWeight="600" color="#64748B" cursor="pointer" fontFamily="heading"
-              _hover={{ color: '#0A3D7A' }} transition="color 0.15s">
+              _hover={{ color: '#1E3A5F' }} transition="color 0.15s">
               Already have an account? Sign in →
             </Text>
           </NextLink>
@@ -181,8 +181,8 @@ export default function RequestPage() {
         <Box mb={10}>
           <Text
             fontSize="10.5px" fontWeight="700" letterSpacing="0.14em"
-            color="#0A80DB" textTransform="uppercase" fontFamily="heading" mb={2}
-            style={{ borderLeft: '2px solid #0A80DB', paddingLeft: 10 }}
+            color="#1E3A5F" textTransform="uppercase" fontFamily="heading" mb={2}
+            style={{ borderLeft: '2px solid #1E3A5F', paddingLeft: 10 }}
           >
             Book a cleaning
           </Text>
@@ -212,8 +212,8 @@ export default function RequestPage() {
                       cursor="pointer"
                       bg={serviceType === s.id ? '#EFF8FB' : '#F8FAFC'}
                       border="1px solid"
-                      borderColor={serviceType === s.id ? '#0A80DB' : '#E3E8EE'}
-                      borderLeft={serviceType === s.id ? '3px solid #0A80DB' : '3px solid transparent'}
+                      borderColor={serviceType === s.id ? '#1E3A5F' : '#E3E8EE'}
+                      borderLeft={serviceType === s.id ? '3px solid #1E3A5F' : '3px solid transparent'}
                       p={3}
                       transition="all 0.15s"
                     >
@@ -221,7 +221,7 @@ export default function RequestPage() {
                         <Text fontSize="xl">{s.icon}</Text>
                         <Box>
                           <Text fontSize="13px" fontWeight="700" fontFamily="heading"
-                            color={serviceType === s.id ? '#0A80DB' : '#0A3D7A'}>{s.labelEn}</Text>
+                            color={serviceType === s.id ? '#1E3A5F' : '#1E3A5F'}>{s.labelEn}</Text>
                           <Text fontSize="12px" color="#697386" fontFamily="heading">{s.descEn}</Text>
                         </Box>
                       </HStack>
@@ -245,7 +245,7 @@ export default function RequestPage() {
               <Box>
                 <Text {...LABEL_STYLE}>Preferred date and time</Text>
                 <HStack>
-                  <Icon as={LucideCalendar} color="#0A80DB" w="15px" h="15px" flexShrink={0} />
+                  <Icon as={LucideCalendar} color="#1E3A5F" w="15px" h="15px" flexShrink={0} />
                   <Box position="relative" flex={1} cursor="pointer"
                     onClick={() => (dateRef.current as any)?.showPicker?.()}>
                     <Box
@@ -254,7 +254,7 @@ export default function RequestPage() {
                       style={{ pointerEvents: 'none' }}
                     >
                       <Text fontFamily="heading" fontSize="14px"
-                        color={dateVal ? '#0A3D7A' : '#A0AEC0'}>
+                        color={dateVal ? '#1E3A5F' : '#A0AEC0'}>
                         {dateVal
                           ? (() => { const [y,m,d] = dateVal.split('-'); return `${m}/${d}/${y}`; })()
                           : 'MM/DD/YYYY'}
@@ -310,17 +310,17 @@ export default function RequestPage() {
                       key={f.id}
                       size="sm"
                       onClick={() => setFrequency(f.id)}
-                      bg={frequency === f.id ? '#0A80DB' : '#F8FAFC'}
+                      bg={frequency === f.id ? '#1E3A5F' : '#F8FAFC'}
                       color={frequency === f.id ? 'white' : '#64748B'}
                       borderRadius="4px"
                       border="1px solid"
-                      borderColor={frequency === f.id ? '#0A80DB' : '#E3E8EE'}
+                      borderColor={frequency === f.id ? '#1E3A5F' : '#E3E8EE'}
                       fontWeight="600"
                       fontSize="13px"
                       fontFamily="heading"
                       h="34px"
                       px={4}
-                      _hover={{ borderColor: '#0A80DB' }}
+                      _hover={{ borderColor: '#1E3A5F' }}
                       transition="all 0.15s"
                     >
                       {f.labelEn}
@@ -359,7 +359,7 @@ export default function RequestPage() {
                         <Text fontSize="lg" lineHeight={1}>{ex.icon}</Text>
                         <Box flex={1}>
                           <Text fontSize="12px" fontWeight="700" fontFamily="heading"
-                            color={extras.includes(ex.id) ? '#92400E' : '#0A3D7A'}>{ex.labelEn}</Text>
+                            color={extras.includes(ex.id) ? '#92400E' : '#1E3A5F'}>{ex.labelEn}</Text>
                           <Text fontSize="11px" color="#697386" fontFamily="heading">+${ex.price}</Text>
                         </Box>
                         {extras.includes(ex.id) && (
@@ -376,18 +376,18 @@ export default function RequestPage() {
                 <Text {...LABEL_STYLE}>Anything we should know? (optional)</Text>
                 <Textarea value={notes} onChange={e => setNotes(e.target.value)}
                   placeholder="E.g., I have a dog, the side gate code is 1234, please focus on the kitchen…"
-                  bg="#F6F9FC" border="1px solid" borderColor="#E3E8EE" borderRadius="4px"
+                  bg="#F7F8FA" border="1px solid" borderColor="#E3E8EE" borderRadius="4px"
                   fontFamily="heading" fontSize="14px" rows={3}
-                  _focus={{ bg: 'white', borderColor: '#0A80DB' }} />
+                  _focus={{ bg: 'white', borderColor: '#1E3A5F' }} />
               </Box>
 
               {/* Submit */}
               {!showRegister && (
                 <Button
                   onClick={handleSubmit}
-                  bg="#0A80DB" color="white" h="44px"
+                  bg="#1E3A5F" color="white" h="44px"
                   borderRadius="4px" fontWeight="700" fontSize="14px" fontFamily="heading"
-                  _hover={{ bg: '#0870C2' }} transition="background 0.15s"
+                  _hover={{ bg: '#172F4D' }} transition="background 0.15s"
                   loading={loading}
                 >
                   Book my cleaning
@@ -409,28 +409,28 @@ export default function RequestPage() {
 
                 <Box bg="#EBF5FE" border="1px solid #A2D3F9" p={4}>
                   <HStack gap={2} mb={1}>
-                    <Icon as={LucideBanknote} w="15px" h="15px" color="#0A80DB" />
-                    <Text fontSize="11px" color="#0A80DB" fontWeight="700" fontFamily="heading">Estimated price range</Text>
+                    <Icon as={LucideBanknote} w="15px" h="15px" color="#1E3A5F" />
+                    <Text fontSize="11px" color="#1E3A5F" fontWeight="700" fontFamily="heading">Estimated price range</Text>
                   </HStack>
                   <Text fontSize="26px" fontWeight="800" color="#065594" fontFamily="heading" letterSpacing="-0.02em">
                     ${estimate.minPrice}–${estimate.maxPrice}
                   </Text>
                   {estimate.discountPct > 0 && (
-                    <Text fontSize="11px" fontWeight="700" color="#0A80DB" fontFamily="heading" mt={1}>
+                    <Text fontSize="11px" fontWeight="700" color="#1E3A5F" fontFamily="heading" mt={1}>
                       {estimate.discountPct}% recurring booking discount applied
                     </Text>
                   )}
                 </Box>
 
                 <HStack gap={2}>
-                  <Icon as={LucideClock} w="14px" h="14px" color="#0A80DB" />
+                  <Icon as={LucideClock} w="14px" h="14px" color="#1E3A5F" />
                   <Text fontSize="13px" color="#425466" fontFamily="heading">
                     Estimated time:{' '}
                     <Text as="span" fontWeight="700" color="#0A2540">~{estimate.hours} hours</Text>
                   </Text>
                 </HStack>
 
-                <Box bg="#F6F9FC" border="1px solid #E3E8EE" p={3}>
+                <Box bg="#F7F8FA" border="1px solid #E3E8EE" p={3}>
                   <Text fontSize="12px" color="#697386" fontFamily="heading" lineHeight="1.6">
                     This is an estimate. You'll confirm the final price directly with your cleaner before the visit.
                   </Text>
@@ -452,7 +452,7 @@ export default function RequestPage() {
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.35 }}
             >
-              <Box mt={6} bg="white" border="1px solid #E3E8EE" borderTop="3px solid #0A80DB" style={{ borderRadius: 8 }} overflow="hidden">
+              <Box mt={6} bg="white" border="1px solid #E3E8EE" borderTop="3px solid #1E3A5F" style={{ borderRadius: 8 }} overflow="hidden">
 
                 {/* Tab switcher */}
                 <HStack gap={0} borderBottom="1px solid #E3E8EE">
@@ -461,8 +461,8 @@ export default function RequestPage() {
                     px={6} py={3.5}
                     cursor="pointer"
                     borderBottom="2px solid"
-                    borderBottomColor={authMode === 'register' ? '#0A80DB' : 'transparent'}
-                    color={authMode === 'register' ? '#0A80DB' : '#64748B'}
+                    borderBottomColor={authMode === 'register' ? '#1E3A5F' : 'transparent'}
+                    color={authMode === 'register' ? '#1E3A5F' : '#64748B'}
                     fontWeight={authMode === 'register' ? '700' : '500'}
                     fontSize="13px"
                     fontFamily="heading"
@@ -476,8 +476,8 @@ export default function RequestPage() {
                     px={6} py={3.5}
                     cursor="pointer"
                     borderBottom="2px solid"
-                    borderBottomColor={authMode === 'login' ? '#0A80DB' : 'transparent'}
-                    color={authMode === 'login' ? '#0A80DB' : '#64748B'}
+                    borderBottomColor={authMode === 'login' ? '#1E3A5F' : 'transparent'}
+                    color={authMode === 'login' ? '#1E3A5F' : '#64748B'}
                     fontWeight={authMode === 'login' ? '700' : '500'}
                     fontSize="13px"
                     fontFamily="heading"
@@ -552,9 +552,9 @@ export default function RequestPage() {
 
                       <Button
                         onClick={handleRegisterAndSubmit}
-                        bg="#0A80DB" color="white" h="44px"
+                        bg="#1E3A5F" color="white" h="44px"
                         borderRadius="4px" fontWeight="700" fontSize="14px" fontFamily="heading"
-                        _hover={{ bg: '#0870C2' }} transition="background 0.15s"
+                        _hover={{ bg: '#172F4D' }} transition="background 0.15s"
                         loading={loading} loadingText="Setting up your account…"
                       >
                         <Icon as={LucideCheckCircle} w={4} h={4} mr={2} />
@@ -594,9 +594,9 @@ export default function RequestPage() {
 
                       <Button
                         onClick={handleLoginAndSubmit}
-                        bg="#0A80DB" color="white" h="44px"
+                        bg="#1E3A5F" color="white" h="44px"
                         borderRadius="4px" fontWeight="700" fontSize="14px" fontFamily="heading"
-                        _hover={{ bg: '#0870C2' }} transition="background 0.15s"
+                        _hover={{ bg: '#172F4D' }} transition="background 0.15s"
                         loading={loading} loadingText="Signing in…"
                       >
                         <Icon as={LucideArrowRight} w={4} h={4} mr={2} />
@@ -606,8 +606,8 @@ export default function RequestPage() {
                       <Text fontSize="12px" color="#697386" fontFamily="heading" mt={3}>
                         Forgot your password?{' '}
                         <NextLink href="/auth/login">
-                          <Text as="span" color="#0A80DB" fontWeight="700" cursor="pointer"
-                            _hover={{ color: '#0870C2' }}>Go to login page</Text>
+                          <Text as="span" color="#1E3A5F" fontWeight="700" cursor="pointer"
+                            _hover={{ color: '#172F4D' }}>Go to login page</Text>
                         </NextLink>
                       </Text>
                     </>

@@ -63,9 +63,9 @@ async function main() {
   // Conta Admin
   const admin = await prisma.user.create({
     data: {
-      email: "admin@brazilianclean.org",
+      email: "admin@verliks.com",
       password: await bcrypt.hash("BrClean@2026!", 10),
-      name: "Admin BrazilianClean",
+      name: "Admin Verliks",
       role: "ADMIN",
       isVerified: true,
     },
@@ -77,7 +77,7 @@ async function main() {
   console.log("\n📝 Contas criadas:");
   console.log("  Cliente:      cliente@example.com     / password123");
   console.log("  Profissional: profissional@example.com / password123");
-  console.log("  Admin:        admin@brazilianclean.org / BrClean@2026!");
+  console.log("  Admin:        admin@verliks.com / BrClean@2026!");
 }
 
 main()

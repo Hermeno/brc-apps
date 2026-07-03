@@ -61,7 +61,7 @@ function WaveTimer({ lead }: { lead: Lead }) {
 
   const label = isWave2 ? 'Wave 2 · Open' : `Wave ${dist.wave}`;
   const chipBg = urgent ? '#FEF2F2' : '#F8FAFC';
-  const chipColor = urgent ? '#B91C1C' : '#0A80DB';
+  const chipColor = urgent ? '#B91C1C' : '#1E3A5F';
 
   return (
     <HStack gap={2}>
@@ -163,7 +163,7 @@ export default function MarketplacePage() {
                 textTransform="uppercase" letterSpacing="0.06em" fontFamily="heading" mb={1}>
                 Instant Book
               </Text>
-              <Text fontSize="2xl" fontWeight="black" color="#0A80DB" fontFamily="heading" letterSpacing="-0.03em">
+              <Text fontSize="2xl" fontWeight="black" color="#1E3A5F" fontFamily="heading" letterSpacing="-0.03em">
                 {w0Count}
               </Text>
             </Box>
@@ -173,7 +173,7 @@ export default function MarketplacePage() {
                 textTransform="uppercase" letterSpacing="0.06em" fontFamily="heading" mb={1}>
                 Wave 2 Competitive
               </Text>
-              <Text fontSize="2xl" fontWeight="black" color="#0A80DB" fontFamily="heading" letterSpacing="-0.03em">
+              <Text fontSize="2xl" fontWeight="black" color="#1E3A5F" fontFamily="heading" letterSpacing="-0.03em">
                 {w2Count}
               </Text>
             </Box>
@@ -182,7 +182,7 @@ export default function MarketplacePage() {
 
         {/* Section panel */}
         <Box border="1px solid #E3E8EE" style={{ borderRadius: 8 }} overflow="hidden">
-          <Box bg="#F6F9FC" px={5} py={3} borderBottom="1px solid #E3E8EE">
+          <Box bg="#F7F8FA" px={5} py={3} borderBottom="1px solid #E3E8EE">
             <Text fontSize="10.5px" fontWeight={700} color="#697386" textTransform="uppercase" letterSpacing="0.06em" fontFamily="heading">
               Available leads
             </Text>
@@ -201,7 +201,7 @@ export default function MarketplacePage() {
               {leads.map((lead, i) => {
                 const dist  = lead.distributions?.[0];
                 const wave  = dist?.wave ?? 0;
-                const accentColor = wave === 0 ? '#0A80DB' : '#7C3AED';
+                const accentColor = wave === 0 ? '#1E3A5F' : '#7C3AED';
 
                 return (
                   <Box
@@ -256,11 +256,11 @@ export default function MarketplacePage() {
                                   fontSize="xs"
                                   style={{
                                     borderRadius: 2,
-                                    background: '#F6F9FC',
+                                    background: '#F7F8FA',
                                     padding: '2px 6px',
                                     fontSize: '9.5px',
                                     fontWeight: 700,
-                                    color: '#0A80DB',
+                                    color: '#1E3A5F',
                                   }}>
                                   🔄 {locale === 'pt' ? FREQUENCY_OPTIONS.find(f => f.id === lead.frequency)?.label : FREQUENCY_OPTIONS.find(f => f.id === lead.frequency)?.labelEn}
                                 </Text>
@@ -285,8 +285,8 @@ export default function MarketplacePage() {
                             {lead.estimatedMinPrice && (
                               <HStack gap={3}>
                                 <HStack gap={1.5}>
-                                  <Icon as={LucideBanknote} w={4} h={4} color="#0A80DB" />
-                                  <Text fontWeight="black" color="#0A80DB" fontSize="sm">
+                                  <Icon as={LucideBanknote} w={4} h={4} color="#1E3A5F" />
+                                  <Text fontWeight="black" color="#1E3A5F" fontSize="sm">
                                     ${lead.estimatedMinPrice}–${lead.estimatedMaxPrice}
                                   </Text>
                                 </HStack>
@@ -301,7 +301,7 @@ export default function MarketplacePage() {
                             {lead.leadPrice && (
                               <HStack gap={1.5}>
                                 <Text fontSize="xs" color="slate.500">Lead fee:</Text>
-                                <Text fontWeight="black" color="#0A80DB" fontSize="sm">
+                                <Text fontWeight="black" color="#1E3A5F" fontSize="sm">
                                   ${lead.leadPrice}
                                 </Text>
                               </HStack>
@@ -322,11 +322,11 @@ export default function MarketplacePage() {
 
                         {/* CTA */}
                         <Button
-                          bg="#0A80DB"
+                          bg="#1E3A5F"
                           color="white" px={5} py={7} h="auto"
                           borderRadius="4px" fontWeight="bold" fontSize="sm"
                           flexShrink={0} flexDirection="column" gap={1.5}
-                          _hover={{ bg: '#0870C2' }}
+                          _hover={{ bg: '#172F4D' }}
                           transition="background 0.15s"
                           onClick={() => handleRespond(lead.id)}
                           loading={responding === lead.id}

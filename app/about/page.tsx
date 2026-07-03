@@ -30,7 +30,7 @@ export default function AboutPage() {
                 px={2} h="34px" borderRadius="4px"
                 border="1px solid transparent"
                 transition="all 0.15s"
-                _hover={{ color: '#0A3D7A', borderColor: '#E2E8F0', bg: '#F8FAFC' }}
+                _hover={{ color: '#1E3A5F', borderColor: '#E2E8F0', bg: '#F8FAFC' }}
                 style={{ cursor: 'pointer' }}
               >
                 <Icon as={LucideArrowLeft} w="13px" h="13px" />
@@ -40,17 +40,17 @@ export default function AboutPage() {
             <Box w="1px" h="18px" bg="#E2E8F0" />
             <NextLink href="/" style={{ textDecoration: 'none' }}>
               <HStack gap={2.5}>
-                <Image src="/2.png" alt="BrazilianClean" width={28} height={28} style={{ borderRadius: "50%", objectFit: "cover", flexShrink: 0 }} />
-                <Text fontWeight="700" fontSize="15px" letterSpacing="-0.02em" color="#0A3D7A" fontFamily="heading">
-                  Brazilian<Text as="span" color="#0A80DB">Clean</Text>
+                <Image src="/logo-blue.png" alt="Verliks" width={28} height={28} style={{ borderRadius: "50%", objectFit: "cover", flexShrink: 0 }} />
+                <Text fontWeight="700" fontSize="15px" letterSpacing="-0.02em" color="#1E3A5F" fontFamily="heading">
+                  Verliks
                 </Text>
               </HStack>
             </NextLink>
           </HStack>
           <HStack gap={2}>
             <NextLink href="/auth/login">
-              <Button size="sm" bg="#0A80DB" color="white" borderRadius="4px" fontWeight="600" fontSize="13px"
-                fontFamily="heading" _hover={{ bg: '#0870C2' }} h="34px" px={4}>
+              <Button size="sm" bg="#1E3A5F" color="white" borderRadius="4px" fontWeight="600" fontSize="13px"
+                fontFamily="heading" _hover={{ bg: '#172F4D' }} h="34px" px={4}>
                 Sign in
               </Button>
             </NextLink>
@@ -59,20 +59,20 @@ export default function AboutPage() {
       </Box>
 
       {/* Hero */}
-      <Box bg="#EBF4FF" pt="120px" pb={20} px={{ base: 5, md: 10, lg: 16 }} borderBottom="1px solid #BFDBFE">
+      <Box bg="#E9F3F5" pt="120px" pb={20} px={{ base: 5, md: 10, lg: 16 }} borderBottom="1px solid #A7C9C7">
         <Box maxW="760px" mx="auto" textAlign="center">
-          <Text fontSize="10.5px" fontWeight="700" letterSpacing="0.14em" color="#0A80DB"
+          <Text fontSize="10.5px" fontWeight="700" letterSpacing="0.14em" color="#1E3A5F"
             textTransform="uppercase" fontFamily="heading" mb={4}>
             Our story
           </Text>
           <Text as="h1" fontSize={{ base: '36px', md: '50px' }} fontWeight="800" lineHeight="1.1"
-            letterSpacing="-0.03em" color="#0A3D7A" fontFamily="heading" mb={6}>
+            letterSpacing="-0.03em" color="#1E3A5F" fontFamily="heading" mb={6}>
             Built on trust,{' '}
-            <Text as="span" color="#0A80DB">driven by community</Text>
+            <Text as="span" color="#1E3A5F">driven by community</Text>
           </Text>
-          <Text fontSize={{ base: '15px', md: '17px' }} color="#4A7AA3"
+          <Text fontSize={{ base: '15px', md: '17px' }} color="#A7C9C7"
             lineHeight="1.7" maxW="600px" mx="auto" fontFamily="heading">
-            BrazilianClean was born from a simple belief: skilled, hardworking cleaning professionals
+            Verliks was born from a simple belief: skilled, hardworking cleaning professionals
             deserve a platform that treats them fairly — and homeowners deserve service they can trust.
           </Text>
         </Box>
@@ -83,7 +83,7 @@ export default function AboutPage() {
         <Box maxW="860px" mx="auto">
           <Flex gap={16} flexDir={{ base: 'column', md: 'row' }} align="start">
             <Box flex={1}>
-              <Text fontSize="10.5px" fontWeight="700" letterSpacing="0.12em" color="#0A80DB"
+              <Text fontSize="10.5px" fontWeight="700" letterSpacing="0.12em" color="#1E3A5F"
                 textTransform="uppercase" fontFamily="heading" mb={3}>
                 How it started
               </Text>
@@ -99,7 +99,7 @@ export default function AboutPage() {
                   of mouth — quietly becoming one of the most trusted presences in American homes.
                 </Text>
                 <Text fontSize="14.5px" color="#475569" lineHeight="1.8" fontFamily="heading">
-                  BrazilianClean was created to give these professionals a modern platform that
+                  Verliks was created to give these professionals a modern platform that
                   matches their talent. A place where reputation is built transparently, payments
                   are protected, and clients can book with real confidence.
                 </Text>
@@ -138,11 +138,11 @@ export default function AboutPage() {
       </Box>
 
       {/* Mission & Values */}
-      <Box bg="#F6F9FC" borderTop="1px solid #E3E8EE" borderBottom="1px solid #E3E8EE"
+      <Box bg="#F7F8FA" borderTop="1px solid #E3E8EE" borderBottom="1px solid #E3E8EE"
         px={{ base: 5, md: 10, lg: 16 }} py={20}>
         <Box maxW="1100px" mx="auto">
           <Box mb={12} textAlign="center">
-            <Text fontSize="10.5px" fontWeight="700" letterSpacing="0.12em" color="#0A80DB"
+            <Text fontSize="10.5px" fontWeight="700" letterSpacing="0.12em" color="#1E3A5F"
               textTransform="uppercase" fontFamily="heading" mb={2}>
               Our values
             </Text>
@@ -167,7 +167,7 @@ export default function AboutPage() {
               {
                 icon: LucideUsers,
                 title: 'Community',
-                desc: 'We are proud of our roots. BrazilianClean celebrates the Brazilian professionals who built their reputation through hard work and dedication. This platform exists to amplify that reputation, not replace it.',
+                desc: 'We are proud of our roots. Verliks celebrates the Brazilian professionals who built their reputation through hard work and dedication. This platform exists to amplify that reputation, not replace it.',
               },
               {
                 icon: LucideStar,
@@ -181,7 +181,7 @@ export default function AboutPage() {
                 position="relative">
                 <Box w="40px" h="40px" mb={4} display="flex" alignItems="center" justifyContent="center"
                   style={{ background: '#F1F5F9', borderRadius: 4 }}>
-                  <Icon as={v.icon} w="18px" h="18px" color="#0A80DB" />
+                  <Icon as={v.icon} w="18px" h="18px" color="#1E3A5F" />
                 </Box>
                 <Text fontSize="15px" fontWeight="700" color="#0A2540" fontFamily="heading" mb={2.5}>{v.title}</Text>
                 <Text fontSize="13.5px" color="#425466" lineHeight="1.75" fontFamily="heading">{v.desc}</Text>
@@ -194,7 +194,7 @@ export default function AboutPage() {
       {/* Mission statement */}
       <Box bg="white" px={{ base: 5, md: 10, lg: 16 }} py={20}>
         <Box maxW="760px" mx="auto" textAlign="center">
-          <Text fontSize="10.5px" fontWeight="700" letterSpacing="0.12em" color="#0A80DB"
+          <Text fontSize="10.5px" fontWeight="700" letterSpacing="0.12em" color="#1E3A5F"
             textTransform="uppercase" fontFamily="heading" mb={4}>
             Our mission
           </Text>
@@ -204,17 +204,17 @@ export default function AboutPage() {
           </Text>
           <Text fontSize="14.5px" color="#425466" lineHeight="1.8" fontFamily="heading" maxW="580px" mx="auto">
             We measure our success not just by bookings or revenue, but by whether the people on both sides of our platform
-            feel respected, protected, and proud to be part of BrazilianClean.
+            feel respected, protected, and proud to be part of Verliks.
           </Text>
         </Box>
       </Box>
 
       {/* How we verify */}
-      <Box bg="#F6F9FC" borderTop="1px solid #E3E8EE" borderBottom="1px solid #E3E8EE"
+      <Box bg="#F7F8FA" borderTop="1px solid #E3E8EE" borderBottom="1px solid #E3E8EE"
         px={{ base: 5, md: 10, lg: 16 }} py={20}>
         <Box maxW="1100px" mx="auto">
           <Box mb={12}>
-            <Text fontSize="10.5px" fontWeight="700" letterSpacing="0.12em" color="#0A80DB"
+            <Text fontSize="10.5px" fontWeight="700" letterSpacing="0.12em" color="#1E3A5F"
               textTransform="uppercase" fontFamily="heading" mb={2}>
               How we verify cleaners
             </Text>
@@ -262,7 +262,7 @@ export default function AboutPage() {
       <Box bg="white" px={{ base: 5, md: 10, lg: 16 }} py={20}>
         <Box maxW="860px" mx="auto">
           <Box mb={8}>
-            <Text fontSize="10.5px" fontWeight="700" letterSpacing="0.12em" color="#0A80DB"
+            <Text fontSize="10.5px" fontWeight="700" letterSpacing="0.12em" color="#1E3A5F"
               textTransform="uppercase" fontFamily="heading" mb={2}>
               Where we operate
             </Text>
@@ -292,7 +292,7 @@ export default function AboutPage() {
       </Box>
 
       {/* CTA */}
-      <Box bg="linear-gradient(140deg, #0A3D7A 0%, #0A56A0 45%, #0A80DB 100%)" style={{ background: 'linear-gradient(140deg, #0A3D7A 0%, #0A56A0 45%, #0A80DB 100%)' }}>
+      <Box bg="linear-gradient(140deg, #1E3A5F 0%, #1E3A5F 45%, #1E3A5F 100%)" style={{ background: 'linear-gradient(140deg, #1E3A5F 0%, #1E3A5F 45%, #1E3A5F 100%)' }}>
         <Flex px={{ base: 5, md: 10, lg: 16 }} py={16} maxW="1440px" mx="auto"
           align="center" justify="space-between" gap={8} flexWrap="wrap">
           <Box>
@@ -306,9 +306,9 @@ export default function AboutPage() {
           </Box>
           <HStack gap={3} flexWrap="wrap">
             <NextLink href="/request">
-              <Button bg="white" color="#0A3D7A" h="44px" px={6} borderRadius="4px"
+              <Button bg="white" color="#1E3A5F" h="44px" px={6} borderRadius="4px"
                 fontWeight="700" fontSize="13px" fontFamily="heading"
-                _hover={{ bg: '#EFF6FF' }} transition="background 0.15s" flexShrink={0}>
+                _hover={{ bg: '#E9F3F5' }} transition="background 0.15s" flexShrink={0}>
                 Book a cleaning
                 <Icon as={LucideArrowRight} w={4} h={4} ml={2} />
               </Button>
@@ -326,13 +326,13 @@ export default function AboutPage() {
       </Box>
 
       {/* Footer */}
-      <Box bg="#F0F7FF" borderTop="1px solid #BFDBFE" py={8}>
+      <Box bg="#E9F3F5" borderTop="1px solid #A7C9C7" py={8}>
         <Flex px={{ base: 5, md: 10, lg: 16 }} maxW="1440px" mx="auto"
           align="center" justify="space-between" flexWrap="wrap" gap={4}>
           <HStack gap={2}>
-            <Image src="/2.png" alt="BrazilianClean" width={28} height={28} style={{ borderRadius: "50%", objectFit: "cover", flexShrink: 0 }} />
+            <Image src="/logo-blue.png" alt="Verliks" width={28} height={28} style={{ borderRadius: "50%", objectFit: "cover", flexShrink: 0 }} />
             <Text fontSize="12px" color="#6A95BC" fontFamily="heading">
-              © 2026 BrazilianClean. All rights reserved.
+              © 2026 Verliks. All rights reserved.
             </Text>
           </HStack>
           <HStack gap={6} flexWrap="wrap">
@@ -342,13 +342,13 @@ export default function AboutPage() {
               { label: 'Terms', href: '/terms' },
             ].map(l => (
               <NextLink key={l.label} href={l.href}>
-                <Text fontSize="12px" color="#4A7AA3" cursor="pointer" fontFamily="heading"
-                  _hover={{ color: '#0A3D7A' }} transition="color 0.15s">{l.label}</Text>
+                <Text fontSize="12px" color="#A7C9C7" cursor="pointer" fontFamily="heading"
+                  _hover={{ color: '#1E3A5F' }} transition="color 0.15s">{l.label}</Text>
               </NextLink>
             ))}
-            <a href="mailto:support@brazilianclean.com"
-              style={{ fontSize: '12px', color: '#4A7AA3', transition: 'color 0.15s', textDecoration: 'none' }}>
-              support@brazilianclean.com
+            <a href="mailto:support@verliks.com"
+              style={{ fontSize: '12px', color: '#A7C9C7', transition: 'color 0.15s', textDecoration: 'none' }}>
+              support@verliks.com
             </a>
           </HStack>
         </Flex>

@@ -52,7 +52,7 @@ function SectionPanel({ title, count, accentColor, extra, children }: {
 }) {
   return (
     <Box border="1px solid #E3E8EE" mb={4} bg="white" style={{ borderRadius: 8 }} overflow="hidden">
-      <Box px={5} py={3} bg="#F6F9FC" borderBottom="1px solid #E3E8EE">
+      <Box px={5} py={3} bg="#F7F8FA" borderBottom="1px solid #E3E8EE">
         <Flex align="center" justify="space-between">
           <HStack gap={2.5}>
             <Text fontSize="10.5px" fontWeight="700" color="#697386" fontFamily="heading" textTransform="uppercase" letterSpacing="0.07em">
@@ -60,7 +60,7 @@ function SectionPanel({ title, count, accentColor, extra, children }: {
             </Text>
             {!!count && count > 0 && (
               <Box
-                bg={accentColor ?? '#0A80DB'} color="white"
+                bg={accentColor ?? '#1E3A5F'} color="white"
                 px={2} h="16px" minW="16px"
                 display="inline-flex" alignItems="center" justifyContent="center"
                 fontSize="9px" fontWeight="700" fontFamily="heading"
@@ -307,7 +307,7 @@ export default function CleanerDashboard() {
           extra={
             <Button
               size="xs" variant="ghost" color="#697386" borderRadius="4px" fontFamily="heading"
-              _hover={{ color: '#0A80DB', bg: 'rgba(26,127,160,0.06)' }}
+              _hover={{ color: '#1E3A5F', bg: 'rgba(26,127,160,0.06)' }}
               onClick={() => fetchLeads()} loading={loading}
             >
               <Icon as={LucideRefreshCw} w={3} h={3} mr={1.5} />{t('cleaner.dashboard.refresh')}
@@ -373,7 +373,7 @@ export default function CleanerDashboard() {
                           {lead.bathrooms  && <Text fontSize="12px" color="#475569">🚿 {lead.bathrooms}ba</Text>}
                           {(lead.squareMeters ?? 0) > 0 && <Text fontSize="12px" color="#475569">📐 {lead.squareMeters}m²</Text>}
                           {freqLabel && (
-                            <Text fontSize="12px" color="#0A80DB" fontWeight="600" fontFamily="heading">↻ {freqLabel}</Text>
+                            <Text fontSize="12px" color="#1E3A5F" fontWeight="600" fontFamily="heading">↻ {freqLabel}</Text>
                           )}
                         </HStack>
                       )}
@@ -390,15 +390,15 @@ export default function CleanerDashboard() {
                       {lead.estimatedMinPrice && (
                         <HStack gap={4} mt={2}>
                           <HStack gap={1.5}>
-                            <Icon as={LucideBanknote} w="13px" h="13px" color="#0A80DB" />
+                            <Icon as={LucideBanknote} w="13px" h="13px" color="#1E3A5F" />
                             <Text fontSize="15px" fontWeight="800" color="#047857" fontFamily="heading" letterSpacing="-0.02em">
                               ${lead.estimatedMinPrice}–${lead.estimatedMaxPrice}
                             </Text>
                           </HStack>
                           {lead.estimatedHours && (
                             <HStack gap={1}>
-                              <Icon as={LucideClock} w="11px" h="11px" color="#0A80DB" />
-                              <Text fontSize="13px" fontWeight="600" color="#0A80DB" fontFamily="heading">
+                              <Icon as={LucideClock} w="11px" h="11px" color="#1E3A5F" />
+                              <Text fontSize="13px" fontWeight="600" color="#1E3A5F" fontFamily="heading">
                                 ~{lead.estimatedHours}h
                               </Text>
                             </HStack>
@@ -412,10 +412,10 @@ export default function CleanerDashboard() {
                     </Box>
 
                     <Button
-                      bg="#0A80DB" color="white" px={4} h="36px"
+                      bg="#1E3A5F" color="white" px={4} h="36px"
                       borderRadius="4px" fontWeight="600" fontSize="13px" fontFamily="heading"
                       flexShrink={0} alignSelf="center"
-                      _hover={{ bg: '#0870C2' }} transition="background 0.15s"
+                      _hover={{ bg: '#172F4D' }} transition="background 0.15s"
                       onClick={() => handleRespond(lead.id)}
                       loading={responding === lead.id} loadingText="…"
                     >
@@ -447,7 +447,7 @@ export default function CleanerDashboard() {
                 <Flex px={6} pl={8} py={3.5} gap={6} align="center" justify="space-between">
                   <Box>
                     <HStack gap={2.5} mb={1} flexWrap="wrap">
-                      <Chip label={t('cleaner.dashboard.chipWaiting')} bg="#F6F9FC" color="#0A80DB" />
+                      <Chip label={t('cleaner.dashboard.chipWaiting')} bg="#F7F8FA" color="#1E3A5F" />
                       <Text fontSize="14px" fontWeight="700" color="#0F172A" fontFamily="heading" letterSpacing="-0.01em">
                         {t(`services.${conv.lead.serviceType}`) || conv.lead.serviceType}
                       </Text>
@@ -472,9 +472,9 @@ export default function CleanerDashboard() {
                     </HStack>
                   </Box>
                   <Button
-                    size="sm" bg="#0A80DB" color="white" borderRadius="4px"
+                    size="sm" bg="#1E3A5F" color="white" borderRadius="4px"
                     fontWeight="600" fontFamily="heading" flexShrink={0}
-                    _hover={{ bg: '#0870C2' }}
+                    _hover={{ bg: '#172F4D' }}
                     onClick={e => { e.stopPropagation(); router.push(`/dashboard/chat/${conv.id}`); }}
                   >
                     <Icon as={LucideMessageCircle} w={3.5} h={3.5} mr={1.5} />
@@ -539,9 +539,9 @@ export default function CleanerDashboard() {
                       </Box>
                       {conv && (
                         <Button
-                          size="sm" bg="#0A80DB" color="white" borderRadius="4px"
+                          size="sm" bg="#1E3A5F" color="white" borderRadius="4px"
                           fontWeight="600" fontFamily="heading" flexShrink={0}
-                          _hover={{ bg: '#0870C2' }}
+                          _hover={{ bg: '#172F4D' }}
                           onClick={() => router.push(`/dashboard/chat/${conv.id}`)}
                         >
                           <Icon as={LucideMessageCircle} w={3.5} h={3.5} mr={1.5} />

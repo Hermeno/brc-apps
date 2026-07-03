@@ -68,10 +68,10 @@ export default function RegisterPage() {
     borderRadius: '8px',
     fontFamily: 'heading',
     fontSize: '13.5px',
-    color: '#0A3D7A',
+    color: '#1E3A5F',
     px: 4,
     _placeholder: { color: '#B0BAC9' },
-    _focus: { borderColor: '#0A80DB', boxShadow: 'none', outline: 'none' },
+    _focus: { borderColor: '#1E3A5F', boxShadow: 'none', outline: 'none' },
   };
 
   return (
@@ -80,18 +80,13 @@ export default function RegisterPage() {
       {/* ── Left panel ── */}
       <Box
         display={{ base: 'none', lg: 'flex' }} flexDirection="column"
-        w="480px" flexShrink={0} bg="#0A4B8F" position="relative" overflow="hidden"
+        w="480px" flexShrink={0} bg="#1E3A5F" position="relative" overflow="hidden"
       >
-        <Box position="absolute" inset={0} style={{ backgroundImage: "url('/abc.png')", backgroundSize: 'cover', backgroundPosition: 'center' }} />
-        <Box position="absolute" inset={0} style={{ background: 'linear-gradient(180deg, rgba(10,75,143,0.88) 0%, rgba(10,128,219,0.50) 50%, rgba(10,75,143,0.88) 100%)' }} />
+        <Box position="absolute" inset={0} style={{ backgroundImage: "url('/abc.png')", backgroundSize: 'cover', backgroundPosition: 'center', opacity: 1 }} />
+        <Box position="absolute" inset={0} style={{ background: 'rgba(30, 58, 95, 0.58)' }} />
 
         <Flex direction="column" justify="space-between" h="full" position="relative" p={10}>
-          <HStack gap={2.5}>
-            <Image src="/2.png" alt="BrazilianClean" width={32} height={32} style={{ borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }} />
-            <Text fontWeight="700" fontSize="15px" letterSpacing="-0.02em" color="white" fontFamily="heading">
-              Brazilian<Text as="span" color="#0A80DB">Clean</Text>
-            </Text>
-          </HStack>
+          <Image src="/logo-blue.png" alt="Verliks" width={180} height={60} style={{ objectFit: 'contain' }} />
 
           <Box>
             <Text fontSize="10.5px" fontWeight="700" letterSpacing="0.14em" color="rgba(255,255,255,0.55)"
@@ -106,7 +101,7 @@ export default function RegisterPage() {
             <VStack align="stretch" gap={2.5}>
               {(['feature1', 'feature2', 'feature3'] as const).map(k => (
                 <HStack key={k} gap={2}>
-                  <Icon as={LucideCheckCircle} w="14px" h="14px" color="#0A80DB" flexShrink={0} />
+                  <Icon as={LucideCheckCircle} w="14px" h="14px" color="#1E3A5F" flexShrink={0} />
                   <Text fontSize="13px" color="rgba(255,255,255,0.65)" fontFamily="heading">{t(`auth.register.${k}`)}</Text>
                 </HStack>
               ))}
@@ -122,7 +117,7 @@ export default function RegisterPage() {
           <Flex justify="space-between" align="center" mb={6}>
             <NextLink href="/" style={{ textDecoration: 'none' }}>
               <HStack gap={1.5} display="inline-flex"
-                _hover={{ color: '#0A80DB' }} color="#697386" transition="color 0.15s">
+                _hover={{ color: '#1E3A5F' }} color="#697386" transition="color 0.15s">
                 <Icon as={LucideArrowLeft} w={3.5} h={3.5} />
                 <Text fontSize="13px" fontFamily="heading" fontWeight="500">{t('common.backToHome')}</Text>
               </HStack>
@@ -131,15 +126,12 @@ export default function RegisterPage() {
           </Flex>
 
           {/* Mobile logo */}
-          <HStack gap={2.5} mb={10} display={{ base: 'flex', lg: 'none' }}>
-            <Image src="/2.png" alt="BrazilianClean" width={28} height={28} style={{ borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }} />
-            <Text fontWeight="700" fontSize="14px" letterSpacing="-0.02em" color="#0A3D7A" fontFamily="heading">
-              Brazilian<Text as="span" color="#0A80DB">Clean</Text>
-            </Text>
-          </HStack>
+          <Box mb={10} display={{ base: 'block', lg: 'none' }}>
+            <Image src="/logo-blue.png" alt="Verliks" width={140} height={48} style={{ objectFit: 'contain' }} />
+          </Box>
 
           <Box mb={8}>
-            <Text fontSize="24px" fontWeight="800" color="#0A3D7A" fontFamily="heading" letterSpacing="-0.025em" mb={1}>
+            <Text fontSize="24px" fontWeight="800" color="#1E3A5F" fontFamily="heading" letterSpacing="-0.025em" mb={1}>
               {t('auth.register.title')}
             </Text>
             <Text fontSize="13px" color="#425466" fontFamily="heading">
@@ -183,9 +175,9 @@ export default function RegisterPage() {
               </Box>
 
               <Button
-                type="submit" bg="#0A80DB" color="white" h="40px" borderRadius="9999px"
+                type="submit" bg="#1E3A5F" color="white" h="40px" borderRadius="9999px"
                 fontWeight="600" fontSize="13.5px" letterSpacing="-0.01em" fontFamily="heading"
-                _hover={{ bg: '#0870C2' }} transition="background 0.15s"
+                _hover={{ bg: '#172F4D' }} transition="background 0.15s"
                 loading={loading} loadingText={t('auth.register.submitting')} mt={1}
               >
                 {t('auth.register.submit')}
@@ -199,7 +191,7 @@ export default function RegisterPage() {
             <Text fontSize="13px" color="#425466" fontFamily="heading" textAlign="center">
               {t('auth.register.hasAccount')}{' '}
               <NextLink href="/auth/login">
-                <Text as="span" color="#0A80DB" fontWeight="700" cursor="pointer" _hover={{ color: '#0870C2' }}>
+                <Text as="span" color="#1E3A5F" fontWeight="700" cursor="pointer" _hover={{ color: '#172F4D' }}>
                   {t('auth.register.signIn')}
                 </Text>
               </NextLink>

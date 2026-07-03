@@ -11,11 +11,11 @@ export default function NotFound() {
 
         <HStack gap={2.5}>
           <Image
-            src="/2.png" alt="BrazilianClean" width={32} height={32}
-            style={{ borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }}
+            src="/logo-blue.png" alt="Verliks" width={32} height={32}
+            style={{ objectFit: 'contain', flexShrink: 0 }}
           />
           <Text fontWeight="700" fontSize="15px" letterSpacing="-0.02em" color="#0A2540" fontFamily="heading">
-            Brazilian<Text as="span" color="#0A80DB">Clean</Text>
+            Verliks
           </Text>
         </HStack>
 
@@ -34,11 +34,11 @@ export default function NotFound() {
         <NextLink href="/">
           <Box
             as="button"
-            bg="#0A80DB" color="white" h="44px" px={8}
+            bg="#1E3A5F" color="white" h="44px" px={8}
             borderRadius="4px" fontWeight="700" fontSize="14px" fontFamily="heading"
             display="inline-flex" alignItems="center" justifyContent="center"
             style={{ transition: 'background 0.15s', cursor: 'pointer' }}
-            _hover={{ bg: '#0870C2' }}
+            _hover={{ bg: '#172F4D' }}
           >
             Back to home
           </Box>

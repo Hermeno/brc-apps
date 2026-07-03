@@ -32,7 +32,7 @@ type Cleaner = {
 
 const PLAN_COLORS: Record<string, { bg: string; color: string; label: string }> = {
   FREE:    { bg: '#F3F4F6', color: '#6B7280', label: 'Free' },
-  BASIC:   { bg: '#EBF5FE', color: '#0A80DB', label: 'Basic' },
+  BASIC:   { bg: '#EBF5FE', color: '#1E3A5F', label: 'Basic' },
   PRO:     { bg: '#FFFBEB', color: '#D97706', label: 'Pro ⭐' },
   PREMIUM: { bg: '#FFFBEB', color: '#D97706', label: 'Pro ⭐' }, // legacy alias
 };
@@ -114,7 +114,7 @@ export default function PublicProfilePage() {
           <Box as="button" onClick={() => router.back()}
             display="inline-flex" alignItems="center" gap={1.5}
             color="#64748B" fontWeight="semibold" fontSize="sm" cursor="pointer"
-            _hover={{ color: '#0A3D7A' }} transition="color 0.15s">
+            _hover={{ color: '#1E3A5F' }} transition="color 0.15s">
             <Icon as={LucideArrowLeft} w={4} h={4} />
             Back
           </Box>
@@ -140,7 +140,7 @@ export default function PublicProfilePage() {
                   >
                     {cleaner.avatarUrl ? (
                       <img src={cleaner.avatarUrl} alt={cleaner.name ?? 'Avatar'}
-                        style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                        style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
                     ) : (
                       <Text color="white" fontWeight="black" fontSize="2xl">{firstLetter}</Text>
                     )}
@@ -160,7 +160,7 @@ export default function PublicProfilePage() {
                         {planStyle.label}
                       </Badge>
                       <Badge
-                        bg="#EBF5FE" color="#0A80DB"
+                        bg="#EBF5FE" color="#1E3A5F"
                         borderRadius="4px" px={3} py={0.5}
                         fontSize="xs" fontWeight="bold">
                         {isExperienced ? '⭐ Experienced' : '🆕 New on the platform'}
@@ -205,10 +205,10 @@ export default function PublicProfilePage() {
 
                 {/* Contact info — only shown after client accepts + cleaner pays */}
                 {cleaner.canSeeContact && cleaner.phone && (
-                  <HStack gap={2} mt={4} bg="#F6F9FC" border="1px solid" borderColor="#E3E8EE"
+                  <HStack gap={2} mt={4} bg="#F7F8FA" border="1px solid" borderColor="#E3E8EE"
                     borderRadius="4px" px={4} py={3}>
-                    <Icon as={LucideMapPin} w={4} h={4} color="#0A80DB" />
-                    <Text fontSize="sm" fontWeight="semibold" color="#0A80DB">
+                    <Icon as={LucideMapPin} w={4} h={4} color="#1E3A5F" />
+                    <Text fontSize="sm" fontWeight="semibold" color="#1E3A5F">
                       📱 {cleaner.phone}
                     </Text>
                   </HStack>
@@ -262,12 +262,12 @@ export default function PublicProfilePage() {
                         position="relative"
                         paddingBottom="100%"
                         bg="slate.100"
-                        _hover={{ borderColor: '#0A80DB' }}
+                        _hover={{ borderColor: '#1E3A5F' }}
                         transition="border-color 0.15s">
                         <img
                           src={photo.url}
                           alt={photo.caption ?? `Job ${i + 1}`}
-                          style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }}
+                          style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'contain' }}
                         />
                       </Box>
                       {photo.caption && (
@@ -287,7 +287,7 @@ export default function PublicProfilePage() {
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.15 }}>
               <Box bg="white" border="1px solid" borderColor="slate.200" p={6}>
                 <HStack gap={2} mb={5}>
-                  <Icon as={LucideAward} w={5} h={5} color="#0A80DB" />
+                  <Icon as={LucideAward} w={5} h={5} color="#1E3A5F" />
                   <Heading size="sm" fontWeight="bold" color="slate.800">Client reviews</Heading>
                   {ratingAvg > 0 && (
                     <HStack gap={1.5}>

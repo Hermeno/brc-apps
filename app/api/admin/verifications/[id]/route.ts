@@ -53,7 +53,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
       });
       sendMail({
         to: cleaner.email,
-        subject: 'Your documents have been approved — BrazilianClean',
+        subject: 'Your documents have been approved — Verliks',
         html: verificationApprovedHtml(cleanerName),
       }).catch(e => console.error('[mail] verification approved:', e));
     } else {
@@ -66,7 +66,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
       });
       sendMail({
         to: cleaner.email,
-        subject: 'Document verification update — BrazilianClean',
+        subject: 'Document verification update — Verliks',
         html: verificationRejectedHtml(cleanerName, note),
       }).catch(e => console.error('[mail] verification rejected:', e));
     }

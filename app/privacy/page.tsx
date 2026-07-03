@@ -25,16 +25,16 @@ export default function PrivacyPage() {
         <Flex align="center" h="full" px={{ base: 5, md: 10, lg: 16 }} maxW="1440px" mx="auto" justify="space-between">
           <NextLink href="/" style={{ textDecoration: 'none' }}>
             <HStack gap={2.5}>
-              <Image src="/2.png" alt="BrazilianClean" width={28} height={28} style={{ borderRadius: '50%', objectFit: 'cover' }} />
-              <Text fontWeight="700" fontSize="15px" letterSpacing="-0.02em" color="#0A3D7A" fontFamily="heading">
-                Brazilian<Text as="span" color="#0A80DB">Clean</Text>
+              <Image src="/logo-blue.png" alt="Verliks" width={28} height={28} style={{ objectFit: 'contain' }} />
+              <Text fontWeight="700" fontSize="15px" letterSpacing="-0.02em" color="#1E3A5F" fontFamily="heading">
+                Verliks
               </Text>
             </HStack>
           </NextLink>
           <HStack gap={3}>
             <NextLink href="/terms" style={{ textDecoration: 'none' }}>
               <Text fontSize="12px" color="#64748B" fontFamily="heading"
-                _hover={{ color: '#0A3D7A' }} transition="color 0.15s" cursor="pointer">
+                _hover={{ color: '#1E3A5F' }} transition="color 0.15s" cursor="pointer">
                 Terms of Service
               </Text>
             </NextLink>
@@ -47,12 +47,12 @@ export default function PrivacyPage() {
                   px={3} py={1}
                   fontSize="11px" fontWeight="700" fontFamily="heading"
                   textTransform="uppercase" letterSpacing="0.06em"
-                  bg={locale === lang ? '#0A80DB' : 'transparent'}
+                  bg={locale === lang ? '#1E3A5F' : 'transparent'}
                   color={locale === lang ? 'white' : '#64748B'}
                   transition="all 0.15s"
                   cursor="pointer"
                   border="none"
-                  _hover={{ color: locale === lang ? 'white' : '#0A3D7A' }}
+                  _hover={{ color: locale === lang ? 'white' : '#1E3A5F' }}
                 >
                   {lang.toUpperCase()}
                 </Box>
@@ -63,27 +63,27 @@ export default function PrivacyPage() {
       </Box>
 
       {/* ── Header ── */}
-      <Box bg="#EBF4FF" pt="100px" pb={14} px={{ base: 5, md: 10, lg: 16 }} borderBottom="1px solid #BFDBFE">
+      <Box bg="#E9F3F5" pt="100px" pb={14} px={{ base: 5, md: 10, lg: 16 }} borderBottom="1px solid #A7C9C7">
         <Box maxW="860px" mx="auto">
-          <Text fontSize="10px" fontWeight="700" letterSpacing="0.16em" color="#0A80DB"
+          <Text fontSize="10px" fontWeight="700" letterSpacing="0.16em" color="#1E3A5F"
             textTransform="uppercase" fontFamily="heading" mb={3}>
             Legal
           </Text>
           <Text as="h1" fontSize={{ base: '30px', md: '44px' }} fontWeight="800"
-            letterSpacing="-0.03em" color="#0A3D7A" fontFamily="heading" mb={3}>
+            letterSpacing="-0.03em" color="#1E3A5F" fontFamily="heading" mb={3}>
             {content.pageTitle}
           </Text>
           <HStack gap={4} flexWrap="wrap">
-            <Text fontSize="12px" color="#7AAED6" fontFamily="heading">
+            <Text fontSize="12px" color="#A7C9C7" fontFamily="heading">
               {content.lastUpdated}
             </Text>
-            <Text fontSize="12px" color="#BFDBFE" fontFamily="heading">·</Text>
-            <Text fontSize="12px" color="#7AAED6" fontFamily="heading">
+            <Text fontSize="12px" color="#A7C9C7" fontFamily="heading">·</Text>
+            <Text fontSize="12px" color="#A7C9C7" fontFamily="heading">
               {content.effectiveDate}
             </Text>
           </HStack>
-          <Box mt={5} p={4} borderRadius="4px" style={{ background: 'rgba(10,128,219,0.08)', borderLeft: '3px solid #0A80DB' }}>
-            <Text fontSize="13px" color="#4A7AA3" lineHeight="1.7" fontFamily="heading">
+          <Box mt={5} p={4} borderRadius="4px" style={{ background: 'rgba(10,128,219,0.08)', borderLeft: '3px solid #1E3A5F' }}>
+            <Text fontSize="13px" color="#A7C9C7" lineHeight="1.7" fontFamily="heading">
               {content.intro}
             </Text>
           </Box>
@@ -235,14 +235,14 @@ export default function PrivacyPage() {
                   ? 'Nossa equipe de privacidade está pronta para ajudar.'
                   : 'Our privacy team is ready to help.'}
               </Text>
-              <a href="mailto:support@brazilianclean.com"
+              <a href="mailto:support@verliks.com"
                 style={{
                   display: 'inline-block', fontSize: '12.5px', fontWeight: '600',
                   color: '#1F6FEA', fontFamily: 'heading', textDecoration: 'none',
                   padding: '8px 20px', border: '1px solid #1F6FEA',
                   borderRadius: '4px', transition: 'all 0.15s',
                 }}>
-                support@brazilianclean.com
+                support@verliks.com
               </a>
             </Box>
           </Box>
@@ -250,13 +250,13 @@ export default function PrivacyPage() {
       </Box>
 
       {/* ── Footer ── */}
-      <Box bg="#F0F7FF" borderTop="1px solid #BFDBFE" py={8}>
+      <Box bg="#E9F3F5" borderTop="1px solid #A7C9C7" py={8}>
         <Flex px={{ base: 5, md: 10, lg: 16 }} maxW="1440px" mx="auto"
           align="center" justify="space-between" flexWrap="wrap" gap={4}>
           <HStack gap={2.5}>
-            <Image src="/2.png" alt="BrazilianClean" width={24} height={24} style={{ borderRadius: '50%', objectFit: 'cover' }} />
+            <Image src="/logo-blue.png" alt="Verliks" width={24} height={24} style={{ objectFit: 'contain' }} />
             <Text fontSize="12px" color="#6A95BC" fontFamily="heading">
-              © 2026 BrazilianClean. {locale === 'pt' ? 'Todos os direitos reservados.' : 'All rights reserved.'}
+              © 2026 Verliks. {locale === 'pt' ? 'Todos os direitos reservados.' : 'All rights reserved.'}
             </Text>
           </HStack>
           <HStack gap={5} flexWrap="wrap">
@@ -265,15 +265,15 @@ export default function PrivacyPage() {
               { label: 'Terms of Service', href: '/terms' },
             ].map((l) => (
               <NextLink key={l.href} href={l.href}>
-                <Text fontSize="12px" color="#4A7AA3" cursor="pointer" fontFamily="heading"
-                  _hover={{ color: '#0A3D7A' }} transition="color 0.15s">
+                <Text fontSize="12px" color="#A7C9C7" cursor="pointer" fontFamily="heading"
+                  _hover={{ color: '#1E3A5F' }} transition="color 0.15s">
                   {l.label}
                 </Text>
               </NextLink>
             ))}
-            <a href="mailto:support@brazilianclean.com"
-              style={{ fontSize: '12px', color: '#4A7AA3', textDecoration: 'none' }}>
-              support@brazilianclean.com
+            <a href="mailto:support@verliks.com"
+              style={{ fontSize: '12px', color: '#A7C9C7', textDecoration: 'none' }}>
+              support@verliks.com
             </a>
           </HStack>
         </Flex>

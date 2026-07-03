@@ -30,7 +30,7 @@ export default function GlobalError({
           <div style={{ display: 'flex', gap: 12, justifyContent: 'center', marginTop: 32 }}>
             <button
               onClick={reset}
-              style={{ background: '#0A80DB', color: '#fff', border: 'none', borderRadius: 4, padding: '10px 24px', fontWeight: 700, fontSize: 14, cursor: 'pointer' }}>
+              style={{ background: '#1E3A5F', color: '#fff', border: 'none', borderRadius: 4, padding: '10px 24px', fontWeight: 700, fontSize: 14, cursor: 'pointer' }}>
               Try again
             </button>
             <a href="/" style={{ background: '#fff', color: '#425466', border: '1px solid #E3E8EE', borderRadius: 4, padding: '10px 24px', fontWeight: 700, fontSize: 14, textDecoration: 'none', display: 'inline-block' }}>

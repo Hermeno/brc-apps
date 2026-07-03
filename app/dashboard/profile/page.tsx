@@ -259,7 +259,7 @@ export default function ProfilePage() {
           {/* ── Avatar + About card ── */}
           <Box bg="white" border="1px solid #E3E8EE" style={{ borderRadius: 8 }} overflow="hidden">
             {/* Section header */}
-            <Box bg="#F6F9FC" px={5} py={3} borderBottom="1px solid #E3E8EE">
+            <Box bg="#F7F8FA" px={5} py={3} borderBottom="1px solid #E3E8EE">
               <HStack gap={2}>
                 <Icon as={LucideUser} w={4} h={4} color="brand.500" />
                 <Text
@@ -339,11 +339,11 @@ export default function ProfilePage() {
                       const sel = serviceTypes.includes(s);
                       return (
                         <Box key={s} as="button" w="full" p={2.5} borderRadius="4px" textAlign="center"
-                          border={sel ? '2px solid #0A80DB' : '1px solid #E3E8EE'}
-                          bg={sel ? '#F0F9FF' : 'white'} cursor="pointer"
+                          border={sel ? '2px solid #1E3A5F' : '1px solid #E3E8EE'}
+                          bg={sel ? '#E9F3F5' : 'white'} cursor="pointer"
                           onClick={() => toggleService(s)} transition="all 0.15s">
                           <Text fontSize="xs" fontWeight={sel ? 'bold' : 'medium'}
-                            color={sel ? '#0A80DB' : 'slate.600'}>{t(`services.${s}`)}</Text>
+                            color={sel ? '#1E3A5F' : 'slate.600'}>{t(`services.${s}`)}</Text>
                         </Box>
                       );
                     })}
@@ -351,8 +351,8 @@ export default function ProfilePage() {
                 </Box>
 
                 <Button
-                  bg="#0A80DB" color="white" borderRadius="4px" fontWeight="bold"
-                  _hover={{ bg: '#0870C2' }}
+                  bg="#1E3A5F" color="white" borderRadius="4px" fontWeight="bold"
+                  _hover={{ bg: '#172F4D' }}
                   transition="all 0.2s"
                   loading={saving} loadingText={t('cleaner.profile.savingProfile')}
                   onClick={handleSave}
@@ -367,7 +367,7 @@ export default function ProfilePage() {
           {/* ── Location card ── */}
           <Box bg="white" border="1px solid #E3E8EE" style={{ borderRadius: 8 }} overflow="hidden">
             {/* Section header */}
-            <Box bg="#F6F9FC" px={5} py={3} borderBottom="1px solid #E3E8EE">
+            <Box bg="#F7F8FA" px={5} py={3} borderBottom="1px solid #E3E8EE">
               <HStack gap={2}>
                 <Icon as={LucideMapPin} w={4} h={4} color="brand.500" />
                 <Text
@@ -395,8 +395,8 @@ export default function ProfilePage() {
                       {t('cleaner.profile.zipLabel')}
                     </Text>
                     <Text style={{
-                      borderRadius: 2, background: '#EFF6FF',
-                      padding: '2px 6px', fontSize: '9.5px', fontWeight: 700, color: '#0A80DB',
+                      borderRadius: 2, background: '#E9F3F5',
+                      padding: '2px 6px', fontSize: '9.5px', fontWeight: 700, color: '#1E3A5F',
                     }}>
                       {t('cleaner.profile.zipBonus')}
                     </Text>
@@ -429,10 +429,10 @@ export default function ProfilePage() {
 
                 {/* Location label */}
                 {locationLabel && (
-                  <HStack gap={2} bg="#F6F9FC" border="1px solid" borderColor="#E3E8EE"
+                  <HStack gap={2} bg="#F7F8FA" border="1px solid" borderColor="#E3E8EE"
                     borderRadius="4px" px={4} py={3}>
-                    <Icon as={LucideMapPin} w={4} h={4} color="#0A80DB" flexShrink={0} />
-                    <Text fontSize="sm" color="#0A80DB" fontWeight="semibold">{locationLabel}</Text>
+                    <Icon as={LucideMapPin} w={4} h={4} color="#1E3A5F" flexShrink={0} />
+                    <Text fontSize="sm" color="#1E3A5F" fontWeight="semibold">{locationLabel}</Text>
                     <Button size="xs" variant="ghost" color="slate.400" ml="auto" px={1}
                       onClick={() => { setLatitude(null); setLongitude(null); setLocationLabel(''); }}>
                       <Icon as={LucideX} w={3} h={3} />
@@ -468,7 +468,7 @@ export default function ProfilePage() {
                     </Text>
                     <Text style={{
                       fontSize: '9.5px', fontWeight: 700, padding: '2px 7px',
-                      background: '#EFF6FF', color: '#0A80DB', borderRadius: 2,
+                      background: '#E9F3F5', color: '#1E3A5F', borderRadius: 2,
                     }}>
                       {t('cleaner.profile.radiusPlan', { max: planMaxRadius })}
                     </Text>
@@ -488,10 +488,10 @@ export default function ProfilePage() {
                           cursor={locked ? 'not-allowed' : 'pointer'}
                           opacity={locked ? 0.38 : 1}
                           transition="all 0.12s"
-                          bg={active ? '#0A80DB' : 'white'}
+                          bg={active ? '#1E3A5F' : 'white'}
                           color={active ? 'white' : locked ? 'slate.400' : 'slate.600'}
-                          borderColor={active ? '#0A80DB' : '#E3E8EE'}
-                          _hover={locked ? {} : { borderColor: '#0A80DB', color: active ? 'white' : '#0A80DB' }}
+                          borderColor={active ? '#1E3A5F' : '#E3E8EE'}
+                          _hover={locked ? {} : { borderColor: '#1E3A5F', color: active ? 'white' : '#1E3A5F' }}
                           onClick={() => !locked && setServiceRadius(miles)}
                         >
                           {miles} {miles === 1 ? t('cleaner.profile.mile') : t('cleaner.profile.miles')}{locked ? ' 🔒' : ''}
@@ -509,8 +509,8 @@ export default function ProfilePage() {
 
                 {/* Save location button */}
                 <Button
-                  bg="#0A80DB" color="white" borderRadius="4px" fontWeight="bold"
-                  _hover={{ bg: '#0870C2' }}
+                  bg="#1E3A5F" color="white" borderRadius="4px" fontWeight="bold"
+                  _hover={{ bg: '#172F4D' }}
                   transition="all 0.2s"
                   loading={saving} loadingText={t('cleaner.profile.savingLocation')}
                   onClick={handleSave}
@@ -525,7 +525,7 @@ export default function ProfilePage() {
           {/* ── Photo Gallery card ── */}
           <Box bg="white" border="1px solid #E3E8EE" style={{ borderRadius: 8 }} overflow="hidden">
             {/* Section header */}
-            <Box bg="#F6F9FC" px={5} py={3} borderBottom="1px solid #E3E8EE">
+            <Box bg="#F7F8FA" px={5} py={3} borderBottom="1px solid #E3E8EE">
               <Flex justify="space-between" align="center">
                 <HStack gap={2}>
                   <Icon as={LucideCamera} w={4} h={4} color="brand.500" />
@@ -539,8 +539,8 @@ export default function ProfilePage() {
                   </Text>
                 </HStack>
                 {photos.length < 20 && !showPhotoForm && (
-                  <Button size="sm" bg="#0A80DB" color="white" borderRadius="4px" fontWeight="bold"
-                    _hover={{ bg: '#0870C2' }}
+                  <Button size="sm" bg="#1E3A5F" color="white" borderRadius="4px" fontWeight="bold"
+                    _hover={{ bg: '#172F4D' }}
                     loading={uploading} loadingText={t('cleaner.profile.uploadingPhoto')}
                     onClick={() => fileInputRef.current?.click()}>
                     <Icon as={LucidePlus} w={3.5} h={3.5} mr={1.5} />
@@ -562,7 +562,7 @@ export default function ProfilePage() {
                       <Box w="80px" h="80px" borderRadius="4px" overflow="hidden" flexShrink={0}
                         border="1px solid" borderColor="brand.200">
                         <img src={pendingUrl} alt="Preview"
-                          style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                          style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
                       </Box>
                       <VStack gap={3} flex={1} align="stretch">
                         <Input
@@ -578,8 +578,8 @@ export default function ProfilePage() {
                             onClick={() => { setShowPhotoForm(false); setPendingUrl(''); setPhotoCaption(''); }}>
                             {t('common.cancel')}
                           </Button>
-                          <Button size="sm" bg="#0A80DB" color="white" borderRadius="4px" fontWeight="bold"
-                            _hover={{ bg: '#0870C2' }}
+                          <Button size="sm" bg="#1E3A5F" color="white" borderRadius="4px" fontWeight="bold"
+                            _hover={{ bg: '#172F4D' }}
                             loading={addingPhoto} loadingText={t('cleaner.profile.addingPhoto')}
                             onClick={handleAddPhoto}>
                             {t('cleaner.profile.addToGallery')}
@@ -613,7 +613,7 @@ export default function ProfilePage() {
                         <img
                           src={photo.url}
                           alt={photo.caption ?? `Photo ${i + 1}`}
-                          style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }}
+                          style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'contain' }}
                         />
                         <Button
                           size="sm" bg="red.500" color="white" borderRadius="4px"

@@ -77,10 +77,10 @@ const SIDEBAR_W    = '216px';
 
 const LEAD_STATUS: Record<string, { label: string; color: string; dot: string }> = {
   NEW:       { label: 'New',            color: '#92400E', dot: '#F59E0B' },
-  WAVE2:     { label: 'Matching',       color: '#0A80DB', dot: '#60A5FA' },
-  WAVE3:     { label: 'Last wave',      color: '#0A80DB', dot: '#60A5FA' },
+  WAVE2:     { label: 'Matching',       color: '#1E3A5F', dot: '#60A5FA' },
+  WAVE3:     { label: 'Last wave',      color: '#1E3A5F', dot: '#60A5FA' },
   IN_REVIEW: { label: 'Pending',        color: '#0369A1', dot: '#38BDF8' },
-  ACCEPTED:  { label: 'Accepted',       color: '#0F4F67', dot: '#0A80DB' },
+  ACCEPTED:  { label: 'Accepted',       color: '#0F4F67', dot: '#1E3A5F' },
   COMPLETED: { label: 'Completed',      color: '#047857', dot: '#10B981' },
   CANCELLED: { label: 'Cancelled',      color: '#BE123C', dot: '#F43F5E' },
   UNMATCHED: { label: 'No cleaner',     color: '#475569', dot: '#94A3B8' },
@@ -95,7 +95,7 @@ const TH: React.CSSProperties = {
   letterSpacing: '0.07em',
   color: '#94A3B8',
   borderBottom: '1px solid #E3E8EE',
-  background: '#F6F9FC',
+  background: '#F7F8FA',
   fontFamily: 'var(--font-dm-sans, sans-serif)',
   whiteSpace: 'nowrap',
 };
@@ -155,9 +155,9 @@ function Sidebar({ tab, setTab, pendingVerifs, onRefresh, user }: {
       {/* Logo */}
       <Box px={5} pt={6} pb={5} borderBottom="1px solid #E2E8F0">
         <HStack gap={2.5}>
-          <Image src="/2.png" alt="BrazilianClean" width={32} height={32} style={{ borderRadius: "50%", objectFit: "cover", flexShrink: 0 }} />
-          <Text fontWeight="700" fontSize="14px" letterSpacing="-0.02em" color="#0A3D7A" fontFamily="heading">
-            Brazilian<Text as="span" color="#0A80DB">Clean</Text>
+          <Image src="/logo-blue.png" alt="Verliks" width={32} height={32} style={{ borderRadius: "50%", objectFit: "cover", flexShrink: 0 }} />
+          <Text fontWeight="700" fontSize="14px" letterSpacing="-0.02em" color="#1E3A5F" fontFamily="heading">
+            Verliks
           </Text>
         </HStack>
       </Box>
@@ -185,8 +185,8 @@ function Sidebar({ tab, setTab, pendingVerifs, onRefresh, user }: {
                 cursor="pointer"
                 borderLeft="2px solid"
                 borderLeftColor={isActive ? 'brand.500' : 'transparent'}
-                bg={isActive ? '#EFF6FF' : 'transparent'}
-                color={isActive ? '#0A3D7A' : '#64748B'}
+                bg={isActive ? '#E9F3F5' : 'transparent'}
+                color={isActive ? '#1E3A5F' : '#64748B'}
                 fontWeight={isActive ? '600' : '400'}
                 fontSize="13px"
                 fontFamily="heading"
@@ -194,7 +194,7 @@ function Sidebar({ tab, setTab, pendingVerifs, onRefresh, user }: {
                 transition="all 0.12s"
                 textAlign="left"
                 borderRadius="0"
-                _hover={{ color: '#0A3D7A', bg: '#F8FAFC' }}
+                _hover={{ color: '#1E3A5F', bg: '#F8FAFC' }}
                 onClick={() => setTab(item.id)}
               >
                 <Icon as={item.icon} w="14px" h="14px" flexShrink={0} />
@@ -225,7 +225,7 @@ function Sidebar({ tab, setTab, pendingVerifs, onRefresh, user }: {
             {user[0]?.toUpperCase() ?? 'A'}
           </Box>
           <Box flex={1} minW={0}>
-            <Text fontSize="12px" fontWeight="600" color="#0A3D7A" fontFamily="heading" lineClamp={1}>{user}</Text>
+            <Text fontSize="12px" fontWeight="600" color="#1E3A5F" fontFamily="heading" lineClamp={1}>{user}</Text>
             <Text fontSize="10px" color="#64748B" fontFamily="heading">Administrator</Text>
           </Box>
         </HStack>
@@ -234,9 +234,9 @@ function Sidebar({ tab, setTab, pendingVerifs, onRefresh, user }: {
           px={3} py={2} cursor="pointer" fontSize="12px"
           fontFamily="heading" fontWeight="500" borderRadius="0"
           transition="all 0.12s"
-          color={tab === 'landing' ? '#0A3D7A' : '#64748B'}
-          bg={tab === 'landing' ? '#EFF6FF' : 'transparent'}
-          _hover={{ color: '#0A3D7A', bg: '#F8FAFC' }}
+          color={tab === 'landing' ? '#1E3A5F' : '#64748B'}
+          bg={tab === 'landing' ? '#E9F3F5' : 'transparent'}
+          _hover={{ color: '#1E3A5F', bg: '#F8FAFC' }}
           onClick={() => setTab('landing')}
         >
           <Icon as={LucideVideo} w={3} h={3} />
@@ -247,9 +247,9 @@ function Sidebar({ tab, setTab, pendingVerifs, onRefresh, user }: {
           px={3} py={2} cursor="pointer" fontSize="12px"
           fontFamily="heading" fontWeight="500" borderRadius="0"
           transition="all 0.12s"
-          color={tab === 'settings' ? '#0A3D7A' : '#64748B'}
-          bg={tab === 'settings' ? '#EFF6FF' : 'transparent'}
-          _hover={{ color: '#0A3D7A', bg: '#F8FAFC' }}
+          color={tab === 'settings' ? '#1E3A5F' : '#64748B'}
+          bg={tab === 'settings' ? '#E9F3F5' : 'transparent'}
+          _hover={{ color: '#1E3A5F', bg: '#F8FAFC' }}
           onClick={() => setTab('settings')}
         >
           <Icon as={LucideSettings} w={3} h={3} />
@@ -260,7 +260,7 @@ function Sidebar({ tab, setTab, pendingVerifs, onRefresh, user }: {
           px={3} py={2} cursor="pointer" color="#64748B" fontSize="12px"
           fontFamily="heading" fontWeight="500" borderRadius="0"
           transition="color 0.12s"
-          _hover={{ color: '#0A3D7A' }}
+          _hover={{ color: '#1E3A5F' }}
           onClick={onRefresh}
         >
           <Icon as={LucideRefreshCw} w={3} h={3} />
@@ -460,7 +460,7 @@ function UserTableRow({ user, onRefresh }: { user: UserRow; onRefresh: () => voi
               <HStack gap={1.5}>
                 <span style={{ fontSize: 12, fontWeight: 600, color: '#92400E', fontFamily: 'var(--font-dm-sans,sans-serif)' }}>Unverified</span>
                 {user.role === 'CLEANER' && (
-                  <Button size="xs" h="18px" px={1.5} fontSize="10px" bg="#0A80DB" color="white"
+                  <Button size="xs" h="18px" px={1.5} fontSize="10px" bg="#1E3A5F" color="white"
                     borderRadius="3px" fontFamily="heading" loading={loading}
                     onClick={() => call({ action: 'verify' })}>
                     Verify
@@ -497,7 +497,7 @@ function UserTableRow({ user, onRefresh }: { user: UserRow; onRefresh: () => voi
             )}
             {suspended ? (
               <Button size="xs" variant="ghost" borderRadius="4px" loading={loading} onClick={() => call({ action: 'unsuspend' })}>
-                <Icon as={LucideUnlock} w={3} h={3} color="#0A80DB" />
+                <Icon as={LucideUnlock} w={3} h={3} color="#1E3A5F" />
               </Button>
             ) : (
               <HStack gap={1}>
@@ -507,7 +507,7 @@ function UserTableRow({ user, onRefresh }: { user: UserRow; onRefresh: () => voi
                 <Text fontSize="10px" color="slate.400">d</Text>
                 <Button size="xs" variant="ghost" borderRadius="4px" loading={loading}
                   onClick={() => call({ action: 'suspend', suspendDays })}>
-                  <Icon as={LucideBan} w={3} h={3} color="#0A80DB" />
+                  <Icon as={LucideBan} w={3} h={3} color="#1E3A5F" />
                 </Button>
               </HStack>
             )}
@@ -596,7 +596,7 @@ function VerifRow({ v, onAction }: { v: Verification; onAction: () => void }) {
                       <Text fontSize="10.5px" fontWeight="700" color="slate.400" fontFamily="heading" mb={1.5} textTransform="uppercase" letterSpacing="0.06em">{img.label}</Text>
                       <a href={img.url} target="_blank" rel="noreferrer">
                         {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img src={img.url} alt={img.label} style={{ width: '100%', height: 130, objectFit: 'cover', border: '1px solid #E3E8EE' }} />
+                        <img src={img.url} alt={img.label} style={{ width: '100%', height: 130, objectFit: 'contain', border: '1px solid #E3E8EE' }} />
                       </a>
                     </Box>
                   ))}
@@ -661,7 +661,7 @@ function LeadDetailRow({ lead }: { lead: LeadRow }) {
         </td>
         <td style={TD}>
           {lead.estimatedMinPrice
-            ? <Text fontSize="12px" fontWeight="600" color="#0A80DB">${lead.estimatedMinPrice}–{lead.estimatedMaxPrice}</Text>
+            ? <Text fontSize="12px" fontWeight="600" color="#1E3A5F">${lead.estimatedMinPrice}–{lead.estimatedMaxPrice}</Text>
             : <Text fontSize="12px" color="slate.300">—</Text>}
         </td>
         <td style={{ ...TD, textAlign: 'center' }}>
@@ -680,7 +680,7 @@ function LeadDetailRow({ lead }: { lead: LeadRow }) {
         {open && (
           <motion.tr initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
             <td colSpan={8} style={{ padding: 0 }}>
-              <Box p={5} bg="#F6F9FC" borderBottom="1px solid #E3E8EE">
+              <Box p={5} bg="#F7F8FA" borderBottom="1px solid #E3E8EE">
                 <Text fontSize="10.5px" fontWeight="700" color="slate.400" fontFamily="heading" textTransform="uppercase" letterSpacing="0.07em" mb={2}>Conversas ({convs.length})</Text>
                 <VStack gap={1} align="stretch">
                   {convs.map(c => (
@@ -861,7 +861,7 @@ export default function AdminPage() {
       />
 
       {/* ── Main ── */}
-      <Box flex={1} overflowY="auto" bg="#F6F9FC">
+      <Box flex={1} overflowY="auto" bg="#F7F8FA">
 
         {/* ══ OVERVIEW ══ */}
         {tab === 'overview' && (
@@ -904,8 +904,8 @@ export default function AdminPage() {
                       <AreaChart data={stats?.leadsTimeSeries ?? []} margin={{ top: 4, right: 4, left: -20, bottom: 0 }}>
                         <defs>
                           <linearGradient id="colorLeads" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%"  stopColor="#0A80DB" stopOpacity={0.15} />
-                            <stop offset="95%" stopColor="#0A80DB" stopOpacity={0} />
+                            <stop offset="5%"  stopColor="#1E3A5F" stopOpacity={0.15} />
+                            <stop offset="95%" stopColor="#1E3A5F" stopOpacity={0} />
                           </linearGradient>
                         </defs>
                         <CartesianGrid strokeDasharray="3 3" stroke="#F1F5F9" />
@@ -917,7 +917,7 @@ export default function AdminPage() {
                           labelStyle={{ color: '#0A2540', fontWeight: 700 }}
                           formatter={(v: any) => [v, 'Bookings']}
                         />
-                        <Area type="monotone" dataKey="count" stroke="#0A80DB" strokeWidth={2} fill="url(#colorLeads)" dot={false} activeDot={{ r: 4 }} />
+                        <Area type="monotone" dataKey="count" stroke="#1E3A5F" strokeWidth={2} fill="url(#colorLeads)" dot={false} activeDot={{ r: 4 }} />
                       </AreaChart>
                     </ResponsiveContainer>
                   )}
@@ -992,7 +992,7 @@ export default function AdminPage() {
                         <YAxis tick={{ fontSize: 10, fill: '#94A3B8', fontFamily: 'var(--font-dm-sans,sans-serif)' }} allowDecimals={false} />
                         <Tooltip
                           contentStyle={{ border: '1px solid #E3E8EE', borderRadius: 4, fontSize: 12, fontFamily: 'var(--font-dm-sans,sans-serif)' }}
-                          cursor={{ fill: '#F6F9FC' }}
+                          cursor={{ fill: '#F7F8FA' }}
                           formatter={(v: any) => [v, 'Bookings']}
                         />
                         <Bar dataKey="count" radius={[3, 3, 0, 0]}>
@@ -1030,7 +1030,7 @@ export default function AdminPage() {
                           cx={65} cy={65} innerRadius={40} outerRadius={60}
                           dataKey="value" paddingAngle={3}
                         >
-                          <Cell fill="#0A80DB" />
+                          <Cell fill="#1E3A5F" />
                           <Cell fill="#10B981" />
                           <Cell fill="#F59E0B" />
                         </Pie>
@@ -1040,7 +1040,7 @@ export default function AdminPage() {
                       </PieChart>
                       <VStack gap={2} align="flex-start">
                         {[
-                          { color: '#0A80DB', label: 'Clients',    value: stats?.users.totalClients ?? 0 },
+                          { color: '#1E3A5F', label: 'Clients',    value: stats?.users.totalClients ?? 0 },
                           { color: '#10B981', label: 'Verified cleaners',  value: stats?.users.verifiedCleaners ?? 0 },
                           { color: '#F59E0B', label: 'Unverified', value: (stats?.users.totalCleaners ?? 0) - (stats?.users.verifiedCleaners ?? 0) },
                         ].map(item => (
@@ -1071,7 +1071,7 @@ export default function AdminPage() {
                       gap={3}
                     >
                       <Box w="6px" h="6px" borderRadius="full" flexShrink={0}
-                        bg={l.status === 'COMPLETED' ? '#10B981' : l.status === 'ACCEPTED' ? '#0A80DB' : l.status === 'CANCELLED' ? '#F43F5E' : '#F59E0B'} />
+                        bg={l.status === 'COMPLETED' ? '#10B981' : l.status === 'ACCEPTED' ? '#1E3A5F' : l.status === 'CANCELLED' ? '#F43F5E' : '#F59E0B'} />
                       <Box flex={1} minW={0}>
                         <Text fontSize="13px" fontWeight="500" color="#0A2540" fontFamily="heading" lineClamp={1}>
                           {l.serviceType} — {l.client.name || '?'}
@@ -1475,7 +1475,7 @@ function AdminSettingsForm() {
   return (
     <Box bg="white" border="1px solid #E3E8EE" style={{ borderRadius: 8 }} overflow="hidden">
       {/* Section header */}
-      <Box bg="#F6F9FC" px={5} py={3} borderBottom="1px solid #E3E8EE">
+      <Box bg="#F7F8FA" px={5} py={3} borderBottom="1px solid #E3E8EE">
         <HStack gap={2}>
           <Icon as={LucideUser} w={4} h={4} color="brand.500" />
           <Text fontSize="10.5px" fontWeight={700} color="#697386"
@@ -1549,8 +1549,8 @@ function AdminSettingsForm() {
 
           <Button
             type="submit"
-            bg="#0A80DB" color="white" borderRadius="4px" fontWeight="bold"
-            _hover={{ bg: '#0870C2' }} transition="background 0.15s"
+            bg="#1E3A5F" color="white" borderRadius="4px" fontWeight="bold"
+            _hover={{ bg: '#172F4D' }} transition="background 0.15s"
             loading={saving} loadingText="Saving…"
             alignSelf="flex-start" px={6}>
             <Icon as={LucideSave} w={4} h={4} mr={2} />
@@ -1569,7 +1569,7 @@ interface PlanConfigRow { id: string; price: number; updatedAt?: string }
 
 const PLAN_META: Record<string, { name: string; color: string; badge: string; perks: string[] }> = {
   BASIC: {
-    name: 'Basic', color: '#0A80DB', badge: 'Popular',
+    name: 'Basic', color: '#1E3A5F', badge: 'Popular',
     perks: ['Wave 1 + Wave 2', '+15 CFS ranking points', '60 mi radius', 'Verified profile badge'],
   },
   PRO: {
@@ -1724,14 +1724,14 @@ function PlanPricingPanel() {
       })}
 
       {/* Info callout */}
-      <Box p={4} bg="#F6F9FC" border="1px solid #E3E8EE">
+      <Box p={4} bg="#F7F8FA" border="1px solid #E3E8EE">
         <HStack gap={3} align="start">
           <Text fontSize="16px" flexShrink={0}>✅</Text>
           <VStack gap={1} align="start">
-            <Text fontSize="12.5px" fontWeight="700" color="#0A80DB" fontFamily="heading">
+            <Text fontSize="12.5px" fontWeight="700" color="#1E3A5F" fontFamily="heading">
               Edit prices here only — Stripe uses this price automatically
             </Text>
-            <Text fontSize="12px" color="#0A80DB" fontFamily="heading" lineHeight={1.6}>
+            <Text fontSize="12px" color="#1E3A5F" fontFamily="heading" lineHeight={1.6}>
               New subscribers always pay the current price on this page. No changes needed in Stripe.
               <strong>Active subscriptions</strong> keep their original price (standard subscription behavior).
             </Text>
@@ -1742,7 +1742,7 @@ function PlanPricingPanel() {
       {/* Refresh button */}
       <Flex justify="flex-end">
         <Button size="sm" variant="ghost" color="slate.400" borderRadius="4px" fontFamily="heading"
-          _hover={{ color: '#0A80DB', bg: 'rgba(26,127,160,0.06)' }}
+          _hover={{ color: '#1E3A5F', bg: 'rgba(26,127,160,0.06)' }}
           onClick={load}>
           <Icon as={LucideRefreshCw} w={3.5} h={3.5} mr={1.5} />Refresh
         </Button>
@@ -1949,7 +1949,7 @@ function LeadPricingPanel() {
               borderRadius="4px"
               fontFamily="heading"
               fontSize="13px"
-              bg="#F6F9FC"
+              bg="#F7F8FA"
             />
             <Text fontSize="11px" color="slate.400" fontFamily="heading">
               One ZIP code per line. Leave empty to accept all areas.
@@ -1993,14 +1993,14 @@ function LeadPricingPanel() {
       </Box>
 
       {/* Info callout */}
-      <Box p={4} bg="#F6F9FC" border="1px solid #E3E8EE">
+      <Box p={4} bg="#F7F8FA" border="1px solid #E3E8EE">
         <HStack gap={3} align="start">
           <Text fontSize="16px" flexShrink={0}>💡</Text>
           <VStack gap={1} align="start">
-            <Text fontSize="12.5px" fontWeight="700" color="#0A80DB" fontFamily="heading">
+            <Text fontSize="12.5px" fontWeight="700" color="#1E3A5F" fontFamily="heading">
               How lead pricing works
             </Text>
-            <Text fontSize="12px" color="#0A80DB" fontFamily="heading" lineHeight={1.6}>
+            <Text fontSize="12px" color="#1E3A5F" fontFamily="heading" lineHeight={1.6}>
               The base price is charged to the cleaner who accepts the lead.
               Prices are randomly picked within each service range at lead creation.
               ZIP coverage, when configured, restricts which areas can submit leads.
@@ -2011,7 +2011,7 @@ function LeadPricingPanel() {
 
       <Flex justify="flex-end">
         <Button size="sm" variant="ghost" color="slate.400" borderRadius="4px" fontFamily="heading"
-          _hover={{ color: '#0A80DB', bg: 'rgba(26,127,160,0.06)' }}
+          _hover={{ color: '#1E3A5F', bg: 'rgba(26,127,160,0.06)' }}
           onClick={load}>
           <Icon as={LucideRefreshCw} w={3.5} h={3.5} mr={1.5} />Refresh
         </Button>
@@ -2069,7 +2069,7 @@ function LandingPageForm() {
 
   return (
     <Box bg="white" border="1px solid #E3E8EE" style={{ borderRadius: 8 }} overflow="hidden">
-      <Box bg="#F6F9FC" px={5} py={3} borderBottom="1px solid #E3E8EE">
+      <Box bg="#F7F8FA" px={5} py={3} borderBottom="1px solid #E3E8EE">
         <HStack gap={2}>
           <Icon as={LucideVideo} w={4} h={4} color="brand.500" />
           <Text fontSize="10.5px" fontWeight={700} color="#697386"
@@ -2119,9 +2119,9 @@ function LandingPageForm() {
             onChange={handleUpload}
           />
           <Button
-            bg="#0A80DB" color="white" borderRadius="4px"
+            bg="#1E3A5F" color="white" borderRadius="4px"
             fontWeight="600" fontSize="13px" fontFamily="heading"
-            _hover={{ bg: '#0870C2' }}
+            _hover={{ bg: '#172F4D' }}
             loading={uploading}
             loadingText="Uploading…"
             onClick={() => inputRef.current?.click()}

@@ -28,7 +28,7 @@ export default function LanguageSwitcher({ dark = false }: { dark?: boolean }) {
       gap={1}
       _hover={dark
         ? { bg: 'rgba(255,255,255,0.12)', color: 'white' }
-        : { bg: '#F6F9FC', borderColor: '#CBD5E1', color: '#0A2540' }
+        : { bg: '#F7F8FA', borderColor: '#CBD5E1', color: '#0A2540' }
       }
       title={locale === 'pt' ? 'Switch to English' : 'Mudar para Português'}
     >
