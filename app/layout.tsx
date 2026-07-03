@@ -36,7 +36,7 @@ export const metadata: Metadata = {
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const cookieStore = await cookies();
-  const locale = (cookieStore.get('bc_locale')?.value ?? 'pt') as Locale;
+  const locale = (cookieStore.get('bc_locale')?.value ?? 'en') as Locale;
   return (
     <html lang="en" translate="no" suppressHydrationWarning>
       <body

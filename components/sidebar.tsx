@@ -53,8 +53,9 @@ export default function Sidebar() {
       >
         {/* Logo */}
         <NextLink href="/dashboard" style={{ flexShrink: 0, textDecoration: 'none' }}>
-          <HStack gap={2}>
-            <Image src="/logo-blue.png" alt="Verliks" width={120} height={40} style={{ objectFit: 'contain' }} />
+          <HStack gap={0} align="center">
+            <Image src="/vlogo.PNG" alt="Verliks" width={38} height={38} style={{ objectFit: 'contain' }} />
+            <Text fontWeight="700" fontSize="17px" color="#1E3A5F" fontFamily="heading" letterSpacing="-0.02em">Verliks</Text>
           </HStack>
         </NextLink>
 

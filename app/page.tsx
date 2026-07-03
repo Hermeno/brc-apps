@@ -7,6 +7,7 @@ import NextLink from 'next/link';
 import Image from 'next/image';
 import styles from './platform-home.module.css';
 import { useT } from '@/lib/i18n';
+import LanguageSwitcher from '@/components/language-switcher';
 
 const IconBolt = () => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
@@ -69,7 +70,8 @@ export default function PlatformHomePage() {
       <nav className={styles.nav}>
         <div className={styles.navInner}>
           <NextLink href="/" className={styles.navLogo}>
-            <Image src="/logo-blue.png" alt="Verliks" width={130} height={44} style={{ objectFit: 'contain' }} />
+            <Image src="/vlogo.PNG" alt="Verliks" width={38} height={38} style={{ objectFit: 'contain' }} />
+            <span className={styles.navLogoText}>Verliks</span>
           </NextLink>
           <ul className={styles.navLinks}>
             <li><a href="#features">{t('home.featuresLabel')}</a></li>
@@ -77,6 +79,7 @@ export default function PlatformHomePage() {
             <li><a href="#how-it-works">{t('home.stepsLabel')}</a></li>
           </ul>
           <div className={styles.navActions}>
+            <LanguageSwitcher />
             <NextLink href="/auth/login" className={styles.navSignIn}>{t('home.heroSignIn').split(' ')[0]}</NextLink>
             <NextLink href="/request" className={styles.navCta}>{t('home.heroCta')}</NextLink>
           </div>
