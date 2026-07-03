@@ -39,7 +39,8 @@ model User {
   role            Role          @default(CLIENT)
   createdAt       DateTime      @default(now())
   updatedAt       DateTime      @updatedAt
-  
+  deletedAt       DateTime?
+
   phone           String?
   address         String?
   avatarUrl       String?
@@ -53,10 +54,15 @@ model User {
   bio             String?
   pricePerHour    Float?
   plan            Plan          @default(FREE)
+  subscriptionEndsAt   DateTime?
   zipCode              String?
   serviceRadiusMiles   Float    @default(25)
 
   suspendedUntil  DateTime?
+
+  // Login rate limiting
+  loginAttempts     Int       @default(0)
+  loginLockedUntil  DateTime?
 
   // Stripe
   stripeCustomerId      String?
@@ -75,6 +81,12 @@ model User {
   workPhotos      WorkPhoto[]    @relation("CleanerPhotos")
   notifications   Notification[]
   verification    CleanerVerification?
+  scheduleBlocks  ScheduleBlock[]
+  disputesAsClient   Dispute[] @relation("DisputeClient")
+  disputesAsCleaner  Dispute[] @relation("DisputeCleaner")
+
+  @@index([deletedAt])
+  @@index([loginLockedUntil])
 }
 
 model Notification {
@@ -299,7 +311,58 @@ model LeadPlatformConfig {
 // Singleton row that stores landing-page configurable content
 model SiteConfig {
   id           String   @id @default("singleton")
-  heroVideoUrl String?  // Cloudinary secure_url for the hero video (mp4)
-  heroVideoPublicId String? // Cloudinary public_id for deletion
+  heroVideoUrl String?
+  heroVideoPublicId String?
   updatedAt    DateTime @updatedAt
+}
+
+// Cleaner manually blocks time slots to prevent scheduling conflicts
+model ScheduleBlock {
+  id          String   @id @default(cuid())
+  cleanerId   String
+  cleaner     User     @relation(fields: [cleanerId], references: [id])
+  startTime   DateTime
+  endTime     DateTime
+  reason      String?
+  createdAt   DateTime @default(now())
+
+  @@index([cleanerId])
+  @@index([startTime, endTime])
+}
+
+// Dispute raised by client or cleaner about a job
+model Dispute {
+  id          String   @id @default(cuid())
+  leadId      String?
+  clientId    String
+  client      User     @relation("DisputeClient",  fields: [clientId],  references: [id])
+  cleanerId   String
+  cleaner     User     @relation("DisputeCleaner", fields: [cleanerId], references: [id])
+  reason      String
+  description String
+  status      String   @default("OPEN")   // OPEN | UNDER_REVIEW | RESOLVED | CLOSED
+  resolution  String?
+  resolvedBy  String?
+  resolvedAt  DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([status])
+  @@index([clientId])
+  @@index([cleanerId])
+}
+
+// Structured platform log for admin visibility
+model AppLog {
+  id        String   @id @default(cuid())
+  level     String   // error | warn | info
+  context   String
+  message   String
+  meta      String?  // JSON string of extra data
+  userId    String?
+  createdAt DateTime @default(now())
+
+  @@index([level])
+  @@index([createdAt])
+  @@index([userId])
 }

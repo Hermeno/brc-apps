@@ -33,7 +33,7 @@ export async function POST(req: NextRequest) {
     }
 
     const { url, publicId } = await uploadVideoToCloudinary(buffer, {
-      folder: 'brazilianclean/landing',
+      folder: 'verliks/landing',
     });
 
     await prisma.siteConfig.upsert({

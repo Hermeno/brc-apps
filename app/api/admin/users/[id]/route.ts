@@ -18,6 +18,16 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     const body = await req.json();
     const { action, name, email, phone, address, zipCode, suspendDays } = body;
 
+    if (action === 'soft_delete') {
+      const user = await prisma.user.update({ where: { id }, data: { deletedAt: new Date() } });
+      return NextResponse.json({ user });
+    }
+
+    if (action === 'restore') {
+      const user = await prisma.user.update({ where: { id }, data: { deletedAt: null } });
+      return NextResponse.json({ user });
+    }
+
     if (action === 'suspend') {
       const until = new Date();
       until.setDate(until.getDate() + (suspendDays ?? 7));

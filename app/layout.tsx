@@ -20,16 +20,33 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: 'Verliks — Professional Cleaning Services',
-  description: 'The #1 platform to find background-checked cleaners near you. Book in minutes, relax all day.',
+  metadataBase: new URL('https://verliks.com'),
+  title: {
+    default:  'Verliks — Professional Cleaning Services',
+    template: '%s | Verliks',
+  },
+  description: 'The #1 platform to find background-checked, Brazilian cleaning professionals near you. Book in minutes, relax all day.',
+  keywords: ['cleaning services', 'house cleaning', 'cleaning professionals', 'Brazilian cleaners', 'book a cleaner', 'home cleaning'],
+  authors:  [{ name: 'Verliks', url: 'https://verliks.com' }],
   openGraph: {
-    title: 'Verliks — Professional Cleaning Services',
+    title:       'Verliks — Professional Cleaning Services',
     description: 'Connect with vetted, background-checked cleaners in your area. Secure booking, satisfaction guaranteed.',
-    type: 'website',
+    url:         'https://verliks.com',
+    siteName:    'Verliks',
+    type:        'website',
+    images: [{ url: '/logo-blue.png', width: 1200, height: 630, alt: 'Verliks' }],
+  },
+  twitter: {
+    card:        'summary_large_image',
+    title:       'Verliks — Professional Cleaning Services',
+    description: 'Find vetted cleaning professionals near you. Book instantly.',
+    images:      ['/logo-blue.png'],
+  },
+  robots: {
+    index: true, follow: true,
+    googleBot: { index: true, follow: true, 'max-image-preview': 'large' },
   },
   other: {
-    // Prevent browser auto-translation — Google Translate/DeepL wrap text nodes in
-    // <font> tags which corrupts React's virtual DOM and causes hydration crashes.
     'google': 'notranslate',
   },
 };

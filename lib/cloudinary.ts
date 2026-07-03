@@ -13,7 +13,7 @@ export async function uploadToCloudinary(
   return new Promise((resolve, reject) => {
     const stream = cloudinary.uploader.upload_stream(
       {
-        folder:         options.folder ?? 'brazilianclean',
+        folder:         options.folder ?? 'verliks',
         public_id:      options.filename,
         resource_type:  'image',
         allowed_formats: ['jpg', 'jpeg', 'png', 'webp', 'gif'],
@@ -35,7 +35,7 @@ export async function uploadVideoToCloudinary(
   return new Promise((resolve, reject) => {
     const stream = cloudinary.uploader.upload_stream(
       {
-        folder:        options.folder ?? 'brazilianclean/videos',
+        folder:        options.folder ?? 'verliks/videos',
         public_id:     options.filename,
         resource_type: 'video',
         allowed_formats: ['mp4', 'mov', 'webm'],

@@ -65,12 +65,21 @@ export async function POST(req: NextRequest) {
           if (!meta.userId || !meta.planId) break;
           const validPlans = ['FREE', 'BASIC', 'PRO', 'PREMIUM'];
           if (!validPlans.includes(meta.planId)) break;
+          // Fetch subscription end date from Stripe
+          let subscriptionEndsAt: Date | undefined;
+          if (s.subscription) {
+            try {
+              const sub = await stripe.subscriptions.retrieve(s.subscription as string);
+              subscriptionEndsAt = new Date(sub.current_period_end * 1000);
+            } catch { /* ignore */ }
+          }
           await prisma.user.update({
             where: { id: meta.userId },
             data: {
               plan:                 meta.planId as any,
               stripeCustomerId:     s.customer     as string,
               stripeSubscriptionId: s.subscription as string,
+              subscriptionEndsAt,
             },
           });
 
@@ -185,14 +194,17 @@ export async function POST(req: NextRequest) {
           if (planId) {
             await prisma.user.update({
               where: { id: userId },
-              data:  { plan: planId as any, stripeSubscriptionId: sub.id },
+              data:  {
+                plan: planId as any,
+                stripeSubscriptionId: sub.id,
+                subscriptionEndsAt: new Date(sub.current_period_end * 1000),
+              },
             });
           }
         } else if (sub.status === 'past_due' || sub.status === 'unpaid' || sub.status === 'paused') {
-          // DB-only downgrade — notification is handled by invoice.payment_failed to avoid duplicates
           await prisma.user.update({
             where: { id: userId },
-            data:  { plan: 'FREE' },
+            data:  { plan: 'FREE', subscriptionEndsAt: null },
           });
         }
         break;
@@ -225,7 +237,7 @@ export async function POST(req: NextRequest) {
         if (!userId) break;
         await prisma.user.update({
           where: { id: userId },
-          data:  { plan: 'FREE', stripeSubscriptionId: null },
+          data:  { plan: 'FREE', stripeSubscriptionId: null, subscriptionEndsAt: null },
         });
         break;
       }

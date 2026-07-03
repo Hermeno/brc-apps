@@ -6,10 +6,10 @@ const MAX_SIZE    = 8 * 1024 * 1024; // 8 MB
 const ALLOWED     = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
 
 const FOLDER_MAP: Record<string, string> = {
-  avatar:       'brazilianclean/avatars',
-  verification: 'brazilianclean/verification',
-  lead:         'brazilianclean/leads',
-  gallery:      'brazilianclean/gallery',
+  avatar:       'verliks/avatars',
+  verification: 'verliks/verification',
+  lead:         'verliks/leads',
+  gallery:      'verliks/gallery',
 };
 
 export async function POST(req: NextRequest) {
@@ -31,7 +31,7 @@ export async function POST(req: NextRequest) {
   }
 
   const buffer = Buffer.from(await file.arrayBuffer());
-  const folder = FOLDER_MAP[type] ?? 'brazilianclean/misc';
+  const folder = FOLDER_MAP[type] ?? 'verliks/misc';
 
   const url = await uploadToCloudinary(buffer, { folder });
   return NextResponse.json({ url });

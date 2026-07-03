@@ -58,7 +58,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
       },
     });
 
-    // Check if the viewer is a client with an accepted conversation with this cleaner
+    // Determine viewer role and permissions
     let canSeeContact = false;
     let isOwner = false;
     try {
@@ -70,6 +70,9 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
         });
         if (viewer?.id === id) {
           isOwner = true;
+        } else if (viewer?.role === 'CLEANER') {
+          // Cleaners cannot see other cleaners' contact info or detailed financials
+          canSeeContact = false;
         } else if (viewer?.role === 'CLIENT') {
           const acceptedConv = await prisma.conversation.findFirst({
             where: {
@@ -81,6 +84,8 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
             },
           });
           canSeeContact = !!acceptedConv;
+        } else if (viewer?.role === 'ADMIN') {
+          canSeeContact = true;
         }
       }
     } catch {}

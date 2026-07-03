@@ -30,7 +30,7 @@ export const authConfig = {
     },
   },
   providers: [],
-  session: { strategy: 'jwt' as const },
+  session: { strategy: 'jwt' as const, maxAge: 60 * 60 * 24 * 7 }, // 7 days
   secret: process.env.NEXTAUTH_SECRET,
   trustHost: true,
 } satisfies NextAuthConfig;

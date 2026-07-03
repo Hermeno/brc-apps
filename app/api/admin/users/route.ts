@@ -12,12 +12,13 @@ export async function GET() {
     if (!me || me.role !== 'ADMIN') return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
 
     const users = await prisma.user.findMany({
-      where: { role: { not: 'ADMIN' } },
+      where: { role: { not: 'ADMIN' }, deletedAt: null },
       select: {
         id: true, name: true, email: true, role: true, phone: true,
         address: true, zipCode: true, latitude: true, longitude: true,
         isVerified: true, suspendedUntil: true,
-        createdAt: true, plan: true, isAvailable: true,
+        createdAt: true, plan: true, isAvailable: true, deletedAt: true,
+        subscriptionEndsAt: true,
         verification: { select: { status: true } },
       },
       orderBy: { createdAt: 'desc' },

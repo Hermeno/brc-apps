@@ -1,13 +1,15 @@
 import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { logError } from '@/lib/logger';
 
-export async function GET() {
+export async function GET(req: NextRequest) {
   const session = await auth();
   if (!session?.user?.email) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
+  const { searchParams } = new URL(req.url);
+  const cityFilter = searchParams.get('city')?.toLowerCase().trim() ?? '';
 
   try {
     const dbUser = await prisma.user.findUnique({
@@ -27,12 +29,17 @@ export async function GET() {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
+    const cityWhere = cityFilter
+      ? { address: { contains: cityFilter, mode: 'insensitive' as const } }
+      : {};
+
     const [available, accepted] = await Promise.all([
       prisma.lead.findMany({
         where: {
           status: { in: ['WAVE2', 'WAVE3', 'NEW', 'IN_REVIEW'] },
           distributions: { some: { cleanerId: dbUser.id, status: 'INVITED' } },
           conversations: { none: { cleanerId: dbUser.id } },
+          ...cityWhere,
         },
         include: {
           client: { select: { name: true } },

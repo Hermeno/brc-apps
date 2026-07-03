@@ -35,6 +35,35 @@ export async function POST(
 
   if (!lead) return NextResponse.json({ error: 'Lead not found' }, { status: 404 });
 
+  // Schedule conflict: check if cleaner already has a job or manual block at this time (±2h window)
+  const windowStart = new Date(lead.dateTime.getTime() - 2 * 60 * 60 * 1000);
+  const windowEnd   = new Date(lead.dateTime.getTime() + 2 * 60 * 60 * 1000);
+
+  const [conflictingJob, conflictingBlock] = await Promise.all([
+    prisma.lead.findFirst({
+      where: {
+        cleanerId: cleaner.id,
+        status: { in: ['ACCEPTED', 'IN_REVIEW'] },
+        dateTime: { gte: windowStart, lte: windowEnd },
+        id: { not: leadId },
+      },
+    }),
+    prisma.scheduleBlock.findFirst({
+      where: {
+        cleanerId: cleaner.id,
+        startTime: { lte: lead.dateTime },
+        endTime:   { gte: lead.dateTime },
+      },
+    }),
+  ]);
+
+  if (conflictingJob) {
+    return NextResponse.json({ error: 'You already have a job scheduled within 2 hours of this time' }, { status: 409 });
+  }
+  if (conflictingBlock) {
+    return NextResponse.json({ error: 'You have blocked this time slot in your schedule' }, { status: 409 });
+  }
+
   // Only accept if lead is still in an open (un-claimed) state
   const openStatuses = ['NEW', 'WAVE2', 'WAVE3'];
   if (!openStatuses.includes(lead.status)) {
