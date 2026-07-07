@@ -94,7 +94,12 @@ export default function PlanPage() {
         body: JSON.stringify({ planId }),
       });
       const data = await res.json();
-      if (data.url) {
+      if (data.granted) {
+        // Promo pricing: plan is $0 right now — granted directly, no Stripe involved.
+        setCurrentPlan(data.plan as PlanId);
+        toaster.create({ title: t('cleaner.plan.toastActivated'), description: t('cleaner.plan.toastActivatedDesc'), type: 'success' });
+        setRedirecting(false);
+      } else if (data.url) {
         window.location.href = data.url;
       } else {
         throw new Error(data.error ?? 'Error creating checkout');

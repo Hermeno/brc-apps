@@ -25,7 +25,13 @@ export async function POST(req: NextRequest) {
     const dbConfig = await prisma.planConfig.findUnique({ where: { id: planId } });
     const price = dbConfig?.price ?? planDef?.price ?? 0;
 
-    if (price <= 0) return NextResponse.json({ error: 'Invalid price' }, { status: 400 });
+    // Promo pricing: admin set this plan's price to $0 — grant it directly,
+    // no Stripe subscription needed. Cleaner keeps full plan perks (wave access,
+    // CFS ranking bonus, radius) until the price is raised again.
+    if (price <= 0) {
+      await prisma.user.update({ where: { id: user.id }, data: { plan: planId } });
+      return NextResponse.json({ granted: true, plan: planId });
+    }
 
     let customerId = user.stripeCustomerId;
     if (!customerId) {

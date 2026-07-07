@@ -53,7 +53,7 @@ export async function PATCH(req: NextRequest) {
     const validIds = PAID_PLANS.map(p => p.id as string);
     if (!validIds.includes(id))
       return NextResponse.json({ error: 'Invalid plan' }, { status: 400 });
-    if (typeof price !== 'number' || price < 1)
+    if (typeof price !== 'number' || price < 0)
       return NextResponse.json({ error: 'Invalid price' }, { status: 400 });
 
     await ensureTable();
