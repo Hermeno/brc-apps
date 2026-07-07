@@ -82,6 +82,9 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
       const deadline = new Date(Date.now() + FEE_PAYMENT_HOURS * 60 * 60 * 1000);
       await prisma.conversation.update({ where: { id }, data: { feeDeadline: deadline } });
     }
+  } else if (conversation.feeStatus === 'pending' && (conversation.leadFee ?? 0) <= 0) {
+    // Free-lead promo: fee is $0 — waive instead of charging or starting a payment deadline.
+    await prisma.conversation.update({ where: { id }, data: { feeStatus: 'waived' } });
   }
 
   const notifBody = autoCharged

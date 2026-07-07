@@ -94,7 +94,7 @@ export async function POST(
       }
 
       const conv = await tx.conversation.create({
-        data: { leadId, clientId: lead.clientId, cleanerId: cleaner.id, leadFee: leadPrice, feeStatus: 'pending' },
+        data: { leadId, clientId: lead.clientId, cleanerId: cleaner.id, leadFee: leadPrice, feeStatus: leadPrice > 0 ? 'pending' : 'waived' },
       });
       conversationId = conv.id;
 
