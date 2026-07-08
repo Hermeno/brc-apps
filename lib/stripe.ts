@@ -26,4 +26,7 @@ export const PLAN_PRICE_IDS: Record<string, string | undefined> = {
   PRO:   process.env.STRIPE_PRO_PRICE_ID,
 };
 
-export const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ?? 'http://localhost:3000';
+// Falls back to the production domain, not localhost — NEXT_PUBLIC_BASE_URL
+// isn't set on DigitalOcean, so an unset var must not send Stripe redirects
+// to localhost in production. Local dev overrides this via .env.
+export const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ?? 'https://verliks.com';

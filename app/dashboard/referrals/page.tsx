@@ -5,7 +5,7 @@ import {
   Box, Flex, VStack, HStack, Text, Heading, Icon, Input, Button,
 } from '@chakra-ui/react';
 import {
-  LucideGift, LucideCopy, LucideCheck, LucideUsers, LucideShieldCheck, LucideClock,
+  LucideGift, LucideCopy, LucideCheck, LucideUsers, LucideShieldCheck, LucideClock, LucideAlertTriangle,
 } from 'lucide-react';
 import CleanerNav from '@/components/cleaner-nav';
 import { useLocale } from '@/lib/i18n';
@@ -28,14 +28,24 @@ export default function ReferralsPage() {
   const [data, setData] = useState<ReferralData | null>(null);
   const [loading, setLoading] = useState(true);
   const [copied, setCopied] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const fetchData = useCallback(async () => {
     setLoading(true);
+    setError(null);
     try {
       const res = await fetch('/api/referrals');
-      if (res.ok) setData(await res.json());
-    } catch {
-      // network error — keep current state, do not crash
+      if (res.ok) {
+        setData(await res.json());
+      } else {
+        const body = await res.json().catch(() => ({}));
+        const msg = `${res.status}${body?.error ? ` — ${body.error}` : ''}`;
+        console.error('[referrals] fetch failed:', msg);
+        setError(msg);
+      }
+    } catch (e: any) {
+      console.error('[referrals] network error:', e);
+      setError(e?.message ?? 'Network error');
     } finally { setLoading(false); }
   }, []);
 
@@ -71,6 +81,32 @@ export default function ReferralsPage() {
         </Text>
 
         <VStack gap={6} align="stretch">
+
+          {error && (
+            <Box border="1px solid #FCA5A5" bg="#FEF2F2" p={4} style={{ borderRadius: 8 }}>
+              <HStack gap={3} justify="space-between" flexWrap="wrap">
+                <HStack gap={2.5}>
+                  <Icon as={LucideAlertTriangle} w={4} h={4} color="#DC2626" flexShrink={0} />
+                  <Box>
+                    <Text fontSize="sm" fontWeight="bold" color="#991B1B">{t('cleaner.referrals.loadError')}</Text>
+                    <Text fontSize="xs" color="#B91C1C" mt={0.5} fontFamily="mono">{error}</Text>
+                  </Box>
+                </HStack>
+                <Button
+                  onClick={fetchData}
+                  size="sm"
+                  bg="#DC2626"
+                  color="white"
+                  borderRadius="6px"
+                  fontSize="12.5px"
+                  fontWeight="600"
+                  _hover={{ bg: '#B91C1C' }}
+                >
+                  {t('cleaner.referrals.retry')}
+                </Button>
+              </HStack>
+            </Box>
+          )}
 
           {/* StatStrip */}
           <Box border="1px solid #E3E8EE" bg="white" style={{ borderRadius: 8 }}>

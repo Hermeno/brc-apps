@@ -1,10 +1,10 @@
 import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { logError } from '@/lib/logger';
 import { REFERRAL_QUALIFY_COUNT, getReferralLink } from '@/lib/referrals';
 
-export async function GET(req: NextRequest) {
+export async function GET() {
   const session = await auth();
   if (!session?.user?.email) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
@@ -24,7 +24,7 @@ export async function GET(req: NextRequest) {
     }
 
     return NextResponse.json({
-      link: getReferralLink(user.id, req.nextUrl.origin),
+      link: getReferralLink(user.id),
       qualifyCount: REFERRAL_QUALIFY_COUNT,
       referralQualifiedCount: user.referralQualifiedCount,
       progressInCycle: user.referralQualifiedCount % REFERRAL_QUALIFY_COUNT,

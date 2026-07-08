@@ -414,6 +414,8 @@ export const en = {
       qualified: 'Verified',
       pending: 'Pending verification',
       freeLeadApplied: 'Free lead applied — referral credit used, no fee charged.',
+      loadError: "Couldn't load your referral data.",
+      retry: 'Try again',
     },
     profile: {
       title: 'My public profile',
