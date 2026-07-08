@@ -4,6 +4,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createNotification } from '@/lib/notifications';
 import { sendMail, verificationApprovedHtml, verificationRejectedHtml } from '@/lib/email';
 import { logError } from '@/lib/logger';
+import { creditReferralIfQualified } from '@/lib/referrals';
 
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const session = await auth();
@@ -35,6 +36,11 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
       },
     });
 
+    const wasVerified = await prisma.user.findUnique({
+      where: { id: verification.cleanerId },
+      select: { isVerified: true },
+    });
+
     const cleaner = await prisma.user.update({
       where: { id: verification.cleanerId },
       data: { isVerified: status === 'APPROVED' },
@@ -42,6 +48,12 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     });
 
     const cleanerName = cleaner.name?.split(' ')[0] ?? 'there';
+
+    // Only credit the referrer the first time this cleaner transitions to verified —
+    // avoids double-counting if an admin re-approves an already-verified record.
+    if (status === 'APPROVED' && !wasVerified?.isVerified) {
+      creditReferralIfQualified(cleaner.id).catch(() => {});
+    }
 
     if (status === 'APPROVED') {
       await createNotification({

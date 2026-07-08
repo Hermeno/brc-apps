@@ -179,6 +179,9 @@ export default function CleanerDashboard() {
       const res = await fetch(`/api/leads/${leadId}/respond`, { method: 'POST' });
       const data = await res.json();
       if (res.ok && data.conversationId) {
+        if (data.usedFreeCredit) {
+          toaster.create({ title: t('cleaner.referrals.freeLeadApplied'), type: 'success' });
+        }
         router.push(`/dashboard/chat/${data.conversationId}`);
         return;
       } else if (!res.ok) {

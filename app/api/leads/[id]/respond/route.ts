@@ -12,7 +12,7 @@ export async function POST(
 
   const cleaner = await prisma.user.findUnique({
     where: { email: session.user.email },
-    select: { id: true, role: true, email: true, name: true },
+    select: { id: true, role: true, email: true, name: true, freeLeadCredits: true },
   });
   if (!cleaner || cleaner.role !== 'CLEANER') {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
@@ -80,6 +80,7 @@ export async function POST(
   const leadPrice = lead.leadPrice ?? 15;
 
   let conversationId = '';
+  let usedFreeCredit = false;
 
   try {
     await prisma.$transaction(async tx => {
@@ -93,8 +94,21 @@ export async function POST(
         throw Object.assign(new Error('LEAD_TAKEN'), { code: 'LEAD_TAKEN' });
       }
 
+      // Referral program: spend a free-lead credit instead of charging, if available.
+      let finalFee = leadPrice;
+      if (leadPrice > 0 && cleaner.freeLeadCredits > 0) {
+        const spent = await tx.user.updateMany({
+          where: { id: cleaner.id, freeLeadCredits: { gt: 0 } },
+          data:  { freeLeadCredits: { decrement: 1 } },
+        });
+        if (spent.count > 0) {
+          finalFee = 0;
+          usedFreeCredit = true;
+        }
+      }
+
       const conv = await tx.conversation.create({
-        data: { leadId, clientId: lead.clientId, cleanerId: cleaner.id, leadFee: leadPrice, feeStatus: leadPrice > 0 ? 'pending' : 'waived' },
+        data: { leadId, clientId: lead.clientId, cleanerId: cleaner.id, leadFee: finalFee, feeStatus: finalFee > 0 ? 'pending' : 'waived' },
       });
       conversationId = conv.id;
 
@@ -138,5 +152,5 @@ export async function POST(
     link:   '/dashboard/client',
   }).catch(() => {});
 
-  return NextResponse.json({ conversationId, won: true });
+  return NextResponse.json({ conversationId, won: true, usedFreeCredit });
 }

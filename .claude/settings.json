@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node -e \"const fs=require\\('fs'\\);const l=fs.readFileSync\\('.env','utf8'\\).split\\('\\\\n'\\).find\\(l=>l.startsWith\\('DATABASE_URL='\\)\\);console.log\\(JSON.stringify\\(l.slice\\(0,25\\)\\)\\)\")"
+    ]
+  }
+}

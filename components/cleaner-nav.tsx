@@ -4,7 +4,7 @@ import { Box, Flex, HStack, Text, Icon, Button } from '@chakra-ui/react';
 import {
   LucideLayoutDashboard, LucideCalendar,
   LucideWallet, LucideCrown, LucideLogOut, LucideUser, LucideCreditCard,
-  LucideMenu,
+  LucideMenu, LucideGift,
 } from 'lucide-react';
 import { useSession, signOut } from 'next-auth/react';
 import NextLink from 'next/link';
@@ -31,6 +31,7 @@ export default function CleanerNav() {
     { key: 'schedule',  icon: LucideCalendar,         href: '/dashboard/schedule' },
     { key: 'finances',  icon: LucideWallet,           href: '/dashboard/finances' },
     { key: 'plan',      icon: LucideCrown,            href: '/dashboard/plan' },
+    { key: 'referrals', icon: LucideGift,             href: '/dashboard/referrals' },
     { key: 'profile',   icon: LucideUser,             href: '/dashboard/profile' },
     { key: 'payments',  icon: LucideCreditCard,       href: '/dashboard/payment-methods' },
   ];

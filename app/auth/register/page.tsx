@@ -3,8 +3,8 @@
 import {
   Box, Text, VStack, HStack, Input, Button, Flex, Icon,
 } from '@chakra-ui/react';
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, Suspense } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { toaster } from '@/lib/toaster';
 import NextLink from 'next/link';
 import { LucideArrowRight, LucideArrowLeft, LucideCheckCircle } from 'lucide-react';
@@ -19,13 +19,15 @@ function formatUSPhone(raw: string) {
   return `(${digits.slice(0,3)}) ${digits.slice(3,6)}-${digits.slice(6)}`;
 }
 
-export default function RegisterPage() {
+function RegisterForm() {
   const [name, setName]         = useState('');
   const [email, setEmail]       = useState('');
   const [password, setPassword] = useState('');
   const [phone, setPhone]       = useState('');
   const [loading, setLoading]   = useState(false);
   const router = useRouter();
+  const params = useSearchParams();
+  const ref = params.get('ref') ?? undefined;
   const t = useT();
 
   const handlePhone = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -44,7 +46,7 @@ export default function RegisterPage() {
       const res = await fetch('/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, email, password, role: 'CLEANER', phone: `+1${phoneDigits}` }),
+        body: JSON.stringify({ name, email, password, role: 'CLEANER', phone: `+1${phoneDigits}`, ...(ref ? { ref } : {}) }),
       });
       if (res.ok) {
         toaster.create({ title: t('auth.register.successTitle'), description: t('auth.register.successDesc'), type: 'success' });
@@ -201,5 +203,13 @@ export default function RegisterPage() {
         </Box>
       </Flex>
     </Flex>
+  );
+}
+
+export default function RegisterPage() {
+  return (
+    <Suspense>
+      <RegisterForm />
+    </Suspense>
   );
 }

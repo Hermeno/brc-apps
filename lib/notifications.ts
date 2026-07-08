@@ -10,7 +10,9 @@ export type NotificationType =
   | 'lead_unmatched'
   | 'verification_approved'
   | 'verification_rejected'
-  | 'payment_failed';
+  | 'payment_failed'
+  | 'referral_qualified'
+  | 'referral_credit_earned';
 
 interface CreateNotificationInput {
   userId: string;

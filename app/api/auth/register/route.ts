@@ -11,6 +11,7 @@ const registerSchema = z.object({
   password: z.string().min(6, 'Password must be at least 6 characters'),
   role:     z.enum(['CLIENT', 'CLEANER']).default('CLIENT'),
   phone:    z.string().optional(),
+  ref:      z.string().optional(),
 });
 
 export async function POST(request: NextRequest) {
@@ -22,7 +23,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: validation.error.errors[0].message }, { status: 400 });
     }
 
-    const { name, email, password, role, phone } = validation.data;
+    const { name, email, password, role, phone, ref } = validation.data;
 
     const existingUser = await prisma.user.findUnique({ where: { email } });
     if (existingUser) {
@@ -31,6 +32,13 @@ export async function POST(request: NextRequest) {
 
     const hashedPassword = await bcryptjs.hash(password, 10);
 
+    // Cleaner referral program: only cleaner → cleaner referrals count.
+    let referredById: string | undefined;
+    if (role === 'CLEANER' && ref) {
+      const referrer = await prisma.user.findUnique({ where: { id: ref }, select: { id: true, role: true } });
+      if (referrer && referrer.role === 'CLEANER') referredById = referrer.id;
+    }
+
     const user = await prisma.$transaction(async (tx) => {
       const created = await tx.user.create({
         data: {
@@ -38,6 +46,7 @@ export async function POST(request: NextRequest) {
           role: role as 'CLIENT' | 'CLEANER',
           isVerified: role === 'CLIENT',
           ...(phone ? { phone } : {}),
+          ...(referredById ? { referredById } : {}),
         },
       });
       if (role === 'CLEANER') {

@@ -58,6 +58,13 @@ model User {
   zipCode              String?
   serviceRadiusMiles   Float    @default(25)
 
+  // Cleaner referral program — refer N verified cleaners, earn a free lead credit
+  referredById         String?
+  referredBy           User?     @relation("CleanerReferrals", fields: [referredById], references: [id])
+  referrals            User[]    @relation("CleanerReferrals")
+  referralQualifiedCount Int     @default(0)  // referred cleaners who became verified
+  freeLeadCredits      Int       @default(0)  // unused free-lead credits earned via referrals
+
   suspendedUntil  DateTime?
 
   // Login rate limiting
@@ -87,6 +94,7 @@ model User {
 
   @@index([deletedAt])
   @@index([loginLockedUntil])
+  @@index([referredById])
 }
 
 model Notification {

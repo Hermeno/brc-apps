@@ -117,6 +117,9 @@ export default function MarketplacePage() {
       const data = await res.json();
 
       if (res.ok && data.conversationId) {
+        if (data.usedFreeCredit) {
+          toaster.create({ title: 'Free lead applied — referral credit used, no fee charged.', type: 'success' });
+        }
         router.push(`/dashboard/chat/${data.conversationId}`);
         return;
       } else if (!res.ok) {
