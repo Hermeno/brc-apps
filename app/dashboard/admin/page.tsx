@@ -16,9 +16,9 @@ import {
   LucideEye, LucideTrash2, LucideLogOut, LucideUser,
   LucideBan, LucideUnlock, LucidePencil, LucideSave, LucideX,
   LucideLayoutDashboard, LucideClipboardList, LucideStar,
-  LucideRefreshCw, LucideSearch, LucideChevronLeft, LucideChevronRight,
-  LucideCheckCircle2, LucideMapPin, LucidePhone,
-  LucideSettings, LucideDollarSign, LucideTrendingUp,
+  LucideRefreshCw, LucideSearch, LucideChevronLeft, LucideChevronRight, LucideChevronDown,
+  LucideCheckCircle2, LucideMapPin, LucidePhone, LucideClock,
+  LucideSettings, LucideDollarSign, LucideTrendingUp, LucideGift,
 } from 'lucide-react';
 import {
   AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell,
@@ -27,7 +27,7 @@ import {
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
-type Tab = 'overview' | 'leads' | 'verifications' | 'users' | 'reviews' | 'pricing' | 'lead-pricing' | 'settings';
+type Tab = 'overview' | 'leads' | 'verifications' | 'users' | 'reviews' | 'referrals' | 'pricing' | 'lead-pricing' | 'settings';
 
 interface StatsData {
   users:         { totalClients: number; totalCleaners: number; verifiedCleaners: number; total: number };
@@ -67,6 +67,15 @@ interface ReviewRow {
   client:  { id: string; name: string | null; email: string };
   cleaner: { id: string; name: string | null; email: string; isVerified: boolean };
   lead:    { serviceType: string; address: string; dateTime: string };
+}
+interface ReferralRow {
+  id: string; name: string | null; email: string; createdAt: string;
+  totalReferred: number; totalVerified: number; freeLeadCredits: number; creditsEarned: number;
+  referrals: { id: string; name: string | null; email: string; isVerified: boolean; createdAt: string }[];
+}
+interface ReferralSummary {
+  totalCleanersReferring: number; totalReferred: number; totalVerified: number;
+  totalCreditsEarned: number; totalCreditsOutstanding: number;
 }
 
 // ─── Design tokens ────────────────────────────────────────────────────────────
@@ -122,6 +131,65 @@ function Stars({ n }: { n: number }) {
 
 function isSuspended(u: UserRow) { return !!u.suspendedUntil && new Date(u.suspendedUntil) > new Date(); }
 
+function ReferralTableRow({ r }: { r: ReferralRow }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <React.Fragment>
+      <tr>
+        <td style={TD}>
+          <Text fontSize="13px" fontWeight="500" color="slate.800" fontFamily="heading">{r.name || '—'}</Text>
+          <Text fontSize="11px" color="slate.400">{r.email}</Text>
+        </td>
+        <td style={TD}>
+          <Text fontSize="12px" color="slate.400" fontFamily="heading" whiteSpace="nowrap">
+            {new Date(r.createdAt).toLocaleDateString('en-US')}
+          </Text>
+        </td>
+        <td style={TD}>
+          <Box
+            as="button"
+            display="flex" alignItems="center" gap={1.5}
+            cursor={r.totalReferred > 0 ? 'pointer' : 'default'}
+            onClick={() => r.totalReferred > 0 && setOpen(v => !v)}
+          >
+            <Text fontSize="13px" fontWeight="700" color="slate.800" fontFamily="heading">{r.totalReferred}</Text>
+            {r.totalReferred > 0 && <Icon as={open ? LucideChevronDown : LucideChevronRight} w="12px" h="12px" color="slate.400" />}
+          </Box>
+        </td>
+        <td style={TD}><Text fontSize="13px" fontWeight="600" color="#047857" fontFamily="heading">{r.totalVerified}</Text></td>
+        <td style={TD}><Text fontSize="13px" color="slate.600" fontFamily="heading">{r.creditsEarned}</Text></td>
+        <td style={TD}>
+          <Box
+            display="inline-block" borderRadius="4px" px="9px" py="3px"
+            bg={r.freeLeadCredits > 0 ? '#FEF3C7' : '#F1F5F9'}
+          >
+            <Text fontSize="12px" fontWeight="700" color={r.freeLeadCredits > 0 ? '#92400E' : '#94A3B8'} fontFamily="heading">
+              {r.freeLeadCredits}
+            </Text>
+          </Box>
+        </td>
+      </tr>
+      {open && r.referrals.length > 0 && (
+        <tr>
+          <td colSpan={6} style={{ ...TD, background: '#F8FAFC', padding: '10px 16px 14px 32px' }}>
+            <VStack align="start" gap={1.5}>
+              {r.referrals.map(ref => (
+                <HStack key={ref.id} gap={2}>
+                  <Icon as={ref.isVerified ? LucideCheckCircle2 : LucideClock} w="12px" h="12px" color={ref.isVerified ? '#059669' : '#94A3B8'} />
+                  <Text fontSize="12.5px" color="slate.700" fontFamily="heading">{ref.name || ref.email}</Text>
+                  <Text fontSize="11px" color="slate.400">
+                    {ref.isVerified ? 'verified' : 'pending verification'} · {new Date(ref.createdAt).toLocaleDateString('en-US')}
+                  </Text>
+                </HStack>
+              ))}
+            </VStack>
+          </td>
+        </tr>
+      )}
+    </React.Fragment>
+  );
+}
+
 function formatUSPhone(raw: string) {
   const digits = raw.replace(/\D/g, '').slice(0, 10);
   if (digits.length < 4) return digits;
@@ -137,6 +205,7 @@ const NAV: { id: Tab; label: string; icon: any; section?: string }[] = [
   { id: 'verifications', label: 'Verifications', icon: LucideShield,          section: 'ACCOUNTS' },
   { id: 'users',         label: 'Users',         icon: LucideUsers },
   { id: 'reviews',       label: 'Reviews',       icon: LucideStar },
+  { id: 'referrals',     label: 'Referrals',     icon: LucideGift },
   { id: 'pricing',       label: 'Plan Pricing',  icon: LucideDollarSign,      section: 'FINANCIAL' },
   { id: 'lead-pricing',  label: 'Lead Prices',   icon: LucideDollarSign },
 ];
@@ -763,12 +832,15 @@ export default function AdminPage() {
   const [users, setUsers]           = useState<UserRow[]>([]);
   const [verifications, setVerifs]  = useState<Verification[]>([]);
   const [reviews, setReviews]       = useState<ReviewRow[]>([]);
+  const [referrals, setReferrals]   = useState<ReferralRow[]>([]);
+  const [referralSummary, setReferralSummary] = useState<ReferralSummary | null>(null);
 
   const [loadingStats, setLS]  = useState(false);
   const [loadingLeads, setLL]  = useState(false);
   const [loadingUsers, setLU]  = useState(false);
   const [loadingVerifs, setLV] = useState(false);
   const [loadingRevs, setLR]   = useState(false);
+  const [loadingRefs, setLRef] = useState(false);
 
   const [leadStatus, setLeadStatus] = useState('');
   const [leadSearch, setLeadSearch] = useState('');
@@ -796,6 +868,13 @@ export default function AdminPage() {
   const fetchUsers  = useCallback(async () => { setLU(true); try { const r = await fetch('/api/admin/users');         if (r.ok) setUsers((await r.json()).users ?? []); } finally { setLU(false); } }, []);
   const fetchVerifs = useCallback(async () => { setLV(true); try { const r = await fetch('/api/admin/verifications'); if (r.ok) setVerifs((await r.json()).verifications ?? []); } finally { setLV(false); } }, []);
   const fetchRevs   = useCallback(async () => { setLR(true); try { const r = await fetch('/api/admin/reviews');       if (r.ok) setReviews((await r.json()).reviews ?? []); } finally { setLR(false); } }, []);
+  const fetchReferrals = useCallback(async () => {
+    setLRef(true);
+    try {
+      const r = await fetch('/api/admin/referrals');
+      if (r.ok) { const d = await r.json(); setReferrals(d.rows ?? []); setReferralSummary(d.summary ?? null); }
+    } finally { setLRef(false); }
+  }, []);
 
   const refreshAll = useCallback(() => {
     fetchStats();
@@ -803,7 +882,8 @@ export default function AdminPage() {
     if (tab === 'users') fetchUsers();
     if (tab === 'verifications') fetchVerifs();
     if (tab === 'reviews') fetchRevs();
-  }, [tab, fetchStats, fetchLeads, fetchUsers, fetchVerifs, fetchRevs]);
+    if (tab === 'referrals') fetchReferrals();
+  }, [tab, fetchStats, fetchLeads, fetchUsers, fetchVerifs, fetchRevs, fetchReferrals]);
 
   useEffect(() => {
     if (authStatus === 'authenticated') {
@@ -817,6 +897,7 @@ export default function AdminPage() {
     if (tab === 'users') fetchUsers();
     if (tab === 'verifications') fetchVerifs();
     if (tab === 'reviews') fetchRevs();
+    if (tab === 'referrals') fetchReferrals();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tab]);
 
@@ -1370,6 +1451,61 @@ export default function AdminPage() {
                           </td>
                         </tr>
                       ))}
+                    </tbody>
+                  </table>
+                </Box>
+              )}
+            </Box>
+          </motion.div>
+        )}
+
+        {/* ══ REFERRALS ══ */}
+        {tab === 'referrals' && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.15 }}>
+            <PageHeader
+              title="Referrals"
+              sub="Cleaner referral program — 3 verified referrals earns 1 free lead credit"
+            />
+
+            <SimpleGrid columns={{ base: 2, md: 4 }} gap={0} bg="white" borderBottom="1px solid #E3E8EE">
+              {[
+                { label: 'Cleaners referring', value: referralSummary?.totalCleanersReferring },
+                { label: 'Total referred',     value: referralSummary?.totalReferred },
+                { label: 'Verified',           value: referralSummary?.totalVerified },
+                { label: 'Credits outstanding', value: referralSummary?.totalCreditsOutstanding },
+              ].map((s, i) => (
+                <Box key={s.label} px={6} py={5} borderRight={i < 3 ? { base: 'none', md: '1px solid #E3E8EE' } : 'none'}>
+                  <Text fontSize="22px" fontWeight="800" color="#1E3A5F" fontFamily="heading" letterSpacing="-0.02em">
+                    {loadingRefs || s.value === undefined ? '—' : s.value}
+                  </Text>
+                  <Text fontSize="11px" color="#697386" textTransform="uppercase" letterSpacing="0.06em" fontFamily="heading" mt={0.5}>
+                    {s.label}
+                  </Text>
+                </Box>
+              ))}
+            </SimpleGrid>
+
+            <Box bg="white">
+              {loadingRefs ? (
+                <Box p={12} textAlign="center"><Text color="slate.400" fontFamily="heading">Loading…</Text></Box>
+              ) : referrals.length === 0 ? (
+                <Box p={12} textAlign="center">
+                  <Text color="slate.300" fontFamily="heading">No referrals yet</Text>
+                  <Text color="slate.400" fontSize="sm" mt={1}>Cleaners show up here once someone signs up through their referral link.</Text>
+                </Box>
+              ) : (
+                <Box overflowX="auto">
+                  <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                    <thead><tr>
+                      <th style={TH}>Cleaner</th>
+                      <th style={TH}>Joined</th>
+                      <th style={TH}>Referred</th>
+                      <th style={TH}>Verified</th>
+                      <th style={TH}>Credits earned</th>
+                      <th style={TH}>Credits available</th>
+                    </tr></thead>
+                    <tbody>
+                      {referrals.map(r => <ReferralTableRow key={r.id} r={r} />)}
                     </tbody>
                   </table>
                 </Box>
