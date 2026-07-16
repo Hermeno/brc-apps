@@ -4,6 +4,7 @@ import { z } from 'zod';
 import { NextRequest, NextResponse } from 'next/server';
 import { createVerificationCode } from '@/lib/verification';
 import { sendMail, emailVerificationHtml } from '@/lib/email';
+import { logError } from '@/lib/logger';
 
 const registerSchema = z.object({
   name:     z.string().min(2, 'Name must be at least 2 characters'),
@@ -25,8 +26,16 @@ export async function POST(request: NextRequest) {
 
     const { name, email, password, role, phone, ref } = validation.data;
 
-    const existingUser = await prisma.user.findUnique({ where: { email } });
-    if (existingUser) {
+    const existingUser = await prisma.user.findUnique({
+      where: { email },
+      select: { id: true, isVerified: true },
+    });
+
+    // A fully verified account is a real conflict. But an UNVERIFIED account
+    // means the person signed up before and never confirmed their email
+    // (e.g. the code never arrived) — let them restart signup instead of
+    // getting permanently locked out with "email already registered".
+    if (existingUser && existingUser.isVerified) {
       return NextResponse.json({ error: 'Email already registered' }, { status: 409 });
     }
 
@@ -36,10 +45,34 @@ export async function POST(request: NextRequest) {
     let referredById: string | undefined;
     if (role === 'CLEANER' && ref) {
       const referrer = await prisma.user.findUnique({ where: { id: ref }, select: { id: true, role: true } });
-      if (referrer && referrer.role === 'CLEANER') referredById = referrer.id;
+      if (referrer && referrer.role === 'CLEANER' && referrer.id !== existingUser?.id) {
+        referredById = referrer.id;
+      }
     }
 
     const user = await prisma.$transaction(async (tx) => {
+      if (existingUser) {
+        // Reclaim the unverified account: refresh credentials & details, keep the same id.
+        const updated = await tx.user.update({
+          where: { id: existingUser.id },
+          data: {
+            name, password: hashedPassword,
+            role: role as 'CLIENT' | 'CLEANER',
+            isVerified: role === 'CLIENT',
+            ...(phone ? { phone } : {}),
+            ...(referredById ? { referredById } : {}),
+          },
+        });
+        if (role === 'CLEANER') {
+          await tx.cleanerStats.upsert({
+            where:  { cleanerId: updated.id },
+            create: { cleanerId: updated.id },
+            update: {},
+          });
+        }
+        return updated;
+      }
+
       const created = await tx.user.create({
         data: {
           name, email, password: hashedPassword,
@@ -56,7 +89,9 @@ export async function POST(request: NextRequest) {
     });
 
     if (role === 'CLEANER') {
-      // Send verification email — non-fatal if email provider is misconfigured
+      // Send verification email. Report whether it actually went out so the
+      // client can tell the user to use "resend" rather than hitting a dead end.
+      let emailSent = false;
       try {
         const code = await createVerificationCode(user.id, email, 'EMAIL_VERIFICATION');
         await sendMail({
@@ -64,13 +99,19 @@ export async function POST(request: NextRequest) {
           subject: 'Confirm your email — Verliks',
           html:    emailVerificationHtml(code, name),
         });
+        emailSent = true;
       } catch (mailErr: any) {
-        // Log but don't fail registration — user can request a new verification email
-        console.error('[register] email send failed:', mailErr?.message ?? mailErr);
+        // Don't fail registration — but log it (AppLog) so email outages are visible.
+        logError('[register] email send failed', mailErr);
       }
 
       return NextResponse.json(
-        { message: 'Account created! Check your email to verify your account.' },
+        {
+          message: emailSent
+            ? 'Account created! Check your email to verify your account.'
+            : "Account created, but we couldn't send your code right now. Use \"Resend code\" in a moment.",
+          emailSent,
+        },
         { status: 201 },
       );
     }
@@ -78,7 +119,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ message: 'Account created successfully!' }, { status: 201 });
 
   } catch (error: any) {
-    console.error('[register] error:', error?.message ?? error);
+    logError('[register]', error);
     return NextResponse.json({ error: 'Internal error' }, { status: 500 });
   }
 }

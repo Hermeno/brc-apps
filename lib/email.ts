@@ -2,13 +2,27 @@ import nodemailer from 'nodemailer';
 
 function createTransport() {
   if (process.env.MAIL_MAILER === 'smtp') {
+    const host = process.env.MAIL_HOST;
+    const user = process.env.MAIL_USERNAME;
+    const pass = process.env.MAIL_PASSWORD;
+
+    // Fail fast with a clear message if the SMTP secrets aren't configured —
+    // otherwise nodemailer throws a cryptic error deep in the connection.
+    if (!host || !user || !pass) {
+      throw new Error(
+        `SMTP is not fully configured (missing ${[!host && 'MAIL_HOST', !user && 'MAIL_USERNAME', !pass && 'MAIL_PASSWORD'].filter(Boolean).join(', ')})`,
+      );
+    }
+
     return nodemailer.createTransport({
-      host: process.env.MAIL_HOST,
+      host,
       port: Number(process.env.MAIL_PORT) || 587,
-      auth: {
-        user: process.env.MAIL_USERNAME,
-        pass: process.env.MAIL_PASSWORD,
-      },
+      auth: { user, pass },
+      // Fail fast instead of hanging the whole request if the SMTP port is
+      // blocked/unreachable (e.g. a host that blocks outbound port 587).
+      connectionTimeout: 10_000,
+      greetingTimeout:   10_000,
+      socketTimeout:     15_000,
     });
   }
   // log mode — prints to console instead of sending
