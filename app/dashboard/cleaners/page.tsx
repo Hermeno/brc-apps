@@ -188,8 +188,8 @@ function CleanersBrowser() {
                       {t('clientCleaners.viewProfile')}
                     </Button>
                     <Box w="1px" h="28px" bg="#E3E8EE" />
-                    <Button flex={1} variant="ghost" borderRadius={0} h="44px" fontSize="13px" fontWeight="700"
-                      color="#1E3A5F" _hover={{ bg: '#E9F3F5' }}
+                    <Button flex={1} borderRadius={0} h="44px" fontSize="13px" fontWeight="700"
+                      bg="gold.500" color="#1E3A5F" _hover={{ bg: 'gold.600' }}
                       onClick={() => router.push(`/request?cleaner=${c.id}&name=${encodeURIComponent(c.name ?? '')}${service ? `&service=${service}` : ''}`)}>
                       {t('clientCleaners.contact')}
                     </Button>

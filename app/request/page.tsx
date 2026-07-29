@@ -417,9 +417,9 @@ function RequestForm() {
               {!showRegister && (
                 <Button
                   onClick={handleSubmit}
-                  bg="#1E3A5F" color="white" h="44px"
+                  bg="gold.500" color="#1E3A5F" h="44px"
                   borderRadius="4px" fontWeight="700" fontSize="14px" fontFamily="heading"
-                  _hover={{ bg: '#172F4D' }} transition="background 0.15s"
+                  _hover={{ bg: 'gold.600' }} transition="background 0.15s"
                   loading={loading}
                 >
                   Book my cleaning

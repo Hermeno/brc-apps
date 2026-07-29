@@ -265,8 +265,9 @@ export default function PlanPage() {
                       ) : (
                         <Button
                           w="full" size="sm" borderRadius="4px" fontWeight="bold"
-                          variant="outline" borderColor={c.border} color={c.text}
-                          _hover={{ bg: c.bg }}
+                          {...(plan.price === 0
+                            ? { variant: 'outline' as const, borderColor: c.border, color: c.text, _hover: { bg: c.bg } }
+                            : { bg: 'gold.500', color: '#1E3A5F', _hover: { bg: 'gold.600' } })}
                           onClick={() => handleSelectPlan(pid)}
                           loading={redirecting || saving}
                           disabled={redirecting}>

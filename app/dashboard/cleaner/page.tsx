@@ -415,10 +415,10 @@ export default function CleanerDashboard() {
                     </Box>
 
                     <Button
-                      bg="#1E3A5F" color="white" px={4} h="36px"
-                      borderRadius="4px" fontWeight="600" fontSize="13px" fontFamily="heading"
+                      bg="gold.500" color="#1E3A5F" px={4} h="36px"
+                      borderRadius="4px" fontWeight="700" fontSize="13px" fontFamily="heading"
                       flexShrink={0} alignSelf="center"
-                      _hover={{ bg: '#172F4D' }} transition="background 0.15s"
+                      _hover={{ bg: 'gold.600' }} transition="background 0.15s"
                       onClick={() => handleRespond(lead.id)}
                       loading={responding === lead.id} loadingText="…"
                     >

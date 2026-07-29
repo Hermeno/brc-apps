@@ -325,11 +325,11 @@ export default function MarketplacePage() {
 
                         {/* CTA */}
                         <Button
-                          bg="#1E3A5F"
-                          color="white" px={5} py={7} h="auto"
+                          bg="gold.500"
+                          color="#1E3A5F" px={5} py={7} h="auto"
                           borderRadius="4px" fontWeight="bold" fontSize="sm"
                           flexShrink={0} flexDirection="column" gap={1.5}
-                          _hover={{ bg: '#172F4D' }}
+                          _hover={{ bg: 'gold.600' }}
                           transition="background 0.15s"
                           onClick={() => handleRespond(lead.id)}
                           loading={responding === lead.id}

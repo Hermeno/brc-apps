@@ -29,6 +29,18 @@ const config = defineConfig({
           700: { value: "#047857" },
         },
 
+        /* ── Gold — primary conversion CTAs (matches the landing page accent) ── */
+        gold: {
+          50:  { value: "#FBF6E3" },
+          100: { value: "#F6ECC3" },
+          200: { value: "#EDD98A" },
+          300: { value: "#E3C868" },
+          400: { value: "#DDBE52" },
+          500: { value: "#D4AF37" },
+          600: { value: "#C4A030" },
+          700: { value: "#A5851F" },
+        },
+
         /* ── Amber — warm warning ── */
         yellow: {
           50:  { value: "#FFFBEB" },

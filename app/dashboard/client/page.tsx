@@ -739,9 +739,9 @@ export default function ClientPage() {
                 {t('client.dashboard.browseCleaners')}
               </Button>
               <Button
-                bg={showForm ? 'slate.100' : 'brand.500'} color={showForm ? 'slate.700' : 'white'}
+                bg={showForm ? 'slate.100' : 'gold.500'} color={showForm ? 'slate.700' : '#1E3A5F'}
                 borderRadius="4px" fontWeight="bold" fontSize="sm" px={5}
-                _hover={{ bg: showForm ? 'slate.200' : 'brand.600' }}
+                _hover={{ bg: showForm ? 'slate.200' : 'gold.600' }}
                 transition="background 0.15s"
                 onClick={() => { setShowForm(v => !v); if (showForm) setForm(emptyForm); }}>
                 <Icon as={showForm ? LucideX : LucidePlus} w={4} h={4} mr={2} />
@@ -788,8 +788,8 @@ export default function ClientPage() {
                         ? t('client.dashboard.allCaughtUpDesc')
                         : t('client.dashboard.homeWaitingDesc')}
                     </Text>
-                    <Button bg="#1E3A5F" color="white" borderRadius="4px" fontWeight="bold" px={6}
-                      _hover={{ bg: '#172F4D' }} transition="background 0.15s"
+                    <Button bg="gold.500" color="#1E3A5F" borderRadius="4px" fontWeight="bold" px={6}
+                      _hover={{ bg: 'gold.600' }} transition="background 0.15s"
                       onClick={() => setShowForm(true)}>
                       <Icon as={LucidePlus} w={4} h={4} mr={2} />
                       {t('client.dashboard.bookCleaning')}
@@ -1803,9 +1803,9 @@ function OrderForm({ form, setField, toggleExtra, estimate, progress, onSubmit, 
               </Box>
             )}
 
-            <Button type="submit" bg='#1E3A5F' color="white"
+            <Button type="submit" bg='gold.500' color="#1E3A5F"
               h="12" borderRadius="4px" fontWeight="bold" fontSize="md"
-              _hover={{ bg: '#172F4D' }}
+              _hover={{ bg: 'gold.600' }}
               transition="background 0.15s" loading={submitting} loadingText={t('client.dashboard.submitting')}>
               {progress === 100 ? `✓ ${t('client.dashboard.submitBooking')}` : t('client.dashboard.submitBooking')}
             </Button>
