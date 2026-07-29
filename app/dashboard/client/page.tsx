@@ -729,15 +729,25 @@ export default function ClientPage() {
                 })()}
               </Text>
             </Box>
-            <Button
-              bg={showForm ? 'slate.100' : 'brand.500'} color={showForm ? 'slate.700' : 'white'}
-              borderRadius="4px" fontWeight="bold" fontSize="sm" px={5}
-              _hover={{ bg: showForm ? 'slate.200' : 'brand.600' }}
-              transition="background 0.15s"
-              onClick={() => { setShowForm(v => !v); if (showForm) setForm(emptyForm); }}>
-              <Icon as={showForm ? LucideX : LucidePlus} w={4} h={4} mr={2} />
-              {showForm ? t('client.dashboard.discardRequest') : t('client.dashboard.bookCleaning')}
-            </Button>
+            <HStack gap={2}>
+              <Button
+                variant="outline" borderColor="#A7C9C7" color="#1E3A5F"
+                borderRadius="4px" fontWeight="bold" fontSize="sm" px={4}
+                _hover={{ bg: '#E9F3F5' }} transition="background 0.15s"
+                onClick={() => router.push('/dashboard/cleaners')}>
+                <Icon as={LucideUsers} w={4} h={4} mr={2} />
+                {t('client.dashboard.browseCleaners')}
+              </Button>
+              <Button
+                bg={showForm ? 'slate.100' : 'brand.500'} color={showForm ? 'slate.700' : 'white'}
+                borderRadius="4px" fontWeight="bold" fontSize="sm" px={5}
+                _hover={{ bg: showForm ? 'slate.200' : 'brand.600' }}
+                transition="background 0.15s"
+                onClick={() => { setShowForm(v => !v); if (showForm) setForm(emptyForm); }}>
+                <Icon as={showForm ? LucideX : LucidePlus} w={4} h={4} mr={2} />
+                {showForm ? t('client.dashboard.discardRequest') : t('client.dashboard.bookCleaning')}
+              </Button>
+            </HStack>
           </Flex>
 
           {/* ── New Order Form ── */}

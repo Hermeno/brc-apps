@@ -82,6 +82,48 @@ const WAVE_BATCH_SIZE      = 2;
 const OPEN_WINDOW_MS       = 90 * 1000;
 const INSTANT_BOOK_WINDOW_MS = 10 * 60 * 1000;
 
+// ─── Direct request ───────────────────────────────────────────────────────────
+// Client picked a specific cleaner (Thumbtack-style). Instead of the wave
+// auto-dispatch, send the lead straight to that cleaner and let it wait for
+// them. The lead is left in status NEW — which advanceWaves never touches, so
+// it is never hijacked into the auto-wave and re-sent to random cleaners — but
+// with an INVITED distribution it still surfaces in the cleaner's feed and the
+// normal /respond flow (which charges the lead fee on accept) works unchanged.
+// expiresAt is null so the cleaner sees no misleading 90-second countdown.
+// Returns false if the target isn't a valid, verified cleaner.
+export async function dispatchDirect(leadId: string, cleanerId: string): Promise<boolean> {
+  const cleaner = await prisma.user.findFirst({
+    where: { id: cleanerId, role: 'CLEANER', isVerified: true },
+    select: { id: true },
+  });
+  if (!cleaner) return false;
+
+  const lead = await prisma.lead.findUnique({
+    where: { id: leadId },
+    select: { serviceType: true, address: true },
+  });
+  if (!lead) return false;
+
+  // Leave lead.status as 'NEW' (its creation default) so advanceWaves ignores it.
+  await prisma.leadDistribution.create({
+    data: {
+      leadId, cleanerId,
+      wave: 2, status: 'INVITED',
+      notifiedAt: new Date(), expiresAt: null,
+    },
+  });
+
+  createNotificationMany([{
+    userId: cleanerId,
+    type:   'lead_received',
+    title:  '✋ A client requested you directly!',
+    body:   `${lead.serviceType} at ${lead.address}. Respond to start the conversation.`,
+    link:   '/dashboard/cleaner',
+  }]).catch(() => {});
+
+  return true;
+}
+
 // ─── Main matching engine ─────────────────────────────────────────────────────
 // Sends the lead to the top 2 scored cleaners (WAVE2). If they don't respond
 // within 90 sec, advanceWaves picks the next batch of 2 (WAVE3, cycling).

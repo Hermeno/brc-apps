@@ -2,7 +2,7 @@ import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { NextRequest, NextResponse } from 'next/server';
 import { after } from 'next/server';
-import { runMatching } from '@/lib/matching';
+import { runMatching, dispatchDirect } from '@/lib/matching';
 import { calculateLeadPrice, getLeadPriceConfig } from '@/lib/pricing';
 import { coordsFromZip } from '@/lib/geo';
 import dns from 'dns/promises';
@@ -81,7 +81,17 @@ export async function POST(request: NextRequest) {
       bedrooms, bathrooms, squareMeters, extras, frequency,
       estimatedMinPrice, estimatedMaxPrice, estimatedHours,
       photos, clientPhone,
+      targetCleanerId, targetCleanerIds,
     } = body;
+
+    // Direct request (Thumbtack-style): client chose specific cleaner(s) to
+    // contact instead of the automatic wave dispatch. Accept one or many.
+    const directTargets: string[] = Array.from(new Set(
+      [
+        ...(typeof targetCleanerId === 'string' ? [targetCleanerId] : []),
+        ...(Array.isArray(targetCleanerIds) ? targetCleanerIds.filter((x: unknown) => typeof x === 'string') : []),
+      ].filter(Boolean),
+    )).slice(0, 10);
 
     if (!serviceType || !address || !dateTime) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
@@ -168,10 +178,23 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    // after() ensures matching runs AFTER the response is sent, never killed mid-flight
-    after(() => runMatching(lead.id).catch(e => logError('[matching]', e)));
+    // after() ensures dispatch runs AFTER the response is sent, never killed mid-flight.
+    if (directTargets.length > 0) {
+      // Direct request → route straight to the chosen cleaner(s), skip the waves.
+      after(() =>
+        Promise.all(
+          directTargets.map(cid => dispatchDirect(lead.id, cid).catch(e => logError('[dispatchDirect]', e))),
+        ).then(results => {
+          // If none of the chosen cleaners were valid, fall back to auto-matching
+          // so the request still gets served rather than sitting unanswered.
+          if (!results.some(Boolean)) return runMatching(lead.id).catch(e => logError('[matching fallback]', e));
+        }),
+      );
+    } else {
+      after(() => runMatching(lead.id).catch(e => logError('[matching]', e)));
+    }
 
-    return NextResponse.json({ lead }, { status: 201 });
+    return NextResponse.json({ lead, direct: directTargets.length > 0 }, { status: 201 });
   } catch (err: any) {
     logError('[POST /api/leads]', err);
     return NextResponse.json({ error: err.message ?? 'Internal error' }, { status: 500 });

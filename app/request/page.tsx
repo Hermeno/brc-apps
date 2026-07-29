@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useMemo, useRef } from 'react';
+import { useState, useMemo, useRef, Suspense } from 'react';
 import { useSession, signIn } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import {
   Box, Flex, VStack, HStack, Text, Button, Input, Textarea,
   Container, Icon, SimpleGrid,
@@ -28,11 +28,17 @@ const LABEL_STYLE = {
   marginBottom: '6px',
 };
 
-export default function RequestPage() {
+function RequestForm() {
   const { data: session, status } = useSession();
   const router = useRouter();
+  const params = useSearchParams();
 
-  const [serviceType, setServiceType]   = useState('standard');
+  // Direct request (Thumbtack-style): client came from a cleaner's card.
+  const targetCleanerId   = params.get('cleaner') || '';
+  const targetCleanerName = params.get('name') || '';
+  const initialService    = params.get('service') || '';
+
+  const [serviceType, setServiceType]   = useState(initialService || 'standard');
   const [address, setAddress]           = useState('');
   const [dateVal, setDateVal]           = useState('');
   const [timeVal, setTimeVal]           = useState('');
@@ -70,6 +76,7 @@ export default function RequestPage() {
         estimatedMinPrice: estimate.minPrice,
         estimatedMaxPrice: estimate.maxPrice,
         estimatedHours: estimate.hours,
+        ...(targetCleanerId ? { targetCleanerId } : {}),
       }),
     });
     if (!res.ok) {
@@ -178,6 +185,29 @@ export default function RequestPage() {
       </Box>
 
       <Container maxW="6xl" py={10}>
+        {targetCleanerId && (
+          <Flex mb={6} align="center" justify="space-between" gap={3} flexWrap="wrap"
+            bg="#E9F3F5" border="1px solid #A7C9C7" p={4} style={{ borderRadius: 8 }}>
+            <HStack gap={3}>
+              <Icon as={LucideUser} w={5} h={5} color="#1E3A5F" />
+              <Box>
+                <Text fontSize="13.5px" fontWeight="700" color="#1E3A5F" fontFamily="heading">
+                  Requesting {targetCleanerName || 'this cleaner'} directly
+                </Text>
+                <Text fontSize="12px" color="#425466" fontFamily="heading">
+                  Only this professional will receive your request.
+                </Text>
+              </Box>
+            </HStack>
+            <NextLink href="/dashboard/cleaners">
+              <Text fontSize="12.5px" fontWeight="600" color="#1E3A5F" cursor="pointer"
+                _hover={{ textDecoration: 'underline' }} fontFamily="heading">
+                Choose someone else
+              </Text>
+            </NextLink>
+          </Flex>
+        )}
+
         <Box mb={10}>
           <Text
             fontSize="10.5px" fontWeight="700" letterSpacing="0.14em"
@@ -191,7 +221,9 @@ export default function RequestPage() {
             Book your cleaning today
           </Text>
           <Text fontSize="14px" color="#425466" fontFamily="heading" mt={1}>
-            Tell us about your home and we'll match you with a vetted cleaner nearby — usually within the hour.
+            {targetCleanerId
+              ? 'Tell us about your home and this cleaner will get your request directly.'
+              : "Tell us about your home and we'll match you with a vetted cleaner nearby — usually within the hour."}
           </Text>
         </Box>
 
@@ -620,5 +652,13 @@ export default function RequestPage() {
 
       </Container>
     </Box>
+  );
+}
+
+export default function RequestPage() {
+  return (
+    <Suspense>
+      <RequestForm />
+    </Suspense>
   );
 }

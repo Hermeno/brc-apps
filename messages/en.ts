@@ -502,6 +502,7 @@ export const en = {
       reviewed: 'Reviewed',
       editProfile: 'Edit profile',
       bookCleaning: 'Book a cleaning',
+      browseCleaners: 'Choose a cleaner',
       discardRequest: 'Discard request',
       allCaughtUp: 'All caught up',
       homeWaiting: 'Your home is waiting',
@@ -686,6 +687,19 @@ export const en = {
     t1: "I've been using Verliks for 6 months and it's completely changed my routine. The cleaner is always on time, professional, and my home looks spotless every single time.",
     t2: 'Booked a deep clean before hosting a family gathering. They exceeded every expectation — areas I forgot existed were cleaned. Booking took 2 minutes. Highly recommend.',
     t3: 'Used Verliks for a move-out clean. Got my full security deposit back. The platform makes everything so simple — booking, communication, payment. No stress at all.',
+  },
+  clientCleaners: {
+    title: 'Choose a cleaner',
+    subtitle: 'Browse verified professionals near you and send your request straight to the one you pick.',
+    allServices: 'All services',
+    loading: 'Loading cleaners…',
+    emptyTitle: 'No cleaners found',
+    emptyHint: 'Try another service, or let the system match you automatically when you book.',
+    newPro: 'New',
+    jobs: '{{n}} jobs',
+    milesAway: '{{n}} mi away',
+    viewProfile: 'View profile',
+    contact: 'Request',
   },
 };
 
