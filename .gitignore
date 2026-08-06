@@ -12,3 +12,7 @@ prisma/dev.db
 
 public/uploads
 
+
+# design mockups & font source archive (not needed at build time)
+design-home-verliks*.png
+public/Google_Sans_Flex,Plus_Jakarta_Sans.zip

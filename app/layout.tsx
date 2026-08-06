@@ -1,21 +1,32 @@
 import type { Metadata } from 'next';
-import { DM_Sans, Inter } from 'next/font/google';
+import localFont from 'next/font/local';
 import Script from 'next/script';
 import { cookies } from 'next/headers';
 import './globals.css';
 import { Providers } from '@/components/providers';
 import type { Locale } from '@/lib/i18n';
 
-const dmSans = DM_Sans({
-  subsets: ['latin'],
-  variable: '--font-dm-sans',
+// Display / headings — Google Sans Flex (static weights only; the 4.15 MB
+// variable font is intentionally not shipped).
+const googleSans = localFont({
+  src: [
+    { path: './fonts/GoogleSansFlex_24pt-Light.ttf',    weight: '300', style: 'normal' },
+    { path: './fonts/GoogleSansFlex_24pt-Regular.ttf',  weight: '400', style: 'normal' },
+    { path: './fonts/GoogleSansFlex_24pt-Medium.ttf',   weight: '500', style: 'normal' },
+    { path: './fonts/GoogleSansFlex_24pt-SemiBold.ttf', weight: '600', style: 'normal' },
+    { path: './fonts/GoogleSansFlex_24pt-Bold.ttf',     weight: '700', style: 'normal' },
+  ],
+  variable: '--font-display',
   display: 'swap',
-  weight: ['300', '400', '500', '600', '700', '800'],
 });
 
-const inter = Inter({
-  subsets: ['latin'],
-  variable: '--font-inter',
+// Body / UI — Plus Jakarta Sans (variable, normal + italic).
+const jakarta = localFont({
+  src: [
+    { path: './fonts/PlusJakartaSans-VariableFont_wght.ttf',        style: 'normal' },
+    { path: './fonts/PlusJakartaSans-Italic-VariableFont_wght.ttf', style: 'italic' },
+  ],
+  variable: '--font-body',
   display: 'swap',
 });
 
@@ -57,7 +68,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   return (
     <html lang="en" translate="no" suppressHydrationWarning>
       <body
-        className={`${dmSans.variable} ${inter.variable}`}
+        className={`${googleSans.variable} ${jakarta.variable}`}
         suppressHydrationWarning
         translate="no"
         style={{ backgroundColor: '#F8FAFC' }}

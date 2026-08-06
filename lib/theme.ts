@@ -78,8 +78,8 @@ const config = defineConfig({
       },
 
       fonts: {
-        heading: { value: "var(--font-dm-sans, 'DM Sans', sans-serif)" },
-        body:    { value: "var(--font-inter, 'Inter', sans-serif)" },
+        heading: { value: "var(--font-display, 'Google Sans Flex', system-ui, sans-serif)" },
+        body:    { value: "var(--font-body, 'Plus Jakarta Sans', system-ui, sans-serif)" },
       },
 
       fontSizes: {

@@ -1,7 +1,14 @@
 html { scroll-behavior: smooth; }
 
+/* Backwards-compat aliases: existing components still reference the old
+   variable names — repoint them at the new local fonts so nothing breaks. */
+:root {
+  --font-dm-sans: var(--font-display);
+  --font-inter:   var(--font-body);
+}
+
 body {
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-family: var(--font-body, 'Plus Jakarta Sans'), system-ui, -apple-system, sans-serif;
   background-color: #F9FAFB;
   color: #111827;
   -webkit-font-smoothing: antialiased;

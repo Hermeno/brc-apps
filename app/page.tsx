@@ -1,300 +1,397 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import NextLink from 'next/link';
 import Image from 'next/image';
 import styles from './platform-home.module.css';
-import { useT } from '@/lib/i18n';
+import { useLocale } from '@/lib/i18n';
+import { SERVICE_TYPES } from '@/lib/estimate';
 import LanguageSwitcher from '@/components/language-switcher';
 
-const IconBolt = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
-    <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+/* ── Inline icons (self-contained, no external deps) ── */
+const IcMenu = () => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
+    <line x1="4" y1="7" x2="20" y2="7" /><line x1="4" y1="12" x2="20" y2="12" /><line x1="4" y1="17" x2="20" y2="17" />
   </svg>
 );
-const IconShield = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+const IcClose = () => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
+    <line x1="6" y1="6" x2="18" y2="18" /><line x1="18" y1="6" x2="6" y2="18" />
   </svg>
 );
-const IconCard = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
-    <rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/>
+const IcVerified = () => (
+  <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" className={styles.verified} aria-hidden="true">
+    <path d="M12 1l2.4 2.1 3.2-.3 1.3 2.9 2.9 1.3-.3 3.2L23.6 16l-2.1 2.4.3 3.2-2.9 1.3-1.3 2.9-3.2-.3L12 27.6 9.6 25.5l-3.2.3-1.3-2.9-2.9-1.3.3-3.2L.4 16l2.1-2.4-.3-3.2 2.9-1.3L6.4 6.2l3.2.3z" transform="scale(0.82) translate(2.6 -1)" />
+    <path d="M10.2 13.6l-2-2-1.2 1.2 3.2 3.2 5.6-5.6-1.2-1.2z" fill="#fff" transform="scale(0.82) translate(2.6 -1)" />
   </svg>
 );
-const IconPin = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
+const IcStar = () => (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z" />
   </svg>
 );
-const IconMsg = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+const IcArrow = () => (
+  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <path d="M5 12h14M13 6l6 6-6 6" />
   </svg>
 );
-const IconChart = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
-    <line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>
-  </svg>
+const IcFacebook = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M22 12a10 10 0 10-11.6 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.5h-1.2c-1.2 0-1.6.8-1.6 1.5V12h2.7l-.4 2.9h-2.3v7A10 10 0 0022 12z" /></svg>
 );
-const IconArrow = () => (
-  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M5 12h14M12 5l7 7-7 7"/>
+const IcInstagram = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
+    <rect x="3" y="3" width="18" height="18" rx="5" /><circle cx="12" cy="12" r="4" /><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none" />
   </svg>
 );
 
-export default function PlatformHomePage() {
+/* Illustrative example data — clearly labeled "Example" in the UI, never
+   presented as real reviews. Real profiles surface after a request. */
+const EXAMPLE_PROS = [
+  { initials: 'S', name: 'Sarah M.',   services: ['standard', 'deep'],       distance: 2.1, rating: 4.9, jobs: 128, avail: 'Tomorrow · 9:00 AM' },
+  { initials: 'J', name: 'Jessica R.', services: ['deep', 'moving'],         distance: 3.4, rating: 4.8, jobs: 96,  avail: 'Wed · 1:00 PM' },
+  { initials: 'E', name: 'Emily T.',   services: ['standard', 'standard'],   distance: 4.7, rating: 4.9, jobs: 142, avail: 'Thu · 10:00 AM' },
+];
+
+/* The landing page always greets US visitors in English. The switcher still
+   works — once a visitor changes language in a session we don't force it again
+   (flag in sessionStorage), so their choice sticks while they browse. */
+const TESTIMONIAL = {
+  quote: 'I used Verliks to find a deep cleaning before my mom came to visit. The cleaner was on time, detailed, and so respectful of my home. It made a huge difference.',
+  name: 'Amanda R.',
+  location: 'Somerville, MA',
+  meta: 'Deep Cleaning · April 2024',
+};
+
+export default function HomePage() {
   const { status } = useSession();
   const router = useRouter();
-  const t = useT();
+  const { locale, setLocale, t } = useLocale();
+  const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
     if (status === 'authenticated') router.replace('/dashboard');
   }, [status, router]);
 
-  const FEATURES = [
-    { Icon: IconBolt,   title: t('home.f1t'), desc: t('home.f1d') },
-    { Icon: IconShield, title: t('home.f2t'), desc: t('home.f2d') },
-    { Icon: IconCard,   title: t('home.f3t'), desc: t('home.f3d') },
-    { Icon: IconPin,    title: t('home.f4t'), desc: t('home.f4d') },
-    { Icon: IconMsg,    title: t('home.f5t'), desc: t('home.f5d') },
-    { Icon: IconChart,  title: t('home.f6t'), desc: t('home.f6d') },
-  ];
+  // English-first landing: force English on the first visit of a session.
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    if (!sessionStorage.getItem('verliks_lang_seen')) {
+      sessionStorage.setItem('verliks_lang_seen', '1');
+      if (locale !== 'en') setLocale('en');
+    }
+  }, [locale, setLocale]);
+
+  const serviceLabel = (id: string) => {
+    const s = SERVICE_TYPES.find(x => x.id === id);
+    return s ? (locale === 'pt' ? s.label : s.labelEn) : id;
+  };
+
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    name: 'Verliks',
+    url: 'https://verliks.com',
+    logo: 'https://verliks.com/logo-blue.png',
+    description: 'Verliks connects homeowners with trusted local cleaning professionals. Send a free request and choose who to hire.',
+    areaServed: 'US',
+    sameAs: ['https://www.instagram.com/'],
+  };
 
   return (
     <div className={styles.page}>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <a href="#main" className={styles.skip}>{t('home.skipToContent')}</a>
 
-      {/* ── Navbar ── */}
-      <nav className={styles.nav}>
+      {/* ── Header ── */}
+      <header className={styles.nav}>
         <div className={styles.navInner}>
-          <NextLink href="/" className={styles.navLogo}>
-            <Image src="/vlogo.PNG" alt="Verliks" width={38} height={38} style={{ objectFit: 'contain' }} />
+          <NextLink href="/" className={styles.navLogo} aria-label="Verliks">
+            <Image src="/vlogo.PNG" alt="" width={34} height={34} style={{ objectFit: 'contain' }} />
             <span className={styles.navLogoText}>Verliks</span>
           </NextLink>
+
           <ul className={styles.navLinks}>
-            <li><a href="#features">{t('home.featuresLabel')}</a></li>
-            <li><a href="#for-who">{t('home.hw02Title')}</a></li>
-            <li><a href="#how-it-works">{t('home.stepsLabel')}</a></li>
+            <li><a href="#how-it-works">{t('home.navHowItWorks')}</a></li>
+            <li><a href="#for-pros">{t('home.navForPros')}</a></li>
+            <li><NextLink href="/about">{t('home.navAbout')}</NextLink></li>
           </ul>
-          <div className={styles.navActions}>
+
+          <div className={styles.navRight}>
             <LanguageSwitcher />
-            <NextLink href="/auth/login" className={styles.navSignIn}>{t('home.heroSignIn').split(' ')[0]}</NextLink>
-            <NextLink href="/request" className={styles.navCta}>{t('home.heroCta')}</NextLink>
+            <NextLink href="/auth/login" className={styles.navSignIn}>{t('home.navSignIn')}</NextLink>
+            <NextLink href="/request" className={styles.navBook}>{t('home.navBook')}</NextLink>
+            <button
+              className={styles.navMenuBtn}
+              onClick={() => setMenuOpen(v => !v)}
+              aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+              aria-expanded={menuOpen}
+            >
+              {menuOpen ? <IcClose /> : <IcMenu />}
+            </button>
           </div>
         </div>
-      </nav>
+        <nav className={`${styles.mobileMenu} ${menuOpen ? styles.open : ''}`} aria-label="Mobile">
+          <a href="#how-it-works" onClick={() => setMenuOpen(false)}>{t('home.navHowItWorks')}</a>
+          <a href="#for-pros" onClick={() => setMenuOpen(false)}>{t('home.navForPros')}</a>
+          <NextLink href="/about" onClick={() => setMenuOpen(false)}>{t('home.navAbout')}</NextLink>
+          <NextLink href="/auth/login" onClick={() => setMenuOpen(false)}>{t('home.navSignIn')}</NextLink>
+          <NextLink href="/request" className={styles.mobileBook} style={{ display: 'block', padding: '13px 4px' }} onClick={() => setMenuOpen(false)}>{t('home.navBook')}</NextLink>
+        </nav>
+      </header>
 
-      {/* ── Hero ── */}
-      <section className={styles.hero}>
-        <div className={styles.heroBgImg} />
-        <div className={styles.heroContent}>
-          <h1 className={styles.heroH1}>
-            {t('home.heroH1a')}<br />
-            <em>{t('home.heroH1b')}</em>
-          </h1>
-          <p className={styles.heroSub}>{t('home.heroSub')}</p>
-          <div className={styles.heroActions}>
-            <NextLink href="/request" className={styles.heroBtnDark}>
-              {t('home.heroCta')} <span className={styles.heroArrow}>&rarr;</span>
-            </NextLink>
-          </div>
-        </div>
-        <div className={styles.heroBorder} />
-      </section>
+      <main id="main">
 
-      {/* ── Statement + Stats ── */}
-      <section className={styles.statement}>
-        <div className={styles.statementInner}>
-          <p className={styles.statementQuote}>
-            {t('home.quoteText').split('—').map((part, i) =>
-              i === 1 ? <em key={i}>—{part}</em> : part
-            )}
-          </p>
-          <div className={styles.statementStats}>
-            {[
-              { val: '500+',   desc: t('home.statCleaner') },
-              { val: '2,400+', desc: t('home.statBookings') },
-              { val: '4.9★',  desc: t('home.statRating') },
-            ].map(s => (
-              <div key={s.val} className={styles.statRow}>
-                <span className={styles.statNum}>{s.val}</span>
-                <span className={styles.statDesc}>
-                  {s.desc.split('\n').map((l, i) => <span key={i} style={{ display: 'block' }}>{l}</span>)}
-                </span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── Features ── */}
-      <section className={styles.features} id="features">
-        <div className={styles.featuresInner}>
-          <div className={styles.featuresHeader}>
-            <h2 className={styles.featuresTitle}>{t('home.featuresTitle')}</h2>
-            <p className={styles.featuresSub}>{t('home.featuresSub')}</p>
-          </div>
-          <div className={styles.featuresGrid}>
-            {FEATURES.map(({ Icon, title, desc }) => (
-              <div key={title} className={styles.featureItem}>
-                <div className={styles.featureItemIcon}><Icon /></div>
-                <h3 className={styles.featureItemTitle}>{title}</h3>
-                <p className={styles.featureItemDesc}>{desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── For who ── */}
-      <section className={styles.forWho} id="for-who">
-        <div className={styles.forWhoInner}>
-          <p className={styles.forWhoLabel}>{t('home.forWhoLabel')}</p>
-          <div className={styles.forWhoGrid}>
-
-            <div className={`${styles.forWhoCard} ${styles.forWhoCardDark}`}>
-              <p className={`${styles.forWhoNum} ${styles.forWhoNumWhite}`}>{t('home.hw01')}</p>
-              <h3 className={`${styles.forWhoTitle} ${styles.forWhoTitleWhite}`}>{t('home.hw01Title')}</h3>
-              <p className={`${styles.forWhoDesc} ${styles.forWhoDescWhite}`}>{t('home.hw01Desc')}</p>
-              <ul className={styles.forWhoBullets}>
-                {(['home.hw01b1','home.hw01b2','home.hw01b3','home.hw01b4'] as const).map(k => (
-                  <li key={k} className={`${styles.forWhoBullet} ${styles.forWhoBulletWhite}`}>
-                    <span className={`${styles.forWhoBulletCheck} ${styles.forWhoBulletCheckWhite}`}>—</span>
-                    {t(k)}
-                  </li>
-                ))}
-              </ul>
-              <NextLink href="/request" className={styles.forWhoLinkWhite}>
-                {t('home.hw01Cta')} <IconArrow />
-              </NextLink>
+        {/* ── Hero ── */}
+        <section className={styles.hero} aria-labelledby="hero-title">
+          <div className={styles.heroInner}>
+            <div className={styles.heroText}>
+              <h1 id="hero-title" className={styles.heroTitle}>
+                {t('home.heroTitleA')}<br />{t('home.heroTitleB')}
+              </h1>
+              <p className={styles.heroBody}>{t('home.heroBody')}</p>
+              <NextLink href="/request" className={styles.heroCta}>{t('home.heroCta')}</NextLink>
+              <p className={styles.heroHelper}>{t('home.heroHelper')}</p>
+              <NextLink href="/auth/register?role=cleaner" className={styles.heroProLink}>{t('home.heroProLink')}</NextLink>
             </div>
-
-            <div className={styles.forWhoCard}>
-              <p className={styles.forWhoNum}>{t('home.hw02')}</p>
-              <h3 className={styles.forWhoTitle}>{t('home.hw02Title')}</h3>
-              <p className={styles.forWhoDesc}>{t('home.hw02Desc')}</p>
-              <ul className={styles.forWhoBullets}>
-                {(['home.hw02b1','home.hw02b2','home.hw02b3','home.hw02b4'] as const).map(k => (
-                  <li key={k} className={styles.forWhoBullet}>
-                    <span className={styles.forWhoBulletCheck}>—</span>
-                    {t(k)}
-                  </li>
-                ))}
-              </ul>
-              <NextLink href="/auth/register?role=cleaner" className={styles.forWhoLink}>
-                {t('home.hw02Cta')} <IconArrow />
-              </NextLink>
+            <div className={styles.heroImageWrap}>
+              <Image src="/abc.png" alt={t('home.heroImgAlt')} fill sizes="(max-width: 900px) 100vw, 50vw" style={{ objectFit: 'cover' }} priority />
             </div>
-
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* ── How it works ── */}
-      <section className={styles.steps} id="how-it-works">
-        <div className={styles.stepsInner}>
-          <div className={styles.stepsHeader}>
-            <h2 className={styles.stepsTitle}>{t('home.stepsTitle')}</h2>
-            <p className={styles.stepsSub}>{t('home.stepsSub')}</p>
+        {/* ── Professionals preview ── */}
+        <section className={styles.section} aria-labelledby="pros-title">
+          <div className={styles.inner}>
+            <div className={styles.prosHead}>
+              <h2 id="pros-title" className={styles.sectionTitle}>{t('home.prosTitle')}</h2>
+              <span className={styles.prosTag}>{t('home.prosExample')}</span>
+            </div>
+            <p className={styles.prosNote}>{t('home.prosNote')}</p>
+            <div className={styles.prosTableWrap}>
+              <table className={styles.prosTable}>
+                <thead>
+                  <tr>
+                    <th>{t('home.colPro')}</th>
+                    <th>{t('home.colServices')}</th>
+                    <th>{t('home.colDistance')}</th>
+                    <th>{t('home.colRating')}</th>
+                    <th>{t('home.colAvail')}</th>
+                    <th aria-hidden="true"></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {EXAMPLE_PROS.map((p, i) => (
+                    <tr key={i}>
+                      <td>
+                        <span className={styles.proCell}>
+                          <span className={styles.proAvatar} aria-hidden="true">{p.initials}</span>
+                          <span className={styles.proName}>{p.name}<IcVerified /></span>
+                        </span>
+                      </td>
+                      <td>{Array.from(new Set(p.services)).map(s => serviceLabel(s)).join(' · ')}</td>
+                      <td>{t('home.milesAway', { n: p.distance })}</td>
+                      <td>
+                        <span className={styles.proStars}><IcStar /> {p.rating.toFixed(1)} ({p.jobs})</span>
+                        <span className={styles.proSub}>{t('home.jobsCount', { n: p.jobs })}</span>
+                      </td>
+                      <td>{p.avail}</td>
+                      <td><NextLink href="/request" className={styles.viewProfile}>{t('home.viewProfile')}</NextLink></td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <div className={styles.seeMoreRow}>
+              <NextLink href="/request" className={styles.seeMore}>{t('home.seeMorePros')}</NextLink>
+            </div>
           </div>
-          <div className={styles.stepsGrid}>
-            {([
-              { n: 'home.s1n', title: 'home.s1t', desc: 'home.s1d' },
-              { n: 'home.s2n', title: 'home.s2t', desc: 'home.s2d' },
-              { n: 'home.s3n', title: 'home.s3t', desc: 'home.s3d' },
-            ] as const).map(s => (
-              <div key={s.n} className={styles.stepItem}>
-                <p className={styles.stepN}>{t(s.n)}</p>
-                <h4 className={styles.stepTitle}>{t(s.title)}</h4>
-                <p className={styles.stepDesc}>{t(s.desc)}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+        </section>
 
-      {/* ── Testimonials ── */}
-      <section className={styles.testimonials}>
-        <div className={styles.testimonialsInner}>
-          <p className={styles.testimonialsLabel}>{t('home.testimonialsLabel')}</p>
-          <div className={styles.testimonialsGrid}>
-            {[
-              { initials: 'SM', name: 'Sarah M.', location: 'Miami, FL · Standard Cleaning', textKey: 'home.t1' },
-              { initials: 'MR', name: 'Michael R.', location: 'Hartford, CT · Deep Cleaning', textKey: 'home.t2' },
-              { initials: 'JK', name: 'Jennifer K.', location: 'Boston, MA · Move-Out Cleaning', textKey: 'home.t3' },
-            ].map(item => (
-              <div key={item.initials} className={styles.testimonialCard}>
-                <div className={styles.testimonialStars}>★★★★★</div>
-                <p className={styles.testimonialText}>&ldquo;{t(item.textKey as any)}&rdquo;</p>
-                <div className={styles.testimonialReviewer}>
-                  <div className={styles.testimonialAvatar}>{item.initials}</div>
-                  <div>
-                    <p className={styles.testimonialName}>{item.name}</p>
-                    <p className={styles.testimonialLocation}>{item.location}</p>
+        {/* ── Process ── */}
+        <section className={styles.section} id="how-it-works" aria-labelledby="process-title">
+          <div className={styles.inner}>
+            <h2 id="process-title" className={styles.sectionTitle}>{t('home.processTitle')}</h2>
+            <p className={styles.processSub}>{t('home.processSub')}</p>
+            <div className={styles.processGrid}>
+              {/* Step 1 */}
+              <div>
+                <h3 className={styles.procStepTitle}>{t('home.p1Title')}</h3>
+                <p className={styles.procStepBody}>{t('home.p1Body')}</p>
+                <div className={styles.mock} aria-hidden="true">
+                  <p className={styles.mockLabel}>{t('home.uiTypeOfCleaning')}</p>
+                  <div className={styles.mockField}>{serviceLabel('deep')}<span>▾</span></div>
+                  <div className={styles.mockField}>{t('home.uiBedrooms')}
+                    <span className={styles.mockStepper}><span className={styles.mockStepBtn}>–</span>2<span className={styles.mockStepBtn}>+</span></span>
                   </div>
+                  <div className={styles.mockField}>{t('home.uiBathrooms')}
+                    <span className={styles.mockStepper}><span className={styles.mockStepBtn}>–</span>2<span className={styles.mockStepBtn}>+</span></span>
+                  </div>
+                  <span className={styles.mockAddLink}>{t('home.uiAddDetails')}</span>
                 </div>
               </div>
-            ))}
+              <div className={styles.procArrow}><IcArrow /></div>
+              {/* Step 2 */}
+              <div>
+                <h3 className={styles.procStepTitle}>{t('home.p2Title')}</h3>
+                <p className={styles.procStepBody}>{t('home.p2Body')}</p>
+                <div className={styles.mock} aria-hidden="true">
+                  {EXAMPLE_PROS.map((p, i) => (
+                    <div key={i} className={`${styles.mockRow} ${i === 1 ? styles.mockRowActive : ''}`}>
+                      <span className={styles.mockMini}>{p.initials}</span>
+                      <span className={styles.mockRowMain}>
+                        <span className={styles.mockRowName}>{p.name}</span>
+                      </span>
+                      <span className={styles.mockRowMeta}>★ {p.rating}<br />{p.avail.split(' · ')[0]}</span>
+                    </div>
+                  ))}
+                </div>
+                <NextLink href="/request" className={styles.procUnderLink}>{t('home.uiSeeAvailability')}</NextLink>
+              </div>
+              <div className={styles.procArrow}><IcArrow /></div>
+              {/* Step 3 */}
+              <div>
+                <h3 className={styles.procStepTitle}>{t('home.p3Title')}</h3>
+                <p className={styles.procStepBody}>{t('home.p3Body')}</p>
+                <div className={styles.mock} aria-hidden="true">
+                  <p className={styles.mockBookTitle}>{serviceLabel('deep')}</p>
+                  <p className={styles.mockBookLine}>Wed · 1:00 PM</p>
+                  <p className={styles.mockBookLine}>Jessica R.</p>
+                  <p className={styles.mockBookLine}>2 bd · 2 ba</p>
+                  <span className={styles.mockConfirm}>{t('home.uiConfirmBooking')}</span>
+                </div>
+                <NextLink href="/request" className={styles.procUnderLink}>{t('home.uiRescheduleNote')}</NextLink>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      {/* ── Trust band ── */}
+      <section className={styles.trust} aria-labelledby="trust-title">
+        <div className={styles.trustInner}>
+          <h2 id="trust-title" className={styles.trustTitle}>{t('home.trustTitle')}</h2>
+          <div className={styles.trustCol}>
+            <h3 className={styles.trustColTitle}>{t('home.trust1Title')}</h3>
+            <p className={styles.trustColBody}>{t('home.trust1Body')}</p>
+          </div>
+          <div className={styles.trustCol}>
+            <h3 className={styles.trustColTitle}>{t('home.trust2Title')}</h3>
+            <p className={styles.trustColBody}>{t('home.trust2Body')}</p>
+          </div>
+          <div className={styles.trustCol}>
+            <h3 className={styles.trustColTitle}>{t('home.trust3Title')}</h3>
+            <p className={styles.trustColBody}>{t('home.trust3Body')}</p>
           </div>
         </div>
       </section>
 
-      {/* ── CTA ── */}
-      <section className={styles.cta}>
-        <div className={styles.ctaInner}>
-          <h2 className={styles.ctaTitle}>
-            {t('home.ctaTitle').split('\n').map((line, i) => <span key={i} style={{ display: 'block' }}>{line}</span>)}
-          </h2>
-          <div className={styles.ctaRight}>
-            <p className={styles.ctaDesc}>{t('home.ctaDesc')}</p>
-            <NextLink href="/request" className={styles.ctaBtnWhite}>
-              {t('home.ctaBtn')} <IconArrow />
-            </NextLink>
-            <NextLink href="/auth/login" className={styles.ctaBtnOutline}>
-              {t('home.ctaSignIn')} &rarr;
-            </NextLink>
+      {/* ── Leads (for cleaning professionals) ── */}
+      <section className={styles.leads} id="for-pros" aria-labelledby="leads-title">
+        <div className={styles.leadsInner}>
+          <div className={styles.leadsText}>
+            <h2 id="leads-title" className={styles.sectionTitle}>{t('home.leadsTitle')}</h2>
+            <p className={styles.leadsBody}>{t('home.leadsBody')}</p>
+            <NextLink href="/auth/register?role=cleaner" className={styles.leadsCta}>{t('home.leadsCta')}</NextLink>
+            <NextLink href="/about" className={styles.leadsLearn}>{t('home.leadsLearnMore')}</NextLink>
           </div>
+          <div className={styles.leadsPanel}>
+            <div className={styles.leadCard} aria-hidden="true">
+              <p className={styles.leadCardTitle}>{serviceLabel('deep')}</p>
+              <p className={styles.leadCardMeta}>Miami, FL · May 24 · 3 bed / 2 bath</p>
+              <p className={styles.leadCardLine}>{t('home.leadCardEstimated')}: $180–$240</p>
+              <p className={styles.leadCardFee}>{t('home.leadCardFee')}: $18</p>
+              <span className={styles.leadCardBtn}>{t('home.leadCardRespond')}</span>
+              <p className={styles.leadCardNote}>{t('home.leadCardNote')}</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Testimonial (kept in English across locales — real quotes aren't translated) ── */}
+      <section className={styles.testimonial} aria-label="Customer testimonial">
+        <div className={styles.testimonialInner}>
+          <div className={styles.testimonialAside}>
+            <p className={styles.quoteMark} aria-hidden="true">&ldquo;</p>
+            <p className={styles.testimonialLabel}>What clients say</p>
+          </div>
+          <figure style={{ margin: 0 }}>
+            <blockquote style={{ margin: 0 }}>
+              <p className={styles.quoteText}>{TESTIMONIAL.quote}</p>
+            </blockquote>
+            <hr className={styles.quoteDivider} />
+            <figcaption>
+              <p className={styles.quoteName}>{TESTIMONIAL.name}</p>
+              <p className={styles.quoteMeta}>{TESTIMONIAL.location} · {TESTIMONIAL.meta}</p>
+            </figcaption>
+          </figure>
+        </div>
+      </section>
+
+      {/* ── Final CTA ── */}
+      <section className={styles.final} aria-labelledby="final-title">
+        <div className={styles.finalInner}>
+          <h2 id="final-title" className={styles.finalTitle}>{t('home.finalTitle')}</h2>
+          <p className={styles.finalBody}>{t('home.finalBody')}</p>
+          <NextLink href="/request" className={styles.finalCta}>{t('home.finalCta')}</NextLink>
+          <p className={styles.finalHelper}>{t('home.finalHelper')}</p>
         </div>
       </section>
 
       {/* ── Footer ── */}
       <footer className={styles.footer}>
         <div className={styles.footerInner}>
-          <div>
-            <NextLink href="/" className={styles.footerLogo}>
-              <Image src="/logo-blue.png" alt="Verliks" width={110} height={37} style={{ objectFit: 'contain' }} />
+          <div className={styles.footerBrand}>
+            <NextLink href="/" className={styles.navLogo} aria-label="Verliks">
+              <Image src="/vlogo.PNG" alt="" width={30} height={30} style={{ objectFit: 'contain' }} />
+              <span className={styles.footerBrandName}>Verliks</span>
             </NextLink>
-            <p className={styles.footerDesc}>
-              The professional cleaning platform trusted by homeowners and cleaners across the US.
-            </p>
+            <p className={styles.footerTagline}>{t('home.footerTagline')}</p>
+            <div className={styles.footerSocials}>
+              <a href="https://facebook.com" aria-label="Facebook" target="_blank" rel="noopener noreferrer"><IcFacebook /></a>
+              <a href="https://instagram.com" aria-label="Instagram" target="_blank" rel="noopener noreferrer"><IcInstagram /></a>
+            </div>
           </div>
-          <div>
-            <p className={styles.footerColTitle}>Platform</p>
-            <NextLink href="/auth/login"    className={styles.footerColLink}>Sign in</NextLink>
-            <NextLink href="/request" className={styles.footerColLink}>Create account</NextLink>
-            <a href="#features"             className={styles.footerColLink}>Features</a>
-            <a href="#how-it-works"         className={styles.footerColLink}>How it works</a>
+          <div className={styles.footerCol}>
+            <p className={styles.footerColTitle}>{t('home.footerPlatform')}</p>
+            <ul>
+              <li><a href="#how-it-works">{t('home.footerHowItWorks')}</a></li>
+              <li><a href="#for-pros">{t('home.footerForPros')}</a></li>
+              <li><NextLink href="/about">{t('home.footerTrust')}</NextLink></li>
+              <li><NextLink href="/about">{t('home.footerSupport')}</NextLink></li>
+            </ul>
           </div>
-          <div>
-            <p className={styles.footerColTitle}>For cleaners</p>
-            <NextLink href="/auth/register?role=cleaner" className={styles.footerColLink}>Join as cleaner</NextLink>
-            <NextLink href="/auth/login"                 className={styles.footerColLink}>Cleaner login</NextLink>
+          <div className={styles.footerCol}>
+            <p className={styles.footerColTitle}>{t('home.footerPros')}</p>
+            <ul>
+              <li><a href="#for-pros">{t('home.footerHowItWorks')}</a></li>
+              <li><NextLink href="/auth/register?role=cleaner">{t('home.footerPricing')}</NextLink></li>
+              <li><NextLink href="/about">{t('home.footerHelp')}</NextLink></li>
+            </ul>
           </div>
-          <div>
-            <p className={styles.footerColTitle}>Company</p>
-<NextLink href="/terms"   className={styles.footerColLink}>Terms of service</NextLink>
-            <NextLink href="/privacy" className={styles.footerColLink}>Privacy policy</NextLink>
-            <a href="mailto:support@verliks.com" className={styles.footerColLink}>Support</a>
+          <div className={styles.footerCol}>
+            <p className={styles.footerColTitle}>{t('home.footerAbout')}</p>
+            <ul>
+              <li><NextLink href="/about">{t('home.footerOurStory')}</NextLink></li>
+              <li><NextLink href="/about">{t('home.footerCareers')}</NextLink></li>
+              <li><NextLink href="/about">{t('home.footerPress')}</NextLink></li>
+            </ul>
+          </div>
+          <div className={styles.footerCol}>
+            <p className={styles.footerColTitle}>{t('home.footerLegal')}</p>
+            <ul>
+              <li><NextLink href="/terms">{t('home.footerTerms')}</NextLink></li>
+              <li><NextLink href="/privacy">{t('home.footerPrivacy')}</NextLink></li>
+              <li><NextLink href="/terms">{t('home.footerTos')}</NextLink></li>
+            </ul>
           </div>
         </div>
         <div className={styles.footerBottom}>
-          <span className={styles.footerCopy}>© {new Date().getFullYear()} Verliks. All rights reserved.</span>
-          <span className={styles.footerCopy}>Built for professionals.</span>
+          <span className={styles.footerCopy}>{t('home.footerRights')}</span>
+          <LanguageSwitcher />
         </div>
       </footer>
-
     </div>
   );
 }
