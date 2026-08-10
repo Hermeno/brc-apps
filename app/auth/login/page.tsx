@@ -60,26 +60,28 @@ export default function LoginPage() {
         w="480px" flexShrink={0} bg="#1E3A5F" position="relative" overflow="hidden"
       >
         <Box position="absolute" inset={0} style={{ backgroundImage: "url('/abc.png')", backgroundSize: 'cover', backgroundPosition: 'center', opacity: 1 }} />
-        <Box position="absolute" inset={0} style={{ background: 'rgba(30, 58, 95, 0.58)' }} />
+        {/* Gradient overlay: lighter at top (photo shows) → dark at bottom for text legibility */}
+        <Box position="absolute" inset={0} style={{ background: 'linear-gradient(to bottom, rgba(20,40,66,0.45) 0%, rgba(15,29,48,0.86) 78%)' }} />
 
         <Flex direction="column" justify="space-between" h="full" position="relative" p={10}>
-          <Image src="/logo-blue.png" alt="Verliks" width={180} height={60} style={{ objectFit: 'contain' }} />
+          <Image src="/logo-white.png" alt="Verliks" width={180} height={60} style={{ objectFit: 'contain' }} />
 
           <Box>
-            <Text fontSize="10.5px" fontWeight="700" letterSpacing="0.14em" color="rgba(255,255,255,0.55)"
+            <Text fontSize="10.5px" fontWeight="700" letterSpacing="0.14em" color="rgba(255,255,255,0.8)"
               textTransform="uppercase" fontFamily="heading" mb={4}
-              style={{ borderLeft: '2px solid rgba(255,255,255,0.3)', paddingLeft: 10 }}>
+              style={{ borderLeft: '2px solid #C5A33B', paddingLeft: 10 }}>
               {t('auth.login.tagline')}
             </Text>
             <Text fontSize="26px" fontWeight="800" color="white" fontFamily="heading"
-              letterSpacing="-0.03em" lineHeight="1.15" mb={6} whiteSpace="pre-line">
+              letterSpacing="-0.03em" lineHeight="1.15" mb={6} whiteSpace="pre-line"
+              style={{ textShadow: '0 1px 12px rgba(0,0,0,0.35)' }}>
               {t('auth.login.hero')}
             </Text>
             <VStack align="stretch" gap={2.5}>
               {(['feature1', 'feature2', 'feature3'] as const).map(k => (
-                <HStack key={k} gap={2}>
-                  <Icon as={LucideCheckCircle} w="14px" h="14px" color="#1E3A5F" flexShrink={0} />
-                  <Text fontSize="13px" color="rgba(255,255,255,0.65)" fontFamily="heading">{t(`auth.login.${k}`)}</Text>
+                <HStack key={k} gap={2.5}>
+                  <Icon as={LucideCheckCircle} w="16px" h="16px" color="#C5A33B" flexShrink={0} />
+                  <Text fontSize="13.5px" color="rgba(255,255,255,0.92)" fontFamily="heading">{t(`auth.login.${k}`)}</Text>
                 </HStack>
               ))}
             </VStack>
