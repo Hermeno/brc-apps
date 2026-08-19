@@ -293,6 +293,28 @@
 .seeMore:hover { text-decoration: underline; }
 
 /* ── Process ──────────────────────────────────────────────── */
+/* Warm interior photo behind the whole section: softened + veiled so the
+   navy headings and the white UI cards stay perfectly legible. */
+.processSection { position: relative; overflow: hidden; isolation: isolate; }
+.processSection::before {   /* the photo — blurred & slightly scaled to hide blur edges */
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: url('/process-bg.jpg') center center / cover no-repeat;
+  filter: blur(3px) saturate(1.04);
+  transform: scale(1.06);
+  z-index: -2;
+}
+.processSection::after {    /* cream scrim for contrast; a touch lighter at the top */
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(245,242,236,0.74) 0%, rgba(245,242,236,0.86) 60%, rgba(245,242,236,0.9) 100%);
+  z-index: -1;
+}
+.processSection .inner { position: relative; z-index: 1; }
+/* Lift the white UI cards off the textured background */
+.processSection .mock { box-shadow: 0 8px 26px rgba(23, 42, 69, 0.12); }
 .processSub { font-size: 15.5px; color: var(--muted); margin: 10px 0 46px; }
 .processGrid {
   display: grid;

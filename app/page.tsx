@@ -210,7 +210,7 @@ export default function HomePage() {
         </section>
 
         {/* ── Process ── */}
-        <section className={styles.section} id="how-it-works" aria-labelledby="process-title">
+        <section className={`${styles.section} ${styles.processSection}`} id="how-it-works" aria-labelledby="process-title">
           <div className={styles.inner}>
             <h2 id="process-title" className={styles.sectionTitle}>{t('home.processTitle')}</h2>
             <p className={styles.processSub}>{t('home.processSub')}</p>
