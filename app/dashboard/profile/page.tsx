@@ -14,6 +14,7 @@ import { toaster } from '@/lib/toaster';
 import { AnimatePresence } from 'motion/react';
 import { ImageUpload } from '@/components/image-upload';
 import { useT } from '@/lib/i18n';
+import { RADIUS_OPTIONS, maxRadiusForPlan } from '@/lib/plans';
 
 function formatUSPhone(raw: string) {
   const digits = raw.replace(/\D/g, '').slice(0, 10);
@@ -25,7 +26,7 @@ function formatUSPhone(raw: string) {
 /* ─── types ──────────────────────────────────────────────────── */
 type Photo = { id: string; url: string; caption?: string | null; createdAt: string };
 
-const PLAN_MAX: Record<string, number> = { FREE: 60, BASIC: 60, PRO: 110, PREMIUM: 110 };
+// Radius plan caps + options come from lib/plans.ts (single source of truth).
 
 const SERVICE_LIST = [
   'Standard Cleaning', 'Deep Cleaning', 'Post-Construction', 'Move-In/Out',
@@ -45,7 +46,7 @@ export default function ProfilePage() {
   const [locationLabel,     setLocationLabel] = useState('');
   const [geoLoading,        setGeoLoading]   = useState(false);
   const [serviceRadiusMiles, setServiceRadius] = useState<number>(25);
-  const [planMaxRadius,      setPlanMaxRadius] = useState<number>(25);
+  const [planMaxRadius,      setPlanMaxRadius] = useState<number>(maxRadiusForPlan('FREE'));
   const [zipCode,            setZipCode]      = useState('');
   const [photos,            setPhotos]       = useState<Photo[]>([]);
   const [saving,            setSaving]       = useState(false);
@@ -65,7 +66,7 @@ export default function ProfilePage() {
       .then(r => r.ok ? r.json() : null)
       .then(d => {
         if (!d) return;
-        const maxR = PLAN_MAX[d.plan ?? 'FREE'] ?? 60;
+        const maxR = maxRadiusForPlan(d.plan);
         setPlanMaxRadius(maxR);
         setZipCode(d.zipCode ?? '');
         if (d.id) fetchProfile(d.id);
@@ -474,7 +475,7 @@ export default function ProfilePage() {
                     </Text>
                   </HStack>
                   <Box display="flex" gap={2} flexWrap="wrap">
-                    {[15, 25, 40, 60, 80, 110].map(miles => {
+                    {RADIUS_OPTIONS.map(miles => {
                       const locked = miles > planMaxRadius;
                       const active = serviceRadiusMiles === miles;
                       return (
@@ -494,7 +495,7 @@ export default function ProfilePage() {
                           _hover={locked ? {} : { borderColor: '#1E3A5F', color: active ? 'white' : '#1E3A5F' }}
                           onClick={() => !locked && setServiceRadius(miles)}
                         >
-                          {miles} {miles === 1 ? t('cleaner.profile.mile') : t('cleaner.profile.miles')}{locked ? ' 🔒' : ''}
+                          {miles} {t('cleaner.profile.miles')}{locked ? ' 🔒' : ''}
                         </Box>
                       );
                     })}

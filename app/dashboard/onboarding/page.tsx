@@ -17,6 +17,7 @@ import NextLink from 'next/link';
 import Image from 'next/image';
 import { useT } from '@/lib/i18n';
 import LanguageSwitcher from '@/components/language-switcher';
+import { RADIUS_OPTIONS, maxRadiusForPlan, DEFAULT_RADIUS_MILES } from '@/lib/plans';
 
 const SERVICES = [
   { id: 'Standard Cleaning',          icon: '🧹' },
@@ -37,7 +38,7 @@ const SERVICES = [
   { id: 'Commercial Cleaning',        icon: '🏬' },
 ];
 
-const RADIUS_OPTIONS = [5, 10, 15, 20, 25, 35, 50, 60];
+// RADIUS_OPTIONS + plan caps come from lib/plans.ts (single source of truth).
 
 function StepDots({ current, steps }: { current: number; steps: string[] }) {
   return (
@@ -71,7 +72,8 @@ export default function OnboardingPage() {
   const [longitude,    setLongitude]    = useState<number | null>(null);
   const [locationLabel, setLocationLabel] = useState('');
   const [zipCode,      setZipCode]      = useState('');
-  const [serviceRadiusMiles, setRadius] = useState(25);
+  const [serviceRadiusMiles, setRadius] = useState(DEFAULT_RADIUS_MILES);
+  const [planMaxRadius, setPlanMaxRadius] = useState(maxRadiusForPlan('FREE'));
   const [bio,       setBio]       = useState('');
   const [avatarUrl, setAvatarUrl] = useState('');
 
@@ -86,6 +88,7 @@ export default function OnboardingPage() {
         if (u.serviceTypes?.length)     setServiceTypes(u.serviceTypes);
         if (u.bio)                      setBio(u.bio);
         if (u.avatarUrl)                setAvatarUrl(u.avatarUrl);
+        setPlanMaxRadius(maxRadiusForPlan(u.plan));
         if (u.serviceRadiusMiles)       setRadius(u.serviceRadiusMiles);
         if (u.zipCode)                  setZipCode(u.zipCode);
         if (u.latitude && u.longitude) {
@@ -358,19 +361,26 @@ export default function OnboardingPage() {
                       </Box>
                     </Flex>
                     <HStack gap={2} flexWrap="wrap">
-                      {RADIUS_OPTIONS.map(r => (
-                        <Box
-                          key={r} as="button" onClick={() => setRadius(r)}
-                          px={3} py={1.5}
-                          bg={serviceRadiusMiles === r ? '#1E3A5F' : '#F8FAFC'}
-                          color={serviceRadiusMiles === r ? 'white' : '#64748B'}
-                          border="1px solid" borderColor={serviceRadiusMiles === r ? '#1E3A5F' : '#E3E8EE'}
-                          borderRadius="4px" fontSize="sm" fontWeight="bold"
-                          cursor="pointer" transition="all 0.12s"
-                          _hover={{ borderColor: '#1E3A5F' }}>
-                          {r} mi
-                        </Box>
-                      ))}
+                      {RADIUS_OPTIONS.map(r => {
+                        const locked = r > planMaxRadius;
+                        const active = serviceRadiusMiles === r;
+                        return (
+                          <Box
+                            key={r} as="button"
+                            onClick={() => !locked && setRadius(r)}
+                            px={3} py={1.5}
+                            bg={active ? '#1E3A5F' : '#F8FAFC'}
+                            color={active ? 'white' : locked ? '#94A3B8' : '#64748B'}
+                            border="1px solid" borderColor={active ? '#1E3A5F' : '#E3E8EE'}
+                            borderRadius="4px" fontSize="sm" fontWeight="bold"
+                            cursor={locked ? 'not-allowed' : 'pointer'}
+                            opacity={locked ? 0.4 : 1}
+                            transition="all 0.12s"
+                            _hover={locked ? {} : { borderColor: '#1E3A5F' }}>
+                            {r} mi{locked ? ' 🔒' : ''}
+                          </Box>
+                        );
+                      })}
                     </HStack>
                   </Box>
                 </VStack>

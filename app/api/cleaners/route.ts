@@ -4,9 +4,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { logError } from '@/lib/logger';
 import { haversineDistance, resolveCoords, coordsFromZip } from '@/lib/geo';
 import { detectServiceKey } from '@/lib/pricing';
+import { PLAN_MAX_RADIUS, DEFAULT_RADIUS_MILES } from '@/lib/plans';
 
 const PLAN_BONUS: Record<string, number> = { FREE: 0, BASIC: 15, PRO: 30, PREMIUM: 30 };
-const PLAN_MAX_RADIUS: Record<string, number> = { FREE: 60, BASIC: 60, PRO: 110, PREMIUM: 110 };
 
 // Directory ranking — same ingredients as the CFS matching score, kept
 // self-contained so the matching engine stays untouched.
@@ -71,8 +71,8 @@ export async function GET(req: NextRequest) {
         if (clientCoords && coords) {
           distanceMiles = haversineDistance(clientCoords.lat, clientCoords.lng, coords.lat, coords.lng);
           // Only show cleaners whose service area actually reaches the client.
-          const planMax = PLAN_MAX_RADIUS[c.plan ?? 'FREE'] ?? 60;
-          const radius  = Math.min(c.serviceRadiusMiles ?? 25, planMax);
+          const planMax = PLAN_MAX_RADIUS[c.plan ?? 'FREE'] ?? PLAN_MAX_RADIUS.FREE;
+          const radius  = Math.min(c.serviceRadiusMiles ?? DEFAULT_RADIUS_MILES, planMax);
           if (distanceMiles > radius) return null;
         }
 

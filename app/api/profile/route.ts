@@ -3,8 +3,7 @@ import { prisma } from '@/lib/prisma';
 import { NextRequest, NextResponse } from 'next/server';
 import { ensureRadiusColumn } from '@/lib/geo';
 import { logError } from '@/lib/logger';
-
-const PLAN_MAX_RADIUS: Record<string, number> = { FREE: 60, BASIC: 60, PRO: 110, PREMIUM: 110 };
+import { maxRadiusForPlan, clampRadiusForPlan } from '@/lib/plans';
 
 export async function PUT(req: NextRequest) {
   const session = await auth();
@@ -22,7 +21,7 @@ export async function PUT(req: NextRequest) {
     const { bio, serviceTypes, avatarUrl, latitude, longitude, serviceRadiusMiles, zipCode, phone } = await req.json();
 
     if (serviceRadiusMiles !== undefined) {
-      const maxRadius = PLAN_MAX_RADIUS[user.plan ?? 'FREE'] ?? 60;
+      const maxRadius = maxRadiusForPlan(user.plan);
       if (Number(serviceRadiusMiles) > maxRadius) {
         return NextResponse.json(
           { error: `Your ${user.plan} plan allows a maximum radius of ${maxRadius} mi. Upgrade to increase it.` },
@@ -39,7 +38,8 @@ export async function PUT(req: NextRequest) {
         ...(avatarUrl          !== undefined && { avatarUrl: avatarUrl || null }),
         ...(latitude           !== undefined && latitude  !== null && { latitude:  Number(latitude)  }),
         ...(longitude          !== undefined && longitude !== null && { longitude: Number(longitude) }),
-        ...(serviceRadiusMiles !== undefined && { serviceRadiusMiles: Number(serviceRadiusMiles) }),
+        // Store the clamped value — never trust the raw number past the plan cap.
+        ...(serviceRadiusMiles !== undefined && { serviceRadiusMiles: clampRadiusForPlan(Number(serviceRadiusMiles), user.plan) }),
         ...(zipCode             !== undefined && { zipCode: zipCode || null }),
         ...(phone               !== undefined && { phone: phone || null }),
       },

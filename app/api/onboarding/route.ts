@@ -2,6 +2,7 @@ import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { NextRequest, NextResponse } from 'next/server';
 import { logError } from '@/lib/logger';
+import { clampRadiusForPlan } from '@/lib/plans';
 
 // GET — returns current profile data for pre-filling the wizard
 export async function GET() {
@@ -12,7 +13,7 @@ export async function GET() {
     const user = await prisma.user.findUnique({
       where: { email: session.user.email },
       select: {
-        id: true, role: true,
+        id: true, role: true, plan: true,
         serviceTypes: true, bio: true, avatarUrl: true,
         latitude: true, longitude: true, serviceRadiusMiles: true, zipCode: true,
       },
@@ -32,8 +33,6 @@ export async function POST(req: NextRequest) {
   if (!session?.user?.email) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
   try {
-    const PLAN_MAX_RADIUS: Record<string, number> = { FREE: 60, BASIC: 60, PRO: 110, PREMIUM: 110 };
-
     const user = await prisma.user.findUnique({
       where: { email: session.user.email },
       select: { id: true, role: true, plan: true },
@@ -59,8 +58,7 @@ export async function POST(req: NextRequest) {
       if (data.longitude != null) updates.longitude = Number(data.longitude);
       if (data.zipCode   != null) updates.zipCode   = String(data.zipCode);
       if (data.serviceRadiusMiles != null) {
-        const maxRadius = PLAN_MAX_RADIUS[user.plan ?? 'FREE'] ?? 60;
-        updates.serviceRadiusMiles = Math.min(Number(data.serviceRadiusMiles), maxRadius);
+        updates.serviceRadiusMiles = clampRadiusForPlan(Number(data.serviceRadiusMiles), user.plan);
       }
     }
 

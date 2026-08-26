@@ -2,6 +2,7 @@ import { prisma } from './prisma';
 import { calculateLeadPrice, detectServiceKey, getLeadPriceConfig } from './pricing';
 import { createNotificationMany, createNotification } from './notifications';
 import { haversineDistance, resolveCoords, ensureRadiusColumn } from './geo';
+import { PLAN_MAX_RADIUS, DEFAULT_RADIUS_MILES } from './plans';
 
 // ─── CFS (Cleaner Fit Score) ─────────────────────────────────────────────────
 // Max 100 points: Plan(30) + Service(40) + Rating(20) + Proximity(10)
@@ -15,9 +16,7 @@ const PLAN_BONUS: Record<string, number> = {
   FREE: 0, BASIC: 15, PRO: 30, PREMIUM: 30,
 };
 
-const PLAN_MAX_RADIUS: Record<string, number> = {
-  FREE: 60, BASIC: 60, PRO: 110, PREMIUM: 110,
-};
+// PLAN_MAX_RADIUS + DEFAULT_RADIUS_MILES come from lib/plans.ts (single source of truth).
 
 function isInstantBookEligible(plan: string): boolean {
   return plan === 'PRO' || plan === 'PREMIUM';
@@ -66,9 +65,12 @@ function filterByRadius(
         ? haversineDistance(cleanerCoords.lat, cleanerCoords.lng, leadCoords.lat, leadCoords.lng)
         : null;
 
-      const planMax     = PLAN_MAX_RADIUS[c.plan ?? 'FREE'] ?? 60;
-      const radiusMiles = Math.min(c.serviceRadiusMiles ?? 25, planMax);
+      const planMax     = PLAN_MAX_RADIUS[c.plan ?? 'FREE'] ?? PLAN_MAX_RADIUS.FREE;
+      const radiusMiles = Math.min(c.serviceRadiusMiles ?? DEFAULT_RADIUS_MILES, planMax);
 
+      // Enforce the cleaner's chosen radius when distance is known. If the lead
+      // has no resolvable coordinates (distanceMiles null), distance can't be
+      // measured — we keep the cleaner as a fallback so the lead still matches.
       if (distanceMiles !== null && distanceMiles > radiusMiles) return null;
 
       return { cleaner: c, distanceMiles };
