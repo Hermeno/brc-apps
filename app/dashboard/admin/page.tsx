@@ -57,6 +57,10 @@ interface UserRow {
   isVerified: boolean; suspendedUntil: string | null;
   createdAt: string; plan: string; isAvailable: boolean;
   hasPaymentMethod: boolean;
+  // Resolved server-side: matching falls back to the ZIP centroid, so raw
+  // lat/lng alone does not say whether a cleaner can be placed.
+  locatable: boolean;
+  locationSource: 'gps' | 'zip' | 'none';
 }
 interface Verification {
   id: string; status: string; fullName: string; idNumber: string;
@@ -422,10 +426,6 @@ function UserTableRow({ user, onRefresh }: { user: UserRow; onRefresh: () => voi
   const [loading, setLoading]       = useState(false);
   const [showDeleteModal, setShowDelete] = useState(false);
   const suspended = isSuspended(user);
-  // Matches lib/geo hasRealCoords: 0,0 is a placeholder, not a location.
-  const hasCoords =
-    user.latitude != null && user.longitude != null &&
-    (Math.abs(user.latitude) > 0.0001 || Math.abs(user.longitude) > 0.0001);
 
   const call = async (body: object) => {
     setLoading(true);
@@ -505,17 +505,23 @@ function UserTableRow({ user, onRefresh }: { user: UserRow; onRefresh: () => voi
             ) : (
               <Text fontSize="11px" color="slate.300" fontFamily="heading">—</Text>
             )}
-            {hasCoords ? (
+            {user.locationSource === 'gps' ? (
               <Text fontSize="10px" color="slate.400" fontFamily="heading">
                 {user.latitude!.toFixed(4)}, {user.longitude!.toFixed(4)}
               </Text>
+            ) : user.locationSource === 'zip' ? (
+              // Placed from the ZIP centroid. Good enough to match on, just less
+              // precise than GPS at the edge of a service radius.
+              <Text fontSize="10px" color="slate.400" fontFamily="heading">
+                Located via ZIP
+              </Text>
             ) : user.role === 'CLEANER' ? (
-              // No coordinates means every wave skips this cleaner — the quiet
-              // failure behind a lead that reaches nobody.
+              // Neither GPS nor a resolvable ZIP: every wave skips this cleaner,
+              // which is the quiet failure behind a lead that reaches nobody.
               <HStack gap={1} mt={0.5}>
                 <Icon as={LucideAlertCircle} w="11px" h="11px" color="#D97706" flexShrink={0} />
                 <Text fontSize="10px" color="#92400E" fontWeight="600" fontFamily="heading">
-                  No coordinates — gets no leads
+                  No location — gets no leads
                 </Text>
               </HStack>
             ) : null}
