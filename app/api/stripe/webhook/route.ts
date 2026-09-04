@@ -1,5 +1,6 @@
 import { prisma } from '@/lib/prisma';
 import { stripe } from '@/lib/stripe';
+import { setDefaultPaymentMethod, syncCardOnFile, notifyCardSaved } from '@/lib/card-on-file';
 import { createNotification } from '@/lib/notifications';
 import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
@@ -50,15 +51,9 @@ export async function POST(req: NextRequest) {
           if (customerId && setupIntentId) {
             const si   = await stripe.setupIntents.retrieve(setupIntentId);
             const pmId = typeof si.payment_method === 'string' ? si.payment_method : null;
-            if (pmId) {
-              await stripe.customers.update(customerId, {
-                invoice_settings: { default_payment_method: pmId },
-              });
-            }
-            await prisma.user.updateMany({
-              where: { stripeCustomerId: customerId },
-              data:  { hasPaymentMethod: true },
-            });
+            if (pmId) await setDefaultPaymentMethod(customerId, pmId);
+            await syncCardOnFile(customerId);
+            await notifyCardSaved(customerId);
           }
 
         } else if (meta.type === 'subscription') {
@@ -182,6 +177,32 @@ export async function POST(req: NextRequest) {
             }).catch(() => {});
           }
         }
+        break;
+      }
+
+      // Catch-all for every way a card can reach a customer — setup checkout, the
+      // billing portal, or a lead payment saved off-session. Keeps hasPaymentMethod
+      // and the default card correct no matter which flow added it.
+      case 'payment_method.attached': {
+        const pm         = event.data.object as Stripe.PaymentMethod;
+        const customerId = typeof pm.customer === 'string' ? pm.customer : null;
+        if (!customerId || pm.type !== 'card') break;
+
+        // sync promotes this card to default when the customer has none.
+        await syncCardOnFile(customerId);
+        await notifyCardSaved(customerId);
+        break;
+      }
+
+      // A card removed outside our own UI (billing portal, Stripe dashboard) must
+      // still clear the flag, otherwise matching keeps sending leads that can't be paid.
+      case 'payment_method.detached': {
+        const pm         = event.data.object as Stripe.PaymentMethod;
+        const customerId = typeof pm.customer === 'string' ? pm.customer : null;
+        // detached events carry the customer in previous_attributes once unlinked
+        const prevCustomer = (event.data.previous_attributes as any)?.customer;
+        const target = customerId ?? (typeof prevCustomer === 'string' ? prevCustomer : null);
+        if (target) await syncCardOnFile(target);
         break;
       }
 

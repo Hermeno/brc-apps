@@ -1,6 +1,7 @@
 import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { stripe } from '@/lib/stripe';
+import { setDefaultPaymentMethod, notifyCardSaved } from '@/lib/card-on-file';
 import { NextRequest, NextResponse } from 'next/server';
 import { logError } from '@/lib/logger';
 
@@ -41,12 +42,16 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
       return NextResponse.json({ error: 'Payment mismatch' }, { status: 400 });
     }
 
-    // Save the payment method as default so future auto-charges work
+    // Save the card as default so the next lead is charged automatically
     const pmId = typeof pi.payment_method === 'string' ? pi.payment_method : null;
     if (pmId && user.stripeCustomerId) {
-      await stripe.customers.update(user.stripeCustomerId, {
-        invoice_settings: { default_payment_method: pmId },
-      }).catch(() => {});
+      try {
+        await setDefaultPaymentMethod(user.stripeCustomerId, pmId);
+        await notifyCardSaved(user.stripeCustomerId);
+      } catch (err) {
+        // The lead fee is paid either way — never fail the unlock over this.
+        logError('[POST /api/conversations/payment/confirm] save card', err, user.id);
+      }
     }
 
     await prisma.conversation.update({

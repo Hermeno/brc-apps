@@ -1,9 +1,11 @@
 import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { stripe, BASE_URL } from '@/lib/stripe';
+import { ensureStripeCustomer, chargeLeadFeeOnFile } from '@/lib/card-on-file';
 import { NextRequest, NextResponse } from 'next/server';
 
-// GET — returns a Stripe Checkout URL for the cleaner to pay the lead fee
+// GET — charges the saved card if there is one, otherwise returns a Stripe
+// Checkout URL for the cleaner to pay the lead fee manually.
 export async function GET(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const session = await auth();
   if (!session?.user?.email) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -35,44 +37,22 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ id:
     return NextResponse.json({ alreadyPaid: true });
   }
 
-  // Ensure Stripe customer
-  let customerId = user.stripeCustomerId;
-  if (!customerId) {
-    const customer = await stripe.customers.create({
-      email: user.email,
-      name:  user.name ?? undefined,
-      metadata: { userId: user.id },
+  const customerId = await ensureStripeCustomer(user);
+
+  // Try the card on file first — the whole point of saving it.
+  const charge = await chargeLeadFeeOnFile({
+    customerId,
+    amount:      leadFee,
+    description: `Lead fee — ${conversation.lead.serviceType}`,
+    metadata:    { type: 'lead_payment', conversationId: id, cleanerId: user.id, leadId: conversation.leadId },
+  });
+
+  if (charge.status === 'charged') {
+    await prisma.conversation.update({
+      where: { id },
+      data:  { feeStatus: 'charged', feeDeadline: null },
     });
-    customerId = customer.id;
-    await prisma.user.update({ where: { id: user.id }, data: { stripeCustomerId: customerId } });
-  }
-
-  // Try auto-charge from saved default card first
-  const customer = await stripe.customers.retrieve(customerId);
-  const defaultPM =
-    !('deleted' in customer) && typeof customer.invoice_settings?.default_payment_method === 'string'
-      ? customer.invoice_settings.default_payment_method
-      : null;
-
-  if (defaultPM) {
-    try {
-      const pi = await stripe.paymentIntents.create({
-        amount:         Math.round(leadFee * 100),
-        currency:       'usd',
-        customer:       customerId,
-        payment_method: defaultPM,
-        confirm:        true,
-        off_session:    true,
-        description:    `Lead fee — ${conversation.lead.serviceType}`,
-        metadata:       { type: 'lead_payment', conversationId: id, cleanerId: user.id, leadId: conversation.leadId },
-      });
-      if (pi.status === 'succeeded') {
-        await prisma.conversation.update({ where: { id }, data: { feeStatus: 'charged' } });
-        return NextResponse.json({ alreadyPaid: true, autoCharged: true });
-      }
-    } catch {
-      // Card declined — fall through to checkout
-    }
+    return NextResponse.json({ alreadyPaid: true, autoCharged: true });
   }
 
   const checkoutSession = await stripe.checkout.sessions.create({
@@ -86,17 +66,24 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ id:
       },
       quantity: 1,
     }],
+    // Keep the card on file so the next lead charges automatically.
+    payment_intent_data: {
+      setup_future_usage: 'off_session',
+      // PaymentIntent metadata carries leadId for refund searches in decline/cancel.
+      metadata: { type: 'lead_payment', conversationId: id, cleanerId: user.id, leadId: conversation.leadId },
+    },
     success_url: `${BASE_URL}/dashboard/chat/${id}?paid=1&cs={CHECKOUT_SESSION_ID}`,
     cancel_url:  `${BASE_URL}/dashboard/chat/${id}`,
     // Checkout-session metadata drives webhook routing — keep it identical to the
     // legacy shape (conversationId, no leadId) so the webhook takes the correct
     // "mark-charged" branch instead of the wave-creation branch.
     metadata: { type: 'lead_payment', conversationId: id, cleanerId: user.id },
-    payment_intent_data: {
-      // PaymentIntent metadata carries leadId for refund searches in decline/cancel.
-      metadata: { type: 'lead_payment', conversationId: id, cleanerId: user.id, leadId: conversation.leadId },
-    },
   });
 
-  return NextResponse.json({ checkoutUrl: checkoutSession.url, leadFee });
+  return NextResponse.json({
+    checkoutUrl: checkoutSession.url,
+    leadFee,
+    // Tells the caller why the card on file didn't cover it.
+    cardStatus: charge.status,
+  });
 }

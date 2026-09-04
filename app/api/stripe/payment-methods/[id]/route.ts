@@ -1,6 +1,7 @@
 import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { stripe } from '@/lib/stripe';
+import { setDefaultPaymentMethod, syncCardOnFile } from '@/lib/card-on-file';
 import { NextRequest, NextResponse } from 'next/server';
 import { logError } from '@/lib/logger';
 
@@ -27,15 +28,12 @@ export async function DELETE(
 
     await stripe.paymentMethods.detach(id);
 
-    const remaining = await stripe.paymentMethods.list({ customer: user.stripeCustomerId, type: 'card' });
-    if (remaining.data.length === 0) {
-      await prisma.user.updateMany({
-        where: { stripeCustomerId: user.stripeCustomerId },
-        data:  { hasPaymentMethod: false },
-      });
-    }
+    // Removing the default card would otherwise leave the customer with cards but
+    // no default, silently disabling auto-charge. Sync promotes a remaining card,
+    // or clears hasPaymentMethod when that was the last one.
+    const { cards } = await syncCardOnFile(user.stripeCustomerId);
 
-    return NextResponse.json({ ok: true });
+    return NextResponse.json({ ok: true, remaining: cards.length });
   } catch (err: any) {
     logError('[DELETE /api/stripe/payment-methods/[id]]', err);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
@@ -63,9 +61,7 @@ export async function POST(
       return NextResponse.json({ error: 'Not authorized' }, { status: 403 });
     }
 
-    await stripe.customers.update(user.stripeCustomerId, {
-      invoice_settings: { default_payment_method: id },
-    });
+    await setDefaultPaymentMethod(user.stripeCustomerId, id);
 
     return NextResponse.json({ ok: true });
   } catch (err: any) {

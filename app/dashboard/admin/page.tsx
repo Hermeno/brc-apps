@@ -19,6 +19,7 @@ import {
   LucideRefreshCw, LucideSearch, LucideChevronLeft, LucideChevronRight, LucideChevronDown,
   LucideCheckCircle2, LucideMapPin, LucidePhone, LucideClock,
   LucideSettings, LucideDollarSign, LucideTrendingUp, LucideGift,
+  LucideCreditCard, LucideAlertCircle,
 } from 'lucide-react';
 import {
   AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell,
@@ -55,6 +56,7 @@ interface UserRow {
   zipCode: string | null; latitude: number | null; longitude: number | null;
   isVerified: boolean; suspendedUntil: string | null;
   createdAt: string; plan: string; isAvailable: boolean;
+  hasPaymentMethod: boolean;
 }
 interface Verification {
   id: string; status: string; fullName: string; idNumber: string;
@@ -420,6 +422,10 @@ function UserTableRow({ user, onRefresh }: { user: UserRow; onRefresh: () => voi
   const [loading, setLoading]       = useState(false);
   const [showDeleteModal, setShowDelete] = useState(false);
   const suspended = isSuspended(user);
+  // Matches lib/geo hasRealCoords: 0,0 is a placeholder, not a location.
+  const hasCoords =
+    user.latitude != null && user.longitude != null &&
+    (Math.abs(user.latitude) > 0.0001 || Math.abs(user.longitude) > 0.0001);
 
   const call = async (body: object) => {
     setLoading(true);
@@ -499,11 +505,20 @@ function UserTableRow({ user, onRefresh }: { user: UserRow; onRefresh: () => voi
             ) : (
               <Text fontSize="11px" color="slate.300" fontFamily="heading">—</Text>
             )}
-            {(user.latitude != null && user.longitude != null && user.latitude !== 0 && user.longitude !== 0) && (
+            {hasCoords ? (
               <Text fontSize="10px" color="slate.400" fontFamily="heading">
-                {user.latitude.toFixed(4)}, {user.longitude.toFixed(4)}
+                {user.latitude!.toFixed(4)}, {user.longitude!.toFixed(4)}
               </Text>
-            )}
+            ) : user.role === 'CLEANER' ? (
+              // No coordinates means every wave skips this cleaner — the quiet
+              // failure behind a lead that reaches nobody.
+              <HStack gap={1} mt={0.5}>
+                <Icon as={LucideAlertCircle} w="11px" h="11px" color="#D97706" flexShrink={0} />
+                <Text fontSize="10px" color="#92400E" fontWeight="600" fontFamily="heading">
+                  No coordinates — gets no leads
+                </Text>
+              </HStack>
+            ) : null}
           </Box>
         </td>
         <td style={TD}>
@@ -524,6 +539,22 @@ function UserTableRow({ user, onRefresh }: { user: UserRow; onRefresh: () => voi
               </HStack>
             )
           }
+        </td>
+        <td style={TD}>
+          {/* Card on file: presence only — never the digits or the cardholder name */}
+          {user.role !== 'CLEANER' ? (
+            <Text fontSize="11px" color="slate.300" fontFamily="heading">—</Text>
+          ) : user.hasPaymentMethod ? (
+            <HStack gap={1}>
+              <Icon as={LucideCheckCircle2} w="12px" h="12px" color="#059669" flexShrink={0} />
+              <Text fontSize="12px" fontWeight="600" color="#047857" fontFamily="heading">Card added</Text>
+            </HStack>
+          ) : (
+            <HStack gap={1}>
+              <Icon as={LucideCreditCard} w="12px" h="12px" color="#D97706" flexShrink={0} />
+              <Text fontSize="12px" fontWeight="600" color="#92400E" fontFamily="heading">No card</Text>
+            </HStack>
+          )}
         </td>
         <td style={TD}>
           <Text fontSize="12px" color="slate.400" fontFamily="heading">{new Date(user.createdAt).toLocaleDateString('en-US')}</Text>
@@ -841,6 +872,8 @@ export default function AdminPage() {
   const [loadingVerifs, setLV] = useState(false);
   const [loadingRevs, setLR]   = useState(false);
   const [loadingRefs, setLRef] = useState(false);
+  const [syncingCards, setSyncingCards] = useState(false);
+  const [syncingGeo, setSyncingGeo]     = useState(false);
 
   const [leadStatus, setLeadStatus] = useState('');
   const [leadSearch, setLeadSearch] = useState('');
@@ -867,6 +900,48 @@ export default function AdminPage() {
 
   const fetchUsers  = useCallback(async () => { setLU(true); try { const r = await fetch('/api/admin/users');         if (r.ok) setUsers((await r.json()).users ?? []); } finally { setLU(false); } }, []);
   const fetchVerifs = useCallback(async () => { setLV(true); try { const r = await fetch('/api/admin/verifications'); if (r.ok) setVerifs((await r.json()).verifications ?? []); } finally { setLV(false); } }, []);
+
+  // Re-reads Stripe for every cleaner and repairs the "card added" flag — for
+  // accounts whose card was saved while the setup webhook was down.
+  const handleSyncCards = useCallback(async () => {
+    setSyncingCards(true);
+    try {
+      const r = await fetch('/api/admin/sync-cards', { method: 'POST' });
+      const d = await r.json();
+      if (!r.ok) throw new Error(d.error ?? 'Sync failed');
+      toaster.create({
+        title:       `${d.withCard} of ${d.checked} cleaners have a card`,
+        description: d.repaired ? `${d.repaired} account(s) repaired.` : 'Everything was already in sync.',
+        type:        'success',
+      });
+      await fetchUsers();
+    } catch (e: any) {
+      toaster.create({ title: e.message ?? 'Sync failed', type: 'error' });
+    } finally { setSyncingCards(false); }
+  }, [fetchUsers]);
+
+  // Fills in coordinates for cleaners whose location was saved before ZIPs were
+  // validated. Without coordinates a cleaner is skipped by every wave.
+  const handleSyncGeo = useCallback(async () => {
+    setSyncingGeo(true);
+    try {
+      const r = await fetch('/api/admin/sync-geo', { method: 'POST' });
+      const d = await r.json();
+      if (!r.ok) throw new Error(d.error ?? 'Sync failed');
+      toaster.create({
+        title: d.repaired
+          ? `${d.repaired} location(s) repaired`
+          : 'All cleaner locations were already valid',
+        description: d.unlocatable?.length
+          ? `${d.unlocatable.length} cleaner(s) still have no location and receive no leads.`
+          : `${d.checked} cleaners checked.`,
+        type: d.unlocatable?.length ? 'warning' : 'success',
+      });
+      await fetchUsers();
+    } catch (e: any) {
+      toaster.create({ title: e.message ?? 'Sync failed', type: 'error' });
+    } finally { setSyncingGeo(false); }
+  }, [fetchUsers]);
   const fetchRevs   = useCallback(async () => { setLR(true); try { const r = await fetch('/api/admin/reviews');       if (r.ok) setReviews((await r.json()).reviews ?? []); } finally { setLR(false); } }, []);
   const fetchReferrals = useCallback(async () => {
     setLRef(true);
@@ -1334,6 +1409,22 @@ export default function AdminPage() {
                 <Input value={userSearch} onChange={e => setUserSearch(e.target.value)}
                   placeholder="Search…" size="sm" pl="30px" borderRadius="4px" w="220px" fontSize="13px" fontFamily="heading" />
               </Box>
+              <Button size="sm" variant="outline" borderColor="#E3E8EE" color="slate.600"
+                borderRadius="4px" fontFamily="heading" fontWeight="600" fontSize="13px"
+                _hover={{ borderColor: '#1E3A5F', color: '#1E3A5F' }}
+                loading={syncingCards}
+                onClick={handleSyncCards}>
+                <Icon as={LucideCreditCard} w="13px" h="13px" mr={1.5} />
+                Sync cards
+              </Button>
+              <Button size="sm" variant="outline" borderColor="#E3E8EE" color="slate.600"
+                borderRadius="4px" fontFamily="heading" fontWeight="600" fontSize="13px"
+                _hover={{ borderColor: '#1E3A5F', color: '#1E3A5F' }}
+                loading={syncingGeo}
+                onClick={handleSyncGeo}>
+                <Icon as={LucideMapPin} w="13px" h="13px" mr={1.5} />
+                Fix locations
+              </Button>
             </PageHeader>
 
             <Box bg="white" borderBottom="1px solid #E3E8EE" px={8} py={0}>
@@ -1364,6 +1455,7 @@ export default function AdminPage() {
                       <th style={TH}>Type</th>
                       <th style={TH}>Location</th>
                       <th style={TH}>Status</th>
+                      <th style={TH}>Card</th>
                       <th style={TH}>Joined</th>
                       <th style={{ ...TH, textAlign: 'right' }}>Actions</th>
                     </tr></thead>

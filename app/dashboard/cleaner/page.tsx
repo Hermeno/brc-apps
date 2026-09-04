@@ -302,6 +302,35 @@ export default function CleanerDashboard() {
           </Box>
         )}
 
+        {/* ── Card on file ── shown once setup is complete, so the cleaner always has
+             confirmation that lead fees are charged automatically. Presence only —
+             no digits, no cardholder name. */}
+        {hasCard === true && verifyStatus === 'APPROVED' && (
+          <Flex
+            mb={5} px={5} py={3} align="center" justify="space-between" gap={3} flexWrap="wrap"
+            border="1px solid #A7F3D0" bg="#ECFDF5" style={{ borderRadius: 8 }}>
+            <HStack gap={3}>
+              <Icon as={LucideCheckCircle} w={4.5} h={4.5} color="#10B981" flexShrink={0} />
+              <Box>
+                <Text fontSize="13px" fontWeight="700" color="#047857" fontFamily="heading">
+                  {t('cleaner.dashboard.cardSaved')}
+                </Text>
+                <Text fontSize="11.5px" color="#059669" mt={0.5}>
+                  {t('cleaner.dashboard.cardSavedDesc')}
+                </Text>
+              </Box>
+            </HStack>
+            <Button
+              size="xs" variant="ghost" color="#047857" borderRadius="4px" fontFamily="heading"
+              fontWeight="700" flexShrink={0}
+              _hover={{ bg: '#D1FAE5' }}
+              onClick={() => router.push('/dashboard/payment-methods')}>
+              <Icon as={LucideCreditCard} w={3.5} h={3.5} mr={1.5} />
+              {t('cleaner.dashboard.cardManageBtn')}
+            </Button>
+          </Flex>
+        )}
+
         {/* ── Available Leads ── */}
         <SectionPanel
           title={t('cleaner.dashboard.sectionAvailable')}

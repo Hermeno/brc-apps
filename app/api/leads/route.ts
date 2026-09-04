@@ -4,15 +4,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { after } from 'next/server';
 import { runMatching, dispatchDirect } from '@/lib/matching';
 import { calculateLeadPrice, getLeadPriceConfig } from '@/lib/pricing';
-import { coordsFromZip } from '@/lib/geo';
+import { geocodeAddressOffline, geocodeAddress } from '@/lib/geo';
 import dns from 'dns/promises';
-import { logError } from '@/lib/logger';
-
-// Extract a 5-digit US ZIP code from an address string
-function extractZip(address: string): string | null {
-  const match = address.match(/\b(\d{5})(?:-\d{4})?\b/);
-  return match ? match[1] : null;
-}
+import { logError, logWarn } from '@/lib/logger';
 
 // Resolve MX records for an email domain; returns false on NXDOMAIN / timeout
 async function hasMxRecords(email: string): Promise<boolean> {
@@ -135,9 +129,16 @@ export async function POST(request: NextRequest) {
 
     const priceConfig = await getLeadPriceConfig();
 
-    // ── ZIP extraction + geocoding ────────────────────────────────────────────
-    const zip       = extractZip(address ?? '');
-    const zipCoords = zip ? coordsFromZip(zip) : null;
+    // ── Geocoding ─────────────────────────────────────────────────────────────
+    // Offline resolution runs inline so the lead always has coordinates and the
+    // response stays fast; a street-level refinement happens in after(), before
+    // matching. Parsing is shared with the cleaner side via lib/geo.
+    const geo = geocodeAddressOffline(address ?? '');
+    const zip = geo?.zip ?? null;
+
+    if (!geo) {
+      logWarn('[POST /api/leads]', 'address did not resolve to coordinates', { address });
+    }
 
     // Coverage check (only active when admin has set specific ZIPs)
     if (priceConfig.coverageZips.length > 0 && zip && !priceConfig.coverageZips.includes(zip)) {
@@ -158,9 +159,9 @@ export async function POST(request: NextRequest) {
         address,
         notes:             notes         || null,
         dateTime:          parsedDate,
-        // Store ZIP-derived coords so matching has real distance data from the start
-        latitude:          zipCoords?.lat  ?? 0,
-        longitude:         zipCoords?.lng  ?? 0,
+        // Store resolved coords so matching has real distance data from the start
+        latitude:          geo?.lat ?? 0,
+        longitude:         geo?.lng ?? 0,
         zipCode:           zip,
         status:            'NEW',
         bedrooms:          bedrooms      ?? 1,
@@ -178,20 +179,40 @@ export async function POST(request: NextRequest) {
       },
     });
 
+    // Street-level refinement: a ZIP centroid can sit miles from the actual house,
+    // which decides whether a cleaner at the edge of their radius sees this lead.
+    // It runs after the response so the network call never slows down booking, and
+    // before matching so the waves use the sharpest coordinates available.
+    const refineCoords = async () => {
+      try {
+        const precise = await geocodeAddress(address ?? '');
+        if (!precise || precise.precision === 'city') return;
+        if (geo && precise.lat === geo.lat && precise.lng === geo.lng) return;
+
+        await prisma.lead.update({
+          where: { id: lead.id },
+          data:  { latitude: precise.lat, longitude: precise.lng, zipCode: precise.zip ?? zip },
+        });
+      } catch (e) {
+        // Matching still has the offline coordinates — never block on this.
+        logError('[POST /api/leads] refineCoords', e);
+      }
+    };
+
     // after() ensures dispatch runs AFTER the response is sent, never killed mid-flight.
     if (directTargets.length > 0) {
       // Direct request → route straight to the chosen cleaner(s), skip the waves.
       after(() =>
-        Promise.all(
+        refineCoords().then(() => Promise.all(
           directTargets.map(cid => dispatchDirect(lead.id, cid).catch(e => logError('[dispatchDirect]', e))),
-        ).then(results => {
+        )).then(results => {
           // If none of the chosen cleaners were valid, fall back to auto-matching
           // so the request still gets served rather than sitting unanswered.
           if (!results.some(Boolean)) return runMatching(lead.id).catch(e => logError('[matching fallback]', e));
         }),
       );
     } else {
-      after(() => runMatching(lead.id).catch(e => logError('[matching]', e)));
+      after(() => refineCoords().then(() => runMatching(lead.id)).catch(e => logError('[matching]', e)));
     }
 
     return NextResponse.json({ lead, direct: directTargets.length > 0 }, { status: 201 });

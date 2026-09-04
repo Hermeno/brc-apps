@@ -1,6 +1,7 @@
 import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { stripe, BASE_URL } from '@/lib/stripe';
+import { ensureStripeCustomer } from '@/lib/card-on-file';
 import { NextResponse } from 'next/server';
 import { logError } from '@/lib/logger';
 
@@ -15,26 +16,18 @@ export async function POST() {
     });
     if (!user) return NextResponse.json({ error: 'User not found' }, { status: 401 });
 
-    let customerId = user.stripeCustomerId;
-    if (!customerId) {
-      const customer = await stripe.customers.create({
-        email: user.email,
-        name: user.name ?? undefined,
-        metadata: { userId: user.id },
-      });
-      customerId = customer.id;
-      await prisma.user.update({
-        where: { id: user.id },
-        data: { stripeCustomerId: customerId },
-      });
-    }
+    const customerId = await ensureStripeCustomer(user);
 
     const checkoutSession = await stripe.checkout.sessions.create({
-      mode: 'setup',
+      mode:     'setup',
       currency: 'usd',
       customer: customerId,
-      success_url: `${BASE_URL}/dashboard/payment-methods?setup=1`,
-      cancel_url: `${BASE_URL}/dashboard/payment-methods`,
+      // Checkout's setup mode already creates the SetupIntent with off_session
+      // usage, which is what lead-fee auto-charges need.
+      // cs lets the page confirm the card server-side on return, so saving the
+      // card never depends on the webhook arriving.
+      success_url: `${BASE_URL}/dashboard/payment-methods?setup=1&cs={CHECKOUT_SESSION_ID}`,
+      cancel_url:  `${BASE_URL}/dashboard/payment-methods`,
     });
 
     return NextResponse.json({ url: checkoutSession.url });

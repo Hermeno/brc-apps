@@ -59,9 +59,12 @@ function PaymentMethodsContent() {
 
   useEffect(() => {
     if (searchParams.get('setup') === '1') {
-      toaster.create({ title: t('cleaner.payments.toastAdded'), type: 'success' });
+      // Confirm the card server-side instead of waiting on the Stripe webhook —
+      // until it is saved as the default, lead fees can't be auto-charged.
+      confirmSetup(searchParams.get('cs'));
+    } else {
+      fetchCards();
     }
-    fetchCards();
 
     // When the browser restores this page from bfcache (e.g. user pressed Cancel
     // on Stripe and the back/redirect brought them here), the React state is frozen
@@ -79,6 +82,30 @@ function PaymentMethodsContent() {
       const res = await fetch('/api/stripe/payment-methods');
       if (res.ok) setCards((await res.json()).paymentMethods ?? []);
     } finally { setLoading(false); }
+  };
+
+  const confirmSetup = async (sessionId: string | null) => {
+    setLoading(true);
+    try {
+      const res  = await fetch('/api/stripe/setup/confirm', {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify({ sessionId }),
+      });
+      const data = res.ok ? await res.json() : null;
+
+      toaster.create(
+        data?.hasCard
+          ? { title: t('cleaner.payments.toastAdded'), type: 'success' }
+          : { title: t('cleaner.payments.toastAddFailed'), type: 'error' },
+      );
+      // Clear the query string so a refresh doesn't re-run confirmation.
+      window.history.replaceState({}, '', window.location.pathname);
+    } catch {
+      toaster.create({ title: t('cleaner.payments.toastAddFailed'), type: 'error' });
+    } finally {
+      fetchCards();
+    }
   };
 
   const handleAdd = async () => {

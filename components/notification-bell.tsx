@@ -6,6 +6,7 @@ import { LucideBell, LucideCheck, LucideTrash2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useRouter } from 'next/navigation';
 import { useT } from '@/lib/i18n';
+import { toaster } from '@/lib/toaster';
 
 type Notification = {
   id: string;
@@ -25,6 +26,8 @@ const TYPE_ICONS: Record<string, string> = {
   job_completed:     '🎉',
   review_received:   '⭐',
   lead_unmatched:    '😔',
+  card_added:        '💳',
+  payment_failed:    '⚠️',
 };
 
 export default function NotificationBell({ dark = false }: { dark?: boolean }) {
@@ -47,29 +50,59 @@ export default function NotificationBell({ dark = false }: { dark?: boolean }) {
   const [pulse, setPulse]          = useState(false);
   const panelRef                   = useRef<HTMLDivElement>(null);
   const prevUnread                 = useRef(0);
+  // The stream callback is registered once, so it reads these through refs.
+  const primed                     = useRef(false);
+  const openRef                    = useRef(false);
 
   useEffect(() => {
     let es: EventSource;
     let retryTimeout: ReturnType<typeof setTimeout>;
+
     const connect = () => {
       es = new EventSource('/api/notifications/stream');
+
       es.onmessage = (e) => {
         try {
           const data = JSON.parse(e.data);
-          if (typeof data.unreadCount === 'number') {
-            if (data.unreadCount > prevUnread.current) {
-              setPulse(true);
-              setTimeout(() => setPulse(false), 1000);
+          if (typeof data.unreadCount !== 'number') return;
+
+          const isNew = data.unreadCount > prevUnread.current;
+
+          // The first message of a connection reports the standing unread count,
+          // which is not news — announcing it would pop a toast on every reload
+          // and after every 10-minute stream refresh.
+          if (isNew && primed.current) {
+            setPulse(true);
+            setTimeout(() => setPulse(false), 1000);
+
+            // A badge on a bell is easy to miss, and a wave lasts 90 seconds.
+            if (data.latest) {
+              toaster.create({
+                title:       data.latest.title,
+                description: data.latest.body ?? undefined,
+                type:        'info',
+                duration:    8000,
+                action: data.latest.link
+                  ? { label: t('notifications.open'), onClick: () => router.push(data.latest.link) }
+                  : undefined,
+              });
             }
-            prevUnread.current = data.unreadCount;
-            setUnread(data.unreadCount);
+            // Keep an open panel in sync with what just arrived.
+            if (openRef.current) fetchNotifications();
           }
+
+          primed.current       = true;
+          prevUnread.current   = data.unreadCount;
+          setUnread(data.unreadCount);
         } catch {}
       };
+
       es.onerror = () => { es.close(); retryTimeout = setTimeout(connect, 10000); };
     };
+
     connect();
     return () => { es?.close(); clearTimeout(retryTimeout); };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -92,6 +125,8 @@ export default function NotificationBell({ dark = false }: { dark?: boolean }) {
       }
     } finally { setLoading(false); }
   }, []);
+
+  useEffect(() => { openRef.current = open; }, [open]);
 
   const handleOpen = () => {
     setOpen(v => !v);

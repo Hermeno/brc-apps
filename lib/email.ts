@@ -131,3 +131,39 @@ export function passwordResetHtml(code: string, name: string) {
     </div>
   `;
 }
+
+// Generic notification email — mirrors an in-app notification so a cleaner who
+// is not sitting on the dashboard still hears about a lead. Kept deliberately
+// plain: the notification body is already written for the reader.
+export function notificationHtml(opts: {
+  name:   string;
+  title:  string;
+  body?:  string;
+  ctaUrl: string;
+  ctaLabel: string;
+  urgent?: boolean;
+}) {
+  const { name, title, body, ctaUrl, ctaLabel, urgent } = opts;
+  return `
+    <div style="font-family:sans-serif;max-width:520px;margin:auto">
+      <div style="background:#1E3A5F;padding:24px 32px;border-radius:8px 8px 0 0">
+        <h1 style="color:white;margin:0;font-size:20px;font-weight:700">Verliks</h1>
+      </div>
+      <div style="padding:32px;background:#ffffff;border:1px solid #E3E8EE;border-top:none;border-radius:0 0 8px 8px">
+        <h2 style="color:#0A2540;margin:0 0 16px">${title}</h2>
+        <p style="color:#425466;line-height:1.6">Hi <strong>${name}</strong>,</p>
+        ${body ? `<p style="color:#425466;line-height:1.6">${body}</p>` : ''}
+        ${urgent ? `
+        <div style="background:#FFFBEB;border:1px solid #FDE68A;border-radius:6px;padding:16px;margin:24px 0">
+          <p style="color:#92400E;margin:0;font-weight:600">⏱ This one is time-sensitive — open it now.</p>
+        </div>` : ''}
+        <p style="margin:28px 0">
+          <a href="${ctaUrl}"
+             style="background:#1E3A5F;color:#ffffff;text-decoration:none;padding:12px 24px;
+                    border-radius:6px;font-weight:700;display:inline-block">${ctaLabel}</a>
+        </p>
+        <p style="color:#697386;font-size:13px;margin-top:32px">— The Verliks Team</p>
+      </div>
+    </div>
+  `;
+}

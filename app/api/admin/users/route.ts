@@ -19,6 +19,8 @@ export async function GET() {
         isVerified: true, suspendedUntil: true,
         createdAt: true, plan: true, isAvailable: true, deletedAt: true,
         subscriptionEndsAt: true,
+        // Presence of a card on file only — never card details.
+        hasPaymentMethod: true,
         verification: { select: { status: true } },
       },
       orderBy: { createdAt: 'desc' },

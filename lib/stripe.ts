@@ -26,7 +26,7 @@ export const PLAN_PRICE_IDS: Record<string, string | undefined> = {
   PRO:   process.env.STRIPE_PRO_PRICE_ID,
 };
 
-// Falls back to the production domain, not localhost — NEXT_PUBLIC_BASE_URL
-// isn't set on DigitalOcean, so an unset var must not send Stripe redirects
-// to localhost in production. Local dev overrides this via .env.
-export const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ?? 'https://verliks.com';
+// Re-exported so the existing `import { BASE_URL } from '@/lib/stripe'` callers
+// keep working; it lives in lib/base-url so modules that only need a link (email
+// notifications) don't have to pull in the Stripe SDK.
+export { BASE_URL } from './base-url';

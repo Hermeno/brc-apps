@@ -1,6 +1,7 @@
 import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { stripe } from '@/lib/stripe';
+import { syncCardOnFile, notifyCardSaved } from '@/lib/card-on-file';
 import { NextRequest, NextResponse } from 'next/server';
 import { logError } from '@/lib/logger';
 
@@ -38,6 +39,13 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
         where: { id },
         data:  { feeStatus: 'charged', feeDeadline: null },
       });
+
+      // Checkout saved the card off-session — promote it so the next lead is automatic.
+      const customerId = typeof stripeSession.customer === 'string' ? stripeSession.customer : null;
+      if (customerId) {
+        const { defaultPaymentMethodId, cards } = await syncCardOnFile(customerId);
+        if (defaultPaymentMethodId && cards.length > 0) await notifyCardSaved(customerId);
+      }
     }
 
     return NextResponse.json({ ok: true });

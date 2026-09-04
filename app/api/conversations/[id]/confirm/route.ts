@@ -1,6 +1,6 @@
 import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
-import { stripe } from '@/lib/stripe';
+import { chargeLeadFeeOnFile } from '@/lib/card-on-file';
 import { createNotification } from '@/lib/notifications';
 import { NextRequest, NextResponse } from 'next/server';
 
@@ -38,7 +38,7 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
     prisma.conversation.update({ where: { id }, data: { status: 'active' } }),
   ]);
 
-  // Automatically charge the cleaner now that the client confirmed
+  // Automatically charge the cleaner's card on file now that the client confirmed
   let autoCharged = false;
   if (conversation.feeStatus === 'pending' && (conversation.leadFee ?? 0) > 0) {
     const cleanerUser = await prisma.user.findUnique({
@@ -47,33 +47,26 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
     });
 
     if (cleanerUser?.stripeCustomerId) {
-      try {
-        const customer = await stripe.customers.retrieve(cleanerUser.stripeCustomerId);
-        const defaultPM =
-          !('deleted' in customer) &&
-          typeof customer.invoice_settings?.default_payment_method === 'string'
-            ? customer.invoice_settings.default_payment_method
-            : null;
+      const charge = await chargeLeadFeeOnFile({
+        customerId:  cleanerUser.stripeCustomerId,
+        amount:      conversation.leadFee!,
+        description: `Lead fee — ${conversation.lead.serviceType}`,
+        metadata:    {
+          type:           'lead_payment',
+          conversationId: id,
+          cleanerId:      conversation.cleanerId,
+          leadId:         conversation.leadId,
+        },
+      });
 
-        if (defaultPM) {
-          const pi = await stripe.paymentIntents.create({
-            amount:         Math.round(conversation.leadFee! * 100),
-            currency:       'usd',
-            customer:       cleanerUser.stripeCustomerId,
-            payment_method: defaultPM,
-            confirm:        true,
-            off_session:    true,
-            description:    `Lead fee — ${conversation.lead.serviceType}`,
-            metadata:       { type: 'lead_payment', conversationId: id, cleanerId: conversation.cleanerId, leadId: conversation.leadId },
-          });
-          if (pi.status === 'succeeded') {
-            await prisma.conversation.update({ where: { id }, data: { feeStatus: 'charged' } });
-            autoCharged = true;
-          }
-        }
-      } catch {
-        // Card declined or no saved card — cleaner pays manually via payment wall
+      if (charge.status === 'charged') {
+        await prisma.conversation.update({
+          where: { id },
+          data:  { feeStatus: 'charged', feeDeadline: null },
+        });
+        autoCharged = true;
       }
+      // no card / declined / needs 3DS — cleaner pays manually via the payment wall
     }
 
     // Auto-charge didn't happen: start the payment deadline clock.

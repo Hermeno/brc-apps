@@ -1,6 +1,7 @@
 import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { stripe } from '@/lib/stripe';
+import { ensureStripeCustomer, chargeLeadFeeOnFile } from '@/lib/card-on-file';
 import { NextRequest, NextResponse } from 'next/server';
 import { logError } from '@/lib/logger';
 
@@ -35,18 +36,26 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
       return NextResponse.json({ alreadyPaid: true });
     }
 
-    // Ensure Stripe customer
-    let customerId = user.stripeCustomerId;
-    if (!customerId) {
-      const customer = await stripe.customers.create({
-        email:    user.email,
-        name:     user.name ?? undefined,
-        metadata: { userId: user.id },
+    const customerId = await ensureStripeCustomer(user);
+
+    // Card already on file: charge it off-session instead of showing the card form.
+    // This is what keeps the cleaner from re-entering a card on every lead.
+    const charge = await chargeLeadFeeOnFile({
+      customerId,
+      amount:      leadFee,
+      description: `Lead fee — ${conv.lead.serviceType}`,
+      metadata:    { type: 'lead_payment', conversationId: id, cleanerId: user.id, leadId: conv.leadId },
+    });
+
+    if (charge.status === 'charged') {
+      await prisma.conversation.update({
+        where: { id },
+        data:  { feeStatus: 'charged', feeDeadline: null },
       });
-      customerId = customer.id;
-      await prisma.user.update({ where: { id: user.id }, data: { stripeCustomerId: customerId } });
+      return NextResponse.json({ alreadyPaid: true, autoCharged: true });
     }
 
+    // No card, declined, or 3DS needed — fall back to the card form.
     const pi = await stripe.paymentIntents.create({
       amount:   Math.round(leadFee * 100),
       currency: 'usd',

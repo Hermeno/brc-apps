@@ -2,7 +2,7 @@ import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { NextRequest, NextResponse } from 'next/server';
 import { logError } from '@/lib/logger';
-import { haversineDistance, resolveCoords, coordsFromZip } from '@/lib/geo';
+import { haversineDistance, resolveCoords, geocodeAddressOffline } from '@/lib/geo';
 import { detectServiceKey } from '@/lib/pricing';
 import { PLAN_MAX_RADIUS, DEFAULT_RADIUS_MILES } from '@/lib/plans';
 
@@ -34,9 +34,12 @@ export async function GET(req: NextRequest) {
     const zipParam = url.searchParams.get('zip')?.trim() || null;
     const service  = url.searchParams.get('service')?.trim() || null;
 
-    // Where is the client? explicit ?zip overrides their saved location.
+    // Where is the client? An explicit search overrides their saved location.
+    // It goes through the same parser as leads, so the box accepts a bare ZIP,
+    // "Miami, FL", or a full street address — and tolerates the typos in each.
+    const searched = zipParam ? geocodeAddressOffline(zipParam) : null;
     const clientCoords = zipParam
-      ? coordsFromZip(zipParam)
+      ? (searched ? { lat: searched.lat, lng: searched.lng } : null)
       : resolveCoords(me.latitude, me.longitude, me.zipCode);
 
     const now = new Date();

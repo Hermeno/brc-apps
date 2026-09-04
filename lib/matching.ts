@@ -3,6 +3,7 @@ import { calculateLeadPrice, detectServiceKey, getLeadPriceConfig } from './pric
 import { createNotificationMany, createNotification } from './notifications';
 import { haversineDistance, resolveCoords, ensureRadiusColumn } from './geo';
 import { PLAN_MAX_RADIUS, DEFAULT_RADIUS_MILES } from './plans';
+import { logWarn } from './logger';
 
 // ─── CFS (Cleaner Fit Score) ─────────────────────────────────────────────────
 // Max 100 points: Plan(30) + Service(40) + Rating(20) + Proximity(10)
@@ -52,30 +53,95 @@ function scoreCFS(cleaner: any, lead: any, distanceMiles: number | null): number
 }
 
 // ─── Radius filter ────────────────────────────────────────────────────────────
+
+type ScoredCleaner = { cleaner: any; distanceMiles: number | null };
+
+type RadiusOutcome = {
+  kept: ScoredCleaner[];
+  /** Cleaners with neither GPS nor a resolvable ZIP — distance can't be measured. */
+  noCoords: { id: string; zipCode: string | null }[];
+  outOfRadius: { id: string; distanceMiles: number; radiusMiles: number }[];
+};
+
 function filterByRadius(
   cleaners: any[],
   leadCoords: { lat: number; lng: number } | null,
-): { cleaner: any; distanceMiles: number | null }[] {
-  return cleaners
-    .map(c => {
-      const cleanerCoords = resolveCoords(c.latitude, c.longitude, c.zipCode);
-      if (!cleanerCoords) return null;
+): RadiusOutcome {
+  const outcome: RadiusOutcome = { kept: [], noCoords: [], outOfRadius: [] };
 
-      const distanceMiles = leadCoords
-        ? haversineDistance(cleanerCoords.lat, cleanerCoords.lng, leadCoords.lat, leadCoords.lng)
-        : null;
+  for (const c of cleaners) {
+    const cleanerCoords = resolveCoords(c.latitude, c.longitude, c.zipCode);
+    if (!cleanerCoords) {
+      // Recorded rather than silently dropped: this state used to starve a
+      // cleaner of every lead with nothing anywhere to say why.
+      outcome.noCoords.push({ id: c.id, zipCode: c.zipCode ?? null });
+      continue;
+    }
 
-      const planMax     = PLAN_MAX_RADIUS[c.plan ?? 'FREE'] ?? PLAN_MAX_RADIUS.FREE;
-      const radiusMiles = Math.min(c.serviceRadiusMiles ?? DEFAULT_RADIUS_MILES, planMax);
+    const distanceMiles = leadCoords
+      ? haversineDistance(cleanerCoords.lat, cleanerCoords.lng, leadCoords.lat, leadCoords.lng)
+      : null;
 
-      // Enforce the cleaner's chosen radius when distance is known. If the lead
-      // has no resolvable coordinates (distanceMiles null), distance can't be
-      // measured — we keep the cleaner as a fallback so the lead still matches.
-      if (distanceMiles !== null && distanceMiles > radiusMiles) return null;
+    const planMax     = PLAN_MAX_RADIUS[c.plan ?? 'FREE'] ?? PLAN_MAX_RADIUS.FREE;
+    const radiusMiles = Math.min(c.serviceRadiusMiles ?? DEFAULT_RADIUS_MILES, planMax);
 
-      return { cleaner: c, distanceMiles };
-    })
-    .filter(Boolean) as { cleaner: any; distanceMiles: number | null }[];
+    // Enforce the cleaner's chosen radius when distance is known. If the lead
+    // has no resolvable coordinates (distanceMiles null), distance can't be
+    // measured — we keep the cleaner as a fallback so the lead still matches.
+    if (distanceMiles !== null && distanceMiles > radiusMiles) {
+      outcome.outOfRadius.push({ id: c.id, distanceMiles: Math.round(distanceMiles), radiusMiles });
+      continue;
+    }
+
+    outcome.kept.push({ cleaner: c, distanceMiles });
+  }
+
+  return outcome;
+}
+
+/**
+ * Explains why a lead reached nobody, one gate at a time.
+ *
+ * A lead going UNMATCHED is otherwise indistinguishable from a lead nobody
+ * wanted, which is what made the last failure impossible to diagnose: the
+ * cleaners were inside the radius, but an earlier gate had already removed them.
+ * Written to AppLog so it shows up in the admin panel.
+ */
+async function logNoMatch(
+  lead: { id: string; address: string; zipCode: string | null; serviceType: string },
+  leadCoords: { lat: number; lng: number } | null,
+  eligible: any[],
+  radius: RadiusOutcome,
+  serviceMismatch: number,
+  nowDate: Date,
+): Promise<void> {
+  const availability = await prisma.user.groupBy({
+    by:    ['isAvailable', 'isVerified', 'hasPaymentMethod'],
+    where: { role: 'CLEANER', deletedAt: null },
+    _count: { _all: true },
+  }).catch(() => null);
+
+  const nearestMiss = radius.outOfRadius
+    .slice()
+    .sort((a, b) => a.distanceMiles - b.distanceMiles)[0] ?? null;
+
+  logWarn('[matching]', 'lead matched no cleaner', {
+    leadId:      lead.id,
+    address:     lead.address,
+    zipCode:     lead.zipCode,
+    serviceType: lead.serviceType,
+    leadCoords,
+    // Cleaners left after the DB gates (available + verified + approved + card).
+    eligible:              eligible.length,
+    droppedNoCoords:       radius.noCoords.length,
+    droppedOutOfRadius:    radius.outOfRadius.length,
+    droppedServiceMismatch: serviceMismatch,
+    nearestMiss,
+    cleanersWithoutCoords: radius.noCoords.slice(0, 5),
+    // Whole-population counts, so a zero here shows the gate that emptied the pool.
+    population: availability,
+    at: nowDate.toISOString(),
+  });
 }
 
 // ─── Timing ───────────────────────────────────────────────────────────────────
@@ -150,13 +216,8 @@ export async function runMatching(leadId: string) {
     take: 200,
   });
 
-  if (cleaners.length === 0) {
-    await prisma.lead.update({ where: { id: leadId }, data: { status: 'UNMATCHED' } });
-    return { type: 'unmatched' };
-  }
-
-  const inRadius = filterByRadius(cleaners, leadCoords);
-  const scored = inRadius
+  const radius = filterByRadius(cleaners, leadCoords);
+  const scored = radius.kept
     .map(({ cleaner, distanceMiles }) => ({
       cleaner,
       score: scoreCFS(cleaner, lead, distanceMiles),
@@ -166,6 +227,10 @@ export async function runMatching(leadId: string) {
     .sort((a, b) => b.score - a.score);
 
   if (scored.length === 0) {
+    await logNoMatch(
+      lead, leadCoords, cleaners, radius,
+      radius.kept.length - scored.length, now,
+    );
     await prisma.lead.update({ where: { id: leadId }, data: { status: 'UNMATCHED' } });
     return { type: 'unmatched' };
   }
@@ -251,12 +316,12 @@ async function dispatchNextBatch(
     take: 200,
   });
 
-  const inRadius = filterByRadius(candidates, leadCoords);
-  const scored   = inRadius
+  const radius = filterByRadius(candidates, leadCoords);
+  const fit    = radius.kept
     .map(({ cleaner, distanceMiles }) => ({ cleaner, score: scoreCFS(cleaner, lead, distanceMiles) }))
     .filter(s => s.score > 0)
-    .sort((a, b) => b.score - a.score)
-    .slice(0, WAVE_BATCH_SIZE);
+    .sort((a, b) => b.score - a.score);
+  const scored = fit.slice(0, WAVE_BATCH_SIZE);
 
   if (scored.length === 0) {
     // No new candidates — cycle back through previously invited cleaners if any are still available
@@ -270,13 +335,26 @@ async function dispatchNextBatch(
       },
       include: { stats: true },
     });
-    const recycledScored = filterByRadius(recycled, leadCoords)
+    const recycledRadius = filterByRadius(recycled, leadCoords);
+    const recycledFit    = recycledRadius.kept
       .map(({ cleaner, distanceMiles }) => ({ cleaner, score: scoreCFS(cleaner, lead, distanceMiles) }))
       .filter(s => s.score > 0)
-      .sort((a, b) => b.score - a.score)
-      .slice(0, WAVE_BATCH_SIZE);
+      .sort((a, b) => b.score - a.score);
+    const recycledScored = recycledFit.slice(0, WAVE_BATCH_SIZE);
 
     if (recycledScored.length === 0) {
+      // Both pools are exhausted, so report them together — the lead is about to
+      // go UNMATCHED and this is the only record of why.
+      await logNoMatch(
+        lead, leadCoords, [...candidates, ...recycled],
+        {
+          kept:        [...radius.kept, ...recycledRadius.kept],
+          noCoords:    [...radius.noCoords, ...recycledRadius.noCoords],
+          outOfRadius: [...radius.outOfRadius, ...recycledRadius.outOfRadius],
+        },
+        (radius.kept.length - fit.length) + (recycledRadius.kept.length - recycledFit.length),
+        nowDate,
+      );
       await prisma.lead.update({ where: { id: lead.id }, data: { status: 'UNMATCHED' } });
       return false;
     }
