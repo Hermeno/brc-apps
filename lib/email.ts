@@ -29,6 +29,21 @@ function createTransport() {
   return nodemailer.createTransport({ jsonTransport: true });
 }
 
+// Escapes text before it goes into an email body.
+//
+// Notification emails carry values the sender did not write: a lead notification
+// embeds the client's typed address, and every template embeds an account name
+// chosen at signup. Interpolating those raw lets one user put arbitrary markup —
+// a spoofed message, a phishing link — into an email another user receives.
+function esc(value: string | undefined | null): string {
+  return String(value ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
 interface MailOptions {
   to: string;
   subject: string;
@@ -50,7 +65,7 @@ export function emailVerificationHtml(code: string, name: string) {
   return `
     <div style="font-family:sans-serif;max-width:480px;margin:auto">
       <h2 style="color:#2563eb">Email verification — Verliks</h2>
-      <p>Hi <strong>${name}</strong>,</p>
+      <p>Hi <strong>${esc(name)}</strong>,</p>
       <p>Use the code below to confirm your email address. It expires in <strong>10 minutes</strong>.</p>
       <div style="font-size:36px;font-weight:bold;letter-spacing:8px;text-align:center;
                   padding:20px;background:#f1f5f9;border-radius:12px;margin:24px 0">
@@ -69,7 +84,7 @@ export function verificationApprovedHtml(name: string) {
       </div>
       <div style="padding:32px;background:#ffffff;border:1px solid #E3E8EE;border-top:none;border-radius:0 0 8px 8px">
         <h2 style="color:#0A2540;margin:0 0 16px">Your documents have been approved! ✅</h2>
-        <p style="color:#425466;line-height:1.6">Hi <strong>${name}</strong>,</p>
+        <p style="color:#425466;line-height:1.6">Hi <strong>${esc(name)}</strong>,</p>
         <p style="color:#425466;line-height:1.6">
           Great news! Your identity documents have been reviewed and <strong style="color:#16a34a">approved</strong> by our team.
           Your account is now fully verified and you can start accepting cleaning jobs on Verliks.
@@ -96,14 +111,14 @@ export function verificationRejectedHtml(name: string, reason?: string) {
       </div>
       <div style="padding:32px;background:#ffffff;border:1px solid #E3E8EE;border-top:none;border-radius:0 0 8px 8px">
         <h2 style="color:#0A2540;margin:0 0 16px">Document verification update</h2>
-        <p style="color:#425466;line-height:1.6">Hi <strong>${name}</strong>,</p>
+        <p style="color:#425466;line-height:1.6">Hi <strong>${esc(name)}</strong>,</p>
         <p style="color:#425466;line-height:1.6">
           After reviewing your submitted documents, our team was unable to approve your verification at this time.
         </p>
         ${reason ? `
         <div style="background:#fef2f2;border:1px solid #fecaca;border-radius:6px;padding:16px;margin:24px 0">
           <p style="color:#991b1b;margin:0 0 4px;font-weight:600">Reason:</p>
-          <p style="color:#7f1d1d;margin:0">${reason}</p>
+          <p style="color:#7f1d1d;margin:0">${esc(reason)}</p>
         </div>` : ''}
         <p style="color:#425466;line-height:1.6">
           Please review the reason above, correct your documents, and resubmit through your cleaner dashboard.
@@ -121,7 +136,7 @@ export function passwordResetHtml(code: string, name: string) {
   return `
     <div style="font-family:sans-serif;max-width:480px;margin:auto">
       <h2 style="color:#2563eb">Password reset — Verliks</h2>
-      <p>Hi <strong>${name}</strong>,</p>
+      <p>Hi <strong>${esc(name)}</strong>,</p>
       <p>Use the code below to reset your password. It expires in <strong>10 minutes</strong>.</p>
       <div style="font-size:36px;font-weight:bold;letter-spacing:8px;text-align:center;
                   padding:20px;background:#f1f5f9;border-radius:12px;margin:24px 0">
@@ -150,17 +165,17 @@ export function notificationHtml(opts: {
         <h1 style="color:white;margin:0;font-size:20px;font-weight:700">Verliks</h1>
       </div>
       <div style="padding:32px;background:#ffffff;border:1px solid #E3E8EE;border-top:none;border-radius:0 0 8px 8px">
-        <h2 style="color:#0A2540;margin:0 0 16px">${title}</h2>
-        <p style="color:#425466;line-height:1.6">Hi <strong>${name}</strong>,</p>
-        ${body ? `<p style="color:#425466;line-height:1.6">${body}</p>` : ''}
+        <h2 style="color:#0A2540;margin:0 0 16px">${esc(title)}</h2>
+        <p style="color:#425466;line-height:1.6">Hi <strong>${esc(name)}</strong>,</p>
+        ${body ? `<p style="color:#425466;line-height:1.6">${esc(body)}</p>` : ''}
         ${urgent ? `
         <div style="background:#FFFBEB;border:1px solid #FDE68A;border-radius:6px;padding:16px;margin:24px 0">
           <p style="color:#92400E;margin:0;font-weight:600">⏱ This one is time-sensitive — open it now.</p>
         </div>` : ''}
         <p style="margin:28px 0">
-          <a href="${ctaUrl}"
+          <a href="${esc(ctaUrl)}"
              style="background:#1E3A5F;color:#ffffff;text-decoration:none;padding:12px 24px;
-                    border-radius:6px;font-weight:700;display:inline-block">${ctaLabel}</a>
+                    border-radius:6px;font-weight:700;display:inline-block">${esc(ctaLabel)}</a>
         </p>
         <p style="color:#697386;font-size:13px;margin-top:32px">— The Verliks Team</p>
       </div>

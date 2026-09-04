@@ -36,6 +36,7 @@ export default function HomePage() {
   const { locale, setLocale, t } = useLocale();
   const [menuOpen, setMenuOpen] = useState(false);
   const [zip, setZip] = useState('');
+  const [zipError, setZipError] = useState(false);
   const [testimonials, setTestimonials] = useState<{ quote: string; name: string; city: string; rating: number }[] | null>(null);
   const [completedJobs, setCompletedJobs] = useState<number>(0);
   const [tIndex, setTIndex] = useState(0);
@@ -75,27 +76,46 @@ export default function HomePage() {
   // Real count once it's meaningful; otherwise the mockup figure from the reference.
   const metricNum = completedJobs >= 100 ? completedJobs : 10000;
 
+  // The input only ever holds digits, so a partial ZIP is the one bad state
+  // left. Catch it here instead of sending a malformed value to /request.
   const submitSearch = useCallback((e: React.FormEvent) => {
     e.preventDefault();
-    const q = zip.trim();
-    router.push(q ? `/request?zip=${encodeURIComponent(q)}` : '/request');
+    if (zip.length > 0 && zip.length < 5) { setZipError(true); return; }
+    setZipError(false);
+    router.push(zip.length === 5 ? `/request?zip=${zip}` : '/request');
   }, [zip, router]);
 
+  // Strip anything that isn't a digit and cap at 5 — paste, autofill and
+  // keyboards that ignore inputMode all land here.
+  const handleZipChange = useCallback((raw: string) => {
+    setZip(raw.replace(/\D/g, '').slice(0, 5));
+    setZipError(false);
+  }, []);
+
   const SearchForm = () => (
-    <form className={styles.search} onSubmit={submitSearch} role="search">
-      <label className={styles.searchField}>
-        <IcPin />
-        <input
-          className={styles.searchInput}
-          value={zip}
-          onChange={e => setZip(e.target.value)}
-          placeholder={t('home.searchPlaceholder')}
-          aria-label={t('home.searchPlaceholder')}
-          inputMode="numeric"
-        />
-      </label>
-      <button type="submit" className={styles.searchBtn}>{t('home.searchCta')}</button>
-    </form>
+    <div>
+      <form className={styles.search} onSubmit={submitSearch} role="search" noValidate>
+        <label className={styles.searchField}>
+          <IcPin />
+          <input
+            className={styles.searchInput}
+            value={zip}
+            onChange={e => handleZipChange(e.target.value)}
+            placeholder={t('home.searchPlaceholder')}
+            aria-label={t('home.searchPlaceholder')}
+            aria-invalid={zipError || undefined}
+            aria-describedby={zipError ? 'zip-error' : undefined}
+            inputMode="numeric"
+            autoComplete="postal-code"
+            maxLength={5}
+          />
+        </label>
+        <button type="submit" className={styles.searchBtn}>{t('home.searchCta')}</button>
+      </form>
+      {zipError && (
+        <p id="zip-error" role="alert" className={styles.searchError}>{t('home.searchZipError')}</p>
+      )}
+    </div>
   );
 
   const jsonLd = {
@@ -113,7 +133,10 @@ export default function HomePage() {
       {/* ── Header ── */}
       <header className={styles.nav}>
         <div className={styles.navInner}>
-          <NextLink href="/" className={styles.logo}>verlik<span>ŝ</span></NextLink>
+          <NextLink href="/" className={styles.logo} aria-label="Verliks">
+            <Image src="/vlogo.PNG" alt="" width={34} height={34} className={styles.logoMark} priority />
+            <span className={styles.logoWord}>verliks</span>
+          </NextLink>
           <ul className={styles.navLinks}>
             <li><a href="#for-clients">{t('home.navClients')}</a></li>
             <li><a href="#for-pros">{t('home.navPros')}</a></li>
@@ -270,7 +293,10 @@ export default function HomePage() {
       <footer className={styles.footer}>
         <div className={styles.footerInner}>
           <div className={styles.footerBrand}>
-            <NextLink href="/" className={styles.logo}>verlik<span>ŝ</span></NextLink>
+            <NextLink href="/" className={styles.logo} aria-label="Verliks">
+            <Image src="/vlogo.PNG" alt="" width={34} height={34} className={styles.logoMark} priority />
+            <span className={styles.logoWord}>verliks</span>
+          </NextLink>
             <p className={styles.footerTagline}>{t('home.footerTagline')}</p>
             <div className={styles.footerSocials}>
               <a href="https://instagram.com" aria-label="Instagram" target="_blank" rel="noopener noreferrer"><IcInstagram /></a>

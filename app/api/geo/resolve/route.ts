@@ -13,7 +13,9 @@ export async function POST(req: NextRequest) {
   if (!session?.user?.email) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
   const { address } = await req.json().catch(() => ({ address: '' }));
-  if (typeof address !== 'string' || !address.trim()) {
+  // Same cap as lead creation: this runs the full parser, including a fuzzy city
+  // match, on whatever is sent.
+  if (typeof address !== 'string' || !address.trim() || address.length > 200) {
     return NextResponse.json({ resolved: false });
   }
 

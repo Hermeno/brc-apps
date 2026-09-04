@@ -650,6 +650,7 @@ export const pt: Messages = {
     heroBody: 'Encontre faxineiras verificadas perto de você, com segurança e praticidade.',
     searchPlaceholder: 'Digite seu ZIP Code',
     searchCta: 'Buscar faxineiras',
+    searchZipError: 'Digite os 5 dígitos do seu ZIP Code.',
     heroImgAlt: 'Uma sala de estar clara e acolhedora',
     // ── Barra de confiança ──
     tb1Title: 'Faxineiras verificadas',

@@ -87,6 +87,17 @@ export async function POST(request: NextRequest) {
       ].filter(Boolean),
     )).slice(0, 10);
 
+    // The address is free text from the client and feeds the geocoder, the DB and
+    // notification emails. Pin down type and length before any of that runs — an
+    // oversized or non-string value would otherwise reach String methods and 500.
+    const MAX_ADDRESS_LEN = 200;
+    if (typeof address !== 'string' || address.trim().length > MAX_ADDRESS_LEN) {
+      return NextResponse.json(
+        { error: `Address must be text, up to ${MAX_ADDRESS_LEN} characters.` },
+        { status: 400 },
+      );
+    }
+
     if (!serviceType || !address || !dateTime) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }

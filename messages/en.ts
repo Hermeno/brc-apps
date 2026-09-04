@@ -648,6 +648,7 @@ export const en = {
     heroBody: 'Find verified cleaners near you — safe, simple, and close to home.',
     searchPlaceholder: 'Enter your ZIP',
     searchCta: 'Find cleaners',
+    searchZipError: 'Enter all 5 digits of your ZIP code.',
     heroImgAlt: 'A bright, welcoming living room',
     // ── Trust bar ──
     tb1Title: 'Verified cleaners',

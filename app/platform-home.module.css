@@ -87,11 +87,15 @@
   display: flex; align-items: center; gap: 24px;
 }
 .logo {
+  display: inline-flex; align-items: center; gap: 9px;
   font-family: var(--font-display), sans-serif;
   font-size: 24px; font-weight: 700; color: var(--green);
   letter-spacing: -0.02em; text-decoration: none; flex-shrink: 0;
 }
-.logo span { color: var(--accent-ink); }
+/* The mark is the shipped brand asset (public/vlogo.PNG), the same one the
+   dashboard nav uses — the header used to spell the name out in text instead. */
+.logoMark { width: 34px; height: 34px; object-fit: contain; flex-shrink: 0; }
+.logoWord { line-height: 1; }
 .navLinks {
   display: flex; align-items: center; gap: 30px; list-style: none; margin: 0 auto; padding: 0;
 }
@@ -111,6 +115,10 @@
 .mobileMenu.open { display: block; }
 .mobileMenu a { display: block; padding: 13px 4px; font-size: 16px; color: var(--green); text-decoration: none; border-bottom: 1px solid var(--line); font-weight: 500; }
 .mobileMenu .mobileCta { margin-top: 16px; background: var(--orange); color: #fff; text-align: center; border-radius: 6px; border-bottom: none; }
+
+.searchError {
+  margin: 8px 0 0; font-size: 13px; font-weight: 500; color: #B91C1C;
+}
 
 /* ── Hero ── */
 .hero { background: var(--cream); position: relative; overflow: hidden; }

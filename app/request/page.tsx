@@ -38,8 +38,13 @@ function RequestForm() {
   const targetCleanerName = params.get('name') || '';
   const initialService    = params.get('service') || '';
 
+  // ZIP typed in the home search. Only a well-formed 5-digit value is carried
+  // over — anything else is ignored rather than pre-filling a broken address.
+  const initialZip = (params.get('zip') || '').trim();
+  const seededZip  = /^\d{5}$/.test(initialZip) ? initialZip : '';
+
   const [serviceType, setServiceType]   = useState(initialService || 'standard');
-  const [address, setAddress]           = useState('');
+  const [address, setAddress]           = useState(seededZip);
   const [dateVal, setDateVal]           = useState('');
   const [timeVal, setTimeVal]           = useState('');
   const [bedrooms, setBedrooms]         = useState(2);
