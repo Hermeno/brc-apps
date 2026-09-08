@@ -139,7 +139,7 @@ export default function HomePage() {
           </NextLink>
           <ul className={styles.navLinks}>
             <li><a href="#for-clients">{t('home.navClients')}</a></li>
-            <li><a href="#for-pros">{t('home.navPros')}</a></li>
+            <li><NextLink href="/for-cleaners">{t('home.navPros')}</NextLink></li>
             <li><a href="#how-it-works">{t('home.navHowItWorks')}</a></li>
             <li><a href="#trust">{t('home.navSafety')}</a></li>
             <li><NextLink href="/about">{t('home.navHelp')}</NextLink></li>
@@ -155,7 +155,7 @@ export default function HomePage() {
         </div>
         <nav className={`${styles.mobileMenu} ${menuOpen ? styles.open : ''}`} aria-label="Mobile">
           <a href="#for-clients" onClick={() => setMenuOpen(false)}>{t('home.navClients')}</a>
-          <a href="#for-pros" onClick={() => setMenuOpen(false)}>{t('home.navPros')}</a>
+          <NextLink href="/for-cleaners" onClick={() => setMenuOpen(false)}>{t('home.navPros')}</NextLink>
           <a href="#how-it-works" onClick={() => setMenuOpen(false)}>{t('home.navHowItWorks')}</a>
           <a href="#trust" onClick={() => setMenuOpen(false)}>{t('home.navSafety')}</a>
           <NextLink href="/auth/login" onClick={() => setMenuOpen(false)}>{t('home.navSignIn')}</NextLink>
@@ -272,7 +272,7 @@ export default function HomePage() {
               <div className={styles.proItem}><IcShieldSm /><span className={styles.proItemText}>{t('home.proItem2')}</span></div>
               <div className={styles.proItem}><IcChart /><span className={styles.proItemText}>{t('home.proItem3')}</span></div>
             </div>
-            <NextLink href="/auth/register?role=cleaner" className={styles.proCta}>{t('home.proCta')} <IcArrow /></NextLink>
+            <NextLink href="/for-cleaners" className={styles.proCta}>{t('home.proCta')} <IcArrow /></NextLink>
           </div>
         </div>
       </section>
@@ -317,7 +317,7 @@ export default function HomePage() {
           <div className={styles.footerCol}>
             <p className={styles.footerColTitle}>{t('home.footerPros')}</p>
             <ul>
-              <li><NextLink href="/auth/register?role=cleaner">{t('home.footerBecomePro')}</NextLink></li>
+              <li><NextLink href="/for-cleaners">{t('home.footerBecomePro')}</NextLink></li>
               <li><a href="#how-it-works">{t('home.footerHowItWorks')}</a></li>
               <li><NextLink href="/about">{t('home.footerTips')}</NextLink></li>
               <li><NextLink href="/about">{t('home.footerHelp')}</NextLink></li>
