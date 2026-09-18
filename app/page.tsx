@@ -1,13 +1,14 @@
 'use client';
 
-import { useEffect, useState, useCallback, useRef, useId } from 'react';
+import { useEffect, useState, useCallback, useId } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import NextLink from 'next/link';
 import Image from 'next/image';
 import styles from './platform-home.module.css';
 import { useLocale } from '@/lib/i18n';
-import LanguageSwitcher from '@/components/language-switcher';
+import SiteHeader from '@/components/site-header';
+import { SERVICES } from '@/lib/services';
 
 /* ── Icons: one family — 24px box, round caps and joins ── */
 const svg = { fill: 'none', stroke: 'currentColor', strokeLinecap: 'round', strokeLinejoin: 'round', 'aria-hidden': true } as const;
@@ -15,8 +16,11 @@ const IcPin      = () => (<svg width="18" height="18" viewBox="0 0 24 24" stroke
 const IcArrow    = () => (<svg width="16" height="16" viewBox="0 0 24 24" strokeWidth="2" {...svg}><path d="M5 12h14M13 6l6 6-6 6"/></svg>);
 const IcChevL    = () => (<svg width="18" height="18" viewBox="0 0 24 24" strokeWidth="2" {...svg}><path d="M15 18l-6-6 6-6"/></svg>);
 const IcChevR    = () => (<svg width="18" height="18" viewBox="0 0 24 24" strokeWidth="2" {...svg}><path d="M9 6l6 6-6 6"/></svg>);
-const IcMenu     = () => (<svg width="24" height="24" viewBox="0 0 24 24" strokeWidth="2" {...svg}><path d="M4 7h16M4 12h16M4 17h16"/></svg>);
-const IcClose    = () => (<svg width="24" height="24" viewBox="0 0 24 24" strokeWidth="2" {...svg}><path d="M6 6l12 12M18 6L6 18"/></svg>);
+
+/* The six services people ask for most. Each row links to its own page. */
+const LEDGER = ['standard', 'deep', 'moving', 'post-work', 'tile-grout', 'commercial']
+  .map(id => SERVICES.find(s => s.id === id)!)
+  .filter(Boolean);
 
 /* Declared at module level on purpose. It used to be defined inside HomePage,
    which gave it a new component identity on every render: each keystroke
@@ -71,14 +75,11 @@ export default function HomePage() {
   const router = useRouter();
   const { locale, setLocale, t } = useLocale();
 
-  const [menuOpen, setMenuOpen]   = useState(false);
-  const [pastHero, setPastHero]   = useState(false);
   const [zip, setZip]             = useState('');
   const [zipError, setZipError]   = useState<'hero' | 'final' | null>(null);
   const [reviews, setReviews]     = useState<Testimonial[]>([]);
   const [completedJobs, setJobs]  = useState(0);
   const [tIndex, setTIndex]       = useState(0);
-  const heroRef = useRef<HTMLElement>(null);
 
   useEffect(() => { if (status === 'authenticated') router.replace('/dashboard'); }, [status, router]);
 
@@ -105,26 +106,7 @@ export default function HomePage() {
       .catch(() => {});
   }, []);
 
-  // Header is transparent over the photo and turns solid once the hero has
-  // scrolled up behind it. An observer instead of a scroll handler: no work
-  // happens while scrolling.
-  useEffect(() => {
-    const el = heroRef.current;
-    if (!el) return;
-    const navH = window.matchMedia('(max-width: 640px)').matches ? 64 : 76;
-    const io = new IntersectionObserver(([entry]) => setPastHero(!entry.isIntersecting), {
-      rootMargin: `-${navH}px 0px 0px 0px`,
-    });
-    io.observe(el);
-    return () => io.disconnect();
-  }, []);
 
-  useEffect(() => {
-    if (!menuOpen) return;
-    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setMenuOpen(false); };
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
-  }, [menuOpen]);
 
   // Digits only, capped at 5 — covers paste, autofill and keyboards that ignore inputMode.
   const handleZip = useCallback((raw: string) => {
@@ -139,9 +121,7 @@ export default function HomePage() {
     router.push(zip.length === 5 ? `/request?zip=${zip}` : '/request');
   }, [zip, router]);
 
-  const solid   = pastHero || menuOpen;
   const current = reviews.length ? reviews[tIndex % reviews.length] : null;
-  const close   = () => setMenuOpen(false);
 
   const searchCopy = {
     value: zip, onValue: handleZip,
@@ -160,55 +140,11 @@ export default function HomePage() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <a href="#main" className={styles.skip}>{t('home.skipToContent')}</a>
 
-      {/* ═══ Header ═══ */}
-      <header className={`${styles.nav} ${solid ? styles.navSolid : ''}`}>
-        <div className={styles.navInner}>
-          <NextLink href="/" className={styles.logo} aria-label="Verliks">
-            <Image src="/vlogo.PNG" alt="" width={34} height={34} className={styles.logoMark} priority />
-            <span className={styles.logoWord}>verliks</span>
-          </NextLink>
-
-          <ul className={styles.navLinks}>
-            <li><a href="#how-it-works" className={styles.navLink}>{t('home.navHowItWorks')}</a></li>
-            <li><a href="#trust" className={styles.navLink}>{t('home.navSafety')}</a></li>
-            <li><NextLink href="/for-cleaners" className={styles.navLink}>{t('home.navPros')}</NextLink></li>
-            <li><NextLink href="/about" className={styles.navLink}>{t('home.navAbout')}</NextLink></li>
-          </ul>
-
-          <div className={styles.navRight}>
-            <LanguageSwitcher dark={!solid} square />
-            <NextLink href="/auth/login" className={styles.navLink}>{t('home.navSignIn')}</NextLink>
-            <NextLink href="/request" className={`${styles.btn} ${styles.btnSmall} ${solid ? styles.btnNavy : styles.btnLight}`}>
-              {t('home.navCta')}
-            </NextLink>
-          </div>
-
-          <button
-            className={styles.navMenuBtn}
-            onClick={() => setMenuOpen(v => !v)}
-            aria-label={menuOpen ? t('home.menuClose') : t('home.menuOpen')}
-            aria-expanded={menuOpen}
-            aria-controls="mobile-menu"
-          >
-            {menuOpen ? <IcClose /> : <IcMenu />}
-          </button>
-        </div>
-
-        <nav id="mobile-menu" className={`${styles.mobileMenu} ${menuOpen ? styles.open : ''}`} aria-label="Mobile">
-          <a href="#how-it-works" onClick={close}>{t('home.navHowItWorks')}</a>
-          <a href="#trust" onClick={close}>{t('home.navSafety')}</a>
-          <NextLink href="/for-cleaners" onClick={close}>{t('home.navPros')}</NextLink>
-          <NextLink href="/about" onClick={close}>{t('home.navAbout')}</NextLink>
-          <NextLink href="/auth/login" onClick={close}>{t('home.navSignIn')}</NextLink>
-          <NextLink href="/request" onClick={close} className={`${styles.btn} ${styles.btnNavy} ${styles.mobileMenuCta}`}>
-            {t('home.navCta')} <IcArrow />
-          </NextLink>
-        </nav>
-      </header>
+      <SiteHeader onHome />
 
       <main id="main">
         {/* ═══ Hero ═══ */}
-        <section ref={heroRef} className={styles.hero} aria-labelledby="hero-title">
+        <section data-hero className={styles.hero} aria-labelledby="hero-title">
           <Image
             src="/images/home/living-room.jpg" alt={t('home.heroImgAlt')}
             fill priority sizes="100vw" quality={80} className={styles.heroImg}
@@ -264,6 +200,36 @@ export default function HomePage() {
           </div>
         </section>
 
+        {/* ═══ Services ledger ═══ */}
+        <section className={styles.section} id="services" aria-labelledby="svc-title">
+          <div className={styles.wrap}>
+            <div className={styles.ledgerHead}>
+              <div>
+                <h2 id="svc-title" className={styles.sectionTitle} style={{ marginTop: 0 }}>{t('home.svcTitle')}</h2>
+                <p className={styles.ledgerIntro}>{t('home.svcIntro')}</p>
+              </div>
+              <NextLink href="/services" className={`${styles.btn} ${styles.btnNavy}`}>
+                {t('home.svcAll')} <IcArrow />
+              </NextLink>
+            </div>
+
+            <div className={styles.ledger}>
+              {LEDGER.map(service => (
+                <NextLink key={service.slug} href={`/services/${service.slug}`} className={styles.ledgerRow}>
+                  <p className={styles.ledgerName}>{service.name}</p>
+                  <p className={styles.ledgerScope}>{service.tagline}</p>
+                  <span className={styles.ledgerGo} aria-hidden="true"><IcArrow /></span>
+                </NextLink>
+              ))}
+            </div>
+
+            <div className={styles.ledgerFoot}>
+              <p className={styles.ledgerNote}>{t('home.svcNote')}</p>
+            </div>
+
+          </div>
+        </section>
+
         {/* ═══ Reviews — real ones only ═══ */}
         {current && (
           <section className={`${styles.section} ${styles.reviews}`} id="reviews" aria-labelledby="re-title">
@@ -306,6 +272,24 @@ export default function HomePage() {
               <NextLink href="/for-cleaners" className={`${styles.btn} ${styles.btnGold}`}>
                 {t('home.proCta')} <IcArrow />
               </NextLink>
+            </div>
+          </div>
+        </section>
+
+        {/* ═══ FAQ ═══ */}
+        <section className={`${styles.section} ${styles.sectionCream}`} id="faq" aria-labelledby="faq-title">
+          <div className={`${styles.wrap} ${styles.faqGrid}`}>
+            <div className={styles.faqAside}>
+              <h2 id="faq-title" className={styles.sectionTitle}>{t('home.faqTitle')}</h2>
+              <p className={styles.faqAsideBody}>{t('home.faqIntro')}</p>
+            </div>
+            <div className={styles.faqList}>
+              {[1, 2, 3, 4, 5, 6].map(n => (
+                <div className={styles.faqItem} key={n}>
+                  <h3 className={styles.faqQ}>{t(`home.faqQ${n}`)}</h3>
+                  <p className={styles.faqA}>{t(`home.faqA${n}`)}</p>
+                </div>
+              ))}
             </div>
           </div>
         </section>

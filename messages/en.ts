@@ -630,6 +630,7 @@ export const en = {
   },
   home: {
     // ── Header ──
+    navServices: 'Services',
     navHowItWorks: 'How it works',
     navSafety: 'Trust & Safety',
     navPros: 'For cleaners',
@@ -683,6 +684,26 @@ export const en = {
     // ── Final CTA ──
     finalTitle: 'Start with your ZIP code',
     finalBody: 'Tell us what needs cleaning. Asking is free, and you decide who comes.',
+    // ── Services ledger ──
+    svcTitle: 'What you can ask for',
+    svcIntro: 'Twelve kinds of cleaning run through Verliks. These are the six people request most, and each one has its own page with what it covers and what it leaves out.',
+    svcAll: 'All 12 services',
+    svcNote: 'Scope is agreed between you and the cleaner. Sending a request costs nothing, and you pay the professional directly.',
+    // ── FAQ ──
+    faqTitle: 'Questions people ask first',
+    faqIntro: 'Anything still unclear can be settled with the cleaner in the conversation, before you accept.',
+    faqQ1: 'What does a cleaning cost?',
+    faqA1: 'There is no fixed price list. The cleaner who takes your request goes through the job with you and confirms the price before anything is booked.',
+    faqQ2: 'Who do I pay, and when?',
+    faqA2: 'You pay the cleaner directly, on the terms the two of you agree. Verliks does not charge you to post a request, takes no percentage of the job, and never holds your payment.',
+    faqQ3: 'Who actually comes to my home?',
+    faqA3: 'An independent professional whose ID and selfie our team approved, whose service area covers your ZIP code, and who offers the type of cleaning you asked for.',
+    faqQ4: 'What if the cleaner who replies is not right for me?',
+    faqA4: 'Decline. Nothing is charged, and your request goes back out to other cleaners near you automatically.',
+    faqQ5: 'Can I ask for a specific cleaner?',
+    faqA5: 'Yes. A request can be sent straight to a professional whose profile you have seen. If they are not available, it falls back to matching with cleaners nearby.',
+    faqQ6: 'How quickly will someone reply?',
+    faqA6: 'Requests reach matching cleaners immediately, in small groups at a time. How fast one replies depends on who is free near you, so it is not a time we can promise.',
     // ── Footer ──
     footerTagline: 'Verliks connects people who need a cleaning with independent cleaners nearby.',
     footerClients: 'For clients',

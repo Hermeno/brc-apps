@@ -31,6 +31,8 @@ const nextConfig: NextConfig = {
     ];
   },
   images: {
+    // Next 16 will require every quality used in the app to be listed here.
+    qualities: [75, 78, 80],
     remotePatterns: [
       { protocol: 'https', hostname: 'picsum.photos' },
       { protocol: 'https', hostname: 'images.unsplash.com' },

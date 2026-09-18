@@ -50,7 +50,7 @@ export const SERVICES: Service[] = [
     tagline: 'Routine cleaning for a home that is already more or less kept up.',
     metaTitle: 'Standard House Cleaning',
     metaDescription:
-      'Routine house cleaning through Verliks: kitchen, bathrooms, bedrooms, living areas and floors. See an estimated range and send your request to cleaners near you.',
+      'Routine house cleaning through Verliks: kitchen, bathrooms, bedrooms, living areas and floors. See what it covers and send your request to cleaners near you.',
     whatIsIt:
       'Standard cleaning is the maintenance clean most homes run on: the kitchen, the bathrooms, the floors and the surfaces that collect dust and daily use. It assumes the home has been cleaned reasonably recently — it is not the right choice for catching up after months without one.',
     included: [
@@ -92,7 +92,7 @@ export const SERVICES: Service[] = [
     tagline: 'A slower, more detailed clean for what routine cleaning keeps missing.',
     metaTitle: 'Deep House Cleaning',
     metaDescription:
-      'Deep cleaning through Verliks for built-up grime, neglected corners and detail work. See an estimated range and send your request to cleaners near you.',
+      'Deep cleaning through Verliks for built-up grime, neglected corners and detail work. See what it covers and send your request to cleaners near you.',
     whatIsIt:
       'Deep cleaning goes after what a routine clean leaves behind: grease around the stove, build-up in the shower, dust on baseboards, edges and the tops of things. It takes considerably longer than a standard clean, and the scope depends on the condition the home is actually in.',
     included: [
@@ -135,7 +135,7 @@ export const SERVICES: Service[] = [
     tagline: 'Getting a space from worksite condition to somewhere you can actually live.',
     metaTitle: 'Post-Construction Cleaning',
     metaDescription:
-      'Post-construction and post-renovation cleaning through Verliks: fine dust, debris and residue. See an estimated range and send your request to cleaners near you.',
+      'Post-construction and post-renovation cleaning through Verliks: fine dust, debris and residue. See what it covers and send your request to cleaners near you.',
     whatIsIt:
       'Construction dust is not ordinary dust. It is fine, it settles everywhere including inside cabinets and on top of doors, and it keeps reappearing for days as it works loose. This service is about removing it and the leftover residue so the space can be used.',
     included: [
@@ -177,7 +177,7 @@ export const SERVICES: Service[] = [
     tagline: 'The clean that happens while the rooms are still empty.',
     metaTitle: 'Move In and Move Out Cleaning',
     metaDescription:
-      'Move-in and move-out cleaning through Verliks, with empty rooms and cabinets cleaned inside. See an estimated range and send your request to cleaners near you.',
+      'Move-in and move-out cleaning through Verliks, with empty rooms and cabinets cleaned inside. See what it covers and send your request to cleaners near you.',
     whatIsIt:
       'An empty home is the one chance to clean what furniture normally covers: the floor under the wardrobe, the inside of every cabinet, the back of the closet. This service is built around that window, whether you are handing a place back or taking one on.',
     included: [
@@ -219,7 +219,7 @@ export const SERVICES: Service[] = [
     tagline: 'Taking a season of weather, leaves and traffic off an outdoor deck.',
     metaTitle: 'Deck Cleaning',
     metaDescription:
-      'Deck cleaning through Verliks, with the method matched to the decking material. See an estimated range and send your request to cleaners near you.',
+      'Deck cleaning through Verliks, with the method matched to the decking material. See what it covers and send your request to cleaners near you.',
     whatIsIt:
       'Decks collect dirt, pollen, leaf stain and, in shaded spots, a green film that turns slippery when wet. Cleaning one is mostly about using the right method for the material: what is safe on composite is not the same as what softwood or hardwood can take.',
     included: [
@@ -261,7 +261,7 @@ export const SERVICES: Service[] = [
     tagline: 'For hard outdoor surfaces that a hose and a brush stopped fixing.',
     metaTitle: 'Pressure Washing',
     metaDescription:
-      'Pressure washing through Verliks for driveways, walkways, patios and suitable exterior surfaces. See an estimated range and send your request to cleaners near you.',
+      'Pressure washing through Verliks for driveways, walkways, patios and suitable exterior surfaces. See what it covers and send your request to cleaners near you.',
     whatIsIt:
       'Pressure washing lifts ground-in dirt, algae and staining from hard exterior surfaces. The pressure and technique have to match the surface: concrete takes far more than siding, render or older brickwork, and too much pressure does damage that cannot be undone.',
     included: [
@@ -303,7 +303,7 @@ export const SERVICES: Service[] = [
     tagline: 'Clearing what has collected in the gutters so water can get out.',
     metaTitle: 'Gutter Cleaning',
     metaDescription:
-      'Gutter cleaning through Verliks: leaves, debris and blocked downspouts cleared. See an estimated range and send your request to cleaners near you.',
+      'Gutter cleaning through Verliks: leaves, debris and blocked downspouts cleared. See what it covers and send your request to cleaners near you.',
     whatIsIt:
       'Gutters fill with leaves, grit off the roof and whatever the trees drop, and once they are blocked the water goes over the edge instead of down the pipe. Clearing them is straightforward work whose difficulty depends almost entirely on access and the height of the roof.',
     included: [
@@ -344,7 +344,7 @@ export const SERVICES: Service[] = [
     tagline: 'Cleaning the exposed metal joins on a roof, without touching the sealing.',
     metaTitle: 'Roof Flashing Cleaning',
     metaDescription:
-      'Cleaning of accessible roof flashing and the surrounding area through Verliks. See an estimated range and send your request to cleaners near you.',
+      'Cleaning of accessible roof flashing and the surrounding area through Verliks. See what it covers and send your request to cleaners near you.',
     whatIsIt:
       'Flashing is the metal detail that seals the joins on a roof — around chimneys, valleys and where a roof meets a wall. Dirt, moss and debris collect along those edges. This service cleans the accessible parts and the area around them. It is not roofing work and does not repair or reseal anything.',
     included: [
@@ -384,7 +384,7 @@ export const SERVICES: Service[] = [
     tagline: 'Detailed work on tile and the grout lines between it.',
     metaTitle: 'Tile and Grout Cleaning',
     metaDescription:
-      'Tile and grout cleaning through Verliks for bathrooms, kitchens and tiled floors. See an estimated range and send your request to cleaners near you.',
+      'Tile and grout cleaning through Verliks for bathrooms, kitchens and tiled floors. See what it covers and send your request to cleaners near you.',
     whatIsIt:
       'Grout is porous, which is why it holds dirt long after the tile beside it looks clean, and why it is usually the reason a tiled room reads as dirty. This service is slow, detailed work along those lines and across the tile, with the method chosen for the material.',
     included: [
@@ -426,7 +426,7 @@ export const SERVICES: Service[] = [
     tagline: 'Deciding where things live, so the space works instead of just looking tidy.',
     metaTitle: 'Home Organizing',
     metaDescription:
-      'Home organizing through Verliks: sorting, decluttering and setting up storage that holds. See an estimated range and send your request to professionals near you.',
+      'Home organizing through Verliks: sorting, decluttering and setting up storage that holds. See what it covers and send your request to professionals near you.',
     whatIsIt:
       'Organizing is not cleaning. Nothing gets scrubbed here — the work is sorting what is there, deciding what stays, and giving it a place that makes sense for how you actually use the room. It needs you present for the decisions, at least at the start.',
     included: [
@@ -470,7 +470,7 @@ export const SERVICES: Service[] = [
     tagline: 'The spaces that get skipped until they cannot be walked through.',
     metaTitle: 'Garage, Basement and Attic Cleaning',
     metaDescription:
-      'Garage, basement and attic cleaning through Verliks: dust, debris and a floor you can use again. See an estimated range and send your request to cleaners near you.',
+      'Garage, basement and attic cleaning through Verliks: dust, debris and a floor you can use again. See what it covers and send your request to cleaners near you.',
     whatIsIt:
       'Garages, basements and attics collect dust of a coarser kind, cobwebs, and years of things put down "for now". The cleaning part is straightforward; the reason these rooms are hard is usually the volume of stored belongings in the way.',
     included: [
@@ -513,7 +513,7 @@ export const SERVICES: Service[] = [
     tagline: 'Cleaning for a workplace, scheduled around the hours it operates.',
     metaTitle: 'Commercial Cleaning',
     metaDescription:
-      'Commercial cleaning through Verliks for offices, retail and small business premises. See an estimated range and send your request to cleaners near you.',
+      'Commercial cleaning through Verliks for offices, retail and small business premises. See what it covers and send your request to cleaners near you.',
     whatIsIt:
       'Commercial cleaning is shaped less by square footage than by how a place is used: how many people come through, what hours it runs, and what has to be spotless for customers. Most of it happens outside opening hours, which is the part worth settling first.',
     included: [
@@ -549,6 +549,15 @@ export const SERVICES: Service[] = [
     ],
     related: ['standard-cleaning', 'deep-cleaning', 'post-construction-cleaning'],
   },
+];
+
+/* Grouped by the question a visitor is actually asking, not by our internal ids.
+   Used by the navbar menu, the mobile menu and the /services index. */
+export const SERVICE_GROUPS: { title: string; slugs: string[] }[] = [
+  { title: 'Inside the home', slugs: ['standard-cleaning', 'deep-cleaning', 'tile-and-grout-cleaning', 'home-organizing'] },
+  { title: 'Moving or finishing work', slugs: ['move-in-move-out-cleaning', 'post-construction-cleaning', 'garage-basement-attic-cleaning'] },
+  { title: 'Outside the home', slugs: ['deck-cleaning', 'pressure-washing', 'gutter-cleaning', 'flashing-cleaning'] },
+  { title: 'For businesses', slugs: ['commercial-cleaning'] },
 ];
 
 export const getService = (slug: string) => SERVICES.find(s => s.slug === slug);

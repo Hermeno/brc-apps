@@ -632,6 +632,7 @@ export const pt: Messages = {
   },
   home: {
     // ── Header ──
+    navServices: 'Serviços',
     navHowItWorks: 'Como funciona',
     navSafety: 'Segurança',
     navPros: 'Para faxineiras',
@@ -685,6 +686,26 @@ export const pt: Messages = {
     // ── CTA final ──
     finalTitle: 'Comece pelo seu ZIP Code',
     finalBody: 'Conte o que precisa ser limpo. Pedir é grátis, e você decide quem vai.',
+    // ── Tabela de serviços ──
+    svcTitle: 'O que você pode pedir',
+    svcIntro: 'São doze tipos de limpeza na Verliks. Estes são os seis mais pedidos, e cada um tem sua própria página com o que cobre e o que não cobre.',
+    svcAll: 'Todos os 12 serviços',
+    svcNote: 'O escopo é combinado entre você e a profissional. Enviar o pedido não custa nada, e você paga diretamente a ela.',
+    // ── Perguntas ──
+    faqTitle: 'As perguntas que vêm primeiro',
+    faqIntro: 'O que ainda ficar em aberto pode ser resolvido com a profissional na conversa, antes de você aceitar.',
+    faqQ1: 'Quanto custa uma limpeza?',
+    faqA1: 'Não existe tabela fixa de preços. A profissional que pegar seu pedido revisa o serviço com você e confirma o preço antes de qualquer agendamento.',
+    faqQ2: 'Para quem eu pago, e quando?',
+    faqA2: 'Você paga direto à profissional, nas condições que vocês combinarem. A Verliks não cobra de você para publicar o pedido, não fica com percentual do serviço e não retém o seu pagamento.',
+    faqQ3: 'Quem vai até a minha casa?',
+    faqA3: 'Uma profissional independente com documento e selfie aprovados pela nossa equipe, cuja área de atendimento cobre seu ZIP Code e que oferece o tipo de limpeza que você pediu.',
+    faqQ4: 'E se quem responder não for a pessoa certa?',
+    faqA4: 'Recuse. Nada é cobrado, e seu pedido volta a ser enviado para outras profissionais perto de você automaticamente.',
+    faqQ5: 'Posso pedir uma profissional específica?',
+    faqA5: 'Sim. O pedido pode ir direto para alguém cujo perfil você já viu. Se ela não estiver disponível, ele volta para a busca entre profissionais próximas.',
+    faqQ6: 'Em quanto tempo alguém responde?',
+    faqA6: 'Os pedidos chegam às profissionais compatíveis na hora, em pequenos grupos por vez. A rapidez depende de quem está livre perto de você, então não é um prazo que possamos prometer.',
     // ── Rodapé ──
     footerTagline: 'A Verliks conecta quem precisa de uma limpeza a profissionais independentes da região.',
     footerClients: 'Para quem precisa',

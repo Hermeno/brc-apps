@@ -1,9 +1,11 @@
 import type { Metadata } from 'next';
 import NextLink from 'next/link';
+import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import styles from '../services.module.css';
-import { SERVICES, getService, exampleEstimate, REQUEST_EXTRAS } from '@/lib/services';
-import { PublicNav, PublicFooter, Arrow, btn } from '@/components/public-chrome';
+import { SERVICES, getService, REQUEST_EXTRAS } from '@/lib/services';
+import { PublicFooter, Arrow, btn } from '@/components/public-chrome';
+import SiteHeader from '@/components/site-header';
 
 const BASE = 'https://verliks.com';
 const footerServices = SERVICES.slice(0, 5).map(s => ({ slug: s.slug, name: s.name }));
@@ -26,7 +28,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       url: `/services/${service.slug}`,
       siteName: 'Verliks',
       type: 'website',
-      images: [{ url: '/images/home/living-room.jpg', width: 2560, height: 1706, alt: 'A clean, open living room' }],
+      images: [{ url: `/images/services/${service.slug}.jpg` }],
     },
     twitter: { card: 'summary_large_image', title: `${service.metaTitle} | Verliks`, description: service.metaDescription },
     robots: { index: true, follow: true },
@@ -45,7 +47,7 @@ const Chevron = () => (
 const WHAT_TO_EXPECT = [
   {
     title: 'You describe the job',
-    body: 'Your ZIP code, the property details, the day you want and anything specific. The form shows an estimated range before you send it.',
+    body: 'Your ZIP code, the property details, the day you want and anything specific. It takes a couple of minutes and costs nothing.',
   },
   {
     title: 'It reaches cleaners near you',
@@ -68,7 +70,7 @@ const WHAT_TO_EXPECT = [
 const SHARED_FAQ = [
   {
     q: 'How much does this cost?',
-    a: 'There is no fixed price. It depends on the property, its condition, the scope, your location and the professional. The request form gives you an estimated range from our calculator, and the cleaner confirms the real price with you before anything is booked.',
+    a: 'There is no fixed price. It depends on the property, its condition, the scope, your location and the professional. The cleaner who takes your request discusses it with you in the conversation, before anything is booked.',
   },
   {
     q: 'Can I ask for a specific cleaner?',
@@ -89,7 +91,6 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
   const service = getService(slug);
   if (!service) notFound();
 
-  const estimate = exampleEstimate(service);
   const related = service.related.map(getService).filter(Boolean);
   const requestUrl = `/request?service=${service.id}`;
 
@@ -120,43 +121,29 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
     <div className={styles.page}>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <a href="#main" className={styles.skip}>Skip to content</a>
-      <PublicNav />
+      <SiteHeader />
 
       <main id="main">
         {/* ═══ Hero ═══ */}
-        <section className={styles.hero}>
-          <div className={`${styles.wrap} ${styles.heroGrid}`}>
-            <div>
-              <nav className={styles.crumbs} aria-label="Breadcrumb">
-                <NextLink href="/">Home</NextLink> <span aria-hidden="true">/</span>
-                <NextLink href="/services">Services</NextLink> <span aria-hidden="true">/</span>
-                <span aria-current="page">{service.name}</span>
-              </nav>
-              <h1 className={styles.h1}>{service.name}</h1>
-              <p className={styles.tagline}>{service.tagline}</p>
-              <div className={styles.heroActions}>
-                <NextLink href={requestUrl} className={btn.navy}>
-                  Request {service.name} <Arrow />
-                </NextLink>
-                <NextLink href="/services" className={styles.textLink}>See all services</NextLink>
-              </div>
-            </div>
-
-            <div className={styles.estimate}>
-              <p className={styles.estimateTop}>Estimated range</p>
-              <div className={styles.estimateBody}>
-                <p className={styles.estimateLabel}>For {service.example.label}:</p>
-                <p className={styles.estimateRange}>${estimate.minPrice} – ${estimate.maxPrice}</p>
-                <p className={styles.estimateHours}>
-                  around {estimate.hours} {estimate.hours === 1 ? 'hour' : 'hours'} of work
-                  {estimate.discountPct > 0 ? `, including the ${estimate.discountPct}% recurring discount` : ''}
-                </p>
-                <p className={styles.estimateNote}>
-                  This is what our calculator returns for that example, shown so you have a starting point
-                  rather than a blank page. Your own request is priced on your details, and the cleaner
-                  agrees the final price with you.
-                </p>
-              </div>
+        <section data-hero className={styles.hero}>
+          <Image
+            src={`/images/services/${service.slug}.jpg`} alt=""
+            fill priority sizes="100vw" quality={78} className={styles.heroImg}
+          />
+          <div className={styles.heroShade} aria-hidden="true" />
+          <div className={styles.heroContent}>
+            <nav className={styles.crumbs} aria-label="Breadcrumb">
+              <NextLink href="/">Home</NextLink> <span aria-hidden="true">/</span>
+              <NextLink href="/services">Services</NextLink> <span aria-hidden="true">/</span>
+              <span aria-current="page">{service.name}</span>
+            </nav>
+            <h1 className={styles.h1}>{service.name}</h1>
+            <p className={styles.tagline}>{service.tagline}</p>
+            <div className={styles.heroActions}>
+              <NextLink href={requestUrl} className={btn.light}>
+                Request {service.name} <Arrow />
+              </NextLink>
+              <NextLink href="/services" className={styles.textLink}>See all services</NextLink>
             </div>
           </div>
         </section>
@@ -187,7 +174,7 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
             {service.showExtras && (
               <p className={styles.prose} style={{ marginTop: 28 }}>
                 Add-ons you can tick in the request form:{' '}
-                {REQUEST_EXTRAS.map(e => `${e.label} (+$${e.price})`).join(', ')}.
+                {REQUEST_EXTRAS.map(e => e.label).join(', ')}.
               </p>
             )}
           </div>
@@ -268,11 +255,11 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
         <div className={styles.wrap}>
           <h2 className={styles.finalTitle}>Send your {service.name.toLowerCase()} request</h2>
           <p className={styles.finalBody}>
-            The form opens with this service already selected. You will see an estimated range as you
-            fill it in, and it costs nothing to ask.
+            The form opens with this service already selected. Describing the job costs nothing, and
+            the cleaner who takes it confirms the price with you.
           </p>
           <div className={styles.finalActions}>
-            <NextLink href={requestUrl} className={btn.light}>
+            <NextLink href={requestUrl} className={btn.navy}>
               Request {service.name} <Arrow />
             </NextLink>
             <NextLink href="/services" className={styles.finalLink}>Look at other services</NextLink>

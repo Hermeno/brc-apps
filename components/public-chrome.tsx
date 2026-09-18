@@ -2,6 +2,7 @@ import NextLink from 'next/link';
 import Image from 'next/image';
 import styles from './public-chrome.module.css';
 
+
 /* Header and footer for the public server-rendered pages. The home page keeps
    its own, because its header is transparent over the hero photo and needs
    client state; these pages sit on white and do not. */
@@ -19,28 +20,6 @@ export const btn = {
   light: `${styles.btn} ${styles.btnLight}`,
   small: styles.btnSmall,
 };
-
-export function PublicNav() {
-  return (
-    <header className={styles.nav}>
-      <div className={styles.navInner}>
-        <NextLink href="/" className={styles.logo} aria-label="Verliks home">
-          <Image src="/vlogo.PNG" alt="" width={34} height={34} className={styles.logoMark} priority />
-          <span>verliks</span>
-        </NextLink>
-        <ul className={styles.navLinks}>
-          <li><NextLink href="/services" className={styles.navLink}>Services</NextLink></li>
-          <li><NextLink href="/for-cleaners" className={styles.navLink}>For cleaners</NextLink></li>
-          <li><NextLink href="/about" className={styles.navLink}>About</NextLink></li>
-        </ul>
-        <div className={styles.navRight}>
-          <NextLink href="/auth/login" className={styles.navLink}>Sign in</NextLink>
-          <NextLink href="/request" className={`${btn.navy} ${styles.btnSmall}`}>Find a cleaner</NextLink>
-        </div>
-      </div>
-    </header>
-  );
-}
 
 export function PublicFooter({ services }: { services: { slug: string; name: string }[] }) {
   return (

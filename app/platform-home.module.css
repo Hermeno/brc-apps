@@ -15,17 +15,19 @@
    ───────────────────────────────────────────────────────────── */
 
 .page {
-  --navy:      #1E3A5F;  /* brand.500 */
-  --navy-mid:  #182F4D;  /* brand.600 */
-  --navy-deep: #12243B;  /* brand.700 */
-  --navy-soft: #41757F;  /* brand.400, darkened for 4.5:1 on white */
-  --gold:      #D4AF37;  /* gold.500 — on dark only */
-  --gold-soft: #E3C868;  /* gold.300 — accent text on dark */
-  --gold-ink:  #A5851F;  /* gold.700 — gold as text on light */
-  --cream:     #F7F8FA;
-  --ink:       #0F172A;
-  --muted:     #5F6B7D;
-  --line:      #E3E8EE;
+  /* Neutral only: text is black or #333, never a dark blue.
+     The token names are kept so the rules below did not have to change. */
+  --navy:      #111111;  /* headings and strong text */
+  --navy-mid:  #000000;  /* hover on filled buttons */
+  --navy-deep: #111111;  /* dark bands and footer */
+  --navy-soft: #333333;  /* secondary text */
+  --gold:      #111111;  /* focus ring on light surfaces */
+  --gold-soft: #FFFFFF;  /* accent text on dark = plain white */
+  --gold-ink:  #333333;
+  --cream:     #F5F5F5;
+  --ink:       #111111;
+  --muted:     #333333;
+  --line:      #E0E0E0;
   --line-dark: rgba(255, 255, 255, 0.18);
   --nav-h:     76px;
   --ease:      cubic-bezier(0.2, 0.7, 0.2, 1);
@@ -66,8 +68,8 @@
 .btnLight { color: #fff; border-color: rgba(255, 255, 255, 0.85); }
 .btnLight:hover, .btnLight:focus-visible { background: #fff; color: var(--navy-deep); border-color: #fff; }
 
-.btnGold { color: var(--gold-soft); border-color: var(--gold); }
-.btnGold:hover, .btnGold:focus-visible { background: var(--gold); color: var(--navy-deep); border-color: var(--gold); }
+.btnGold { color: #fff; border-color: rgba(255, 255, 255, 0.85); }
+.btnGold:hover, .btnGold:focus-visible { background: #fff; color: #111; border-color: #fff; }
 
 .btnNavy { color: var(--navy); border-color: var(--navy); }
 .btnNavy:hover, .btnNavy:focus-visible { background: var(--navy); color: #fff; border-color: var(--navy); }
@@ -77,7 +79,13 @@
 /* ═════════════════════════════════════════════
    Header — transparent over the hero, solid after it
    ═════════════════════════════════════════════ */
+.navSpacer { height: 76px; }
+
 .nav {
+  /* repeated here because the header is now used outside .page too */
+  --nav-h: 76px; --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --ink: #111111; --muted: #333333; --line: #E0E0E0;
+  --navy: #111111; --navy-soft: #333333; --cream: #F5F5F5;
   position: fixed; top: 0; left: 0; right: 0; z-index: 100;
   background: transparent; border-bottom: 1px solid transparent;
   transition: background-color 0.3s var(--ease), border-color 0.3s var(--ease);
@@ -116,6 +124,58 @@
 
 .navRight { display: flex; align-items: center; gap: 22px; flex-shrink: 0; }
 
+/* ── Services menu: a panel that drops out of the header ── */
+.navItem { position: relative; display: flex; align-items: center; }
+.navTrigger {
+  display: inline-flex; align-items: center; gap: 7px;
+  background: none; border: none; border-radius: 0; padding: 6px 0; cursor: pointer;
+  font-family: var(--font-body), sans-serif; font-size: 14px; font-weight: 500;
+  color: rgba(255, 255, 255, 0.86); transition: color 0.3s var(--ease);
+}
+.navSolid .navTrigger { color: var(--navy-soft); }
+.navTrigger:hover, .navTrigger[aria-expanded='true'] { color: #fff; }
+.navSolid .navTrigger:hover, .navSolid .navTrigger[aria-expanded='true'] { color: var(--ink); }
+.navCaret { transition: transform 0.25s var(--ease); }
+.navTrigger[aria-expanded='true'] .navCaret { transform: rotate(180deg); }
+
+.mega {
+  position: absolute; top: 100%; left: 0; right: 0;
+  background: #fff; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);
+}
+.megaInner {
+  max-width: 1200px; margin: 0 auto; padding: 40px 48px 44px;
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 0 48px;
+}
+.megaGroup { border-top: 1px solid var(--line); padding-top: 18px; }
+.megaGroupTitle {
+  font-size: 11.5px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--muted); margin: 0 0 6px;
+}
+.megaLink {
+  display: block; padding: 11px 0; border-bottom: 1px solid var(--line);
+  font-size: 15px; color: var(--ink); text-decoration: none;
+  transition: padding-left 0.25s var(--ease);
+}
+.megaLink:hover { padding-left: 8px; }
+.megaFoot {
+  max-width: 1200px; margin: 0 auto; padding: 0 48px 36px;
+}
+.megaAll {
+  font-size: 13px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--ink); text-decoration: none; display: inline-flex; align-items: center; gap: 10px;
+}
+.megaAll:hover { text-decoration: underline; text-underline-offset: 5px; }
+
+/* Mobile: the same list, opened inline inside the drawer */
+.mobileGroupTitle {
+  font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--muted); margin: 18px 0 2px;
+}
+.mobileMenu .mobileSub {
+  display: block; padding: 11px 2px 11px 14px; font-size: 15px; font-weight: 400;
+  color: var(--ink); border-bottom: 1px solid var(--line); text-decoration: none;
+}
+
 .navMenuBtn {
   display: none; margin-left: auto; padding: 8px;
   background: none; border: none; border-radius: 0; cursor: pointer;
@@ -148,11 +208,11 @@
 /* Two layers: a short dark band at the top keeps the transparent header
    legible; the navy wash deepens toward the bottom, where the search sits.
    Measured: white hero text stays above 4.5:1 over the brightest walls. */
+/* Flat navy tint, no gradient. Measured: white hero text stays above 4.5:1
+   even over the brightest wall in the photo. */
 .heroShade {
   position: absolute; inset: 0; pointer-events: none;
-  background:
-    linear-gradient(180deg, rgba(6, 13, 20, 0.55) 0%, rgba(6, 13, 20, 0) 24%),
-    linear-gradient(180deg, rgba(18, 36, 59, 0.58) 0%, rgba(18, 36, 59, 0.70) 50%, rgba(12, 25, 41, 0.88) 100%);
+  background: rgba(0, 0, 0, 0.62);
 }
 
 .heroContent {
@@ -171,14 +231,14 @@
   margin: 22px 0 36px; max-width: 46ch;
 }
 .heroPro {
-  margin: 26px 0 0; font-size: 14px; color: rgba(255, 255, 255, 0.72);
+  margin: 26px 0 0; font-size: 14px; color: rgba(255, 255, 255, 0.88);
 }
 .heroPro a {
   color: #fff; font-weight: 600; text-decoration: underline;
   text-decoration-thickness: 1px; text-underline-offset: 4px;
   transition: text-decoration-color 0.3s var(--ease), color 0.3s var(--ease);
 }
-.heroPro a:hover { color: var(--gold-soft); }
+.heroPro a:hover { color: #fff; }
 
 /* ═════════════════════════════════════════════
    ZIP search — one outlined bar, square
@@ -201,17 +261,17 @@
 .searchBtn { min-height: 0; border-width: 0 0 0 1px; padding: 0 28px; }
 
 /* on the photo */
-.searchDark { border-color: rgba(255, 255, 255, 0.85); background: rgba(6, 13, 20, 0.22); }
-.searchDark:focus-within { border-color: var(--gold); }
+.searchDark { border-color: rgba(255, 255, 255, 0.85); background: rgba(0, 0, 0, 0.22); }
+.searchDark:focus-within { border-color: #fff; }
 .searchDark .searchField svg { color: rgba(255, 255, 255, 0.8); }
 .searchDark .searchInput { color: #fff; }
-.searchDark .searchInput::placeholder { color: rgba(255, 255, 255, 0.72); }
+.searchDark .searchInput::placeholder { color: rgba(255, 255, 255, 0.88); }
 .searchDark .searchBtn { color: #fff; border-color: rgba(255, 255, 255, 0.85); }
 .searchDark .searchBtn:hover, .searchDark .searchBtn:focus-visible { background: #fff; color: var(--navy-deep); }
 
 /* on light */
 .searchLight { border-color: var(--navy); background: #fff; }
-.searchLight:focus-within { border-color: var(--gold-ink); }
+.searchLight:focus-within { border-color: #111; }
 .searchLight .searchField svg { color: var(--muted); }
 .searchLight .searchInput { color: var(--ink); }
 .searchLight .searchInput::placeholder { color: #7C889A; }
@@ -253,7 +313,7 @@
 .rowBody { margin: 0; font-size: 15px; line-height: 1.65; color: var(--muted); max-width: 62ch; }
 .splitBody .btn { align-self: flex-start; margin-top: 38px; }
 
-.trustText { font-size: 17px; line-height: 1.7; color: #334155; margin: 26px 0 0; max-width: 50ch; }
+.trustText { font-size: 17px; line-height: 1.7; color: #333333; margin: 26px 0 0; max-width: 50ch; }
 .trustNote {
   font-size: 14px; line-height: 1.6; color: var(--muted);
   margin: 34px 0 0; padding-top: 20px; border-top: 1px solid var(--line); max-width: 50ch;
@@ -280,6 +340,57 @@
 .reviewMetric { font-size: 13.5px; color: var(--muted); margin: 28px 0 0; }
 
 /* ═════════════════════════════════════════════
+   Services ledger — rows with hairlines, scope and
+   estimate on the right. Adapted from the reference
+   layout; palette and type stay Verliks.
+   ═════════════════════════════════════════════ */
+.ledgerHead {
+  display: flex; align-items: flex-end; justify-content: space-between;
+  gap: 24px; flex-wrap: wrap; margin-bottom: 8px;
+}
+.ledgerIntro { font-size: 16.5px; line-height: 1.6; color: var(--muted); margin: 16px 0 0; max-width: 58ch; }
+.ledger { margin: 40px 0 0; border-top: 1px solid var(--line); }
+.ledgerRow {
+  display: grid; grid-template-columns: 4.5fr 6fr auto; gap: 32px; align-items: baseline;
+  padding: 26px 16px 28px; margin: 0 -16px;
+  border-bottom: 1px solid var(--line); text-decoration: none;
+  transition: background-color 0.3s var(--ease);
+}
+.ledgerRow:hover { background: var(--cream); }
+.ledgerName {
+  font-family: var(--font-display), sans-serif;
+  font-size: 22px; font-weight: 700; letter-spacing: -0.02em; color: var(--navy); margin: 0;
+}
+.ledgerScope { font-size: 15px; line-height: 1.6; color: var(--muted); margin: 0; }
+.ledgerGo { color: var(--ink); display: inline-flex; align-self: center; transition: transform 0.3s var(--ease); }
+.ledgerRow:hover .ledgerGo { transform: translateX(4px); }
+.ledgerFoot {
+  display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap;
+  margin: 28px 0 0;
+}
+.ledgerNote { font-size: 13px; line-height: 1.6; color: var(--muted); margin: 0; max-width: 62ch; }
+
+/* ── FAQ, 4 / 8 split ── */
+.faqGrid { display: grid; grid-template-columns: 4fr 8fr; gap: 64px; align-items: start; }
+.faqAside .sectionTitle { margin-top: 0; }
+.faqAsideBody { font-size: 15.5px; line-height: 1.65; color: var(--muted); margin: 18px 0 0; }
+.faqList { border-top: 1px solid var(--line); }
+.faqItem { padding: 26px 0 28px; border-bottom: 1px solid var(--line); }
+.faqQ { font-size: 18px; font-weight: 700; letter-spacing: -0.015em; color: var(--navy); margin: 0 0 9px; }
+.faqA { font-size: 15.5px; line-height: 1.7; color: var(--muted); margin: 0; max-width: 70ch; }
+
+@media (max-width: 1000px) {
+  .ledgerRow { grid-template-columns: 1fr auto; gap: 8px 24px; }
+  .ledgerScope { grid-column: 1 / -1; }
+  .faqGrid { grid-template-columns: 1fr; gap: 40px; }
+}
+@media (max-width: 640px) {
+  .ledgerRow { grid-template-columns: 1fr auto; gap: 8px 16px; padding: 22px 12px 24px; margin: 0 -12px; }
+  .ledgerName { font-size: 19px; }
+  .faqQ { font-size: 16.5px; }
+}
+
+/* ═════════════════════════════════════════════
    For cleaners — second photographic band
    ═════════════════════════════════════════════ */
 .pro {
@@ -290,7 +401,7 @@
 .proImg { object-fit: cover; object-position: 62% 60%; }
 .proShade {
   position: absolute; inset: 0; pointer-events: none;
-  background: linear-gradient(90deg, rgba(12, 25, 41, 0.94) 0%, rgba(12, 25, 41, 0.84) 38%, rgba(12, 25, 41, 0.35) 72%, rgba(12, 25, 41, 0.1) 100%);
+  background: rgba(0, 0, 0, 0.78);
 }
 .proInner { position: relative; z-index: 1; width: 100%; padding-top: 96px; padding-bottom: 96px; }
 .proContent { max-width: 520px; }
@@ -316,39 +427,46 @@
 /* ═════════════════════════════════════════════
    Footer
    ═════════════════════════════════════════════ */
-.footer { background: var(--navy-deep); color: #fff; }
+.footer { background: #fff; border-top: 1px solid var(--line); color: var(--ink); }
 .footerInner {
   max-width: 1200px; margin: 0 auto; padding: 64px 48px 48px;
   display: grid; grid-template-columns: 1.6fr 1fr 1fr 1fr; gap: 40px;
 }
-.footer .logo { color: #fff; }
-.footerTagline { font-size: 14px; line-height: 1.6; color: rgba(255, 255, 255, 0.58); margin: 16px 0 0; max-width: 32ch; }
+.footer .logo { color: var(--ink); }
+.footerTagline { font-size: 14px; line-height: 1.6; color: var(--muted); margin: 16px 0 0; max-width: 32ch; }
 .footerColTitle {
   font-size: 12px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.92); margin: 6px 0 18px;
+  color: var(--ink); margin: 6px 0 18px;
 }
 .footerCol ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 12px; }
 .footerCol a {
-  font-size: 14px; color: rgba(255, 255, 255, 0.64); text-decoration: none;
+  font-size: 14px; color: var(--muted); text-decoration: none;
   transition: color 0.3s var(--ease);
 }
-.footerCol a:hover { color: #fff; }
+.footerCol a:hover { color: var(--ink); }
 .footerBottom {
   max-width: 1200px; margin: 0 auto; padding: 22px 48px 36px;
-  border-top: 1px solid var(--line-dark);
+  border-top: 1px solid var(--line);
   display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;
-  font-size: 13px; color: rgba(255, 255, 255, 0.5);
+  font-size: 13px; color: var(--muted);
 }
 
 /* ── Focus ── */
 .page a:focus-visible, .page button:focus-visible, .page input:focus-visible {
-  outline: 2px solid var(--gold); outline-offset: 3px;
+  outline: 2px solid #111; outline-offset: 3px;
 }
+.hero a:focus-visible, .hero button:focus-visible, .hero input:focus-visible,
+.pro a:focus-visible { outline-color: #fff; }
 .search .searchInput:focus-visible { outline: none; } /* the bar's border carries focus */
 
 /* ═════════════════════════════════════════════
    Responsive — 1440 / 768 / 390 checkpoints
    ═════════════════════════════════════════════ */
+@media (max-width: 1160px) {
+  .megaInner { grid-template-columns: repeat(2, 1fr); gap: 0 40px; padding: 32px 32px 36px; }
+  .megaFoot { padding: 0 32px 30px; }
+}
+
 @media (max-width: 1080px) {
   .wrap, .navInner, .footerInner, .footerBottom { padding-left: 32px; padding-right: 32px; }
   .navLinks { gap: 22px; }
@@ -367,12 +485,14 @@
   .splitBody, .splitReverse .splitBody { padding: 72px 32px 80px; }
 
   .pro { min-height: 0; }
-  .proShade { background: linear-gradient(180deg, rgba(12, 25, 41, 0.72) 0%, rgba(12, 25, 41, 0.9) 55%, rgba(12, 25, 41, 0.96) 100%); }
+  .proShade { background: rgba(0, 0, 0, 0.82); }
   .proInner { padding-top: 80px; padding-bottom: 80px; }
 }
 
 @media (max-width: 640px) {
   .page { --nav-h: 64px; }
+  .nav { --nav-h: 64px; }
+  .navSpacer { height: 64px; }
   .wrap, .navInner, .footerInner, .footerBottom { padding-left: 20px; padding-right: 20px; }
   .logo { font-size: 21px; }
   .logoMark { width: 30px; height: 30px; }

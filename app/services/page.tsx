@@ -1,8 +1,9 @@
 import type { Metadata } from 'next';
 import NextLink from 'next/link';
 import styles from './services.module.css';
-import { SERVICES } from '@/lib/services';
-import { PublicNav, PublicFooter, Arrow, btn } from '@/components/public-chrome';
+import { SERVICES, SERVICE_GROUPS } from '@/lib/services';
+import { PublicFooter, Arrow, btn } from '@/components/public-chrome';
+import SiteHeader from '@/components/site-header';
 
 const BASE = 'https://verliks.com';
 const footerServices = SERVICES.slice(0, 5).map(s => ({ slug: s.slug, name: s.name }));
@@ -10,12 +11,12 @@ const footerServices = SERVICES.slice(0, 5).map(s => ({ slug: s.slug, name: s.na
 export const metadata: Metadata = {
   title: 'Cleaning Services',
   description:
-    'Every type of cleaning you can request through Verliks — from routine and deep cleaning to post-construction, gutters, tile and commercial work. Each one with what it covers and an estimated range.',
+    'Every type of cleaning you can request through Verliks — from routine and deep cleaning to post-construction, gutters, tile and commercial work. Each one with what it covers and what to have ready.',
   alternates: { canonical: '/services' },
   openGraph: {
     title: 'Cleaning Services | Verliks',
     description:
-      'Routine, deep, move-out, post-construction, exterior and commercial cleaning — what each one covers and what it tends to cost.',
+      'Routine, deep, move-out, post-construction, exterior and commercial cleaning — what each one covers and what to have ready.',
     url: '/services',
     siteName: 'Verliks',
     type: 'website',
@@ -23,14 +24,6 @@ export const metadata: Metadata = {
   },
   robots: { index: true, follow: true },
 };
-
-/* Grouped by the question a visitor is actually asking, not by our internal ids. */
-const GROUPS: { title: string; slugs: string[] }[] = [
-  { title: 'Inside the home', slugs: ['standard-cleaning', 'deep-cleaning', 'tile-and-grout-cleaning', 'home-organizing'] },
-  { title: 'Moving or finishing work', slugs: ['move-in-move-out-cleaning', 'post-construction-cleaning', 'garage-basement-attic-cleaning'] },
-  { title: 'Outside the home', slugs: ['deck-cleaning', 'pressure-washing', 'gutter-cleaning', 'flashing-cleaning'] },
-  { title: 'For businesses', slugs: ['commercial-cleaning'] },
-];
 
 export default function ServicesIndexPage() {
   const jsonLd = {
@@ -65,19 +58,19 @@ export default function ServicesIndexPage() {
     <div className={styles.page}>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <a href="#main" className={styles.skip}>Skip to content</a>
-      <PublicNav />
+      <SiteHeader />
 
       <main id="main">
-        <section className={styles.hero}>
-          <div className={styles.wrap}>
+        <section className={`${styles.hero} ${styles.heroFlat}`}>
+          <div className={styles.heroContent}>
             <nav className={styles.crumbs} aria-label="Breadcrumb">
               <NextLink href="/">Home</NextLink> <span aria-hidden="true">/</span>
               <span aria-current="page">Services</span>
             </nav>
             <h1 className={styles.h1}>What you can ask a cleaner for</h1>
             <p className={styles.tagline}>
-              Twelve kinds of work, each with what it covers, what it usually leaves out, and an
-              estimated range so you are not guessing before you ask.
+              Twelve kinds of work, each with what it covers, what it usually leaves out, and what is
+              worth telling the cleaner before you ask.
             </p>
             <div className={styles.heroActions}>
               <NextLink href="/request" className={btn.navy}>Start a request <Arrow /></NextLink>
@@ -87,7 +80,7 @@ export default function ServicesIndexPage() {
 
         <section className={styles.section}>
           <div className={styles.wrap}>
-            {GROUPS.map(group => (
+            {SERVICE_GROUPS.map(group => (
               <div className={styles.group} key={group.title}>
                 <h2 className={styles.groupTitle}>{group.title}</h2>
                 {group.slugs.map(slug => {
@@ -117,7 +110,7 @@ export default function ServicesIndexPage() {
             cleaner who picks it up can tell you if a different service fits better.
           </p>
           <div className={styles.finalActions}>
-            <NextLink href="/request" className={btn.light}>Start a request <Arrow /></NextLink>
+            <NextLink href="/request" className={btn.navy}>Start a request <Arrow /></NextLink>
             <NextLink href="/for-cleaners" className={styles.finalLink}>I am a cleaner, not a client</NextLink>
           </div>
         </div>
