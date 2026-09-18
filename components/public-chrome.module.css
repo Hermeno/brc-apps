@@ -1,0 +1,86 @@
+/* Shared header and footer for the public server-rendered pages
+   (/services and below). Same shape language as the home page:
+   square corners, outlined buttons that fill on hover. */
+
+.nav {
+  position: sticky; top: 0; z-index: 100;
+  background: #fff; border-bottom: 1px solid #E3E8EE;
+}
+.navInner {
+  max-width: 1200px; margin: 0 auto; padding: 0 48px; height: 76px;
+  display: flex; align-items: center; gap: 28px;
+}
+.logo {
+  display: inline-flex; align-items: center; gap: 9px; flex-shrink: 0;
+  font-family: var(--font-display), sans-serif;
+  font-size: 24px; font-weight: 700; letter-spacing: -0.02em;
+  color: #1E3A5F; text-decoration: none;
+}
+.logoMark { width: 34px; height: 34px; object-fit: contain; flex-shrink: 0; }
+.navLinks { display: flex; align-items: center; gap: 32px; list-style: none; margin: 0 auto; padding: 0; }
+.navLink {
+  font-size: 14px; font-weight: 500; color: #41757F; text-decoration: none;
+  transition: color 0.3s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.navLink:hover { color: #1E3A5F; }
+.navRight { display: flex; align-items: center; gap: 22px; flex-shrink: 0; }
+
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 12px;
+  min-height: 52px; padding: 0 30px;
+  border: 1.5px solid; border-radius: 0; background: transparent;
+  font-family: var(--font-body), sans-serif;
+  font-size: 13px; font-weight: 600; line-height: 1;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  text-decoration: none; white-space: nowrap; cursor: pointer;
+  transition: background-color 0.3s cubic-bezier(0.2, 0.7, 0.2, 1),
+              color 0.3s cubic-bezier(0.2, 0.7, 0.2, 1),
+              border-color 0.3s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.btn svg { flex-shrink: 0; transition: transform 0.3s cubic-bezier(0.2, 0.7, 0.2, 1); }
+.btn:hover svg { transform: translateX(3px); }
+.btnNavy { color: #1E3A5F; border-color: #1E3A5F; }
+.btnNavy:hover, .btnNavy:focus-visible { background: #1E3A5F; color: #fff; }
+.btnLight { color: #fff; border-color: rgba(255, 255, 255, 0.85); }
+.btnLight:hover, .btnLight:focus-visible { background: #fff; color: #12243B; border-color: #fff; }
+.btnSmall { min-height: 42px; padding: 0 20px; font-size: 12px; }
+
+/* ── Footer ── */
+.footer { background: #12243B; color: #fff; }
+.footerInner {
+  max-width: 1200px; margin: 0 auto; padding: 64px 48px 48px;
+  display: grid; grid-template-columns: 1.6fr 1fr 1fr 1fr; gap: 40px;
+}
+.footer .logo { color: #fff; }
+.footerTagline { font-size: 14px; line-height: 1.6; color: rgba(255, 255, 255, 0.58); margin: 16px 0 0; max-width: 32ch; }
+.footerColTitle {
+  font-size: 12px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.92); margin: 6px 0 18px;
+}
+.footerCol ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 12px; }
+.footerCol a {
+  font-size: 14px; color: rgba(255, 255, 255, 0.64); text-decoration: none;
+  transition: color 0.3s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.footerCol a:hover { color: #fff; }
+.footerBottom {
+  max-width: 1200px; margin: 0 auto; padding: 22px 48px 36px;
+  border-top: 1px solid rgba(255, 255, 255, 0.18);
+  font-size: 13px; color: rgba(255, 255, 255, 0.5);
+}
+
+@media (max-width: 1000px) {
+  .navInner, .footerInner, .footerBottom { padding-left: 32px; padding-right: 32px; }
+  .footerInner { grid-template-columns: 1fr 1fr 1fr; }
+  .footerBrand { grid-column: 1 / -1; }
+}
+@media (max-width: 760px) {
+  .navLinks, .navRight .navLink { display: none; }
+}
+@media (max-width: 640px) {
+  .navInner, .footerInner, .footerBottom { padding-left: 20px; padding-right: 20px; }
+  .navInner { height: 64px; gap: 12px; }
+  .logo { font-size: 21px; }
+  .logoMark { width: 30px; height: 30px; }
+  .footerInner { grid-template-columns: 1fr 1fr; gap: 36px 24px; padding-top: 52px; }
+}

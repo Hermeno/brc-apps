@@ -58,7 +58,7 @@
 
 .skip {
   position: absolute; left: -9999px; top: 0;
-  background: var(--navy); color: #fff; padding: 10px 16px; border-radius: 6px;
+  background: var(--navy); color: #fff; padding: 10px 16px; border-radius: 0;
   z-index: 200; font-size: 14px; font-weight: 600;
 }
 .skip:focus { left: 16px; top: 12px; }
@@ -68,7 +68,7 @@
   display: inline-flex; align-items: center; justify-content: center; gap: 9px;
   font-family: var(--font-body), sans-serif;
   font-size: 15px; font-weight: 600; letter-spacing: -0.01em;
-  padding: 14px 26px; border-radius: 6px; border: none;
+  padding: 14px 26px; border-radius: 0; border: none;
   text-decoration: none; cursor: pointer; transition: background 0.15s;
 }
 .ctaGold { background: var(--gold); color: var(--navy-deep); }
@@ -150,15 +150,9 @@
 /* ── How it works — numbered rail ── */
 .steps { margin: 54px 0 0; }
 .step {
-  display: grid; grid-template-columns: 96px 1fr; gap: 28px;
   padding: 30px 0; border-top: 1px solid var(--line);
 }
 .step:last-child { border-bottom: 1px solid var(--line); }
-.stepNum {
-  font-family: var(--font-display), sans-serif;
-  font-size: 30px; font-weight: 600; color: var(--navy);
-  line-height: 1; letter-spacing: -0.02em;
-}
 .stepTitle {
   font-size: 17px; font-weight: 700; color: var(--navy);
   margin: 0 0 8px; letter-spacing: -0.01em;
@@ -172,7 +166,7 @@
 /* ── Example opportunity panel ── */
 .example {
   margin: 24px 0 0; background: var(--white);
-  border: 1px solid var(--line); border-radius: 10px; overflow: hidden;
+  border: 1px solid var(--line); border-radius: 0; overflow: hidden;
   max-width: 520px;
 }
 .exampleTop {
@@ -332,7 +326,7 @@
 
 /* ── Focus ── */
 .page a:focus-visible, .page button:focus-visible, .page summary:focus-visible {
-  outline: 2px solid var(--gold); outline-offset: 3px; border-radius: 4px;
+  outline: 2px solid var(--gold); outline-offset: 3px;
 }
 .dark a:focus-visible, .footer a:focus-visible, .final a:focus-visible {
   outline-color: var(--gold);
@@ -364,8 +358,7 @@
   .heroActions .ctaGold { width: 100%; }
   .ctaGhostDark { padding: 4px 0; }
 
-  .step { grid-template-columns: 1fr; gap: 12px; padding: 26px 0; }
-  .stepNum { font-size: 24px; }
+  .step { padding: 26px 0; }
 
   .steps { margin-top: 40px; }
   .controls, .truthGrid, .faq { margin-top: 34px; }

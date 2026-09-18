@@ -3,7 +3,7 @@
 import { useLocale } from '@/lib/i18n';
 import { Box, Text } from '@chakra-ui/react';
 
-export default function LanguageSwitcher({ dark = false }: { dark?: boolean }) {
+export default function LanguageSwitcher({ dark = false, square = false }: { dark?: boolean; square?: boolean }) {
   const { locale, setLocale, t } = useLocale();
 
   return (
@@ -12,7 +12,7 @@ export default function LanguageSwitcher({ dark = false }: { dark?: boolean }) {
       onClick={() => setLocale(locale === 'pt' ? 'en' : 'pt')}
       h="34px"
       px={2.5}
-      borderRadius="lg"
+      borderRadius={square ? '0' : 'lg'}
       border="1px solid"
       borderColor={dark ? 'rgba(255,255,255,0.15)' : '#E3E8EE'}
       bg={dark ? 'rgba(255,255,255,0.06)' : 'transparent'}

@@ -227,29 +227,22 @@ export default function AboutPage() {
           <SimpleGrid columns={{ base: 1, md: 3 }} gap={0}>
             {[
               {
-                n: '01',
                 title: 'Identity Verification',
                 desc: 'Every cleaner submits government-issued ID. We verify name, address, and identity before activation.',
               },
               {
-                n: '02',
                 title: 'Background Check',
                 desc: 'National criminal background check on every cleaner. Any history of violent or property crimes results in immediate disqualification.',
               },
               {
-                n: '03',
                 title: 'Ongoing Ratings',
                 desc: 'After every booking, clients rate the service. Cleaners with consistently low ratings are reviewed and can be suspended.',
               },
             ].map((s, i) => (
-              <Box key={s.n} px={8} py={8}
+              <Box key={s.title} px={8} py={8}
                 borderRight={{ md: i < 2 ? '1px solid #E3E8EE' : 'none' }}
                 borderBottom={{ base: i < 2 ? '1px solid #E3E8EE' : 'none', md: 'none' }}
                 position="relative">
-                <Text fontSize="42px" fontWeight="800" fontFamily="heading" letterSpacing="-0.05em"
-                  color="#E3E8EE" lineHeight={1} mb={4} style={{ userSelect: 'none' }}>
-                  {s.n}
-                </Text>
                 <Text fontSize="14px" fontWeight="700" color="#0A2540" fontFamily="heading" mb={2}>{s.title}</Text>
                 <Text fontSize="13.5px" color="#425466" lineHeight="1.65" fontFamily="heading">{s.desc}</Text>
               </Box>

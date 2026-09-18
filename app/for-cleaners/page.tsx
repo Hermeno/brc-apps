@@ -177,13 +177,12 @@ export default async function ForCleanersPage() {
               <p className={styles.eyebrow}>How it works</p>
               <h2 id="how-title" className={styles.h2}>From sign-up to your first client request</h2>
               <p className={styles.lede}>
-                Five steps. The first four are yours to complete once; after that, requests come to you.
+                You set this up once. After that, requests come to you.
               </p>
             </div>
 
             <ol className={styles.steps}>
               <li className={styles.step}>
-                <span className={styles.stepNum} aria-hidden="true">01</span>
                 <div>
                   <h3 className={styles.stepTitle}>Create your account</h3>
                   <p className={styles.stepBody}>
@@ -193,7 +192,6 @@ export default async function ForCleanersPage() {
               </li>
 
               <li className={styles.step}>
-                <span className={styles.stepNum} aria-hidden="true">02</span>
                 <div>
                   <h3 className={styles.stepTitle}>Set your services and your area</h3>
                   <p className={styles.stepBody}>
@@ -205,7 +203,6 @@ export default async function ForCleanersPage() {
               </li>
 
               <li className={styles.step}>
-                <span className={styles.stepNum} aria-hidden="true">03</span>
                 <div>
                   <h3 className={styles.stepTitle}>Verify your identity</h3>
                   <p className={styles.stepBody}>
@@ -216,7 +213,6 @@ export default async function ForCleanersPage() {
               </li>
 
               <li className={styles.step}>
-                <span className={styles.stepNum} aria-hidden="true">04</span>
                 <div>
                   <h3 className={styles.stepTitle}>Add a card</h3>
                   <p className={styles.stepBody}>
@@ -229,7 +225,6 @@ export default async function ForCleanersPage() {
               </li>
 
               <li className={styles.step}>
-                <span className={styles.stepNum} aria-hidden="true">05</span>
                 <div>
                   <h3 className={styles.stepTitle}>Answer the requests you want</h3>
                   <p className={styles.stepBody}>
