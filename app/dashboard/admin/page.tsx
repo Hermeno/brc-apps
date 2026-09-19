@@ -19,7 +19,7 @@ import {
   LucideRefreshCw, LucideSearch, LucideChevronLeft, LucideChevronRight, LucideChevronDown,
   LucideCheckCircle2, LucideMapPin, LucidePhone, LucideClock,
   LucideSettings, LucideDollarSign, LucideTrendingUp, LucideGift,
-  LucideCreditCard, LucideAlertCircle,
+  LucideCreditCard, LucideAlertCircle, LucideAlertTriangle, LucideScrollText,
 } from 'lucide-react';
 import {
   AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell,
@@ -28,7 +28,7 @@ import {
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
-type Tab = 'overview' | 'leads' | 'verifications' | 'users' | 'reviews' | 'referrals' | 'pricing' | 'lead-pricing' | 'settings';
+type Tab = 'overview' | 'leads' | 'disputes' | 'verifications' | 'users' | 'reviews' | 'referrals' | 'logs' | 'pricing' | 'lead-pricing' | 'settings';
 
 interface StatsData {
   users:         { totalClients: number; totalCleaners: number; verifiedCleaners: number; total: number };
@@ -40,6 +40,16 @@ interface StatsData {
   leadsTimeSeries:   { date: string; count: number }[];
   revenueTimeSeries: { date: string; revenue: number }[];
   totalRevenue:      number;
+}
+interface DisputeRow {
+  id: string; leadId: string | null; reason: string; description: string;
+  status: string; resolution: string | null; resolvedAt: string | null; createdAt: string;
+  client:  { id: string; name: string | null; email: string };
+  cleaner: { id: string; name: string | null; email: string };
+}
+interface LogRow {
+  id: string; level: string; context: string; message: string;
+  meta: string | null; userId: string | null; createdAt: string;
 }
 interface LeadRow {
   id: string; serviceType: string; address: string; dateTime: string;
@@ -98,6 +108,19 @@ const LEAD_STATUS: Record<string, { label: string; color: string; dot: string }>
   COMPLETED: { label: 'Completed',      color: '#047857', dot: '#10B981' },
   CANCELLED: { label: 'Cancelled',      color: '#BE123C', dot: '#F43F5E' },
   UNMATCHED: { label: 'No cleaner',     color: '#475569', dot: '#94A3B8' },
+};
+
+const DISPUTE_STATUS: Record<string, { label: string; color: string; dot: string }> = {
+  OPEN:         { label: 'Open',         color: '#B45309', dot: '#F59E0B' },
+  UNDER_REVIEW: { label: 'Under review', color: '#0369A1', dot: '#38BDF8' },
+  RESOLVED:     { label: 'Resolved',     color: '#047857', dot: '#10B981' },
+  CLOSED:       { label: 'Closed',       color: '#475569', dot: '#94A3B8' },
+};
+
+const LOG_LEVEL: Record<string, { color: string; bg: string }> = {
+  error: { color: '#BE123C', bg: '#FFF1F2' },
+  warn:  { color: '#B45309', bg: '#FFFBEB' },
+  info:  { color: '#475569', bg: '#F1F5F9' },
 };
 
 const TH: React.CSSProperties = {
@@ -207,18 +230,20 @@ function formatUSPhone(raw: string) {
 
 const NAV: { id: Tab; label: string; icon: any; section?: string }[] = [
   { id: 'overview',      label: 'Overview',     icon: LucideLayoutDashboard, section: 'PLATFORM' },
-  { id: 'leads',         label: 'Bookings',     icon: LucideClipboardList },
+  { id: 'leads',         label: 'Leads',         icon: LucideClipboardList },
+  { id: 'disputes',      label: 'Disputes',      icon: LucideAlertTriangle },
   { id: 'verifications', label: 'Verifications', icon: LucideShield,          section: 'ACCOUNTS' },
   { id: 'users',         label: 'Users',         icon: LucideUsers },
   { id: 'reviews',       label: 'Reviews',       icon: LucideStar },
   { id: 'referrals',     label: 'Referrals',     icon: LucideGift },
   { id: 'pricing',       label: 'Plan Pricing',  icon: LucideDollarSign,      section: 'FINANCIAL' },
   { id: 'lead-pricing',  label: 'Lead Prices',   icon: LucideDollarSign },
+  { id: 'logs',          label: 'System logs',   icon: LucideScrollText,      section: 'OPERATIONS' },
 ];
 
-function Sidebar({ tab, setTab, pendingVerifs, onRefresh, user }: {
+function Sidebar({ tab, setTab, pendingVerifs, openDisputes, onRefresh, user }: {
   tab: Tab; setTab: (t: Tab) => void;
-  pendingVerifs: number; onRefresh: () => void;
+  pendingVerifs: number; openDisputes: number; onRefresh: () => void;
   user: string;
 }) {
   return (
@@ -273,6 +298,15 @@ function Sidebar({ tab, setTab, pendingVerifs, onRefresh, user }: {
               >
                 <Icon as={item.icon} w="14px" h="14px" flexShrink={0} />
                 <Text flex={1}>{item.label}</Text>
+                {item.id === 'disputes' && openDisputes > 0 && (
+                  <Box
+                    w="18px" h="18px" bg="red.500" borderRadius="full"
+                    display="flex" alignItems="center" justifyContent="center"
+                    fontSize="9px" fontWeight="700" color="white" fontFamily="heading"
+                  >
+                    {openDisputes}
+                  </Box>
+                )}
                 {item.id === 'verifications' && pendingVerifs > 0 && (
                   <Box
                     w="18px" h="18px" bg="red.500" borderRadius="full"
@@ -778,10 +812,16 @@ function LeadDetailRow({ lead }: { lead: LeadRow }) {
                   {convs.map(c => (
                     <HStack key={c.id} gap={4} px={3} py={2} bg="white" border="1px solid #E3E8EE">
                       <Text fontSize="12.5px" fontWeight="600" color="slate.800" fontFamily="heading" flex={1}>{c.cleaner.name || '—'}</Text>
-                      <Text fontSize="12px" color="slate.500" fontFamily="heading">{c.status === 'active' ? 'Active' : 'Closed'}</Text>
-                      <Text fontSize="11px" color="slate.400">Lead fee $${c.leadFee}</Text>
-                      <Text fontSize="11px" fontWeight="600" color={c.feeStatus === 'charged' ? '#059669' : '#94A3B8'}>
-                        {c.feeStatus === 'charged' ? 'Charged' : 'Pending'}
+                      <Text fontSize="12px" fontWeight="600" fontFamily="heading"
+                        color={c.status === 'active' ? '#0369A1' : c.status === 'declined' ? '#BE123C' : '#64748B'}>
+                        {c.status === 'active' ? 'Active' : c.status === 'declined' ? 'Declined' : 'Closed'}
+                      </Text>
+                      <Text fontSize="11px" color="slate.400">Lead fee ${'$'}{c.leadFee}</Text>
+                      <Text fontSize="11px" fontWeight="600"
+                        color={c.feeStatus === 'charged' ? '#059669' : c.feeStatus === 'refunded' ? '#BE123C' : '#94A3B8'}>
+                        {c.feeStatus === 'charged' ? 'Charged'
+                          : c.feeStatus === 'waived' ? 'Waived'
+                          : c.feeStatus === 'refunded' ? 'Refunded' : 'Fee pending'}
                       </Text>
                     </HStack>
                   ))}
@@ -791,6 +831,90 @@ function LeadDetailRow({ lead }: { lead: LeadRow }) {
                     <Stars n={lead.review.rating} />
                     <Text fontSize="12px" color="slate.600">{lead.review.comment || 'No comment'}</Text>
                   </HStack>
+                )}
+              </Box>
+            </td>
+          </motion.tr>
+        )}
+      </AnimatePresence>
+    </>
+  );
+}
+
+// ─── Dispute row ──────────────────────────────────────────────────────────────
+
+function DisputeRow({ d, onUpdate }: { d: DisputeRow; onUpdate: (id: string, status: string, resolution?: string) => void }) {
+  const [open, setOpen] = useState(false);
+  const [note, setNote] = useState(d.resolution ?? '');
+  const [busy, setBusy] = useState(false);
+  const st = DISPUTE_STATUS[d.status] ?? DISPUTE_STATUS.OPEN;
+  const settled = d.status === 'RESOLVED' || d.status === 'CLOSED';
+
+  const act = async (status: string) => {
+    setBusy(true);
+    await onUpdate(d.id, status, note.trim() || undefined);
+    setBusy(false);
+  };
+
+  return (
+    <>
+      <tr style={{ background: 'white' }}>
+        <td style={TD}>
+          <Text fontSize="12px" color="slate.400" fontFamily="heading">{new Date(d.createdAt).toLocaleDateString('en-US')}</Text>
+        </td>
+        <td style={TD}>
+          <Text fontSize="13px" color="slate.700">{d.client.name || '—'}</Text>
+          <Text fontSize="11px" color="slate.400">{d.client.email}</Text>
+        </td>
+        <td style={TD}>
+          <Text fontSize="13px" color="slate.700">{d.cleaner.name || '—'}</Text>
+          <Text fontSize="11px" color="slate.400">{d.cleaner.email}</Text>
+        </td>
+        <td style={TD}><Text fontSize="13px" color="slate.700" fontFamily="heading">{d.reason}</Text></td>
+        <td style={TD}>
+          <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 12, color: st.color, fontWeight: 600 }}>
+            <span style={{ width: 7, height: 7, borderRadius: '50%', background: st.dot, display: 'inline-block' }} />
+            {st.label}
+          </span>
+        </td>
+        <td style={{ ...TD, textAlign: 'right' }}>
+          <Box as="button" onClick={() => setOpen(o => !o)} cursor="pointer" color="#697386" _hover={{ color: '#475569' }}>
+            <Icon as={LucideEye} w="13px" h="13px" />
+          </Box>
+        </td>
+      </tr>
+      <AnimatePresence>
+        {open && (
+          <motion.tr initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+            <td colSpan={6} style={{ padding: 0 }}>
+              <Box p={5} bg="#F7F8FA" borderBottom="1px solid #E3E8EE">
+                <Text fontSize="10.5px" fontWeight="700" color="slate.400" fontFamily="heading"
+                  textTransform="uppercase" letterSpacing="0.07em" mb={2}>What was reported</Text>
+                <Text fontSize="13px" color="slate.700" mb={4} whiteSpace="pre-wrap">{d.description}</Text>
+
+                {d.leadId && (
+                  <Text fontSize="11px" color="slate.400" fontFamily="heading" mb={4}>Lead: {d.leadId}</Text>
+                )}
+
+                <Text fontSize="10.5px" fontWeight="700" color="slate.400" fontFamily="heading"
+                  textTransform="uppercase" letterSpacing="0.07em" mb={2}>Resolution note</Text>
+                <Textarea
+                  value={note} onChange={e => setNote(e.target.value)}
+                  placeholder="What was decided, and why. Saved with the dispute."
+                  rows={3} bg="white" borderRadius="0" fontSize="13px" mb={3}
+                />
+                <HStack gap={2}>
+                  <Button size="xs" borderRadius="0" variant="outline" disabled={busy || d.status === 'UNDER_REVIEW'}
+                    onClick={() => act('UNDER_REVIEW')}>Mark under review</Button>
+                  <Button size="xs" borderRadius="0" bg="#047857" color="white" disabled={busy}
+                    _hover={{ bg: '#065F46' }} onClick={() => act('RESOLVED')}>Resolve</Button>
+                  <Button size="xs" borderRadius="0" variant="outline" disabled={busy}
+                    onClick={() => act('CLOSED')}>Close without action</Button>
+                </HStack>
+                {settled && d.resolvedAt && (
+                  <Text fontSize="11px" color="slate.400" fontFamily="heading" mt={3}>
+                    Settled on {new Date(d.resolvedAt).toLocaleString('en-US')}
+                  </Text>
                 )}
               </Box>
             </td>
@@ -882,6 +1006,12 @@ export default function AdminPage() {
   const [syncingGeo, setSyncingGeo]     = useState(false);
 
   const [leadStatus, setLeadStatus] = useState('');
+  const [disputes, setDisputes]         = useState<DisputeRow[]>([]);
+  const [disputeStatus, setDisputeStatus] = useState('');
+  const [loadingDisputes, setLD]        = useState(false);
+  const [logs, setLogs]                 = useState<LogRow[]>([]);
+  const [logLevel, setLogLevel]         = useState('');
+  const [loadingLogs, setLGL]           = useState(false);
   const [leadSearch, setLeadSearch] = useState('');
   const [leadPage, setLeadPage]     = useState(0);
   const [roleFilter, setRoleFilter] = useState<'ALL' | 'CLIENT' | 'CLEANER'>('ALL');
@@ -894,6 +1024,39 @@ export default function AdminPage() {
     try { const r = await fetch('/api/admin/stats'); if (r.ok) setStats(await r.json()); }
     finally { setLS(false); }
   }, []);
+
+  const fetchDisputes = useCallback(async () => {
+    setLD(true);
+    try {
+      const r = await fetch(`/api/admin/disputes${disputeStatus ? `?status=${disputeStatus}` : ''}`);
+      if (r.ok) { const d = await r.json(); setDisputes(d.disputes ?? d); }
+    } finally { setLD(false); }
+  }, [disputeStatus]);
+
+  const fetchLogs = useCallback(async () => {
+    setLGL(true);
+    try {
+      const r = await fetch(`/api/admin/logs?take=200${logLevel ? `&level=${logLevel}` : ''}`);
+      if (r.ok) { const d = await r.json(); setLogs(d.logs ?? d); }
+    } finally { setLGL(false); }
+  }, [logLevel]);
+
+  /* Resolve or move a dispute along. The admin-only PATCH lives on
+     /api/disputes/[id]; the list route is read-only. */
+  const updateDispute = useCallback(async (id: string, status: string, resolution?: string) => {
+    const r = await fetch(`/api/disputes/${id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ status, ...(resolution ? { resolution } : {}) }),
+    });
+    if (r.ok) {
+      toaster.create({ title: `Dispute marked ${DISPUTE_STATUS[status]?.label ?? status}`, type: 'success' });
+      fetchDisputes();
+    } else {
+      const d = await r.json().catch(() => ({}));
+      toaster.create({ title: d.error || 'Could not update the dispute', type: 'error' });
+    }
+  }, [fetchDisputes]);
 
   const fetchLeads = useCallback(async () => {
     setLL(true);
@@ -959,19 +1122,21 @@ export default function AdminPage() {
 
   const refreshAll = useCallback(() => {
     fetchStats();
+    fetchDisputes();
+    if (tab === 'logs') fetchLogs();
     if (tab === 'leads') fetchLeads();
     if (tab === 'users') fetchUsers();
     if (tab === 'verifications') fetchVerifs();
     if (tab === 'reviews') fetchRevs();
     if (tab === 'referrals') fetchReferrals();
-  }, [tab, fetchStats, fetchLeads, fetchUsers, fetchVerifs, fetchRevs, fetchReferrals]);
+  }, [tab, fetchStats, fetchDisputes, fetchLogs, fetchLeads, fetchUsers, fetchVerifs, fetchRevs, fetchReferrals]);
 
   useEffect(() => {
     if (authStatus === 'authenticated') {
       if ((session?.user as any)?.role !== 'ADMIN') router.replace('/dashboard');
-      else fetchStats();
+      else { fetchStats(); fetchDisputes(); }
     }
-  }, [authStatus, session, router, fetchStats]);
+  }, [authStatus, session, router, fetchStats, fetchDisputes]);
 
   useEffect(() => {
     if (tab === 'leads') fetchLeads();
@@ -979,8 +1144,13 @@ export default function AdminPage() {
     if (tab === 'verifications') fetchVerifs();
     if (tab === 'reviews') fetchRevs();
     if (tab === 'referrals') fetchReferrals();
+    if (tab === 'disputes') fetchDisputes();
+    if (tab === 'logs') fetchLogs();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tab]);
+
+  useEffect(() => { if (tab === 'disputes') fetchDisputes(); }, [disputeStatus, tab, fetchDisputes]);
+  useEffect(() => { if (tab === 'logs') fetchLogs(); }, [logLevel, tab, fetchLogs]);
 
   useEffect(() => { if (tab === 'leads') fetchLeads(); }, [leadStatus, leadSearch, leadPage, tab, fetchLeads]);
 
@@ -988,6 +1158,7 @@ export default function AdminPage() {
   const filteredVerifs = verifications.filter(v => verifFilter === 'ALL' || v.status === verifFilter);
   const filteredRevs   = reviews.filter(r => revFilter === 0 || r.rating === revFilter);
   const pendingVerifs  = verifications.filter(v => v.status === 'PENDING').length;
+  const openDisputes   = disputes.filter(d => d.status === 'OPEN' || d.status === 'UNDER_REVIEW').length;
   const totalLeads     = stats ? Object.values(stats.leads).reduce((a, b) => a + b, 0) : 0;
   const userName       = session?.user?.name ?? 'Admin';
 
@@ -1004,6 +1175,7 @@ export default function AdminPage() {
       <Sidebar
         tab={tab} setTab={setTab}
         pendingVerifs={pendingVerifs}
+        openDisputes={openDisputes}
         onRefresh={refreshAll}
         user={userName}
       />
@@ -1022,11 +1194,12 @@ export default function AdminPage() {
               { label: 'Clients',        value: loadingStats ? '…' : stats?.users.totalClients ?? 0 },
               { label: 'Cleaners',       value: loadingStats ? '…' : stats?.users.totalCleaners ?? 0 },
               { label: 'Verified',       value: loadingStats ? '…' : stats?.users.verifiedCleaners ?? 0, accent: true },
-              { label: 'Total bookings', value: loadingStats ? '…' : totalLeads, onClick: () => setTab('leads') },
+              { label: 'Total leads',    value: loadingStats ? '…' : totalLeads, onClick: () => setTab('leads') },
               { label: 'Completed',      value: loadingStats ? '…' : stats?.leads?.COMPLETED ?? 0, accent: true, onClick: () => { setTab('leads'); setLeadStatus('COMPLETED'); } },
               { label: 'Revenue',        value: loadingStats ? '…' : `$${((stats?.totalRevenue ?? 0)).toFixed(0)}`, accent: true },
               { label: 'Avg. rating',    value: loadingStats ? '…' : `${(stats?.reviews.avgRating ?? 0).toFixed(1)}★` },
               { label: 'Pending verifs', value: loadingStats ? '…' : stats?.verifications.pending ?? 0, onClick: () => setTab('verifications') },
+              { label: 'Open disputes',  value: openDisputes, onClick: () => setTab('disputes') },
             ]} />
 
             <Box px={8} py={6}>
@@ -1278,7 +1451,7 @@ export default function AdminPage() {
         {/* ══ PEDIDOS ══ */}
         {tab === 'leads' && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.15 }}>
-            <PageHeader title="Bookings" sub={`${leadsTotal} bookings total`}>
+            <PageHeader title="Leads" sub={`${leadsTotal} leads total`}>
               <HStack gap={3}>
                 <Box position="relative">
                   <Icon as={LucideSearch} w="13px" h="13px" color="slate.400"
@@ -1320,7 +1493,7 @@ export default function AdminPage() {
               {loadingLeads ? (
                 <Box p={12} textAlign="center"><Text color="slate.400" fontFamily="heading">Loading…</Text></Box>
               ) : leads.length === 0 ? (
-                <Box p={12} textAlign="center"><Text color="slate.300" fontFamily="heading">No bookings found</Text></Box>
+                <Box p={12} textAlign="center"><Text color="slate.300" fontFamily="heading">No leads in this view</Text></Box>
               ) : (
                 <Box overflowX="auto" bg="white">
                   <table style={{ width: '100%', borderCollapse: 'collapse' }}>
@@ -1354,6 +1527,140 @@ export default function AdminPage() {
                     </Button>
                   </HStack>
                 </Flex>
+              )}
+            </Box>
+          </motion.div>
+        )}
+
+        {/* ══ DISPUTAS ══ */}
+        {tab === 'disputes' && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.15 }}>
+            <PageHeader title="Disputes" sub={`${disputes.length} in this view · ${openDisputes} still open`} />
+
+            <Box bg="white" borderBottom="1px solid #E3E8EE" px={8}>
+              <HStack gap={0} overflowX="auto">
+                {[{ key: '', label: 'All' }, ...Object.entries(DISPUTE_STATUS).map(([k, v]) => ({ key: k, label: v.label, dot: v.dot }))].map(item => (
+                  <Box
+                    key={item.key} as="button" px={4} py={3} cursor="pointer" flexShrink={0}
+                    borderBottom="2px solid"
+                    borderBottomColor={disputeStatus === item.key ? 'brand.500' : 'transparent'}
+                    color={disputeStatus === item.key ? 'brand.600' : 'slate.500'}
+                    fontWeight={disputeStatus === item.key ? '600' : '400'}
+                    fontSize="13px" fontFamily="heading" transition="all 0.12s"
+                    _hover={{ color: 'slate.800' }}
+                    onClick={() => setDisputeStatus(item.key)}
+                  >
+                    <HStack gap={1.5}>
+                      {'dot' in item && <Box w="6px" h="6px" bg={(item as any).dot} borderRadius="full" />}
+                      <Text>{item.label}</Text>
+                    </HStack>
+                  </Box>
+                ))}
+              </HStack>
+            </Box>
+
+            <Box>
+              {loadingDisputes ? (
+                <Box p={12} textAlign="center"><Text color="slate.400" fontFamily="heading">Loading…</Text></Box>
+              ) : disputes.length === 0 ? (
+                <Box p={12} textAlign="center">
+                  <Text color="slate.300" fontFamily="heading">No disputes in this view</Text>
+                  <Text color="slate.300" fontSize="12px" fontFamily="heading" mt={1}>
+                    Disputes are raised from a job by the client or the cleaner.
+                  </Text>
+                </Box>
+              ) : (
+                <Box overflowX="auto" bg="white">
+                  <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                    <thead><tr>
+                      <th style={TH}>Opened</th>
+                      <th style={TH}>Client</th>
+                      <th style={TH}>Cleaner</th>
+                      <th style={TH}>Reason</th>
+                      <th style={TH}>Status</th>
+                      <th style={{ ...TH, textAlign: 'right' }}></th>
+                    </tr></thead>
+                    <tbody>{disputes.map(d => <DisputeRow key={d.id} d={d} onUpdate={updateDispute} />)}</tbody>
+                  </table>
+                </Box>
+              )}
+            </Box>
+          </motion.div>
+        )}
+
+        {/* ══ LOGS ══ */}
+        {tab === 'logs' && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.15 }}>
+            <PageHeader title="System logs" sub={`${logs.length} most recent entries`}>
+              <Button size="sm" borderRadius="0" variant="outline" onClick={fetchLogs}>
+                <Icon as={LucideRefreshCw} w="13px" h="13px" mr={1.5} /> Refresh
+              </Button>
+            </PageHeader>
+
+            <Box bg="white" borderBottom="1px solid #E3E8EE" px={8}>
+              <HStack gap={0} overflowX="auto">
+                {[{ key: '', label: 'All' }, { key: 'error', label: 'Errors' }, { key: 'warn', label: 'Warnings' }, { key: 'info', label: 'Info' }].map(item => (
+                  <Box
+                    key={item.key} as="button" px={4} py={3} cursor="pointer" flexShrink={0}
+                    borderBottom="2px solid"
+                    borderBottomColor={logLevel === item.key ? 'brand.500' : 'transparent'}
+                    color={logLevel === item.key ? 'brand.600' : 'slate.500'}
+                    fontWeight={logLevel === item.key ? '600' : '400'}
+                    fontSize="13px" fontFamily="heading" transition="all 0.12s"
+                    _hover={{ color: 'slate.800' }}
+                    onClick={() => setLogLevel(item.key)}
+                  >
+                    {item.label}
+                  </Box>
+                ))}
+              </HStack>
+            </Box>
+
+            <Box>
+              {loadingLogs ? (
+                <Box p={12} textAlign="center"><Text color="slate.400" fontFamily="heading">Loading…</Text></Box>
+              ) : logs.length === 0 ? (
+                <Box p={12} textAlign="center"><Text color="slate.300" fontFamily="heading">Nothing logged in this view</Text></Box>
+              ) : (
+                <Box overflowX="auto" bg="white">
+                  <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                    <thead><tr>
+                      <th style={TH}>When</th>
+                      <th style={TH}>Level</th>
+                      <th style={TH}>Context</th>
+                      <th style={TH}>Message</th>
+                      <th style={TH}>Details</th>
+                    </tr></thead>
+                    <tbody>
+                      {logs.map(l => {
+                        const lv = LOG_LEVEL[l.level] ?? LOG_LEVEL.info;
+                        return (
+                          <tr key={l.id}>
+                            <td style={{ ...TD, whiteSpace: 'nowrap' }}>
+                              <Text fontSize="12px" color="slate.400" fontFamily="heading">
+                                {new Date(l.createdAt).toLocaleString('en-US', { dateStyle: 'short', timeStyle: 'short' })}
+                              </Text>
+                            </td>
+                            <td style={TD}>
+                              <Box as="span" px={2} py={0.5} bg={lv.bg} color={lv.color}
+                                fontSize="10.5px" fontWeight="700" fontFamily="heading" textTransform="uppercase">
+                                {l.level}
+                              </Box>
+                            </td>
+                            <td style={TD}><Text fontSize="12px" color="slate.600" fontFamily="heading">{l.context}</Text></td>
+                            <td style={TD}><Text fontSize="12.5px" color="slate.800">{l.message}</Text></td>
+                            <td style={{ ...TD, maxWidth: 380 }}>
+                              {l.meta
+                                ? <Text fontSize="11px" color="slate.400" fontFamily="monospace"
+                                    overflow="hidden" textOverflow="ellipsis" whiteSpace="nowrap" title={l.meta}>{l.meta}</Text>
+                                : <Text fontSize="12px" color="slate.300">—</Text>}
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </Box>
               )}
             </Box>
           </motion.div>
