@@ -167,7 +167,7 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
             <ul className={styles.cols} style={{ listStyle: 'none', padding: 0 }}>
               {service.included.map(item => (
                 <li className={styles.item} key={item}>
-                  <span className={styles.itemMark} aria-hidden="true">—</span>{item}
+                  <span className={styles.itemMark} aria-hidden="true">-</span>{item}
                 </li>
               ))}
             </ul>
@@ -187,7 +187,7 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
             <ul className={styles.cols} style={{ listStyle: 'none', padding: 0 }}>
               {service.rightForYou.map(item => (
                 <li className={styles.item} key={item}>
-                  <span className={styles.itemMark} aria-hidden="true">—</span>{item}
+                  <span className={styles.itemMark} aria-hidden="true">-</span>{item}
                 </li>
               ))}
             </ul>

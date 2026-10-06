@@ -25,7 +25,7 @@ export type ServiceExample = {
 
 export type Service = {
   slug: string;
-  /** id in lib/estimate.ts — also the value /request?service= expects */
+  /** id in lib/estimate.ts - also the value /request?service= expects */
   id: string;
   name: string;
   tagline: string;
@@ -52,7 +52,7 @@ export const SERVICES: Service[] = [
     metaDescription:
       'Routine house cleaning through Verliks: kitchen, bathrooms, bedrooms, living areas and floors. See what it covers and send your request to cleaners near you.',
     whatIsIt:
-      'Standard cleaning is the maintenance clean most homes run on: the kitchen, the bathrooms, the floors and the surfaces that collect dust and daily use. It assumes the home has been cleaned reasonably recently — it is not the right choice for catching up after months without one.',
+      'Standard cleaning is the maintenance clean most homes run on: the kitchen, the bathrooms, the floors and the surfaces that collect dust and daily use. It assumes the home has been cleaned reasonably recently - it is not the right choice for catching up after months without one.',
     included: [
       'Kitchen surfaces, sink and the outside of appliances',
       'Bathrooms, fixtures and mirrors',
@@ -70,7 +70,7 @@ export const SERVICES: Service[] = [
       'A one-off reset between deeper cleans',
     ],
     beforeYouRequest:
-      'Have the number of bedrooms and bathrooms ready, along with roughly how big the home is and whether pets live there. If a room should be skipped — a home office, a nursery during a nap — say so in the notes, since it changes how long the job takes.',
+      'Have the number of bedrooms and bathrooms ready, along with roughly how big the home is and whether pets live there. If a room should be skipped - a home office, a nursery during a nap - say so in the notes, since it changes how long the job takes.',
     showExtras: true,
     example: { label: 'a 2-bedroom, 1-bathroom home of about 100 m², cleaned every two weeks', bedrooms: 2, bathrooms: 1, squareMeters: 100, extras: [], frequency: 'biweekly' },
     faq: [
@@ -80,7 +80,7 @@ export const SERVICES: Service[] = [
       },
       {
         q: 'Do I need to supply products and equipment?',
-        a: 'That varies by professional. Verliks does not set a rule on it, so ask in the conversation before you accept — some cleaners bring everything, others prefer to use what is already in the home.',
+        a: 'That varies by professional. Verliks does not set a rule on it, so ask in the conversation before you accept - some cleaners bring everything, others prefer to use what is already in the home.',
       },
     ],
     related: ['deep-cleaning', 'move-in-move-out-cleaning', 'home-organizing'],
@@ -113,7 +113,7 @@ export const SERVICES: Service[] = [
       'After illness or a renovation-free but dusty period',
     ],
     beforeYouRequest:
-      'The condition matters more than the size here, so be specific about the worst areas and how long it has been. Photos of the kitchen and bathrooms help a lot — they are what make the difference between an estimate that holds and one that changes on the day.',
+      'The condition matters more than the size here, so be specific about the worst areas and how long it has been. Photos of the kitchen and bathrooms help a lot - they are what make the difference between an estimate that holds and one that changes on the day.',
     showExtras: true,
     example: { label: 'a 3-bedroom, 2-bathroom home of about 130 m², with the inside of the fridge added', bedrooms: 3, bathrooms: 2, squareMeters: 130, extras: ['fridge'], frequency: 'once' },
     faq: [
@@ -155,7 +155,7 @@ export const SERVICES: Service[] = [
       'A property being handed over or prepared for move-in',
     ],
     beforeYouRequest:
-      'Say what kind of work was done, whether the contractors removed the heavy debris already, and whether the space has power and running water — a cleaner cannot do much without either. Mention if paint, adhesive or grout haze is still on the floors, because that is different work from dust.',
+      'Say what kind of work was done, whether the contractors removed the heavy debris already, and whether the space has power and running water - a cleaner cannot do much without either. Mention if paint, adhesive or grout haze is still on the floors, because that is different work from dust.',
     showExtras: false,
     example: { label: 'a renovated 2-bedroom, 1-bathroom unit of about 90 m²', bedrooms: 2, bathrooms: 1, squareMeters: 90, extras: [], frequency: 'once' },
     faq: [
@@ -197,7 +197,7 @@ export const SERVICES: Service[] = [
       'A property being prepared for viewing or sale',
     ],
     beforeYouRequest:
-      'Say whether the property will be completely empty and when access starts and ends, since this work is usually pinned between a moving truck and a handover. If a landlord or agency gave you a checklist, share it in the notes — it is the clearest possible brief.',
+      'Say whether the property will be completely empty and when access starts and ends, since this work is usually pinned between a moving truck and a handover. If a landlord or agency gave you a checklist, share it in the notes - it is the clearest possible brief.',
     showExtras: true,
     example: { label: 'an empty 2-bedroom, 1-bathroom apartment of about 85 m², with the oven added', bedrooms: 2, bathrooms: 1, squareMeters: 85, extras: ['oven'], frequency: 'once' },
     faq: [
@@ -239,13 +239,13 @@ export const SERVICES: Service[] = [
       'Routine exterior upkeep',
     ],
     beforeYouRequest:
-      'The material is the important part: composite, pressure-treated softwood, hardwood or painted. Add the rough size, how many steps and levels, whether there is an outdoor tap nearby, and whether the boards are sound — loose or rotten boards are a repair question, not a cleaning one.',
+      'The material is the important part: composite, pressure-treated softwood, hardwood or painted. Add the rough size, how many steps and levels, whether there is an outdoor tap nearby, and whether the boards are sound - loose or rotten boards are a repair question, not a cleaning one.',
     showExtras: false,
     example: { label: 'a deck of roughly 30 m²', bedrooms: 0, bathrooms: 0, squareMeters: 30, extras: [], frequency: 'once' },
     faq: [
       {
         q: 'Will the deck look new again?',
-        a: 'It will look clean, which is not the same thing. Greying from sun exposure and stains that have gone into the wood usually need sanding, staining or sealing — work beyond cleaning. A cleaner can tell you which of the two you are looking at.',
+        a: 'It will look clean, which is not the same thing. Greying from sun exposure and stains that have gone into the wood usually need sanding, staining or sealing - work beyond cleaning. A cleaner can tell you which of the two you are looking at.',
       },
       {
         q: 'Does this include sealing or staining?',
@@ -281,7 +281,7 @@ export const SERVICES: Service[] = [
       'General exterior tidy-up of a property',
     ],
     beforeYouRequest:
-      'Name the surfaces and rough square footage, and say whether there is an outdoor tap and power point available. Flag anything delicate nearby — planting beds, painted surfaces, older mortar, exterior lighting — and any oil stains, which behave differently from ordinary dirt.',
+      'Name the surfaces and rough square footage, and say whether there is an outdoor tap and power point available. Flag anything delicate nearby - planting beds, painted surfaces, older mortar, exterior lighting - and any oil stains, which behave differently from ordinary dirt.',
     showExtras: false,
     example: { label: 'a driveway and walkway of roughly 60 m² together', bedrooms: 0, bathrooms: 0, squareMeters: 60, extras: [], frequency: 'once' },
     faq: [
@@ -346,7 +346,7 @@ export const SERVICES: Service[] = [
     metaDescription:
       'Cleaning of accessible roof flashing and the surrounding area through Verliks. See what it covers and send your request to cleaners near you.',
     whatIsIt:
-      'Flashing is the metal detail that seals the joins on a roof — around chimneys, valleys and where a roof meets a wall. Dirt, moss and debris collect along those edges. This service cleans the accessible parts and the area around them. It is not roofing work and does not repair or reseal anything.',
+      'Flashing is the metal detail that seals the joins on a roof - around chimneys, valleys and where a roof meets a wall. Dirt, moss and debris collect along those edges. This service cleans the accessible parts and the area around them. It is not roofing work and does not repair or reseal anything.',
     included: [
       'Cleaning of accessible exposed flashing',
       'Removing loose dirt, moss and debris from the joins',
@@ -362,7 +362,7 @@ export const SERVICES: Service[] = [
       'Appearance of the roofline from the ground',
     ],
     beforeYouRequest:
-      'Describe where the flashing is and how it can be reached: chimney, valley, or where a roof meets a wall, and at what height. If you have noticed a leak or lifted metal, say so — that points to a roofer rather than to cleaning, and it is better to find out before booking.',
+      'Describe where the flashing is and how it can be reached: chimney, valley, or where a roof meets a wall, and at what height. If you have noticed a leak or lifted metal, say so - that points to a roofer rather than to cleaning, and it is better to find out before booking.',
     showExtras: false,
     example: { label: 'flashing and surrounding roof area of roughly 20 m² on a single-storey roofline', bedrooms: 0, bathrooms: 0, squareMeters: 20, extras: [], frequency: 'once' },
     faq: [
@@ -372,7 +372,7 @@ export const SERVICES: Service[] = [
       },
       {
         q: 'Is sealing or resealing included?',
-        a: 'No. This is cleaning of accessible areas only — no repair, no sealant, no replacement.',
+        a: 'No. This is cleaning of accessible areas only - no repair, no sealant, no replacement.',
       },
     ],
     related: ['gutter-cleaning', 'pressure-washing', 'deck-cleaning'],
@@ -410,7 +410,7 @@ export const SERVICES: Service[] = [
     faq: [
       {
         q: 'Will the grout go back to its original colour?',
-        a: 'Often it improves a great deal, but not always all the way. Grout that is stained through, or that has been sealed with dirt underneath, can stay discoloured — at which point the answer is regrouting or colour sealing, which is a different trade.',
+        a: 'Often it improves a great deal, but not always all the way. Grout that is stained through, or that has been sealed with dirt underneath, can stay discoloured - at which point the answer is regrouting or colour sealing, which is a different trade.',
       },
       {
         q: 'Can mould be removed?',
@@ -428,7 +428,7 @@ export const SERVICES: Service[] = [
     metaDescription:
       'Home organizing through Verliks: sorting, decluttering and setting up storage that holds. See what it covers and send your request to professionals near you.',
     whatIsIt:
-      'Organizing is not cleaning. Nothing gets scrubbed here — the work is sorting what is there, deciding what stays, and giving it a place that makes sense for how you actually use the room. It needs you present for the decisions, at least at the start.',
+      'Organizing is not cleaning. Nothing gets scrubbed here - the work is sorting what is there, deciding what stays, and giving it a place that makes sense for how you actually use the room. It needs you present for the decisions, at least at the start.',
     included: [
       'Sorting and grouping what is in the space',
       'Support with decluttering decisions',
@@ -448,13 +448,13 @@ export const SERVICES: Service[] = [
       'A room that is tidy but still hard to use',
     ],
     beforeYouRequest:
-      'Say which rooms, and be honest about volume — a wardrobe and a full garage are not the same afternoon. Decide in advance whether you want help deciding what to discard or only help arranging what you keep, and whether you can be there, because the sorting usually needs your calls.',
+      'Say which rooms, and be honest about volume - a wardrobe and a full garage are not the same afternoon. Decide in advance whether you want help deciding what to discard or only help arranging what you keep, and whether you can be there, because the sorting usually needs your calls.',
     showExtras: false,
     example: { label: 'two rooms of about 35 m² combined', bedrooms: 2, bathrooms: 0, squareMeters: 35, extras: [], frequency: 'once' },
     faq: [
       {
         q: 'Do I have to be there?',
-        a: 'For the sorting, usually yes — nobody else can decide what you keep. Once those decisions are made, the arranging can often continue without you.',
+        a: 'For the sorting, usually yes - nobody else can decide what you keep. Once those decisions are made, the arranging can often continue without you.',
       },
       {
         q: 'Do organizers take things away or supply storage?',
@@ -491,7 +491,7 @@ export const SERVICES: Service[] = [
       'Spaces that have gone years without attention',
     ],
     beforeYouRequest:
-      'Say how full the space is and whether things can be moved, since that decides most of the time on the job. Flag anything that changes the work: damp, mould, pests, exposed insulation, or an attic with boards missing. If items need discarding, note it — removal is not part of cleaning.',
+      'Say how full the space is and whether things can be moved, since that decides most of the time on the job. Flag anything that changes the work: damp, mould, pests, exposed insulation, or an attic with boards missing. If items need discarding, note it - removal is not part of cleaning.',
     showExtras: false,
     example: { label: 'a two-car garage of roughly 40 m²', bedrooms: 0, bathrooms: 0, squareMeters: 40, extras: [], frequency: 'once' },
     faq: [
@@ -501,7 +501,7 @@ export const SERVICES: Service[] = [
       },
       {
         q: 'What about mould or pests?',
-        a: 'Say so in the request. Visible mould and pest activity are specialist work, and a cleaner may decline the job or limit it — which is the right outcome, not a lost booking.',
+        a: 'Say so in the request. Visible mould and pest activity are specialist work, and a cleaner may decline the job or limit it - which is the right outcome, not a lost booking.',
       },
     ],
     related: ['home-organizing', 'deep-cleaning', 'post-construction-cleaning'],
@@ -562,7 +562,7 @@ export const SERVICE_GROUPS: { title: string; slugs: string[] }[] = [
 
 export const getService = (slug: string) => SERVICES.find(s => s.slug === slug);
 
-/** Price range and hours from the platform's own estimator — never written into copy. */
+/** Price range and hours from the platform's own estimator - never written into copy. */
 export function exampleEstimate(service: Service) {
   return calculateEstimate({
     serviceType: service.id,

@@ -10,10 +10,12 @@ import { SERVICES, SERVICE_GROUPS } from '@/lib/services';
 
 /* The one header used by every public page.
 
-   It is transparent while a photo hero is behind it and turns solid once that
-   hero has scrolled past. A page opts in by putting `data-hero` on its hero
-   section; a page without one gets a solid header and a spacer, because the
-   header is fixed. */
+   The bar carries the brand navy and sits in the flow (sticky), so a photo
+   hero starts below it and still spans the full width. The `data-hero`
+   observer is only used to add a shadow once the page has scrolled.
+
+   Skills consulted: design-taste-frontend (nav on one line, height cap,
+   button-contrast check) and industrial-brutalist-ui (restraint). */
 
 const svg = { fill: 'none', stroke: 'currentColor', strokeLinecap: 'round', strokeLinejoin: 'round', 'aria-hidden': true } as const;
 const IcCaret = () => (<svg className={styles.navCaret} width="14" height="14" viewBox="0 0 24 24" strokeWidth="2" {...svg}><path d="M6 9.5l6 6 6-6" /></svg>);
@@ -25,18 +27,17 @@ export default function SiteHeader({ onHome = false }: { onHome?: boolean }) {
   const { t } = useLocale();
   const [menuOpen, setMenuOpen] = useState(false);
   const [svcOpen, setSvcOpen]   = useState(false);
-  const [pastHero, setPastHero] = useState(false);
-  const [hasHero, setHasHero]   = useState(true);
+  const [scrolled, setScrolled] = useState(false);
 
+  /* A 1px sentinel at the top of the document: once it leaves the viewport the
+     bar has lifted off the page and earns a shadow. No scroll listener. */
   useEffect(() => {
-    const hero = document.querySelector('[data-hero]');
-    if (!hero) { setHasHero(false); return; }
-    const navH = window.matchMedia('(max-width: 640px)').matches ? 64 : 76;
-    const io = new IntersectionObserver(([entry]) => setPastHero(!entry.isIntersecting), {
-      rootMargin: `-${navH}px 0px 0px 0px`,
-    });
-    io.observe(hero);
-    return () => io.disconnect();
+    const sentinel = document.createElement('div');
+    sentinel.style.cssText = 'position:absolute;top:0;left:0;height:1px;width:1px;pointer-events:none';
+    document.body.prepend(sentinel);
+    const io = new IntersectionObserver(([e]) => setScrolled(!e.isIntersecting));
+    io.observe(sentinel);
+    return () => { io.disconnect(); sentinel.remove(); };
   }, []);
 
   useEffect(() => {
@@ -48,7 +49,7 @@ export default function SiteHeader({ onHome = false }: { onHome?: boolean }) {
     return () => window.removeEventListener('keydown', onKey);
   }, [menuOpen, svcOpen]);
 
-  const solid = !hasHero || pastHero || menuOpen || svcOpen;
+  const solid = scrolled || menuOpen || svcOpen;
   const close = () => { setMenuOpen(false); setSvcOpen(false); };
   const href  = (hash: string) => (onHome ? hash : `/${hash}`);
 
@@ -97,9 +98,9 @@ export default function SiteHeader({ onHome = false }: { onHome?: boolean }) {
           </ul>
 
           <div className={styles.navRight}>
-            <LanguageSwitcher dark={!solid} square />
+            <LanguageSwitcher dark square />
             <NextLink href="/auth/login" className={styles.navLink}>{t('home.navSignIn')}</NextLink>
-            <NextLink href="/request" className={`${styles.btn} ${styles.btnSmall} ${solid ? styles.btnNavy : styles.btnLight}`}>
+            <NextLink href="/request" className={`${styles.btn} ${styles.btnSmall} ${styles.navCta}`}>
               {t('home.navCta')}
             </NextLink>
           </div>
@@ -152,8 +153,6 @@ export default function SiteHeader({ onHome = false }: { onHome?: boolean }) {
         </nav>
       </header>
 
-      {/* The header is fixed; pages without a photo hero need the height back. */}
-      {!hasHero && <div className={styles.navSpacer} aria-hidden="true" />}
     </>
   );
 }

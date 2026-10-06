@@ -1,6 +1,15 @@
 /* ─────────────────────────────────────────────────────────────
    Verliks home.
 
+   Skills consulted while writing this file: design-taste-frontend
+   (brief inference, shape-consistency lock, button-contrast check,
+   anti-generic rules) and industrial-brutalist-ui (rigid grid, hairlines,
+   mono labels, restraint). ui-ux-pro-max is not installed in this
+   environment, so its checks were done by hand.
+
+   Shape system: one radius for everything interactive or contained
+   (--r, 2px). Full-bleed surfaces carry no radius, by nature.
+
    Palette from lib/theme.ts: navy brand.500 for structure, gold as the
    accent, the dashboard neutrals.
 
@@ -17,9 +26,19 @@
 .page {
   /* Neutral only: text is black or #333, never a dark blue.
      The token names are kept so the rules below did not have to change. */
+  /* Brand, from the logo: navy wordmark, gold stars, the two tones of the V. */
+  --brand:      #021A3A;
+  --brand-2:    #0E2B52;
+  --gold:       #D2B572;
+  --gold-tint:  #F6EFDD;
+  --gold-ink:   #7A5C17;
+  --teal:       #A8D2D2;
+  --steel:      #407088;
+  --r:          2px;
+
   --navy:      #111111;  /* headings and strong text */
   --navy-mid:  #000000;  /* hover on filled buttons */
-  --navy-deep: #111111;  /* dark bands and footer */
+  --navy-deep: #021A3A;  /* dark bands and footer */
   --navy-soft: #333333;  /* secondary text */
   --gold:      #111111;  /* focus ring on light surfaces */
   --gold-soft: #FFFFFF;  /* accent text on dark = plain white */
@@ -55,7 +74,7 @@
 .btn {
   display: inline-flex; align-items: center; justify-content: center; gap: 12px;
   min-height: 52px; padding: 0 30px;
-  border: 1.5px solid; border-radius: 0; background: transparent;
+  border: 1.5px solid; border-radius: var(--r); background: transparent;
   font-family: var(--font-body), sans-serif;
   font-size: 13px; font-weight: 600; line-height: 1;
   letter-spacing: 0.14em; text-transform: uppercase;
@@ -71,26 +90,32 @@
 .btnGold { color: #fff; border-color: rgba(255, 255, 255, 0.85); }
 .btnGold:hover, .btnGold:focus-visible { background: #fff; color: #111; border-color: #fff; }
 
-.btnNavy { color: var(--navy); border-color: var(--navy); }
-.btnNavy:hover, .btnNavy:focus-visible { background: var(--navy); color: #fff; border-color: var(--navy); }
+.btnNavy { color: var(--brand); border-color: var(--brand); }
+.btnNavy:hover, .btnNavy:focus-visible { background: var(--brand); color: #fff; border-color: var(--brand); }
 
 .btnSmall { min-height: 42px; padding: 0 20px; font-size: 12px; }
+
+/* Header CTA: gold on navy measures 8.8:1, and the fill keeps navy on gold. */
+.navCta { color: var(--gold); border-color: var(--gold); }
+.navCta:hover, .navCta:focus-visible { background: var(--gold); color: var(--brand); border-color: var(--gold); }
 
 /* ═════════════════════════════════════════════
    Header — transparent over the hero, solid after it
    ═════════════════════════════════════════════ */
-.navSpacer { height: 76px; }
-
 .nav {
   /* repeated here because the header is now used outside .page too */
   --nav-h: 76px; --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
   --ink: #111111; --muted: #333333; --line: #E0E0E0;
   --navy: #111111; --navy-soft: #333333; --cream: #F5F5F5;
-  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-  background: transparent; border-bottom: 1px solid transparent;
-  transition: background-color 0.3s var(--ease), border-color 0.3s var(--ease);
+  --brand: #021A3A; --brand-2: #0E2B52; --gold: #D2B572; --r: 2px;
+  /* In flow, not over the photo: the hero image starts below the bar and
+     still spans the full width. */
+  position: sticky; top: 0; z-index: 100;
+  background: var(--brand);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+  transition: box-shadow 0.3s var(--ease);
 }
-.navSolid { background: #fff; border-bottom-color: var(--line); }
+.navSolid { box-shadow: 0 10px 30px -18px rgba(2, 26, 58, 0.75); }
 
 .navInner {
   max-width: 1200px; margin: 0 auto; padding: 0 48px; height: var(--nav-h);
@@ -100,9 +125,8 @@
   display: inline-flex; align-items: center; gap: 9px; flex-shrink: 0;
   font-family: var(--font-display), sans-serif;
   font-size: 24px; font-weight: 700; letter-spacing: -0.02em;
-  color: #fff; text-decoration: none; transition: color 0.3s var(--ease);
+  color: #fff; text-decoration: none;
 }
-.navSolid .logo { color: var(--navy); }
 .logoMark { width: 34px; height: 34px; object-fit: contain; flex-shrink: 0; }
 .logoWord { line-height: 1; }
 
@@ -110,17 +134,15 @@
 .navLink {
   position: relative; padding: 6px 0;
   font-size: 14px; font-weight: 500; text-decoration: none;
-  color: rgba(255, 255, 255, 0.86); transition: color 0.3s var(--ease);
+  color: rgba(255, 255, 255, 0.88); transition: color 0.3s var(--ease);
 }
 .navLink::after {
-  content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 1.5px;
-  background: currentColor; transform: scaleX(0); transform-origin: left;
+  content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 2px;
+  background: var(--gold); transform: scaleX(0); transform-origin: left;
   transition: transform 0.3s var(--ease);
 }
 .navLink:hover { color: #fff; }
 .navLink:hover::after, .navLink:focus-visible::after { transform: scaleX(1); }
-.navSolid .navLink { color: var(--navy-soft); }
-.navSolid .navLink:hover { color: var(--navy); }
 
 .navRight { display: flex; align-items: center; gap: 22px; flex-shrink: 0; }
 
@@ -132,9 +154,7 @@
   font-family: var(--font-body), sans-serif; font-size: 14px; font-weight: 500;
   color: rgba(255, 255, 255, 0.86); transition: color 0.3s var(--ease);
 }
-.navSolid .navTrigger { color: var(--navy-soft); }
 .navTrigger:hover, .navTrigger[aria-expanded='true'] { color: #fff; }
-.navSolid .navTrigger:hover, .navSolid .navTrigger[aria-expanded='true'] { color: var(--ink); }
 .navCaret { transition: transform 0.25s var(--ease); }
 .navTrigger[aria-expanded='true'] .navCaret { transform: rotate(180deg); }
 
@@ -178,10 +198,8 @@
 
 .navMenuBtn {
   display: none; margin-left: auto; padding: 8px;
-  background: none; border: none; border-radius: 0; cursor: pointer;
-  color: #fff; transition: color 0.3s var(--ease);
+  background: none; border: none; border-radius: 0; cursor: pointer; color: #fff;
 }
-.navSolid .navMenuBtn { color: var(--navy); }
 
 .mobileMenu {
   display: none; background: #fff; border-top: 1px solid var(--line);
@@ -212,12 +230,12 @@
    even over the brightest wall in the photo. */
 .heroShade {
   position: absolute; inset: 0; pointer-events: none;
-  background: rgba(0, 0, 0, 0.62);
+  background: rgba(2, 26, 58, 0.66);
 }
 
 .heroContent {
   position: relative; z-index: 1; width: 100%; max-width: 860px;
-  padding: calc(var(--nav-h) + 12px) 32px 40px;
+  padding: 0 32px;
   display: flex; flex-direction: column; align-items: center; text-align: center;
 }
 .heroTitle {
@@ -246,7 +264,7 @@
 .searchWrap { width: 100%; max-width: 560px; }
 .search {
   display: flex; align-items: stretch; width: 100%;
-  border: 1px solid; border-radius: 0;
+  border: 1px solid; border-radius: var(--r);
   transition: border-color 0.3s var(--ease);
 }
 .searchField {
@@ -401,7 +419,7 @@
 .proImg { object-fit: cover; object-position: 62% 60%; }
 .proShade {
   position: absolute; inset: 0; pointer-events: none;
-  background: rgba(0, 0, 0, 0.78);
+  background: rgba(2, 26, 58, 0.82);
 }
 .proInner { position: relative; z-index: 1; width: 100%; padding-top: 96px; padding-bottom: 96px; }
 .proContent { max-width: 520px; }
@@ -485,14 +503,13 @@
   .splitBody, .splitReverse .splitBody { padding: 72px 32px 80px; }
 
   .pro { min-height: 0; }
-  .proShade { background: rgba(0, 0, 0, 0.82); }
+  .proShade { background: rgba(2, 26, 58, 0.86); }
   .proInner { padding-top: 80px; padding-bottom: 80px; }
 }
 
 @media (max-width: 640px) {
   .page { --nav-h: 64px; }
   .nav { --nav-h: 64px; }
-  .navSpacer { height: 64px; }
   .wrap, .navInner, .footerInner, .footerBottom { padding-left: 20px; padding-right: 20px; }
   .logo { font-size: 21px; }
   .logoMark { width: 30px; height: 30px; }

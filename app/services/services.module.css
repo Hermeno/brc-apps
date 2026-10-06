@@ -3,6 +3,9 @@
    that fill on hover, no decorative numbering. */
 
 .page {
+  --brand: #021A3A;
+  --gold: #D2B572;
+  --r: 2px;
   --navy: #111111;
   --navy-deep: #111111;
   --navy-soft: #333333;

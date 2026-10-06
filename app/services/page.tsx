@@ -11,12 +11,12 @@ const footerServices = SERVICES.slice(0, 5).map(s => ({ slug: s.slug, name: s.na
 export const metadata: Metadata = {
   title: 'Cleaning Services',
   description:
-    'Every type of cleaning you can request through Verliks — from routine and deep cleaning to post-construction, gutters, tile and commercial work. Each one with what it covers and what to have ready.',
+    'Every type of cleaning you can request through Verliks - from routine and deep cleaning to post-construction, gutters, tile and commercial work. Each one with what it covers and what to have ready.',
   alternates: { canonical: '/services' },
   openGraph: {
     title: 'Cleaning Services | Verliks',
     description:
-      'Routine, deep, move-out, post-construction, exterior and commercial cleaning — what each one covers and what to have ready.',
+      'Routine, deep, move-out, post-construction, exterior and commercial cleaning - what each one covers and what to have ready.',
     url: '/services',
     siteName: 'Verliks',
     type: 'website',

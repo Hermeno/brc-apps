@@ -87,7 +87,7 @@
 .btn {
   display: inline-flex; align-items: center; justify-content: center; gap: 12px;
   min-height: 52px; padding: 0 30px;
-  border: 1.5px solid; border-radius: 0; background: transparent;
+  border: 1.5px solid; border-radius: 2px; background: transparent;
   font-family: var(--font-body), sans-serif;
   font-size: 13px; font-weight: 600; line-height: 1;
   letter-spacing: 0.14em; text-transform: uppercase;
@@ -98,8 +98,8 @@
 }
 .btn svg { flex-shrink: 0; transition: transform 0.3s cubic-bezier(0.2, 0.7, 0.2, 1); }
 .btn:hover svg { transform: translateX(3px); }
-.btnNavy { color: #111111; border-color: #111111; }
-.btnNavy:hover, .btnNavy:focus-visible { background: #111111; color: #fff; }
+.btnNavy { color: #021A3A; border-color: #021A3A; }
+.btnNavy:hover, .btnNavy:focus-visible { background: #021A3A; color: #fff; }
 .btnLight { color: #fff; border-color: rgba(255, 255, 255, 0.85); }
 .btnLight:hover, .btnLight:focus-visible { background: #fff; color: #111111; border-color: #fff; }
 .btnSmall { min-height: 42px; padding: 0 20px; font-size: 12px; }
