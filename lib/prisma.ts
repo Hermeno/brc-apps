@@ -33,7 +33,11 @@ function createClient(): PrismaClient {
     connectionString,
     max:                          3,
     connectionTimeoutMillis:      15_000,
-    idleTimeoutMillis:            10_000,
+    // Was 10s, which closed every idle connection between cron ticks. The wave
+    // cron runs once a minute, so each run had to open a fresh TLS connection
+    // to a database in another region, and those handshakes were what timed
+    // out. Holding connections for 5 minutes lets the cron reuse a warm one.
+    idleTimeoutMillis:            300_000,
     keepAlive:                    true,
     keepAliveInitialDelayMillis:  10_000,
     ssl: { rejectUnauthorized: false },

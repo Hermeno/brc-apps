@@ -1,11 +1,15 @@
 'use client';
 
-import { Box, Text, Button, HStack, VStack } from '@chakra-ui/react';
-import Image from 'next/image';
-import NextLink from 'next/link';
 import { useEffect } from 'react';
 
-export default function GlobalError({
+/* No Chakra and no providers here on purpose - see the note in not-found.tsx.
+   This boundary catches render failures, so it has to survive a broken tree.
+   It is also what bots hit when they POST a junk `Next-Action` header, which is
+   how the ChakraProvider context error reached production. */
+
+const navy = '#021A3A';
+
+export default function Error({
   error,
   reset,
 }: {
@@ -13,63 +17,52 @@ export default function GlobalError({
   reset: () => void;
 }) {
   useEffect(() => {
-    console.error('[GlobalError]', error);
+    console.error('[error boundary]', error);
   }, [error]);
 
   return (
-    <Box minH="100vh" bg="white" display="flex" alignItems="center" justifyContent="center" px={5}>
-      <VStack gap={8} textAlign="center" maxW="420px">
+    <div style={{
+      minHeight: '100vh', background: '#fff', display: 'flex',
+      alignItems: 'center', justifyContent: 'center', padding: '0 20px',
+      fontFamily: 'system-ui, -apple-system, sans-serif',
+    }}>
+      <div style={{ textAlign: 'center', maxWidth: 420 }}>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src="/logo-blue.png" alt="Verliks" width={32} height={32}
+          style={{ objectFit: 'contain', marginBottom: 28 }} />
 
-        <HStack gap={2.5}>
-          <Image
-            src="/logo-blue.png" alt="Verliks" width={32} height={32}
-            style={{ objectFit: 'contain', flexShrink: 0 }}
-          />
-          <Text fontWeight="700" fontSize="15px" letterSpacing="-0.02em" color="#0A2540" fontFamily="heading">
-            Verliks
-          </Text>
-        </HStack>
+        <p style={{ fontSize: 56, fontWeight: 800, color: navy, margin: 0, lineHeight: 1, letterSpacing: '-0.04em' }}>
+          500
+        </p>
+        <p style={{ fontSize: 20, fontWeight: 700, color: navy, marginTop: 12, letterSpacing: '-0.02em' }}>
+          Something went wrong
+        </p>
+        <p style={{ fontSize: 14, color: '#5E5E5E', marginTop: 8, lineHeight: 1.6 }}>
+          An unexpected error occurred. Try again, or go back to the home page.
+        </p>
+        {error.digest && (
+          <p style={{ fontSize: 11, color: '#9AA3AE', fontFamily: 'ui-monospace, monospace', marginTop: 12 }}>
+            Error ID: {error.digest}
+          </p>
+        )}
 
-        <Box>
-          <Text fontSize="56px" fontWeight="800" color="#0A2540" fontFamily="heading" letterSpacing="-0.04em" lineHeight="1">
-            500
-          </Text>
-          <Text fontSize="20px" fontWeight="700" color="#0A2540" fontFamily="heading" mt={3} letterSpacing="-0.02em">
-            Something went wrong
-          </Text>
-          <Text fontSize="14px" color="#697386" fontFamily="heading" mt={2} lineHeight="1.6">
-            An unexpected error occurred. Please try again or reach out to support if the problem persists.
-          </Text>
-          {error.digest && (
-            <Text fontSize="11px" color="#CBD5E1" fontFamily="mono" mt={3}>
-              Error ID: {error.digest}
-            </Text>
-          )}
-        </Box>
-
-        <HStack gap={3}>
-          <Button
-            onClick={reset}
-            bg="#1E3A5F" color="white" h="44px" px={6}
-            borderRadius="4px" fontWeight="700" fontSize="14px" fontFamily="heading"
-            _hover={{ bg: '#172F4D' }} transition="background 0.15s"
-          >
+        <div style={{ display: 'flex', gap: 12, justifyContent: 'center', marginTop: 32, flexWrap: 'wrap' }}>
+          <button onClick={reset} style={{
+            background: navy, color: '#fff', border: `1.5px solid ${navy}`, borderRadius: 2,
+            padding: '13px 28px', fontWeight: 700, fontSize: 13, letterSpacing: '0.14em',
+            textTransform: 'uppercase', cursor: 'pointer', fontFamily: 'inherit',
+          }}>
             Try again
-          </Button>
-          <NextLink href="/">
-            <Button
-              variant="outline" h="44px" px={6} borderRadius="4px"
-              fontWeight="700" fontSize="14px" fontFamily="heading"
-              borderColor="#E3E8EE" color="#425466"
-              _hover={{ bg: '#F7F8FA', borderColor: '#CBD5E1' }}
-              transition="all 0.15s"
-            >
-              Go home
-            </Button>
-          </NextLink>
-        </HStack>
-
-      </VStack>
-    </Box>
+          </button>
+          <a href="/" style={{
+            background: '#fff', color: navy, border: `1.5px solid ${navy}`, borderRadius: 2,
+            padding: '13px 28px', fontWeight: 700, fontSize: 13, letterSpacing: '0.14em',
+            textTransform: 'uppercase', textDecoration: 'none', display: 'inline-block',
+          }}>
+            Go home
+          </a>
+        </div>
+      </div>
+    </div>
   );
 }

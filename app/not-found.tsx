@@ -1,50 +1,48 @@
-'use client';
+/* No Chakra, no providers, no next/image here on purpose.
 
-import { Box, Text, VStack, HStack } from '@chakra-ui/react';
-import Image from 'next/image';
-import NextLink from 'next/link';
+   This page is rendered on paths where the app-level provider tree is not
+   guaranteed to be mounted. When it used Chakra it crashed in production with
+   "useContext returned undefined. Seems you forgot to wrap component within
+   <ChakraProvider />" and the 404 turned into a 500. An error page has to be
+   able to render when everything else is broken, so it depends on nothing. */
+
+export const metadata = {
+  title: 'Page not found',
+  robots: { index: false, follow: true },
+};
+
+const navy = '#021A3A';
 
 export default function NotFound() {
   return (
-    <Box minH="100vh" bg="white" display="flex" alignItems="center" justifyContent="center" px={5}>
-      <VStack gap={8} textAlign="center" maxW="420px">
+    <div style={{
+      minHeight: '100vh', background: '#fff', display: 'flex',
+      alignItems: 'center', justifyContent: 'center', padding: '0 20px',
+      fontFamily: 'system-ui, -apple-system, sans-serif',
+    }}>
+      <div style={{ textAlign: 'center', maxWidth: 420 }}>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src="/logo-blue.png" alt="Verliks" width={32} height={32}
+          style={{ objectFit: 'contain', marginBottom: 28 }} />
 
-        <HStack gap={2.5}>
-          <Image
-            src="/logo-blue.png" alt="Verliks" width={32} height={32}
-            style={{ objectFit: 'contain', flexShrink: 0 }}
-          />
-          <Text fontWeight="700" fontSize="15px" letterSpacing="-0.02em" color="#0A2540" fontFamily="heading">
-            Verliks
-          </Text>
-        </HStack>
+        <p style={{ fontSize: 56, fontWeight: 800, color: navy, margin: 0, lineHeight: 1, letterSpacing: '-0.04em' }}>
+          404
+        </p>
+        <p style={{ fontSize: 20, fontWeight: 700, color: navy, marginTop: 12, letterSpacing: '-0.02em' }}>
+          Page not found
+        </p>
+        <p style={{ fontSize: 14, color: '#5E5E5E', marginTop: 8, lineHeight: 1.6 }}>
+          This page does not exist, or it has moved.
+        </p>
 
-        <Box>
-          <Text fontSize="56px" fontWeight="800" color="#0A2540" fontFamily="heading" letterSpacing="-0.04em" lineHeight="1">
-            404
-          </Text>
-          <Text fontSize="20px" fontWeight="700" color="#0A2540" fontFamily="heading" mt={3} letterSpacing="-0.02em">
-            Page not found
-          </Text>
-          <Text fontSize="14px" color="#697386" fontFamily="heading" mt={2} lineHeight="1.6">
-            The page you're looking for doesn't exist or has been moved.
-          </Text>
-        </Box>
-
-        <NextLink href="/">
-          <Box
-            as="button"
-            bg="#1E3A5F" color="white" h="44px" px={8}
-            borderRadius="4px" fontWeight="700" fontSize="14px" fontFamily="heading"
-            display="inline-flex" alignItems="center" justifyContent="center"
-            style={{ transition: 'background 0.15s', cursor: 'pointer' }}
-            _hover={{ bg: '#172F4D' }}
-          >
-            Back to home
-          </Box>
-        </NextLink>
-
-      </VStack>
-    </Box>
+        <a href="/" style={{
+          display: 'inline-block', marginTop: 32, background: navy, color: '#fff',
+          padding: '13px 28px', borderRadius: 2, fontWeight: 700, fontSize: 13,
+          letterSpacing: '0.14em', textTransform: 'uppercase', textDecoration: 'none',
+        }}>
+          Back to home
+        </a>
+      </div>
+    </div>
   );
 }
