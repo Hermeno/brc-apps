@@ -1,0 +1,278 @@
+/* Layout for /about only.
+   Every colour, font and measure here is taken from the public design
+   system in app/site.css (the .vsite scope supplies the custom properties).
+   The patterns mirror their existing equivalents one-to-one:
+     hero photo      -> .pro-image / .hero-visual-caption
+     principle list  -> .process-section / .process-grid / .process-steps
+     trust block     -> .trust-grid / .trust-image / .trust-copy
+     coverage block  -> .area-section / .area-grid
+     closing cta     -> .final-cta / .final-cta-inner
+   No new visual language is introduced. */
+
+.page { width: 100%; }
+
+/* ── Hero ───────────────────────────────────────────── */
+.hero {
+  position: relative;
+  min-height: 650px;
+  background: var(--cream);
+  overflow: hidden;
+}
+
+.heroGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.04fr) minmax(0, .96fr);
+  align-items: stretch;
+  gap: clamp(38px, 5vw, 84px);
+  min-height: 650px;
+}
+
+.heroCopy {
+  align-self: center;
+  padding: 40px 0 56px;
+}
+
+.breadcrumb {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 clamp(44px, 5vw, 72px);
+  color: var(--muted);
+  font-size: .8rem;
+  line-height: 1.4;
+}
+.breadcrumb a:hover { color: var(--navy); text-decoration: underline; text-underline-offset: 4px; }
+.breadcrumb [aria-current="page"] { color: var(--navy); font-weight: 700; }
+
+.heroCopy h1 {
+  max-width: 660px;
+  margin: 22px 0 20px;
+  color: var(--navy);
+  font-size: clamp(2.7rem, 4.1vw, 4.5rem);
+  letter-spacing: -.055em;
+  line-height: 1.01;
+}
+.heroCopy h1 em { font-style: normal; color: #457D8A; }
+
+.heroCopy h1 + p {
+  max-width: 520px;
+  color: var(--body);
+  font-size: 1.08rem;
+  line-height: 1.58;
+}
+
+.heroActions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px 26px;
+  margin-top: 30px;
+}
+
+.heroPhoto {
+  position: relative;
+  min-height: 650px;
+  margin: 0;
+  margin-right: calc((min(100vw - 48px, 1220px) - 100vw) / 2);
+  background: var(--mist);
+}
+.heroPhoto img { object-fit: cover; object-position: 50% 42%; }
+
+.heroPhoto figcaption {
+  position: absolute;
+  z-index: 2;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 26px;
+  padding: 19px 25px;
+  background: var(--navy);
+  color: #fff;
+  font-size: .85rem;
+  font-weight: 600;
+  line-height: 1.4;
+}
+.heroPhoto figcaption span:first-child {
+  color: var(--gold-light);
+  font-size: .72rem;
+  font-weight: 800;
+  letter-spacing: .14em;
+  white-space: nowrap;
+}
+
+/* ── Statement ──────────────────────────────────────── */
+.statement { padding-block: clamp(70px, 8vw, 112px); }
+
+.statementGrid {
+  display: grid;
+  grid-template-columns: minmax(0, .85fr) minmax(0, 1.15fr);
+  gap: clamp(40px, 8vw, 125px);
+}
+.statementGrid h2 { max-width: 760px; }
+.statementGrid h2 + p {
+  max-width: 640px;
+  margin-top: 22px;
+  color: var(--body);
+  font-size: 1.05rem;
+}
+
+/* ── Principles ─────────────────────────────────────── */
+.principles {
+  padding-block: clamp(70px, 8vw, 112px);
+  background: var(--cream);
+}
+
+.principlesGrid {
+  display: grid;
+  grid-template-columns: minmax(0, .85fr) minmax(0, 1.15fr);
+  gap: clamp(40px, 8vw, 125px);
+}
+
+.principlesIntro h2 { max-width: 450px; margin: 15px 0 18px; }
+.principlesIntro :global(.text-link) { margin-top: 6px; }
+
+.principleList {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid #BED0D9;
+}
+.principleList li {
+  display: grid;
+  grid-template-columns: 75px 1fr;
+  gap: 20px;
+  padding: 25px 0;
+  border-bottom: 1px solid #BED0D9;
+}
+.principleList li > span {
+  color: #9B7C24;
+  font-size: .82rem;
+  font-weight: 800;
+  letter-spacing: .08em;
+}
+.principleList h3 { color: var(--navy); font-size: 1.34rem; letter-spacing: -.025em; }
+.principleList p {
+  max-width: 440px;
+  margin-top: 7px;
+  color: var(--body);
+  font-size: .94rem;
+}
+
+/* ── Trust ──────────────────────────────────────────── */
+.trust { padding-block: clamp(70px, 8vw, 112px); }
+
+.trustGrid {
+  display: grid;
+  grid-template-columns: minmax(0, .95fr) minmax(0, 1.05fr);
+  align-items: center;
+  gap: clamp(45px, 8vw, 120px);
+}
+
+.trustPhoto {
+  position: relative;
+  min-height: 570px;
+  border-radius: 5px;
+  background: var(--mist);
+  overflow: hidden;
+}
+.trustPhoto img { object-fit: cover; object-position: 50% 31%; }
+
+.trustCopy h2 { max-width: 520px; margin: 14px 0 22px; }
+.trustCopy h2 + p { max-width: 530px; color: var(--body); }
+.trustCopy ul {
+  margin: 24px 0;
+  padding: 0;
+  list-style: none;
+  border-block: 1px solid var(--line);
+}
+.trustCopy li {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  min-height: 50px;
+  color: var(--navy);
+  font-size: .94rem;
+  font-weight: 700;
+}
+.trustCopy li + li { border-top: 1px solid var(--line); }
+.trustCopy li svg { flex: none; color: #568679; }
+
+.trustNote { margin-top: 12px; color: var(--body); font-size: .78rem; }
+.trustCopy :global(.text-link) { margin-top: 22px; }
+
+/* ── Coverage ───────────────────────────────────────── */
+.coverage {
+  padding-block: clamp(70px, 8vw, 112px);
+  background: #EDF3F5;
+}
+
+.coverageGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  gap: 80px;
+}
+.coverageGrid h2 { max-width: 530px; margin-top: 14px; }
+.coverageGrid > div:last-child > p { max-width: 520px; color: var(--body); }
+.coverageGrid :global(.text-link) { margin-top: 23px; }
+
+/* ── Closing CTA ────────────────────────────────────── */
+.cta {
+  background: #E7EFF2;
+  border-top: 1px solid #CBDCE3;
+}
+
+.ctaInner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 35px;
+  padding-block: 50px;
+}
+.ctaInner h2 { margin-top: 10px; font-size: clamp(2rem, 3vw, 3rem); }
+.ctaInner :global(.btn) { flex: none; }
+
+/* ── Responsive (same breakpoints as app/site.css) ──── */
+@media (max-width: 1100px) {
+  .heroCopy h1 { font-size: clamp(2.5rem, 4.3vw, 3.9rem); }
+}
+
+@media (max-width: 900px) {
+  .hero, .heroGrid { min-height: 0; }
+  .heroGrid { grid-template-columns: 1fr; gap: 0; }
+  .heroCopy { padding: 48px 0 56px; }
+  .heroPhoto {
+    min-height: 0;
+    height: clamp(340px, 52vw, 460px);
+    margin-inline: calc((min(100vw - 48px, 1220px) - 100vw) / 2);
+  }
+  .trustPhoto { min-height: 500px; }
+}
+
+@media (max-width: 760px) {
+  .heroCopy h1 { font-size: clamp(2.8rem, 10.5vw, 4rem); margin: 18px 0; }
+  .heroCopy h1 + p { font-size: .99rem; }
+  .heroPhoto { height: clamp(300px, 58vw, 400px); margin-inline: -18px; }
+  .heroPhoto figcaption { padding: 14px 18px; font-size: .72rem; }
+  .heroPhoto figcaption span:last-child { text-align: right; }
+  .statement, .principles, .trust, .coverage { padding-block: 65px; }
+  .statementGrid, .principlesGrid, .trustGrid, .coverageGrid {
+    grid-template-columns: 1fr;
+    gap: 34px;
+  }
+  .coverageGrid { gap: 20px; }
+  .principleList li { grid-template-columns: 42px 1fr; gap: 12px; }
+  .trustPhoto { min-height: 430px; }
+  .trustCopy h2 { margin-bottom: 17px; }
+  .ctaInner { align-items: flex-start; flex-direction: column; }
+}
+
+@media (max-width: 480px) {
+  .heroCopy h1 { font-size: clamp(2.45rem, 10vw, 3.2rem); }
+  .heroPhoto figcaption { font-size: .68rem; }
+  .breadcrumb { margin-bottom: 40px; }
+}
