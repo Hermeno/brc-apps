@@ -5,6 +5,8 @@ html { scroll-behavior: smooth; }
 :root {
   --font-dm-sans: var(--font-display);
   --font-inter:   var(--font-body);
+  --font-archivo: var(--font-display);
+  --font-plex-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 }
 
 body {

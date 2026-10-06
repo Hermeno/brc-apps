@@ -99,7 +99,7 @@
   font-size: 23px; font-weight: 700; color: #fff;
   letter-spacing: -0.02em; text-decoration: none; flex-shrink: 0;
 }
-.logoMark { width: 32px; height: 32px; object-fit: contain; flex-shrink: 0; }
+.logoMark { width: 149px; height: 32px; object-fit: contain; flex-shrink: 0; }
 .topbarRight { display: flex; align-items: center; gap: 20px; margin-left: auto; }
 .signIn {
   font-size: 14.5px; font-weight: 500; color: rgba(255, 255, 255, 0.75);
@@ -346,7 +346,7 @@
   .signIn { display: none; }
   .topbarCta { padding: 9px 15px; font-size: 13.5px; }
   .logo { font-size: 20px; }
-  .logoMark { width: 28px; height: 28px; }
+  .logoMark { width: 130px; height: 28px; }
 
   .exampleRow { flex-direction: column; gap: 3px; }
   .exampleVal { text-align: left; }

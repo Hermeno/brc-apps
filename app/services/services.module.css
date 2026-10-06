@@ -184,7 +184,7 @@
 /* Shared navy conversion band. */
 .page .guidance { padding-block: clamp(64px, 6vw, 92px); background: var(--navy); color: #fff; }
 .page .guidance .eyebrow { color: #f5d981; }
-.page .guidanceGrid { display: flex; align-items: end; justify-content: space-between; gap: 36px; }
+.page .guidanceGrid { display: flex; align-items: flex-end; justify-content: space-between; gap: 36px; }
 .page .guidance h2 { max-width: 14ch; color: #fff; }
 .page .guidance p:not(.eyebrow) { max-width: 57ch; margin: 18px 0 0; color: #e0ebf3; font-size: 16px; line-height: 1.6; }
 .page .guidance .goldButton { flex: none; }
@@ -262,7 +262,7 @@
 .page .faqList details[open] .faqPlus { transform: rotate(45deg); }
 .page .faqList details p { max-width: 68ch; margin: -1px 38px 25px 0; color: var(--body); font-size: 15px; line-height: 1.65; }
 .page .relatedSection { padding-block: 82px 105px; background: var(--cream); }
-.page .relatedHeading { display: flex; justify-content: space-between; align-items: end; gap: 30px; margin-bottom: 32px; }
+.page .relatedHeading { display: flex; justify-content: space-between; align-items: flex-end; gap: 30px; margin-bottom: 32px; }
 .page .relatedGrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(16px, 2vw, 26px); }
 .page .relatedCard { display: block; min-width: 0; color: var(--navy); text-decoration: none; }
 .page .relatedImage { position: relative; display: block; aspect-ratio: 4 / 3; overflow: hidden; background: #e9eef0; }

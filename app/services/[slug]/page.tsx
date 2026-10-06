@@ -128,7 +128,7 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
         name: service.name,
         serviceType: service.name,
         description: service.whatIsIt,
-        areaServed: { '@type': 'Country', name: 'United States' },
+        areaServed: { '@type': 'State', name: 'Connecticut' },
         provider: { '@type': 'Organization', name: 'Verliks', url: BASE },
       },
       {

@@ -29,7 +29,6 @@ export default function SiteHeader() {
     <div className="wrap header-inner">
       <Link className="brand" href="/" aria-label="Verliks home">
         <Image className="brand-mark" src="/images/brand/verliks-logo-600.png" width={159} height={34} alt="" priority />
-        <span>verliks</span>
       </Link>
       <nav className="desktop-nav" aria-label="Main navigation">
         {links.map(link => <Link key={link.href} href={link.href} aria-current={pathname === link.href ? 'page' : undefined}>{link.label}</Link>)}

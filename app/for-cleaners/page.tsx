@@ -118,8 +118,7 @@ export default async function ForCleanersPage() {
         <header className={styles.topbar}>
           <div className={styles.topbarInner}>
             <NextLink href="/" className={styles.logo} aria-label="Verliks home">
-              <Image src="/images/brand/verliks-logo-600.png" alt="" width={149} height={32} className={styles.logoMark} priority />
-              <span>verliks</span>
+              <Image src="/images/brand/verliks-logo-white-600.png" alt="" width={149} height={32} className={styles.logoMark} priority />
             </NextLink>
             <div className={styles.topbarRight}>
               <NextLink href="/auth/login" className={styles.signIn}>Sign in</NextLink>

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo, Suspense } from 'react';
+import { useState, useMemo, Suspense, type ReactNode } from 'react';
 import { useSession, signIn } from 'next-auth/react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import {
@@ -27,6 +27,10 @@ const LABEL_STYLE = {
   fontFamily: 'heading',
   marginBottom: '9px',
 };
+
+function FormLabel({ htmlFor, children }: { htmlFor: string; children: ReactNode }) {
+  return <label htmlFor={htmlFor} style={{ display: 'block', marginBottom: 9, color: '#1E3A5F', fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.08em' }}>{children}</label>;
+}
 
 function RequestForm() {
   const { data: session, status } = useSession();
@@ -204,9 +208,6 @@ function RequestForm() {
           <NextLink href="/" aria-label="Verliks home">
             <HStack gap={2} minH="44px">
               <Image src="/images/brand/verliks-logo-600.png" alt="" width={159} height={34} style={{ objectFit: 'contain' }} />
-              <Text fontWeight="800" fontSize="23px" letterSpacing="-.06em" color="#1E3A5F" fontFamily="heading" lineHeight="1">
-                verliks
-              </Text>
             </HStack>
           </NextLink>
           <NextLink href="/auth/login">
@@ -273,7 +274,7 @@ function RequestForm() {
                 {SERVICE_TYPES.map(s => {
                   const selected = serviceType === s.id;
                   return (
-                    <Box as="button" type="button" key={s.id} onClick={() => setServiceType(s.id)}
+                    <Button type="button" variant="plain" key={s.id} onClick={() => setServiceType(s.id)}
                       aria-pressed={selected} textAlign="left" minH="73px" px={4} py={3} cursor="pointer"
                       bg={selected ? '#EDF3F5' : '#FFFFFF'} border="1px solid"
                       borderColor={selected ? '#1E3A5F' : '#DDE5E9'} borderRadius="5px"
@@ -291,7 +292,7 @@ function RequestForm() {
                           {selected && <Icon as={LucideCheck} boxSize="12px" color="white" />}
                         </Flex>
                       </Flex>
-                    </Box>
+                    </Button>
                   );
                 })}
               </SimpleGrid>
@@ -307,18 +308,18 @@ function RequestForm() {
               </HStack>
               <VStack gap={5} align="stretch">
                 <Box>
-                  <Text as="label" htmlFor="request-address" {...LABEL_STYLE}>Cleaning address or ZIP code</Text>
+                  <FormLabel htmlFor="request-address">Cleaning address or ZIP code</FormLabel>
                   <AddressInput value={address} onChange={setAddress} placeholder="123 Main St, Hartford, CT 06103"
                     inputProps={{ ...inputStyle, id: 'request-address', autoComplete: 'street-address' }} />
                 </Box>
                 <SimpleGrid columns={{ base: 1, sm: 2 }} gap={4}>
                   <Box>
-                    <Text as="label" htmlFor="request-date" {...LABEL_STYLE}>Preferred date</Text>
+                    <FormLabel htmlFor="request-date">Preferred date</FormLabel>
                     <Input id="request-date" type="date" value={dateVal} onChange={e => setDateVal(e.target.value)}
                       min={new Date().toISOString().split('T')[0]} {...inputStyle} />
                   </Box>
                   <Box>
-                    <Text as="label" htmlFor="request-time" {...LABEL_STYLE}>Preferred time</Text>
+                    <FormLabel htmlFor="request-time">Preferred time</FormLabel>
                     <Input id="request-time" type="time" value={timeVal} onChange={e => setTimeVal(e.target.value)} {...inputStyle} />
                   </Box>
                 </SimpleGrid>
@@ -366,14 +367,14 @@ function RequestForm() {
                     {FREQUENCY_OPTIONS.map(f => {
                       const selected = frequency === f.id;
                       return (
-                        <Box as="button" type="button" key={f.id} aria-pressed={selected} onClick={() => setFrequency(f.id)}
+                        <Button type="button" variant="plain" key={f.id} aria-pressed={selected} onClick={() => setFrequency(f.id)}
                           minH="48px" px={3} py={2} bg={selected ? '#1E3A5F' : '#FFFFFF'} color={selected ? '#FFFFFF' : '#1E3A5F'}
                           border="1px solid" borderColor={selected ? '#1E3A5F' : '#CBD8E0'} borderRadius="5px"
                           textAlign="center" fontSize="13px" fontWeight="800" fontFamily="heading" cursor="pointer"
                           _hover={{ borderColor: '#1E3A5F', bg: selected ? '#29496E' : '#EDF3F5' }}
                           _focusVisible={{ outline: '3px solid #D4AF37', outlineOffset: '2px' }}>
                           {f.labelEn}{f.tag && <Text as="span" ml={1.5} color={selected ? '#E9D68B' : '#8A6E1E'} fontSize="11px">{f.tag}</Text>}
-                        </Box>
+                        </Button>
                       );
                     })}
                   </SimpleGrid>
@@ -384,7 +385,7 @@ function RequestForm() {
                     {EXTRAS.map(ex => {
                       const selected = extras.includes(ex.id);
                       return (
-                        <Box as="button" type="button" key={ex.id} aria-pressed={selected} onClick={() => toggleExtra(ex.id)}
+                        <Button type="button" variant="plain" key={ex.id} aria-pressed={selected} onClick={() => toggleExtra(ex.id)}
                           px={4} py={3} textAlign="left" minH="57px" bg={selected ? '#F8F4E7' : '#FFFFFF'}
                           border="1px solid" borderColor={selected ? '#B89631' : '#DDE5E9'} borderRadius="5px" cursor="pointer"
                           _hover={{ borderColor: '#B89631' }} _focusVisible={{ outline: '3px solid #D4AF37', outlineOffset: '2px' }}>
@@ -398,13 +399,13 @@ function RequestForm() {
                               {selected && <Icon as={LucideCheck} boxSize="13px" color="#1E3A5F" />}
                             </Flex>
                           </Flex>
-                        </Box>
+                        </Button>
                       );
                     })}
                   </SimpleGrid>
                 </Box>
                 <Box>
-                  <Text as="label" htmlFor="request-notes" {...LABEL_STYLE}>Anything else we should know? <Text as="span" textTransform="none" letterSpacing="normal" color="#6A8092" fontWeight="500">(optional)</Text></Text>
+                  <FormLabel htmlFor="request-notes">Anything else we should know? <Text as="span" textTransform="none" letterSpacing="normal" color="#6A8092" fontWeight="500">(optional)</Text></FormLabel>
                   <Textarea id="request-notes" value={notes} onChange={e => setNotes(e.target.value)}
                     placeholder="For example, pets at home, parking details, or areas to focus on."
                     bg="#FFFFFF" border="1px solid #CBD8E0" borderRadius="5px" color="#1E3A5F" fontFamily="heading"
@@ -461,22 +462,22 @@ function RequestForm() {
                   </HStack>
                 </Box>
                 <HStack gap={0} px={{ base: 5, md: 8 }} borderBottom="1px solid #DDE5E9">
-                  <Box as="button" type="button" flex={1} textAlign="center" minH="50px" px={2} py={3}
+                  <Button type="button" variant="plain" flex={1} textAlign="center" minH="50px" px={2} py={3}
                     borderBottom="2px solid" borderBottomColor={authMode === 'register' ? '#1E3A5F' : 'transparent'}
                     color={authMode === 'register' ? '#1E3A5F' : '#60758A'} fontSize="13px"
                     fontWeight={authMode === 'register' ? '800' : '600'} fontFamily="heading" cursor="pointer"
                     aria-pressed={authMode === 'register'} onClick={() => setAuthMode('register')}
                     _focusVisible={{ outline: '3px solid #D4AF37', outlineOffset: '-3px' }}>
                     Create account
-                  </Box>
-                  <Box as="button" type="button" flex={1} textAlign="center" minH="50px" px={2} py={3}
+                  </Button>
+                  <Button type="button" variant="plain" flex={1} textAlign="center" minH="50px" px={2} py={3}
                     borderBottom="2px solid" borderBottomColor={authMode === 'login' ? '#1E3A5F' : 'transparent'}
                     color={authMode === 'login' ? '#1E3A5F' : '#60758A'} fontSize="13px"
                     fontWeight={authMode === 'login' ? '800' : '600'} fontFamily="heading" cursor="pointer"
                     aria-pressed={authMode === 'login'} onClick={() => setAuthMode('login')}
                     _focusVisible={{ outline: '3px solid #D4AF37', outlineOffset: '-3px' }}>
                     Sign in
-                  </Box>
+                  </Button>
                 </HStack>
 
                 <Box px={{ base: 5, md: 8 }} py={{ base: 6, md: 8 }}>
@@ -488,14 +489,14 @@ function RequestForm() {
                       </Text>
                       <SimpleGrid columns={{ base: 1, sm: 2 }} gap={4} mb={4}>
                         <Box>
-                          <Text as="label" htmlFor="register-name" {...LABEL_STYLE}>Full name</Text>
+                          <FormLabel htmlFor="register-name">Full name</FormLabel>
                           <HStack gap={2}>
                             <Icon as={LucideUser} boxSize="17px" color="#60758A" flexShrink={0} />
                             <Input id="register-name" value={name} onChange={e => setName(e.target.value)} placeholder="Jane Smith" {...inputStyle} />
                           </HStack>
                         </Box>
                         <Box>
-                          <Text as="label" htmlFor="register-phone" {...LABEL_STYLE}>Phone number</Text>
+                          <FormLabel htmlFor="register-phone">Phone number</FormLabel>
                           <HStack gap={2}>
                             <Icon as={LucidePhone} boxSize="17px" color="#60758A" flexShrink={0} />
                             <Input id="register-phone" value={regPhone}
@@ -514,7 +515,7 @@ function RequestForm() {
                       </SimpleGrid>
                       <SimpleGrid columns={{ base: 1, sm: 2 }} gap={4} mb={6}>
                         <Box>
-                          <Text as="label" htmlFor="register-email" {...LABEL_STYLE}>Email address</Text>
+                          <FormLabel htmlFor="register-email">Email address</FormLabel>
                           <HStack gap={2}>
                             <Icon as={LucideMail} boxSize="17px" color="#60758A" flexShrink={0} />
                             <Input id="register-email" type="email" value={email} onChange={e => setEmail(e.target.value)}
@@ -522,7 +523,7 @@ function RequestForm() {
                           </HStack>
                         </Box>
                         <Box>
-                          <Text as="label" htmlFor="register-password" {...LABEL_STYLE}>Create a password</Text>
+                          <FormLabel htmlFor="register-password">Create a password</FormLabel>
                           <HStack gap={2}>
                             <Icon as={LucideLock} boxSize="17px" color="#60758A" flexShrink={0} />
                             <Input id="register-password" type="password" value={password} onChange={e => setPassword(e.target.value)}
@@ -545,7 +546,7 @@ function RequestForm() {
                       </Text>
                       <SimpleGrid columns={{ base: 1, sm: 2 }} gap={4} mb={6}>
                         <Box>
-                          <Text as="label" htmlFor="login-email" {...LABEL_STYLE}>Email address</Text>
+                          <FormLabel htmlFor="login-email">Email address</FormLabel>
                           <HStack gap={2}>
                             <Icon as={LucideMail} boxSize="17px" color="#60758A" flexShrink={0} />
                             <Input id="login-email" type="email" value={email} onChange={e => setEmail(e.target.value)}
@@ -553,7 +554,7 @@ function RequestForm() {
                           </HStack>
                         </Box>
                         <Box>
-                          <Text as="label" htmlFor="login-password" {...LABEL_STYLE}>Password</Text>
+                          <FormLabel htmlFor="login-password">Password</FormLabel>
                           <HStack gap={2}>
                             <Icon as={LucideLock} boxSize="17px" color="#60758A" flexShrink={0} />
                             <Input id="login-password" type="password" value={password} onChange={e => setPassword(e.target.value)}

@@ -1,6 +1,5 @@
 import type { Metadata } from 'next';
 import localFont from 'next/font/local';
-import { Archivo, IBM_Plex_Mono } from 'next/font/google';
 import Script from 'next/script';
 import { cookies } from 'next/headers';
 import './globals.css';
@@ -31,21 +30,6 @@ const jakarta = localFont({
   display: 'swap',
 });
 
-// Public website typefaces (Archivo variable + IBM Plex Mono), per the brief.
-// Loaded through next/font so there is no Google Fonts <link> in production.
-const archivo = Archivo({
-  subsets: ['latin'],
-  axes: ['wdth'],
-  variable: '--font-archivo',
-  display: 'swap',
-});
-const plexMono = IBM_Plex_Mono({
-  subsets: ['latin'],
-  weight: ['400', '500'],
-  variable: '--font-plex-mono',
-  display: 'swap',
-});
-
 export const metadata: Metadata = {
   metadataBase: new URL('https://verliks.com'),
   title: {
@@ -61,7 +45,7 @@ export const metadata: Metadata = {
     url:         'https://verliks.com',
     siteName:    'Verliks',
     type:        'website',
-    images: [{ url: '/images/brand/verliks-logo-600.png', width: 1200, height: 630, alt: 'Verliks' }],
+    images: [{ url: '/images/brand/verliks-logo-600.png', width: 600, height: 129, alt: 'Verliks' }],
   },
   twitter: {
     card:        'summary_large_image',
@@ -84,7 +68,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   return (
     <html lang="en" translate="no" suppressHydrationWarning>
       <body
-        className={`${googleSans.variable} ${jakarta.variable} ${archivo.variable} ${plexMono.variable}`}
+        className={`${googleSans.variable} ${jakarta.variable}`}
         suppressHydrationWarning
         translate="no"
         style={{ backgroundColor: '#F8FAFC' }}

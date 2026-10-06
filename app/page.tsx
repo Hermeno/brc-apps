@@ -35,6 +35,7 @@ export default function HomePage() {
       <SiteHeader />
       <main id="main">
         <section className="home-hero" aria-labelledby="home-title">
+          <Image src="/images/site/verliks-cleaning-hero-editorial-20261006.webp" alt="A cleaning professional at work in a sunlit living room" fill priority sizes="100vw" className="home-hero-backdrop" />
           <div className="wrap home-hero-grid">
             <div className="home-hero-copy">
               <p className="eyebrow eyebrow-rule">CLEANING HELP, ON YOUR TERMS</p>
@@ -57,12 +58,8 @@ export default function HomePage() {
               </form>
               <p className="search-note" id="zip-hint"><Check size={16} aria-hidden="true" /> Free to request <span aria-hidden="true">·</span> Availability depends on your ZIP code</p>
             </div>
-            <div className="home-hero-visual">
-              <Image src="/images/site/verliks-cleaning-hero-editorial-20261006.webp" alt="A cleaning professional at work in a sunlit living room" fill priority sizes="(max-width: 900px) 100vw, 43vw" className="home-hero-image" />
-              <div className="hero-visual-caption"><span>01 / 03</span><span>Real people. Real homes.<br />A better way to connect.</span></div>
-            </div>
           </div>
-          <div className="hero-edge" aria-hidden="true">V</div>
+          <div className="hero-visual-caption"><span>01 / 03</span><span>Real people. Real homes.<br />A better way to connect.</span></div>
         </section>
 
         <section className="benefit-ribbon" aria-label="Why request through Verliks"><div className="wrap benefit-ribbon-inner">
