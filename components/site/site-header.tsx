@@ -22,12 +22,24 @@ export default function SiteHeader() {
   const pathname = usePathname();
   const [servicesOpen, setServicesOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const servicesBtn = useRef<HTMLButtonElement>(null);
   const dropdown = useRef<HTMLLIElement>(null);
 
   const closeServices = useCallback((returnFocus = false) => {
     setServicesOpen(false);
     if (returnFocus) servicesBtn.current?.focus();
+  }, []);
+
+  /* A 1px sentinel at the top of the page: when it leaves the viewport the bar
+     has lifted off and tightens. An observer, never a scroll listener. */
+  useEffect(() => {
+    const mark = document.createElement('div');
+    mark.style.cssText = 'position:absolute;top:0;left:0;width:1px;height:1px;pointer-events:none';
+    document.body.prepend(mark);
+    const io = new IntersectionObserver(([e]) => setScrolled(!e.isIntersecting));
+    io.observe(mark);
+    return () => { io.disconnect(); mark.remove(); };
   }, []);
 
   // Every navigation closes whatever was open.
@@ -89,7 +101,7 @@ export default function SiteHeader() {
   }));
 
   return (
-    <header className="site-header">
+    <header className="site-header" data-scrolled={scrolled ? '' : undefined}>
       <div className="wrap header-bar">
         <Link className="brand" href="/" aria-label="Verliks home">
           <Image className="brand-mark" src="/images/site/verliks-mark-128.png" width={34} height={34} alt="" priority />

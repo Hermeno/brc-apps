@@ -1,7 +1,7 @@
 'use client';
 
 import { useRef, type ReactNode } from 'react';
-import { motion, useReducedMotion, useScroll, useTransform } from 'motion/react';
+import { motion, useInView, useReducedMotion, useScroll, useTransform } from 'motion/react';
 
 /* Motion for the public site.
 
@@ -132,4 +132,34 @@ export function ParallaxMedia({
 
   if (reduce) return <div className={className}>{children}</div>;
   return <motion.div ref={ref} className={className} style={{ y }}>{children}</motion.div>;
+}
+
+/* Staggers whatever is already inside it, without adding a single element.
+   The container gets data-stagger, and once it enters the viewport it gets
+   data-in; the per-child delay lives in CSS, keyed off nth-child. That keeps
+   sibling selectors like `.hero-index li+li a` working, which a wrapper per
+   child would have broken. */
+export function Stagger({
+  children, className, as = 'div', id, ariaLabelledby,
+}: {
+  children: ReactNode; className?: string;
+  as?: 'div' | 'ul' | 'ol' | 'nav' | 'section'; id?: string; ariaLabelledby?: string;
+}) {
+  const ref = useRef<HTMLElement>(null);
+  const reduce = useReducedMotion();
+  const inView = useInView(ref, { once: true, amount: 0.15 });
+  const Tag = as as 'div';
+
+  return (
+    <Tag
+      ref={ref as never}
+      className={className}
+      id={id}
+      aria-labelledby={ariaLabelledby}
+      data-stagger={reduce ? undefined : ''}
+      data-in={!reduce && inView ? '' : undefined}
+    >
+      {children}
+    </Tag>
+  );
 }
