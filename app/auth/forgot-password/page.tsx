@@ -46,7 +46,7 @@ export default function ForgotPasswordPage() {
 
         <HStack gap={2.5} mb={10} justify="space-between">
           <HStack gap={2.5}>
-            <Image src="/logo-blue.png" alt="Verliks" width={32} height={32} style={{ objectFit: 'contain', flexShrink: 0 }} />
+            <Image src="/images/brand/verliks-logo-600.png" alt="Verliks" width={149} height={32} style={{ objectFit: 'contain', flexShrink: 0 }} />
             <Text fontWeight="700" fontSize="15px" letterSpacing="-0.02em" color="#1E3A5F" fontFamily="heading">
               Verliks
             </Text>

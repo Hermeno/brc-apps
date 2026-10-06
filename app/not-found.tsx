@@ -22,7 +22,7 @@ export default function NotFound() {
     }}>
       <div style={{ textAlign: 'center', maxWidth: 420 }}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/logo-blue.png" alt="Verliks" width={32} height={32}
+        <img src="/images/brand/verliks-logo-600.png" alt="Verliks" width={32} height={32}
           style={{ objectFit: 'contain', marginBottom: 28 }} />
 
         <p style={{ fontSize: 56, fontWeight: 800, color: navy, margin: 0, lineHeight: 1, letterSpacing: '-0.04em' }}>

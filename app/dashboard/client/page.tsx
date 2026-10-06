@@ -570,7 +570,7 @@ export default function ClientPage() {
       >
         <Flex align="center" h="60px" px={{ base: 4, md: 6, lg: 8 }} maxW="1440px" mx="auto" justify="space-between">
           <HStack gap={2}>
-            <Image src="/logo-blue.png" alt="Verliks" width={32} height={32} style={{ borderRadius: "50%", objectFit: "cover", flexShrink: 0 }} />
+            <Image src="/images/brand/verliks-logo-600.png" alt="Verliks" width={149} height={32} style={{ borderRadius: "50%", objectFit: "cover", flexShrink: 0 }} />
             <Text fontWeight="700" fontSize={{ base: '13px', sm: '15px' }} letterSpacing="-0.02em" color="#1E3A5F" fontFamily="heading">
               Verliks
             </Text>

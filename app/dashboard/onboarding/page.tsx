@@ -215,7 +215,7 @@ export default function OnboardingPage() {
       <Box bg="white" borderBottom="1px solid" borderColor="slate.100" px={6} py={4} position="sticky" top={0} zIndex={50}>
         <Flex align="center" justify="space-between" maxW="640px" mx="auto">
           <NextLink href="/">
-            <Image src="/logo-blue.png" alt="Verliks" width={28} height={28} style={{ objectFit: 'contain', flexShrink: 0 }} />
+            <Image src="/images/brand/verliks-logo-600.png" alt="Verliks" width={131} height={28} style={{ objectFit: 'contain', flexShrink: 0 }} />
           </NextLink>
           <Text fontSize="xs" color="slate.400" fontWeight="semibold">
             {t('onboarding.stepOf', { n: String(step + 1), total: String(stepNames.length), name: stepNames[step] ?? '' })}

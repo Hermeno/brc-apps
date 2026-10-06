@@ -25,7 +25,7 @@ export default function PrivacyPage() {
         <Flex align="center" h="full" px={{ base: 5, md: 10, lg: 16 }} maxW="1440px" mx="auto" justify="space-between">
           <NextLink href="/" style={{ textDecoration: 'none' }}>
             <HStack gap={2.5}>
-              <Image src="/logo-blue.png" alt="Verliks" width={28} height={28} style={{ objectFit: 'contain' }} />
+              <Image src="/images/brand/verliks-logo-600.png" alt="Verliks" width={131} height={28} style={{ objectFit: 'contain' }} />
               <Text fontWeight="700" fontSize="15px" letterSpacing="-0.02em" color="#1E3A5F" fontFamily="heading">
                 Verliks
               </Text>
@@ -254,7 +254,7 @@ export default function PrivacyPage() {
         <Flex px={{ base: 5, md: 10, lg: 16 }} maxW="1440px" mx="auto"
           align="center" justify="space-between" flexWrap="wrap" gap={4}>
           <HStack gap={2.5}>
-            <Image src="/logo-blue.png" alt="Verliks" width={24} height={24} style={{ objectFit: 'contain' }} />
+            <Image src="/images/brand/verliks-logo-600.png" alt="Verliks" width={112} height={24} style={{ objectFit: 'contain' }} />
             <Text fontSize="12px" color="#6A95BC" fontFamily="heading">
               © 2026 Verliks. {locale === 'pt' ? 'Todos os direitos reservados.' : 'All rights reserved.'}
             </Text>

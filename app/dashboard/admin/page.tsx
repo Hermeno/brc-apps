@@ -254,10 +254,7 @@ function Sidebar({ tab, setTab, pendingVerifs, openDisputes, onRefresh, user }: 
       {/* Logo */}
       <Box px={5} pt={6} pb={5} borderBottom="1px solid #E2E8F0">
         <HStack gap={0}>
-          <Image src="/vlogo.PNG" alt="Verliks" width={38} height={38} style={{ objectFit: 'contain', flexShrink: 0 }} />
-          <Text fontWeight="700" fontSize="14px" letterSpacing="-0.02em" color="#1E3A5F" fontFamily="heading">
-            Verliks
-          </Text>
+          <Image src="/images/brand/verliks-logo-600.png" alt="Verliks" width={177} height={38} style={{ objectFit: 'contain', flexShrink: 0 }} />
         </HStack>
       </Box>
 

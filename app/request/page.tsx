@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo, useRef, Suspense } from 'react';
+import { useState, useMemo, Suspense } from 'react';
 import { useSession, signIn } from 'next-auth/react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import {
@@ -8,8 +8,8 @@ import {
   Container, Icon, SimpleGrid,
 } from '@chakra-ui/react';
 import {
-  LucideArrowRight, LucideMapPin, LucideCalendar, LucideBanknote,
-  LucideClock, LucideUser, LucideLock, LucideMail, LucideCheckCircle, LucidePhone,
+  LucideArrowRight, LucideBanknote, LucideClock, LucideUser,
+  LucideLock, LucideMail, LucideCheckCircle, LucidePhone, LucideCheck,
 } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import NextLink from 'next/link';
@@ -19,13 +19,13 @@ import { AddressInput } from '@/components/address-input';
 import Image from 'next/image';
 
 const LABEL_STYLE = {
-  fontSize: '11px' as const,
+  fontSize: '12px' as const,
   fontWeight: '700' as const,
-  color: '#64748B',
+  color: '#1E3A5F',
   textTransform: 'uppercase' as const,
-  letterSpacing: '0.1em',
+  letterSpacing: '0.08em',
   fontFamily: 'heading',
-  marginBottom: '6px',
+  marginBottom: '9px',
 };
 
 function RequestForm() {
@@ -60,7 +60,6 @@ function RequestForm() {
   const [password, setPassword]         = useState('');
   const [regPhone, setRegPhone]         = useState('+1 ');
   const [loading, setLoading]           = useState(false);
-  const dateRef                         = useRef<HTMLInputElement>(null);
 
   const estimate = useMemo(() =>
     calculateEstimate({ serviceType, bedrooms, bathrooms, squareMeters, extras, frequency }),
@@ -152,407 +151,354 @@ function RequestForm() {
   };
 
   const inputStyle = {
-    bg: '#F8FAFC',
+    bg: '#FFFFFF',
     border: '1px solid',
-    borderColor: '#E3E8EE',
-    h: '44px',
-    borderRadius: '4px',
+    borderColor: '#CBD8E0',
+    h: '50px',
+    borderRadius: '5px',
+    color: '#1E3A5F',
     fontFamily: 'heading',
     fontSize: '14px',
-    _focus: { bg: 'white', borderColor: '#1E3A5F' },
+    px: 3.5,
+    _placeholder: { color: '#7B8DA0' },
+    _hover: { borderColor: '#8DAABD' },
+    _focusVisible: { borderColor: '#1E3A5F', boxShadow: '0 0 0 3px rgba(212,175,55,.28)' },
   } as const;
 
-  return (
-    <Box minH="100vh" bg="white">
+  const estimateSummary = (
+    <Box bg="#FFFFFF" border="1px solid #D7E2E8" borderRadius="6px" overflow="hidden">
+      <Box bg="#EDF3F5" px={{ base: 5, md: 6 }} py={4} borderBottom="1px solid #D7E2E8">
+        <HStack gap={2.5}>
+          <Icon as={LucideBanknote} boxSize="18px" color="#1E3A5F" />
+          <Text fontSize="12px" fontWeight="800" letterSpacing=".1em" color="#1E3A5F" textTransform="uppercase" fontFamily="heading">
+            Your estimate
+          </Text>
+        </HStack>
+      </Box>
+      <Box px={{ base: 5, md: 6 }} py={5}>
+        <Text fontSize="13px" color="#526A7F" fontFamily="heading" mb={1}>Estimated price range</Text>
+        <Text fontFamily="heading" fontSize={{ base: '30px', md: '34px' }} fontWeight="800" lineHeight="1.1" letterSpacing="-.045em" color="#1E3A5F">
+          {'$'}{estimate.minPrice}–{'$'}{estimate.maxPrice}
+        </Text>
+        {estimate.discountPct > 0 && (
+          <Text mt={2} fontSize="12px" fontWeight="700" color="#725915" fontFamily="heading">
+            {estimate.discountPct}% recurring discount included
+          </Text>
+        )}
+        <Box h="1px" bg="#E2E9ED" my={5} />
+        <HStack gap={2.5} color="#365878">
+          <Icon as={LucideClock} boxSize="17px" />
+          <Text fontSize="13px" fontFamily="heading">About <Text as="span" fontWeight="800" color="#1E3A5F">{estimate.hours} hours</Text> of work</Text>
+        </HStack>
+        <Text mt={5} fontSize="12px" lineHeight="1.65" color="#526A7F" fontFamily="heading">
+          This is a guide, not a final quote. Discuss the work and price with the cleaner before deciding.
+        </Text>
+      </Box>
+    </Box>
+  );
 
-      {/* Navbar */}
-      <Box
-        bg="white" borderBottom="1px solid #E2E8F0"
-        position="sticky" top={0} zIndex={50} h="64px"
-        style={{ boxShadow: '0 1px 6px rgba(0,0,0,0.06)' }}
-      >
-        <Flex align="center" h="full" px={{ base: 5, md: 10, lg: 16 }} maxW="1440px" mx="auto" justify="space-between">
-          <NextLink href="/">
-            <HStack gap={2.5} cursor="pointer">
-              <Image src="/logo-blue.png" alt="Verliks" width={28} height={28} style={{ borderRadius: "50%", objectFit: "cover", flexShrink: 0 }} />
-              <Text fontWeight="700" fontSize="14px" letterSpacing="-0.02em" color="#1E3A5F" fontFamily="heading">
-                Verliks
+  return (
+    <Box minH="100vh" bg="#F8F8F4" color="#1E3A5F">
+      <Box as="header" bg="#FFFFFF" borderBottom="1px solid #DDE5E9" position="sticky" top={0} zIndex={50}>
+        <Flex align="center" justify="space-between" h={{ base: '66px', md: '76px' }} px={{ base: 5, md: 8 }} maxW="1250px" mx="auto">
+          <NextLink href="/" aria-label="Verliks home">
+            <HStack gap={2} minH="44px">
+              <Image src="/images/brand/verliks-logo-600.png" alt="" width={159} height={34} style={{ objectFit: 'contain' }} />
+              <Text fontWeight="800" fontSize="23px" letterSpacing="-.06em" color="#1E3A5F" fontFamily="heading" lineHeight="1">
+                verliks
               </Text>
             </HStack>
           </NextLink>
           <NextLink href="/auth/login">
-            <Text fontSize="13px" fontWeight="600" color="#64748B" cursor="pointer" fontFamily="heading"
-              _hover={{ color: '#1E3A5F' }} transition="color 0.15s">
-              Already have an account? Sign in →
+            <Text fontSize={{ base: '13px', md: '14px' }} fontWeight="700" color="#1E3A5F" fontFamily="heading" _hover={{ textDecoration: 'underline' }} textUnderlineOffset="5px">
+              Sign in
             </Text>
           </NextLink>
         </Flex>
       </Box>
 
-      <Container maxW="6xl" py={10}>
+      <Container maxW="1200px" px={{ base: 5, md: 8 }} pt={{ base: 9, md: 14 }} pb={{ base: 16, md: 24 }}>
+        <Flex align={{ base: 'start', lg: 'end' }} justify="space-between" gap={7} direction={{ base: 'column', lg: 'row' }} mb={{ base: 8, md: 10 }}>
+          <Box maxW="750px">
+            <HStack gap={3} mb={4}>
+              <Box w="26px" h="2px" bg="#D4AF37" />
+              <Text fontSize="12px" color="#365878" fontWeight="800" letterSpacing=".15em" textTransform="uppercase" fontFamily="heading">
+                A cleaner home starts here
+              </Text>
+            </HStack>
+            <Text as="h1" fontFamily="heading" fontSize={{ base: '37px', sm: '45px', md: '58px' }} fontWeight="800" letterSpacing="-.055em" lineHeight="1.06" color="#1E3A5F">
+              Tell us what needs cleaning.
+            </Text>
+            <Text fontSize={{ base: '15px', md: '17px' }} color="#526A7F" lineHeight="1.65" fontFamily="heading" mt={4} maxW="620px">
+              {targetCleanerId
+                ? 'Share the details below and your request will go directly to this professional.'
+                : 'Share a few details about your space. A local independent cleaner can review your request, then you can agree on the work and price together.'}
+            </Text>
+          </Box>
+          <HStack align="center" gap={3} flexShrink={0} color="#1E3A5F" pb={{ lg: 1 }}>
+            <Flex w="34px" h="34px" borderRadius="full" bg="#1E3A5F" color="white" align="center" justify="center" fontSize="12px" fontWeight="800">01</Flex>
+            <Text fontSize="13px" fontWeight="800" fontFamily="heading">Request details</Text>
+            <Box w="32px" h="1px" bg="#C7D6DE" mx={1} />
+            <Flex w="34px" h="34px" borderRadius="full" bg={showRegister ? '#1E3A5F' : '#E7EFF2'} color={showRegister ? 'white' : '#607990'} align="center" justify="center" fontSize="12px" fontWeight="800">02</Flex>
+            <Text fontSize="13px" fontWeight="700" color={showRegister ? '#1E3A5F' : '#607990'} fontFamily="heading">Send request</Text>
+          </HStack>
+        </Flex>
+
         {targetCleanerId && (
-          <Flex mb={6} align="center" justify="space-between" gap={3} flexWrap="wrap"
-            bg="#E9F3F5" border="1px solid #A7C9C7" p={4} style={{ borderRadius: 8 }}>
-            <HStack gap={3}>
-              <Icon as={LucideUser} w={5} h={5} color="#1E3A5F" />
+          <Flex mb={6} align="center" justify="space-between" gap={4} flexWrap="wrap" bg="#EDF3F5" borderLeft="3px solid #D4AF37" px={5} py={4}>
+            <HStack gap={3} align="start">
+              <Icon as={LucideUser} boxSize="18px" color="#1E3A5F" mt="2px" />
               <Box>
-                <Text fontSize="13.5px" fontWeight="700" color="#1E3A5F" fontFamily="heading">
-                  Requesting {targetCleanerName || 'this cleaner'} directly
-                </Text>
-                <Text fontSize="12px" color="#425466" fontFamily="heading">
-                  Only this professional will receive your request.
-                </Text>
+                <Text fontWeight="800" fontSize="14px" fontFamily="heading">Requesting {targetCleanerName || 'this cleaner'} directly</Text>
+                <Text color="#526A7F" fontSize="13px" fontFamily="heading">Only this professional will receive your request.</Text>
               </Box>
             </HStack>
             <NextLink href="/dashboard/cleaners">
-              <Text fontSize="12.5px" fontWeight="600" color="#1E3A5F" cursor="pointer"
-                _hover={{ textDecoration: 'underline' }} fontFamily="heading">
-                Choose someone else
-              </Text>
+              <Text fontSize="13px" fontWeight="800" fontFamily="heading" textDecoration="underline" textUnderlineOffset="4px">Choose someone else</Text>
             </NextLink>
           </Flex>
         )}
 
-        <Box mb={10}>
-          <Text
-            fontSize="10.5px" fontWeight="700" letterSpacing="0.14em"
-            color="#1E3A5F" textTransform="uppercase" fontFamily="heading" mb={2}
-            style={{ borderLeft: '2px solid #1E3A5F', paddingLeft: 10 }}
-          >
-            Book a cleaning
-          </Text>
-          <Text fontSize={{ base: '26px', md: '32px' }} fontWeight="800" color="#0A2540"
-            fontFamily="heading" letterSpacing="-0.025em">
-            Book your cleaning today
-          </Text>
-          <Text fontSize="14px" color="#425466" fontFamily="heading" mt={1}>
-            {targetCleanerId
-              ? 'Tell us about your home and this cleaner will get your request directly.'
-              : "Tell us about your home and we'll match you with a vetted cleaner nearby — usually within the hour."}
-          </Text>
-        </Box>
-
-        <Flex gap={8} align="start" direction={{ base: 'column', lg: 'row' }}>
-
-          {/* ── Form card ── */}
-          <Box flex={1} bg="white" border="1px solid #E3E8EE" p={8} style={{ borderRadius: 8 }}>
-            <VStack gap={7} align="stretch">
-
-              {/* Service type */}
-              <Box>
-                <Text {...LABEL_STYLE}>What type of cleaning do you need?</Text>
-                <SimpleGrid columns={2} gap={2}>
-                  {SERVICE_TYPES.map(s => (
-                    <Box
-                      key={s.id}
-                      onClick={() => setServiceType(s.id)}
-                      cursor="pointer"
-                      bg={serviceType === s.id ? '#EFF8FB' : '#F8FAFC'}
-                      border="1px solid"
-                      borderColor={serviceType === s.id ? '#1E3A5F' : '#E3E8EE'}
-                      borderLeft={serviceType === s.id ? '3px solid #1E3A5F' : '3px solid transparent'}
-                      p={3}
-                      transition="all 0.15s"
+        <Flex gap={{ base: 6, lg: 8 }} align="start" direction={{ base: 'column', lg: 'row' }}>
+          <Box flex={1} minW={0} w="full" bg="#FFFFFF" border="1px solid #DDE5E9" borderRadius="6px" overflow="hidden">
+            <Box px={{ base: 5, md: 8 }} py={{ base: 6, md: 8 }} borderBottom="1px solid #E2E9ED">
+              <HStack align="start" gap={4} mb={6}>
+                <Text fontSize="13px" fontWeight="800" color="#9B7C24" fontFamily="heading" pt={1}>01</Text>
+                <Box>
+                  <Text as="h2" fontSize={{ base: '21px', md: '24px' }} fontWeight="800" letterSpacing="-.03em" fontFamily="heading" lineHeight="1.2">Choose your service</Text>
+                  <Text mt={1} fontSize="13px" color="#60758A" fontFamily="heading">Pick the work that best fits your space.</Text>
+                </Box>
+              </HStack>
+              <SimpleGrid columns={{ base: 1, md: 2 }} gap={2.5}>
+                {SERVICE_TYPES.map(s => {
+                  const selected = serviceType === s.id;
+                  return (
+                    <Box as="button" type="button" key={s.id} onClick={() => setServiceType(s.id)}
+                      aria-pressed={selected} textAlign="left" minH="73px" px={4} py={3} cursor="pointer"
+                      bg={selected ? '#EDF3F5' : '#FFFFFF'} border="1px solid"
+                      borderColor={selected ? '#1E3A5F' : '#DDE5E9'} borderRadius="5px"
+                      _hover={{ borderColor: '#8DAABD', bg: '#F6F9FA' }}
+                      _focusVisible={{ outline: '3px solid #D4AF37', outlineOffset: '2px' }}
+                      transition="background .15s, border-color .15s"
                     >
-                      <HStack gap={2}>
-                        <Text fontSize="xl">{s.icon}</Text>
+                      <Flex align="start" justify="space-between" gap={3}>
                         <Box>
-                          <Text fontSize="13px" fontWeight="700" fontFamily="heading"
-                            color={serviceType === s.id ? '#1E3A5F' : '#1E3A5F'}>{s.labelEn}</Text>
-                          <Text fontSize="12px" color="#697386" fontFamily="heading">{s.descEn}</Text>
+                          <Text fontSize="14px" fontWeight="800" color="#1E3A5F" fontFamily="heading" lineHeight="1.3">{s.labelEn}</Text>
+                          <Text mt={0.5} fontSize="12px" lineHeight="1.4" color="#60758A" fontFamily="heading">{s.descEn}</Text>
                         </Box>
-                      </HStack>
+                        <Flex flexShrink={0} w="19px" h="19px" borderRadius="full" border="1.5px solid" borderColor={selected ? '#1E3A5F' : '#A7BAC6'}
+                          bg={selected ? '#1E3A5F' : 'white'} align="center" justify="center" mt={0.5}>
+                          {selected && <Icon as={LucideCheck} boxSize="12px" color="white" />}
+                        </Flex>
+                      </Flex>
                     </Box>
-                  ))}
-                </SimpleGrid>
-              </Box>
-
-              {/* Address */}
-              <Box>
-                <Text {...LABEL_STYLE}>Where should the cleaner go?</Text>
-                <AddressInput
-                  value={address}
-                  onChange={setAddress}
-                  placeholder="123 Main St, Miami, FL 33101"
-                  inputProps={inputStyle}
-                />
-              </Box>
-
-              {/* Date */}
-              <Box>
-                <Text {...LABEL_STYLE}>Preferred date and time</Text>
-                <HStack>
-                  <Icon as={LucideCalendar} color="#1E3A5F" w="15px" h="15px" flexShrink={0} />
-                  <Box position="relative" flex={1} cursor="pointer"
-                    onClick={() => (dateRef.current as any)?.showPicker?.()}>
-                    <Box
-                      h="44px" bg="#F8FAFC" border="1px solid" borderColor="#E3E8EE"
-                      borderRadius="4px" px={3} display="flex" alignItems="center"
-                      style={{ pointerEvents: 'none' }}
-                    >
-                      <Text fontFamily="heading" fontSize="14px"
-                        color={dateVal ? '#1E3A5F' : '#A0AEC0'}>
-                        {dateVal
-                          ? (() => { const [y,m,d] = dateVal.split('-'); return `${m}/${d}/${y}`; })()
-                          : 'MM/DD/YYYY'}
-                      </Text>
-                    </Box>
-                    <input ref={dateRef} type="date" value={dateVal}
-                      onChange={e => setDateVal(e.target.value)}
-                      min={new Date().toISOString().split('T')[0]}
-                      style={{ position:'absolute', top:0, left:0, right:0, bottom:0,
-                               opacity:0, pointerEvents:'none',
-                               width:'100%', height:'100%' }} />
-                  </Box>
-                  <Input type="time" value={timeVal}
-                    onChange={e => setTimeVal(e.target.value)}
-                    {...inputStyle} w="140px" flexShrink={0} />
-                </HStack>
-              </Box>
-
-              {/* Rooms */}
-              <SimpleGrid columns={2} gap={4}>
-                <Box>
-                  <Text {...LABEL_STYLE}>Bedrooms</Text>
-                  <HStack gap={2}>
-                    <Button size="sm" variant="outline" borderRadius="4px"
-                      onClick={() => setBedrooms(Math.max(1, bedrooms - 1))}
-                      h="32px" minW="32px" px={0} fontFamily="heading">−</Button>
-                    <Text fontWeight="700" minW="8" textAlign="center" fontFamily="heading">{bedrooms}</Text>
-                    <Button size="sm" variant="outline" borderRadius="4px"
-                      onClick={() => setBedrooms(bedrooms + 1)}
-                      h="32px" minW="32px" px={0} fontFamily="heading">+</Button>
-                  </HStack>
-                </Box>
-                <Box>
-                  <Text {...LABEL_STYLE}>Bathrooms</Text>
-                  <HStack gap={2}>
-                    <Button size="sm" variant="outline" borderRadius="4px"
-                      onClick={() => setBathrooms(Math.max(1, bathrooms - 1))}
-                      h="32px" minW="32px" px={0} fontFamily="heading">−</Button>
-                    <Text fontWeight="700" minW="8" textAlign="center" fontFamily="heading">{bathrooms}</Text>
-                    <Button size="sm" variant="outline" borderRadius="4px"
-                      onClick={() => setBathrooms(bathrooms + 1)}
-                      h="32px" minW="32px" px={0} fontFamily="heading">+</Button>
-                  </HStack>
-                </Box>
+                  );
+                })}
               </SimpleGrid>
+            </Box>
 
-              {/* Frequency */}
-              <Box>
-                <Text {...LABEL_STYLE}>How often would you like us?</Text>
-                <HStack gap={2} flexWrap="wrap">
-                  {FREQUENCY_OPTIONS.map(f => (
-                    <Button
-                      key={f.id}
-                      size="sm"
-                      onClick={() => setFrequency(f.id)}
-                      bg={frequency === f.id ? '#1E3A5F' : '#F8FAFC'}
-                      color={frequency === f.id ? 'white' : '#64748B'}
-                      borderRadius="4px"
-                      border="1px solid"
-                      borderColor={frequency === f.id ? '#1E3A5F' : '#E3E8EE'}
-                      fontWeight="600"
-                      fontSize="13px"
-                      fontFamily="heading"
-                      h="34px"
-                      px={4}
-                      _hover={{ borderColor: '#1E3A5F' }}
-                      transition="all 0.15s"
-                    >
-                      {f.labelEn}
-                      {f.tag && (
-                        <Box
-                          as="span" ml={1.5}
-                          bg="#34D399" color="white"
-                          fontSize="10px" fontWeight="700" px={1.5} py={0.5}
-                          style={{ borderRadius: 3 }}
-                        >
-                          {f.tag}
-                        </Box>
-                      )}
-                    </Button>
-                  ))}
-                </HStack>
-              </Box>
-
-              {/* Extras */}
-              <Box>
-                <Text {...LABEL_STYLE}>Add-ons (optional)</Text>
-                <SimpleGrid columns={2} gap={2}>
-                  {EXTRAS.map(ex => (
-                    <Box
-                      key={ex.id}
-                      onClick={() => toggleExtra(ex.id)}
-                      cursor="pointer"
-                      bg={extras.includes(ex.id) ? '#FEFCE8' : '#F8FAFC'}
-                      border="1px solid"
-                      borderColor={extras.includes(ex.id) ? '#FCD34D' : '#E3E8EE'}
-                      borderLeft={extras.includes(ex.id) ? '3px solid #FCD34D' : '3px solid transparent'}
-                      px={3} py={2.5}
-                      transition="all 0.15s"
-                    >
-                      <HStack gap={2}>
-                        <Text fontSize="lg" lineHeight={1}>{ex.icon}</Text>
-                        <Box flex={1}>
-                          <Text fontSize="12px" fontWeight="700" fontFamily="heading"
-                            color={extras.includes(ex.id) ? '#92400E' : '#1E3A5F'}>{ex.labelEn}</Text>
-                          <Text fontSize="11px" color="#697386" fontFamily="heading">+${ex.price}</Text>
-                        </Box>
-                        {extras.includes(ex.id) && (
-                          <Icon as={LucideCheckCircle} w="14px" h="14px" color="#D97706" />
-                        )}
-                      </HStack>
-                    </Box>
-                  ))}
+            <Box px={{ base: 5, md: 8 }} py={{ base: 6, md: 8 }} borderBottom="1px solid #E2E9ED">
+              <HStack align="start" gap={4} mb={6}>
+                <Text fontSize="13px" fontWeight="800" color="#9B7C24" fontFamily="heading" pt={1}>02</Text>
+                <Box>
+                  <Text as="h2" fontSize={{ base: '21px', md: '24px' }} fontWeight="800" letterSpacing="-.03em" fontFamily="heading" lineHeight="1.2">Where and when?</Text>
+                  <Text mt={1} fontSize="13px" color="#60758A" fontFamily="heading">Add the location and a time that works for you.</Text>
+                </Box>
+              </HStack>
+              <VStack gap={5} align="stretch">
+                <Box>
+                  <Text as="label" htmlFor="request-address" {...LABEL_STYLE}>Cleaning address or ZIP code</Text>
+                  <AddressInput value={address} onChange={setAddress} placeholder="123 Main St, Hartford, CT 06103"
+                    inputProps={{ ...inputStyle, id: 'request-address', autoComplete: 'street-address' }} />
+                </Box>
+                <SimpleGrid columns={{ base: 1, sm: 2 }} gap={4}>
+                  <Box>
+                    <Text as="label" htmlFor="request-date" {...LABEL_STYLE}>Preferred date</Text>
+                    <Input id="request-date" type="date" value={dateVal} onChange={e => setDateVal(e.target.value)}
+                      min={new Date().toISOString().split('T')[0]} {...inputStyle} />
+                  </Box>
+                  <Box>
+                    <Text as="label" htmlFor="request-time" {...LABEL_STYLE}>Preferred time</Text>
+                    <Input id="request-time" type="time" value={timeVal} onChange={e => setTimeVal(e.target.value)} {...inputStyle} />
+                  </Box>
                 </SimpleGrid>
-              </Box>
+                <SimpleGrid columns={{ base: 1, sm: 2 }} gap={4}>
+                  <Box>
+                    <Text {...LABEL_STYLE}>Bedrooms</Text>
+                    <HStack w="fit-content" gap={0} border="1px solid #CBD8E0" borderRadius="5px" overflow="hidden">
+                      <Button type="button" aria-label="Remove one bedroom" onClick={() => setBedrooms(Math.max(1, bedrooms - 1))}
+                        variant="ghost" h="44px" minW="46px" px={0} color="#1E3A5F" fontSize="20px" fontWeight="400" borderRadius={0}
+                        _hover={{ bg: '#EDF3F5' }} _focusVisible={{ outline: '3px solid #D4AF37', outlineOffset: '-3px' }}>−</Button>
+                      <Text minW="44px" textAlign="center" fontSize="15px" fontWeight="800" fontFamily="heading" aria-live="polite">{bedrooms}</Text>
+                      <Button type="button" aria-label="Add one bedroom" onClick={() => setBedrooms(bedrooms + 1)}
+                        variant="ghost" h="44px" minW="46px" px={0} color="#1E3A5F" fontSize="20px" fontWeight="400" borderRadius={0}
+                        _hover={{ bg: '#EDF3F5' }} _focusVisible={{ outline: '3px solid #D4AF37', outlineOffset: '-3px' }}>+</Button>
+                    </HStack>
+                  </Box>
+                  <Box>
+                    <Text {...LABEL_STYLE}>Bathrooms</Text>
+                    <HStack w="fit-content" gap={0} border="1px solid #CBD8E0" borderRadius="5px" overflow="hidden">
+                      <Button type="button" aria-label="Remove one bathroom" onClick={() => setBathrooms(Math.max(1, bathrooms - 1))}
+                        variant="ghost" h="44px" minW="46px" px={0} color="#1E3A5F" fontSize="20px" fontWeight="400" borderRadius={0}
+                        _hover={{ bg: '#EDF3F5' }} _focusVisible={{ outline: '3px solid #D4AF37', outlineOffset: '-3px' }}>−</Button>
+                      <Text minW="44px" textAlign="center" fontSize="15px" fontWeight="800" fontFamily="heading" aria-live="polite">{bathrooms}</Text>
+                      <Button type="button" aria-label="Add one bathroom" onClick={() => setBathrooms(bathrooms + 1)}
+                        variant="ghost" h="44px" minW="46px" px={0} color="#1E3A5F" fontSize="20px" fontWeight="400" borderRadius={0}
+                        _hover={{ bg: '#EDF3F5' }} _focusVisible={{ outline: '3px solid #D4AF37', outlineOffset: '-3px' }}>+</Button>
+                    </HStack>
+                  </Box>
+                </SimpleGrid>
+              </VStack>
+            </Box>
 
-              {/* Notes */}
-              <Box>
-                <Text {...LABEL_STYLE}>Anything we should know? (optional)</Text>
-                <Textarea value={notes} onChange={e => setNotes(e.target.value)}
-                  placeholder="E.g., I have a dog, the side gate code is 1234, please focus on the kitchen…"
-                  bg="#F7F8FA" border="1px solid" borderColor="#E3E8EE" borderRadius="4px"
-                  fontFamily="heading" fontSize="14px" rows={3}
-                  _focus={{ bg: 'white', borderColor: '#1E3A5F' }} />
-              </Box>
-
-              {/* Submit */}
-              {!showRegister && (
-                <Button
-                  onClick={handleSubmit}
-                  bg="gold.500" color="#1E3A5F" h="44px"
-                  borderRadius="4px" fontWeight="700" fontSize="14px" fontFamily="heading"
-                  _hover={{ bg: 'gold.600' }} transition="background 0.15s"
-                  loading={loading}
-                >
-                  Book my cleaning
-                  <Icon as={LucideArrowRight} w={4} h={4} ml={2} />
-                </Button>
-              )}
-
-            </VStack>
-          </Box>
-
-          {/* ── Estimate sidebar ── */}
-          <Box w={{ base: 'full', lg: '280px' }} position={{ lg: 'sticky' }} top="80px">
-            <Box bg="white" border="1px solid #E3E8EE" p={6} style={{ borderRadius: 8 }}>
-              <Text fontSize="11px" fontWeight="700" color="#425466" textTransform="uppercase"
-                letterSpacing="0.1em" fontFamily="heading" mb={4}>
-                Your price estimate
-              </Text>
-              <VStack gap={4} align="stretch">
-
-                <Box bg="#EBF5FE" border="1px solid #A2D3F9" p={4}>
-                  <HStack gap={2} mb={1}>
-                    <Icon as={LucideBanknote} w="15px" h="15px" color="#1E3A5F" />
-                    <Text fontSize="11px" color="#1E3A5F" fontWeight="700" fontFamily="heading">Estimated price range</Text>
-                  </HStack>
-                  <Text fontSize="26px" fontWeight="800" color="#065594" fontFamily="heading" letterSpacing="-0.02em">
-                    ${estimate.minPrice}–${estimate.maxPrice}
-                  </Text>
-                  {estimate.discountPct > 0 && (
-                    <Text fontSize="11px" fontWeight="700" color="#1E3A5F" fontFamily="heading" mt={1}>
-                      {estimate.discountPct}% recurring booking discount applied
-                    </Text>
-                  )}
+            <Box px={{ base: 5, md: 8 }} py={{ base: 6, md: 8 }}>
+              <HStack align="start" gap={4} mb={6}>
+                <Text fontSize="13px" fontWeight="800" color="#9B7C24" fontFamily="heading" pt={1}>03</Text>
+                <Box>
+                  <Text as="h2" fontSize={{ base: '21px', md: '24px' }} fontWeight="800" letterSpacing="-.03em" fontFamily="heading" lineHeight="1.2">Make it yours</Text>
+                  <Text mt={1} fontSize="13px" color="#60758A" fontFamily="heading">Choose a schedule and anything extra.</Text>
+                </Box>
+              </HStack>
+              <VStack gap={6} align="stretch">
+                <Box>
+                  <Text {...LABEL_STYLE}>How often?</Text>
+                  <SimpleGrid columns={{ base: 1, sm: 3 }} gap={2}>
+                    {FREQUENCY_OPTIONS.map(f => {
+                      const selected = frequency === f.id;
+                      return (
+                        <Box as="button" type="button" key={f.id} aria-pressed={selected} onClick={() => setFrequency(f.id)}
+                          minH="48px" px={3} py={2} bg={selected ? '#1E3A5F' : '#FFFFFF'} color={selected ? '#FFFFFF' : '#1E3A5F'}
+                          border="1px solid" borderColor={selected ? '#1E3A5F' : '#CBD8E0'} borderRadius="5px"
+                          textAlign="center" fontSize="13px" fontWeight="800" fontFamily="heading" cursor="pointer"
+                          _hover={{ borderColor: '#1E3A5F', bg: selected ? '#29496E' : '#EDF3F5' }}
+                          _focusVisible={{ outline: '3px solid #D4AF37', outlineOffset: '2px' }}>
+                          {f.labelEn}{f.tag && <Text as="span" ml={1.5} color={selected ? '#E9D68B' : '#8A6E1E'} fontSize="11px">{f.tag}</Text>}
+                        </Box>
+                      );
+                    })}
+                  </SimpleGrid>
+                </Box>
+                <Box>
+                  <Text {...LABEL_STYLE}>Add-ons <Text as="span" textTransform="none" letterSpacing="normal" color="#6A8092" fontWeight="500">(optional)</Text></Text>
+                  <SimpleGrid columns={{ base: 1, sm: 2 }} gap={2}>
+                    {EXTRAS.map(ex => {
+                      const selected = extras.includes(ex.id);
+                      return (
+                        <Box as="button" type="button" key={ex.id} aria-pressed={selected} onClick={() => toggleExtra(ex.id)}
+                          px={4} py={3} textAlign="left" minH="57px" bg={selected ? '#F8F4E7' : '#FFFFFF'}
+                          border="1px solid" borderColor={selected ? '#B89631' : '#DDE5E9'} borderRadius="5px" cursor="pointer"
+                          _hover={{ borderColor: '#B89631' }} _focusVisible={{ outline: '3px solid #D4AF37', outlineOffset: '2px' }}>
+                          <Flex justify="space-between" align="center" gap={3}>
+                            <Box>
+                              <Text fontSize="13px" fontWeight="800" fontFamily="heading" color="#1E3A5F">{ex.labelEn}</Text>
+                              <Text fontSize="12px" fontFamily="heading" color="#60758A">+{'$'}{ex.price}</Text>
+                            </Box>
+                            <Flex w="19px" h="19px" flexShrink={0} align="center" justify="center" border="1.5px solid"
+                              borderColor={selected ? '#B89631' : '#A7BAC6'} bg={selected ? '#D4AF37' : '#FFFFFF'} borderRadius="3px">
+                              {selected && <Icon as={LucideCheck} boxSize="13px" color="#1E3A5F" />}
+                            </Flex>
+                          </Flex>
+                        </Box>
+                      );
+                    })}
+                  </SimpleGrid>
+                </Box>
+                <Box>
+                  <Text as="label" htmlFor="request-notes" {...LABEL_STYLE}>Anything else we should know? <Text as="span" textTransform="none" letterSpacing="normal" color="#6A8092" fontWeight="500">(optional)</Text></Text>
+                  <Textarea id="request-notes" value={notes} onChange={e => setNotes(e.target.value)}
+                    placeholder="For example, pets at home, parking details, or areas to focus on."
+                    bg="#FFFFFF" border="1px solid #CBD8E0" borderRadius="5px" color="#1E3A5F" fontFamily="heading"
+                    fontSize="14px" rows={3} px={3.5} py={3}
+                    _placeholder={{ color: '#7B8DA0' }} _focusVisible={{ borderColor: '#1E3A5F', boxShadow: '0 0 0 3px rgba(212,175,55,.28)' }} />
                 </Box>
 
-                <HStack gap={2}>
-                  <Icon as={LucideClock} w="14px" h="14px" color="#1E3A5F" />
-                  <Text fontSize="13px" color="#425466" fontFamily="heading">
-                    Estimated time:{' '}
-                    <Text as="span" fontWeight="700" color="#0A2540">~{estimate.hours} hours</Text>
-                  </Text>
-                </HStack>
+                <Box display={{ base: 'block', lg: 'none' }}>{estimateSummary}</Box>
 
-                <Box bg="#F7F8FA" border="1px solid #E3E8EE" p={3}>
-                  <Text fontSize="12px" color="#697386" fontFamily="heading" lineHeight="1.6">
-                    This is an estimate. You'll confirm the final price directly with your cleaner before the visit.
+                {!showRegister ? (
+                  <Box pt={1}>
+                    <Button onClick={handleSubmit} bg="#D4AF37" color="#1E3A5F" minH="52px" w={{ base: 'full', sm: 'auto' }}
+                      px={7} borderRadius="5px" fontWeight="800" fontSize="14px" fontFamily="heading"
+                      _hover={{ bg: '#E5C562' }} _focusVisible={{ outline: '3px solid #1E3A5F', outlineOffset: '3px' }}
+                      loading={loading}>
+                      Continue to send request <Icon as={LucideArrowRight} boxSize="17px" ml={2} />
+                    </Button>
+                    <Text mt={3} fontSize="12px" color="#60758A" fontFamily="heading">Free to request. You decide before booking.</Text>
+                  </Box>
+                ) : (
+                  <Text fontSize="13px" color="#365878" fontFamily="heading" fontWeight="700">
+                    Your details are saved below. Finish the account step to send your request.
                   </Text>
-                </Box>
-
+                )}
               </VStack>
             </Box>
           </Box>
 
+          <Box display={{ base: 'none', lg: 'block' }} w="310px" flexShrink={0} position="sticky" top="100px">
+            {estimateSummary}
+            <HStack align="start" gap={2.5} mt={5} px={1}>
+              <Icon as={LucideCheckCircle} boxSize="17px" mt="2px" color="#568679" />
+              <Text fontSize="12px" lineHeight="1.55" color="#526A7F" fontFamily="heading">
+                Sending a request is free. You only proceed when the details feel right.
+              </Text>
+            </HStack>
+          </Box>
         </Flex>
 
-        {/* ── Auth section (guest) ── */}
         <AnimatePresence>
           {showRegister && (
-            <motion.div
-              id="register-section"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              transition={{ duration: 0.35 }}
-            >
-              <Box mt={6} bg="white" border="1px solid #E3E8EE" borderTop="3px solid #1E3A5F" style={{ borderRadius: 8 }} overflow="hidden">
-
-                {/* Tab switcher */}
-                <HStack gap={0} borderBottom="1px solid #E3E8EE">
-                  <Box
-                    as="button"
-                    px={6} py={3.5}
-                    cursor="pointer"
-                    borderBottom="2px solid"
-                    borderBottomColor={authMode === 'register' ? '#1E3A5F' : 'transparent'}
-                    color={authMode === 'register' ? '#1E3A5F' : '#64748B'}
-                    fontWeight={authMode === 'register' ? '700' : '500'}
-                    fontSize="13px"
-                    fontFamily="heading"
-                    transition="all 0.12s"
-                    onClick={() => setAuthMode('register')}
-                  >
-                    New here? Create account
+            <motion.div id="register-section" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.28 }} style={{ scrollMarginTop: '95px' }}>
+              <Box mt={8} maxW="812px" bg="#FFFFFF" border="1px solid #DDE5E9" borderTop="3px solid #D4AF37" borderRadius="6px" overflow="hidden">
+                <Box px={{ base: 5, md: 8 }} pt={{ base: 6, md: 8 }} pb={5}>
+                  <HStack align="start" gap={4}>
+                    <Text fontSize="13px" fontWeight="800" color="#9B7C24" fontFamily="heading" pt={1}>04</Text>
+                    <Box>
+                      <Text as="h2" fontSize={{ base: '21px', md: '24px' }} fontWeight="800" letterSpacing="-.03em" fontFamily="heading" lineHeight="1.2">
+                        Send your request
+                      </Text>
+                      <Text mt={1} color="#60758A" fontSize="13px" fontFamily="heading">Create an account or sign in to finish.</Text>
+                    </Box>
+                  </HStack>
+                </Box>
+                <HStack gap={0} px={{ base: 5, md: 8 }} borderBottom="1px solid #DDE5E9">
+                  <Box as="button" type="button" flex={1} textAlign="center" minH="50px" px={2} py={3}
+                    borderBottom="2px solid" borderBottomColor={authMode === 'register' ? '#1E3A5F' : 'transparent'}
+                    color={authMode === 'register' ? '#1E3A5F' : '#60758A'} fontSize="13px"
+                    fontWeight={authMode === 'register' ? '800' : '600'} fontFamily="heading" cursor="pointer"
+                    aria-pressed={authMode === 'register'} onClick={() => setAuthMode('register')}
+                    _focusVisible={{ outline: '3px solid #D4AF37', outlineOffset: '-3px' }}>
+                    Create account
                   </Box>
-                  <Box
-                    as="button"
-                    px={6} py={3.5}
-                    cursor="pointer"
-                    borderBottom="2px solid"
-                    borderBottomColor={authMode === 'login' ? '#1E3A5F' : 'transparent'}
-                    color={authMode === 'login' ? '#1E3A5F' : '#64748B'}
-                    fontWeight={authMode === 'login' ? '700' : '500'}
-                    fontSize="13px"
-                    fontFamily="heading"
-                    transition="all 0.12s"
-                    onClick={() => setAuthMode('login')}
-                  >
-                    Already have an account? Sign in
+                  <Box as="button" type="button" flex={1} textAlign="center" minH="50px" px={2} py={3}
+                    borderBottom="2px solid" borderBottomColor={authMode === 'login' ? '#1E3A5F' : 'transparent'}
+                    color={authMode === 'login' ? '#1E3A5F' : '#60758A'} fontSize="13px"
+                    fontWeight={authMode === 'login' ? '800' : '600'} fontFamily="heading" cursor="pointer"
+                    aria-pressed={authMode === 'login'} onClick={() => setAuthMode('login')}
+                    _focusVisible={{ outline: '3px solid #D4AF37', outlineOffset: '-3px' }}>
+                    Sign in
                   </Box>
                 </HStack>
 
-                <Box p={8}>
+                <Box px={{ base: 5, md: 8 }} py={{ base: 6, md: 8 }}>
                   {authMode === 'register' ? (
                     <>
-                      <Box mb={5}>
-                        <Text fontSize="16px" fontWeight="800" color="#0A2540" fontFamily="heading"
-                          letterSpacing="-0.02em" mb={1}>
-                          One last step — create your free account
-                        </Text>
-                        <Text fontSize="13px" color="#425466" fontFamily="heading">
-                          Free and takes under 30 seconds. Your booking is sent immediately.
-                        </Text>
-                      </Box>
-
-                      <SimpleGrid columns={{ base: 1, md: 2 }} gap={4} mb={4}>
+                      <Text fontSize="14px" fontWeight="800" fontFamily="heading" mb={1}>Your contact details</Text>
+                      <Text fontSize="13px" color="#60758A" fontFamily="heading" mb={5}>
+                        Your request will be sent after your free account is created.
+                      </Text>
+                      <SimpleGrid columns={{ base: 1, sm: 2 }} gap={4} mb={4}>
                         <Box>
-                          <Text {...LABEL_STYLE}>Full name</Text>
-                          <HStack>
-                            <Icon as={LucideUser} w="14px" h="14px" color="#697386" flexShrink={0} />
-                            <Input value={name} onChange={e => setName(e.target.value)}
-                              placeholder="Jane Smith" {...inputStyle} />
+                          <Text as="label" htmlFor="register-name" {...LABEL_STYLE}>Full name</Text>
+                          <HStack gap={2}>
+                            <Icon as={LucideUser} boxSize="17px" color="#60758A" flexShrink={0} />
+                            <Input id="register-name" value={name} onChange={e => setName(e.target.value)} placeholder="Jane Smith" {...inputStyle} />
                           </HStack>
                         </Box>
                         <Box>
-                          <Text {...LABEL_STYLE}>Phone number</Text>
-                          <HStack>
-                            <Icon as={LucidePhone} w="14px" h="14px" color="#697386" flexShrink={0} />
-                            <Input
-                              value={regPhone}
+                          <Text as="label" htmlFor="register-phone" {...LABEL_STYLE}>Phone number</Text>
+                          <HStack gap={2}>
+                            <Icon as={LucidePhone} boxSize="17px" color="#60758A" flexShrink={0} />
+                            <Input id="register-phone" value={regPhone}
                               onChange={e => {
                                 let v = e.target.value;
                                 if (!v.startsWith('+1 ')) v = '+1 ';
@@ -562,89 +508,69 @@ function RequestForm() {
                                                   .replace(/^(\d{1,3})$/, '($1');
                                 setRegPhone('+1 ' + fmt);
                               }}
-                              placeholder="+1 (555) 000-0000"
-                              {...inputStyle}
-                            />
+                              placeholder="+1 (555) 000-0000" {...inputStyle} />
                           </HStack>
                         </Box>
                       </SimpleGrid>
-                      <SimpleGrid columns={{ base: 1, md: 2 }} gap={4} mb={5}>
+                      <SimpleGrid columns={{ base: 1, sm: 2 }} gap={4} mb={6}>
                         <Box>
-                          <Text {...LABEL_STYLE}>Email address</Text>
-                          <HStack>
-                            <Icon as={LucideMail} w="14px" h="14px" color="#697386" flexShrink={0} />
-                            <Input type="email" value={email} onChange={e => setEmail(e.target.value)}
+                          <Text as="label" htmlFor="register-email" {...LABEL_STYLE}>Email address</Text>
+                          <HStack gap={2}>
+                            <Icon as={LucideMail} boxSize="17px" color="#60758A" flexShrink={0} />
+                            <Input id="register-email" type="email" value={email} onChange={e => setEmail(e.target.value)}
                               placeholder="you@example.com" {...inputStyle} />
                           </HStack>
                         </Box>
                         <Box>
-                          <Text {...LABEL_STYLE}>Create a password</Text>
-                          <HStack>
-                            <Icon as={LucideLock} w="14px" h="14px" color="#697386" flexShrink={0} />
-                            <Input type="password" value={password} onChange={e => setPassword(e.target.value)}
+                          <Text as="label" htmlFor="register-password" {...LABEL_STYLE}>Create a password</Text>
+                          <HStack gap={2}>
+                            <Icon as={LucideLock} boxSize="17px" color="#60758A" flexShrink={0} />
+                            <Input id="register-password" type="password" value={password} onChange={e => setPassword(e.target.value)}
                               placeholder="At least 8 characters" {...inputStyle} />
                           </HStack>
                         </Box>
                       </SimpleGrid>
-
-                      <Button
-                        onClick={handleRegisterAndSubmit}
-                        bg="#1E3A5F" color="white" h="44px"
-                        borderRadius="4px" fontWeight="700" fontSize="14px" fontFamily="heading"
-                        _hover={{ bg: '#172F4D' }} transition="background 0.15s"
-                        loading={loading} loadingText="Setting up your account…"
-                      >
-                        <Icon as={LucideCheckCircle} w={4} h={4} mr={2} />
-                        Create account and send request
+                      <Button onClick={handleRegisterAndSubmit} bg="#D4AF37" color="#1E3A5F" minH="52px"
+                        w={{ base: 'full', sm: 'auto' }} px={7} borderRadius="5px" fontWeight="800" fontSize="14px" fontFamily="heading"
+                        _hover={{ bg: '#E5C562' }} _focusVisible={{ outline: '3px solid #1E3A5F', outlineOffset: '3px' }}
+                        loading={loading} loadingText="Setting up your account…">
+                        <Icon as={LucideCheckCircle} boxSize="17px" mr={2} /> Create account and send request
                       </Button>
                     </>
                   ) : (
                     <>
-                      <Box mb={5}>
-                        <Text fontSize="16px" fontWeight="800" color="#0A2540" fontFamily="heading"
-                          letterSpacing="-0.02em" mb={1}>
-                          Sign in to your account
-                        </Text>
-                        <Text fontSize="13px" color="#425466" fontFamily="heading">
-                          Your booking will be sent immediately after signing in.
-                        </Text>
-                      </Box>
-
-                      <SimpleGrid columns={{ base: 1, md: 2 }} gap={4} mb={5}>
+                      <Text fontSize="14px" fontWeight="800" fontFamily="heading" mb={1}>Welcome back</Text>
+                      <Text fontSize="13px" color="#60758A" fontFamily="heading" mb={5}>
+                        Your request will be sent after you sign in.
+                      </Text>
+                      <SimpleGrid columns={{ base: 1, sm: 2 }} gap={4} mb={6}>
                         <Box>
-                          <Text {...LABEL_STYLE}>Email address</Text>
-                          <HStack>
-                            <Icon as={LucideMail} w="14px" h="14px" color="#697386" flexShrink={0} />
-                            <Input type="email" value={email} onChange={e => setEmail(e.target.value)}
+                          <Text as="label" htmlFor="login-email" {...LABEL_STYLE}>Email address</Text>
+                          <HStack gap={2}>
+                            <Icon as={LucideMail} boxSize="17px" color="#60758A" flexShrink={0} />
+                            <Input id="login-email" type="email" value={email} onChange={e => setEmail(e.target.value)}
                               placeholder="you@example.com" {...inputStyle} />
                           </HStack>
                         </Box>
                         <Box>
-                          <Text {...LABEL_STYLE}>Password</Text>
-                          <HStack>
-                            <Icon as={LucideLock} w="14px" h="14px" color="#697386" flexShrink={0} />
-                            <Input type="password" value={password} onChange={e => setPassword(e.target.value)}
+                          <Text as="label" htmlFor="login-password" {...LABEL_STYLE}>Password</Text>
+                          <HStack gap={2}>
+                            <Icon as={LucideLock} boxSize="17px" color="#60758A" flexShrink={0} />
+                            <Input id="login-password" type="password" value={password} onChange={e => setPassword(e.target.value)}
                               placeholder="Your password" {...inputStyle} />
                           </HStack>
                         </Box>
                       </SimpleGrid>
-
-                      <Button
-                        onClick={handleLoginAndSubmit}
-                        bg="#1E3A5F" color="white" h="44px"
-                        borderRadius="4px" fontWeight="700" fontSize="14px" fontFamily="heading"
-                        _hover={{ bg: '#172F4D' }} transition="background 0.15s"
-                        loading={loading} loadingText="Signing in…"
-                      >
-                        <Icon as={LucideArrowRight} w={4} h={4} mr={2} />
-                        Sign in and send request
+                      <Button onClick={handleLoginAndSubmit} bg="#D4AF37" color="#1E3A5F" minH="52px"
+                        w={{ base: 'full', sm: 'auto' }} px={7} borderRadius="5px" fontWeight="800" fontSize="14px" fontFamily="heading"
+                        _hover={{ bg: '#E5C562' }} _focusVisible={{ outline: '3px solid #1E3A5F', outlineOffset: '3px' }}
+                        loading={loading} loadingText="Signing in…">
+                        Sign in and send request <Icon as={LucideArrowRight} boxSize="17px" ml={2} />
                       </Button>
-
-                      <Text fontSize="12px" color="#697386" fontFamily="heading" mt={3}>
+                      <Text fontSize="12px" color="#60758A" fontFamily="heading" mt={4}>
                         Forgot your password?{' '}
                         <NextLink href="/auth/login">
-                          <Text as="span" color="#1E3A5F" fontWeight="700" cursor="pointer"
-                            _hover={{ color: '#172F4D' }}>Go to login page</Text>
+                          <Text as="span" color="#1E3A5F" fontWeight="800" cursor="pointer" textDecoration="underline" textUnderlineOffset="3px">Go to login page</Text>
                         </NextLink>
                       </Text>
                     </>
@@ -655,6 +581,13 @@ function RequestForm() {
           )}
         </AnimatePresence>
 
+        <Flex mt={{ base: 12, md: 16 }} pt={5} borderTop="1px solid #DDE5E9" justify="space-between" align="center" gap={4} flexWrap="wrap">
+          <Text fontFamily="heading" fontSize="13px" color="#60758A">Verliks · A clearer way to find cleaning help.</Text>
+          <HStack gap={5} fontFamily="heading" fontSize="13px" color="#1E3A5F" fontWeight="700">
+            <NextLink href="/how-it-works">How it works</NextLink>
+            <NextLink href="/contact">Contact</NextLink>
+          </HStack>
+        </Flex>
       </Container>
     </Box>
   );

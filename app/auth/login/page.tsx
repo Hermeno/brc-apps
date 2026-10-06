@@ -64,7 +64,7 @@ export default function LoginPage() {
         <Box position="absolute" inset={0} style={{ background: 'linear-gradient(to bottom, rgba(20,40,66,0.45) 0%, rgba(15,29,48,0.86) 78%)' }} />
 
         <Flex direction="column" justify="space-between" h="full" position="relative" p={10}>
-          <Image src="/logo-white.png" alt="Verliks" width={180} height={60} style={{ objectFit: 'contain' }} />
+          <Image src="/images/brand/verliks-logo-white-600.png" alt="Verliks" width={280} height={60} style={{ objectFit: 'contain' }} />
 
           <Box>
             <Text fontSize="10.5px" fontWeight="700" letterSpacing="0.14em" color="rgba(255,255,255,0.8)"
@@ -106,7 +106,7 @@ export default function LoginPage() {
 
           {/* Mobile logo */}
           <Box mb={10} display={{ base: 'block', lg: 'none' }}>
-            <Image src="/logo-blue.png" alt="Verliks" width={140} height={48} style={{ objectFit: 'contain' }} />
+            <Image src="/images/brand/verliks-logo-600.png" alt="Verliks" width={224} height={48} style={{ objectFit: 'contain' }} />
           </Box>
 
           <Box mb={8}>

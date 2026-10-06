@@ -57,8 +57,7 @@ export default function CleanerNav() {
         {/* Logo */}
         <NextLink href="/dashboard/cleaner" style={{ flexShrink: 0, textDecoration: 'none' }}>
           <HStack gap={0} align="center">
-            <Image src="/vlogo.PNG" alt="Verliks" width={38} height={38} style={{ objectFit: 'contain' }} />
-            <Text fontWeight="700" fontSize="17px" color="#1E3A5F" fontFamily="heading" letterSpacing="-0.02em">Verliks</Text>
+            <Image src="/images/brand/verliks-logo-600.png" alt="Verliks" width={177} height={38} style={{ objectFit: 'contain' }} />
           </HStack>
         </NextLink>
 

@@ -27,8 +27,7 @@ export function PublicFooter({ services }: { services: { slug: string; name: str
       <div className={styles.footerInner}>
         <div className={styles.footerBrand}>
           <NextLink href="/" className={styles.logo} aria-label="Verliks home">
-            <Image src="/vlogo.PNG" alt="" width={34} height={34} className={styles.logoMark} />
-            <span>verliks</span>
+            <Image src="/images/brand/verliks-logo-600.png" alt="" width={159} height={34} className={styles.logoMark} />
           </NextLink>
           <p className={styles.footerTagline}>
             Verliks connects people who need a cleaning with independent cleaners nearby.

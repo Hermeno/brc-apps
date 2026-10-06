@@ -74,7 +74,7 @@ export default function ClientProfilePage() {
           </Box>
           <Box w="1px" h="20px" bg="slate.200" />
           <HStack gap={2.5}>
-            <Image src="/logo-blue.png" alt="Verliks" width={28} height={28} style={{ borderRadius: "50%", objectFit: "cover", flexShrink: 0 }} />
+            <Image src="/images/brand/verliks-logo-600.png" alt="Verliks" width={131} height={28} style={{ borderRadius: "50%", objectFit: "cover", flexShrink: 0 }} />
             <Text fontWeight="black" fontSize="sm" color="slate.900">
               Verliks
             </Text>

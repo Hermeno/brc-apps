@@ -1,23 +1,62 @@
 import type { Metadata } from 'next';
-import NextLink from 'next/link';
 import Image from 'next/image';
+import Link from 'next/link';
 import { notFound } from 'next/navigation';
+import '../../site.css';
 import styles from '../services.module.css';
-import { SERVICES, getService, REQUEST_EXTRAS } from '@/lib/services';
-import { PublicFooter, Arrow, btn } from '@/components/public-chrome';
-import SiteHeader from '@/components/site-header';
+import { SERVICES, getService, REQUEST_EXTRAS, type Service } from '@/lib/services';
+import SiteHeader from '@/components/site/site-header';
+import SiteFooter from '@/components/site/site-footer';
+import { Icon, IconSprite } from '@/components/site/icons';
 
 const BASE = 'https://verliks.com';
-const footerServices = SERVICES.slice(0, 5).map(s => ({ slug: s.slug, name: s.name }));
+
+/* The public navigation includes recurring cleaning, while the request form
+   records it as standard cleaning with a frequency. Keep that route useful. */
+const standard = getService('standard-cleaning')!;
+const recurring: Service = {
+  ...standard,
+  slug: 'recurring-cleaning',
+  id: 'standard',
+  name: 'Recurring Cleaning',
+  tagline: 'Regular upkeep on a schedule that works for your home.',
+  metaTitle: 'Recurring House Cleaning',
+  metaDescription: 'Arrange regular house cleaning through Verliks. Describe your home and preferred frequency, then agree on the scope and price with an independent cleaner near you.',
+  whatIsIt: 'Recurring cleaning is a regular arrangement for standard home cleaning. It focuses on the kitchen, bathrooms, floors and lived-in surfaces, with the schedule and exact tasks agreed between you and the cleaner who replies.',
+  rightForYou: [
+    'Weekly or biweekly upkeep',
+    'A home that is already reasonably maintained',
+    'A routine that leaves more time between detailed cleans',
+  ],
+  beforeYouRequest: 'Have the number of bedrooms and bathrooms, the approximate home size and your preferred days ready. Mention pets, rooms to skip and whether you want to use your own supplies. Discuss the schedule and the tasks with the cleaner before accepting.',
+  faq: [
+    {
+      q: 'Can I choose the frequency?',
+      a: 'Yes. Select the frequency in the request form and share your preferred days in the notes. The cleaner confirms what schedule they can offer in the conversation.',
+    },
+    {
+      q: 'Will the same cleaner come every time?',
+      a: 'That is something to agree with the independent cleaner who takes your request. Ask about their ongoing availability before you accept.',
+    },
+  ],
+  related: ['standard-cleaning', 'deep-cleaning', 'home-organizing'],
+};
+
+function getPageService(slug: string): Service | undefined {
+  return slug === recurring.slug ? recurring : getService(slug);
+}
 
 export function generateStaticParams() {
-  return SERVICES.map(s => ({ slug: s.slug }));
+  return [...SERVICES.map(service => ({ slug: service.slug })), { slug: recurring.slug }];
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
-  const service = getService(slug);
+  const service = getPageService(slug);
   if (!service) return {};
+  const image = slug === recurring.slug
+    ? '/images/site/recurring-cleaning-bedroom-1200.jpg'
+    : `/images/services/${service.slug}.jpg`;
   return {
     title: service.metaTitle,
     description: service.metaDescription,
@@ -28,71 +67,57 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       url: `/services/${service.slug}`,
       siteName: 'Verliks',
       type: 'website',
-      images: [{ url: `/images/services/${service.slug}.jpg` }],
+      images: [{ url: image }],
     },
     twitter: { card: 'summary_large_image', title: `${service.metaTitle} | Verliks`, description: service.metaDescription },
     robots: { index: true, follow: true },
   };
 }
 
-const Chevron = () => (
-  <svg className={styles.faqChevron} width="18" height="18" viewBox="0 0 24 24" fill="none"
-    stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-    <path d="M6 9.5l6 6 6-6" />
-  </svg>
-);
-
-/* The platform mechanic, identical on every service page because it is the
-   same mechanic. Wording checked against the matching and conversation code. */
-const WHAT_TO_EXPECT = [
+const STEPS = [
   {
-    title: 'You describe the job',
-    body: 'Your ZIP code, the property details, the day you want and anything specific. It takes a couple of minutes and costs nothing.',
+    title: 'Describe the job',
+    body: 'Add your ZIP code, property details, preferred day and anything specific. Sending a request costs nothing.',
   },
   {
-    title: 'It reaches cleaners near you',
-    body: 'Only professionals whose service area covers your ZIP, who offer this type of cleaning, and whose ID has been approved by our team.',
+    title: 'Discuss the details',
+    body: 'A cleaner who offers this service and covers your ZIP can reply. Use the conversation to agree on the scope, timing and price.',
   },
   {
-    title: 'One of them replies',
-    body: 'The first available cleaner takes the request and a conversation opens, where you can ask about scope, timing and price.',
-  },
-  {
-    title: 'You accept or decline',
-    body: 'Look at their profile and rating, then decide. If you decline, the request goes back out to another cleaner automatically.',
-  },
-  {
-    title: 'You pay the cleaner directly',
-    body: 'Requesting costs you nothing. The price is what you and the cleaner agree, and it is paid to them, not to Verliks.',
+    title: 'Decide who to hire',
+    body: 'Review the cleaner’s profile and rating. Accept or decline before anything is booked, then pay the cleaner directly for the work.',
   },
 ];
 
 const SHARED_FAQ = [
   {
     q: 'How much does this cost?',
-    a: 'There is no fixed price. It depends on the property, its condition, the scope, your location and the professional. The cleaner who takes your request discusses it with you in the conversation, before anything is booked.',
+    a: 'There is no fixed price. It depends on the property, its condition, the scope, your location and the professional. The cleaner who takes your request discusses the price with you before anything is booked.',
   },
   {
     q: 'Can I ask for a specific cleaner?',
-    a: 'Yes. You can send a request straight to a professional whose profile you have seen, and it goes to them rather than into the general matching. If they are not available, the request falls back to cleaners near you.',
+    a: 'Yes. You can send a request straight to a professional whose profile you have seen. If they are not available, the request falls back to cleaners near you.',
   },
   {
     q: 'Does every cleaner offer this service?',
-    a: 'No. Each professional lists the types of cleaning they take on, and requests are only matched to cleaners who offer this one and who cover your area.',
+    a: 'No. Each professional lists the types of cleaning they take on. Requests are only matched to cleaners who offer this service and cover your area.',
   },
   {
     q: 'Can I add extra work to the request?',
-    a: 'Describe it in the notes when you send the request. The cleaner confirms in the conversation what they include and whether the extra work is something they can do.',
+    a: 'Describe it in the notes when you send the request. The cleaner confirms what they include and whether they can do the extra work.',
   },
 ];
 
 export default async function ServicePage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const service = getService(slug);
+  const service = getPageService(slug);
   if (!service) notFound();
 
-  const related = service.related.map(getService).filter(Boolean);
+  const related = service.related.map(getPageService).filter((item): item is Service => Boolean(item));
   const requestUrl = `/request?service=${service.id}`;
+  const heroImage = slug === recurring.slug
+    ? '/images/site/recurring-cleaning-bedroom-1200.jpg'
+    : `/images/services/${service.slug}.jpg`;
 
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -118,156 +143,178 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
   };
 
   return (
-    <div className={styles.page}>
+    <div className={`vsite ${styles.page}`}>
+      <IconSprite />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
-      <a href="#main" className={styles.skip}>Skip to content</a>
+      <a href="#main" className={styles.skip}>Skip to main content</a>
       <SiteHeader />
 
-      <main id="main">
-        {/* ═══ Hero ═══ */}
-        <section data-hero className={styles.hero}>
-          <Image
-            src={`/images/services/${service.slug}.jpg`} alt=""
-            fill priority sizes="100vw" quality={78} className={styles.heroImg}
-          />
-          <div className={styles.heroShade} aria-hidden="true" />
-          <div className={styles.heroContent}>
-            <nav className={styles.crumbs} aria-label="Breadcrumb">
-              <NextLink href="/">Home</NextLink> <span aria-hidden="true">/</span>
-              <NextLink href="/services">Services</NextLink> <span aria-hidden="true">/</span>
+      <main id="main" data-inert-when-menu>
+        <section className={styles.detailHero} aria-labelledby="service-title">
+          <div className={styles.container}>
+            <nav className={styles.breadcrumbs} aria-label="Breadcrumb">
+              <Link href="/">Home</Link><span aria-hidden="true">/</span>
+              <Link href="/services">Services</Link><span aria-hidden="true">/</span>
               <span aria-current="page">{service.name}</span>
             </nav>
-            <h1 className={styles.h1}>{service.name}</h1>
-            <p className={styles.tagline}>{service.tagline}</p>
-            <div className={styles.heroActions}>
-              <NextLink href={requestUrl} className={btn.light}>
-                Request {service.name} <Arrow />
-              </NextLink>
-              <NextLink href="/services" className={styles.textLink}>See all services</NextLink>
-            </div>
-          </div>
-        </section>
-
-        {/* ═══ What is it ═══ */}
-        <section className={styles.section}>
-          <div className={styles.wrap}>
-            <h2 className={styles.h2}>What it is</h2>
-            <p className={styles.prose}>{service.whatIsIt}</p>
-          </div>
-        </section>
-
-        {/* ═══ What's included ═══ */}
-        <section className={`${styles.section} ${styles.sectionCream}`}>
-          <div className={styles.wrap}>
-            <h2 className={styles.h2}>What is usually included</h2>
-            <p className={styles.prose}>
-              Scope is agreed between you and the cleaner, so treat this as the shape of the job rather
-              than a contract. Anything you need that is not here belongs in your request notes.
-            </p>
-            <ul className={styles.cols} style={{ listStyle: 'none', padding: 0 }}>
-              {service.included.map(item => (
-                <li className={styles.item} key={item}>
-                  <span className={styles.itemMark} aria-hidden="true">—</span>{item}
-                </li>
-              ))}
-            </ul>
-            {service.showExtras && (
-              <p className={styles.prose} style={{ marginTop: 28 }}>
-                Add-ons you can tick in the request form:{' '}
-                {REQUEST_EXTRAS.map(e => e.label).join(', ')}.
-              </p>
-            )}
-          </div>
-        </section>
-
-        {/* ═══ Right for you ═══ */}
-        <section className={styles.section}>
-          <div className={styles.wrap}>
-            <h2 className={styles.h2}>When people ask for it</h2>
-            <ul className={styles.cols} style={{ listStyle: 'none', padding: 0 }}>
-              {service.rightForYou.map(item => (
-                <li className={styles.item} key={item}>
-                  <span className={styles.itemMark} aria-hidden="true">—</span>{item}
-                </li>
-              ))}
-            </ul>
-          </div>
-        </section>
-
-        {/* ═══ What to expect ═══ */}
-        <section className={`${styles.section} ${styles.sectionCream}`}>
-          <div className={styles.wrap}>
-            <h2 className={styles.h2}>What happens after you send the request</h2>
-            <div className={styles.rows}>
-              {WHAT_TO_EXPECT.map(step => (
-                <div className={styles.row} key={step.title}>
-                  <p className={styles.rowTitle}>{step.title}</p>
-                  <p className={styles.rowBody}>{step.body}</p>
+            <div className={styles.detailHeroGrid}>
+              <div className={styles.detailHeroCopy}>
+                <p className={styles.eyebrow}>Cleaning services / {service.name}</p>
+                <h1 id="service-title" className={styles.detailTitle}>{service.name}</h1>
+                <p className={styles.heroLead}>{service.tagline}</p>
+                <div className={styles.actions}>
+                  <Link className={styles.primaryButton} href={requestUrl}>Request this service <Icon name="arrow-right" /></Link>
+                  <Link className={styles.secondaryLink} href="/services">All services <Icon name="arrow-right" /></Link>
                 </div>
-              ))}
+                <p className={styles.heroNote}>Free to send a request. Discuss scope and price before deciding.</p>
+              </div>
+              <figure className={styles.detailHeroMedia}>
+                <Image src={heroImage} alt="" fill priority sizes="(max-width: 800px) 100vw, 46vw" />
+              </figure>
             </div>
           </div>
         </section>
 
-        {/* ═══ Before you request ═══ */}
-        <section className={styles.section}>
-          <div className={styles.wrap}>
-            <h2 className={styles.h2}>Worth having ready</h2>
-            <p className={styles.prose}>{service.beforeYouRequest}</p>
+        <div className={styles.factBar} aria-label="How Verliks works">
+          <div className={styles.container}>
+            <span>01 <strong>Describe the work</strong></span>
+            <span>02 <strong>Discuss with a cleaner</strong></span>
+            <span>03 <strong>Decide before booking</strong></span>
+          </div>
+        </div>
+
+        <div className={styles.detailContent}>
+          <div className={styles.container}>
+            <div className={styles.articleGrid}>
+              <aside className={styles.articleAside} aria-label="On this page">
+                <p className={styles.eyebrow}>On this page</p>
+                <nav>
+                  <a href="#overview">Overview</a>
+                  <a href="#included">Typical scope</a>
+                  <a href="#when-to-book">When it fits</a>
+                  <a href="#before-request">Before you request</a>
+                  <a href="#questions">Questions</a>
+                </nav>
+                <Link className={styles.asideCta} href={requestUrl}>Start a request <Icon name="arrow-right" /></Link>
+              </aside>
+
+              <article className={styles.article}>
+                <section id="overview" className={styles.articleSection} aria-labelledby="overview-title">
+                  <p className={styles.sectionKicker}>01 / The service</p>
+                  <h2 id="overview-title">What it is</h2>
+                  <p className={styles.introProse}>{service.whatIsIt}</p>
+                </section>
+
+                <section id="included" className={styles.articleSection} aria-labelledby="included-title">
+                  <p className={styles.sectionKicker}>02 / The work</p>
+                  <h2 id="included-title">What is usually included</h2>
+                  <p className={styles.sectionIntro}>The exact scope is agreed with the cleaner. Use this list as a starting point and put anything unusual in your request notes.</p>
+                  <ul className={styles.includedList}>
+                    {service.included.map(item => <li key={item}>{item}</li>)}
+                  </ul>
+                  {service.showExtras && (
+                    <p className={styles.extrasNote}><strong>Optional work in the request form:</strong> {REQUEST_EXTRAS.map(extra => extra.label).join(', ')}. Confirm any extras with the cleaner.</p>
+                  )}
+                </section>
+
+                <section id="when-to-book" className={styles.articleSection} aria-labelledby="when-title">
+                  <p className={styles.sectionKicker}>03 / The moment</p>
+                  <h2 id="when-title">When this service fits</h2>
+                  <ul className={styles.situationsList}>
+                    {service.rightForYou.map(item => <li key={item}><span aria-hidden="true">↗</span>{item}</li>)}
+                  </ul>
+                </section>
+
+                <section id="before-request" className={styles.prepSection} aria-labelledby="prep-title">
+                  <p className={styles.sectionKicker}>04 / Prepare your request</p>
+                  <h2 id="prep-title">Worth having ready</h2>
+                  <p>{service.beforeYouRequest}</p>
+                  <Link href={requestUrl} className={styles.inlineCta}>Request {service.name} <Icon name="arrow-right" /></Link>
+                </section>
+              </article>
+            </div>
+          </div>
+        </div>
+
+        <section className={styles.processSection} aria-labelledby="process-title">
+          <div className={styles.container}>
+            <div className={styles.processHeading}>
+              <p className={styles.sectionKicker}>From request to decision</p>
+              <h2 id="process-title">How it works</h2>
+              <p>You stay in control of whom you hire and the price you agree to.</p>
+            </div>
+            <ol className={styles.processList}>
+              {STEPS.map((step, index) => (
+                <li key={step.title}>
+                  <span className={styles.stepNumber}>0{index + 1}</span>
+                  <h3>{step.title}</h3>
+                  <p>{step.body}</p>
+                </li>
+              ))}
+            </ol>
           </div>
         </section>
 
-        {/* ═══ FAQ ═══ */}
-        <section className={`${styles.section} ${styles.sectionCream}`}>
-          <div className={styles.wrap}>
-            <h2 className={styles.h2}>Questions about {service.name.toLowerCase()}</h2>
-            <div className={styles.faq}>
-              {[...service.faq, ...SHARED_FAQ].map(item => (
-                <details className={styles.faqItem} key={item.q}>
-                  <summary className={styles.faqQ}>{item.q}<Chevron /></summary>
-                  <p className={styles.faqA}>{item.a}</p>
-                </details>
-              ))}
+        <section id="questions" className={styles.faqSection} aria-labelledby="faq-title">
+          <div className={styles.container}>
+            <div className={styles.faqGrid}>
+              <div className={styles.faqHeading}>
+                <p className={styles.sectionKicker}>Good to know</p>
+                <h2 id="faq-title">Questions about {service.name.toLowerCase()}</h2>
+                <p>Ask the cleaner about anything specific to your property before you accept.</p>
+              </div>
+              <div className={styles.faqList}>
+                {[...service.faq, ...SHARED_FAQ].map(item => (
+                  <details key={item.q}>
+                    <summary>{item.q}<span className={styles.faqPlus} aria-hidden="true">+</span></summary>
+                    <p>{item.a}</p>
+                  </details>
+                ))}
+              </div>
             </div>
           </div>
         </section>
 
-        {/* ═══ Related ═══ */}
         {related.length > 0 && (
-          <section className={styles.section}>
-            <div className={styles.wrap}>
-              <h2 className={styles.h2}>Often requested alongside</h2>
-              <div className={styles.related}>
-                {related.map(r => (
-                  <NextLink key={r!.slug} href={`/services/${r!.slug}`} className={styles.relatedLink}>
-                    <p className={styles.serviceName}>{r!.name}</p>
-                    <p className={styles.serviceTagline}>{r!.tagline}</p>
-                  </NextLink>
+          <section className={styles.relatedSection} aria-labelledby="related-title">
+            <div className={styles.container}>
+              <div className={styles.relatedHeading}>
+                <div>
+                  <p className={styles.sectionKicker}>Keep exploring</p>
+                  <h2 id="related-title">Related services</h2>
+                </div>
+                <Link href="/services" className={styles.secondaryLink}>View all services <Icon name="arrow-right" /></Link>
+              </div>
+              <div className={styles.relatedGrid}>
+                {related.map(item => (
+                  <Link key={item.slug} href={`/services/${item.slug}`} className={styles.relatedCard}>
+                    <span className={styles.relatedImage}>
+                      <Image src={item.slug === recurring.slug ? '/images/site/recurring-cleaning-bedroom-1200.jpg' : `/images/services/${item.slug}.jpg`} alt="" fill sizes="(max-width: 700px) 100vw, 30vw" />
+                    </span>
+                    <span className={styles.relatedText}><strong>{item.name}</strong><Icon name="arrow-up-right" /></span>
+                    <span className={styles.relatedTagline}>{item.tagline}</span>
+                  </Link>
                 ))}
               </div>
             </div>
           </section>
         )}
+
+        <section className={styles.guidance} aria-labelledby="request-title">
+          <div className={styles.container}>
+            <p className={styles.eyebrow}>Ready when you are</p>
+            <div className={styles.guidanceGrid}>
+              <div>
+                <h2 id="request-title">Tell a cleaner what you need.</h2>
+                <p>The request opens with {service.name.toLowerCase()} selected. Sending it costs nothing, and you can discuss the price before deciding.</p>
+              </div>
+              <Link className={styles.goldButton} href={requestUrl}>Request {service.name} <Icon name="arrow-right" /></Link>
+            </div>
+          </div>
+        </section>
       </main>
 
-      {/* ═══ Final CTA ═══ */}
-      <section className={styles.final}>
-        <div className={styles.wrap}>
-          <h2 className={styles.finalTitle}>Send your {service.name.toLowerCase()} request</h2>
-          <p className={styles.finalBody}>
-            The form opens with this service already selected. Describing the job costs nothing, and
-            the cleaner who takes it confirms the price with you.
-          </p>
-          <div className={styles.finalActions}>
-            <NextLink href={requestUrl} className={btn.navy}>
-              Request {service.name} <Arrow />
-            </NextLink>
-            <NextLink href="/services" className={styles.finalLink}>Look at other services</NextLink>
-          </div>
-        </div>
-      </section>
-
-      <PublicFooter services={footerServices} />
+      <SiteFooter />
     </div>
   );
 }

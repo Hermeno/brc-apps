@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
 import NextLink from 'next/link';
 import Image from 'next/image';
+import SiteFooter from '@/components/site/site-footer';
+import '../site.css';
 import styles from './for-cleaners.module.css';
 import { prisma } from '@/lib/prisma';
 import { PLANS, RADIUS_OPTIONS, PLAN_MAX_RADIUS } from '@/lib/plans';
@@ -116,7 +118,7 @@ export default async function ForCleanersPage() {
         <header className={styles.topbar}>
           <div className={styles.topbarInner}>
             <NextLink href="/" className={styles.logo} aria-label="Verliks home">
-              <Image src="/vlogo.PNG" alt="" width={32} height={32} className={styles.logoMark} priority />
+              <Image src="/images/brand/verliks-logo-600.png" alt="" width={149} height={32} className={styles.logoMark} priority />
               <span>verliks</span>
             </NextLink>
             <div className={styles.topbarRight}>
@@ -619,10 +621,10 @@ export default async function ForCleanersPage() {
               <details className={styles.faqItem}>
                 <summary className={styles.faqQ}>Which areas does Verliks cover?<IcChevron /></summary>
                 <p className={styles.faqA}>
-                  Verliks operates in the United States and does not restrict professionals to a fixed
-                  list of ZIP codes — you are matched to any request that falls inside the area you set.
-                  How many requests that actually means depends on client demand around you, which
-                  varies by region.
+                  Verliks is starting in Connecticut. Professionals choose a base ZIP code and travel
+                  radius rather than a fixed list of towns. Requests reach you only when the client’s
+                  location falls inside your area and you offer that service. The number of requests
+                  varies by location and client demand.
                 </p>
               </details>
 
@@ -668,45 +670,7 @@ export default async function ForCleanersPage() {
         </div>
       </section>
 
-      {/* ═══ Footer ═══ */}
-      <footer className={styles.footer}>
-        <div className={styles.footerInner}>
-          <div className={styles.footerBrand}>
-            <NextLink href="/" className={styles.logo} aria-label="Verliks home">
-              <Image src="/vlogo.PNG" alt="" width={32} height={32} className={styles.logoMark} />
-              <span>verliks</span>
-            </NextLink>
-            <p className={styles.footerTagline}>
-              Connecting people who need a cleaning with independent professionals nearby.
-            </p>
-          </div>
-
-          <nav className={styles.footerNav} aria-label="Footer">
-            <div className={styles.footerCol}>
-              <p className={styles.footerColTitle}>For cleaners</p>
-              <NextLink href={SIGNUP}>Create your profile</NextLink>
-              <a href="#how-it-works">How it works</a>
-              <a href="#pricing">What it costs</a>
-              <a href="#faq">Questions</a>
-            </div>
-            <div className={styles.footerCol}>
-              <p className={styles.footerColTitle}>For clients</p>
-              <NextLink href="/">Home</NextLink>
-              <NextLink href="/request">Request a cleaning</NextLink>
-            </div>
-            <div className={styles.footerCol}>
-              <p className={styles.footerColTitle}>Company</p>
-              <NextLink href="/about">About Verliks</NextLink>
-              <NextLink href="/terms">Terms of service</NextLink>
-              <NextLink href="/privacy">Privacy policy</NextLink>
-            </div>
-          </nav>
-        </div>
-        <div className={styles.footerBottom}>
-          © {new Date().getFullYear()} Verliks. Verliks connects clients with independent cleaning
-          professionals and is not an employer or staffing agency.
-        </div>
-      </footer>
+      <div className="vsite"><SiteFooter /></div>
     </div>
   );
 }

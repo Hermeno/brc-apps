@@ -40,7 +40,7 @@ export default function AboutPage() {
             <Box w="1px" h="18px" bg="#E2E8F0" />
             <NextLink href="/" style={{ textDecoration: 'none' }}>
               <HStack gap={2.5}>
-                <Image src="/logo-blue.png" alt="Verliks" width={28} height={28} style={{ borderRadius: "50%", objectFit: "cover", flexShrink: 0 }} />
+                <Image src="/images/brand/verliks-logo-600.png" alt="Verliks" width={131} height={28} style={{ borderRadius: "50%", objectFit: "cover", flexShrink: 0 }} />
                 <Text fontWeight="700" fontSize="15px" letterSpacing="-0.02em" color="#1E3A5F" fontFamily="heading">
                   Verliks
                 </Text>
@@ -323,7 +323,7 @@ export default function AboutPage() {
         <Flex px={{ base: 5, md: 10, lg: 16 }} maxW="1440px" mx="auto"
           align="center" justify="space-between" flexWrap="wrap" gap={4}>
           <HStack gap={2}>
-            <Image src="/logo-blue.png" alt="Verliks" width={28} height={28} style={{ borderRadius: "50%", objectFit: "cover", flexShrink: 0 }} />
+            <Image src="/images/brand/verliks-logo-600.png" alt="Verliks" width={131} height={28} style={{ borderRadius: "50%", objectFit: "cover", flexShrink: 0 }} />
             <Text fontSize="12px" color="#6A95BC" fontFamily="heading">
               © 2026 Verliks. All rights reserved.
             </Text>

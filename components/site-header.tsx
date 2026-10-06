@@ -74,8 +74,7 @@ export default function SiteHeader({ onHome = false }: { onHome?: boolean }) {
       >
         <div className={styles.navInner}>
           <NextLink href="/" className={styles.logo} aria-label="Verliks">
-            <Image src="/vlogo.PNG" alt="" width={34} height={34} className={styles.logoMark} priority />
-            <span className={styles.logoWord}>verliks</span>
+            <Image src="/images/brand/verliks-logo-600.png" alt="" width={159} height={34} className={styles.logoMark} priority />
           </NextLink>
 
           <ul className={styles.navLinks}>
