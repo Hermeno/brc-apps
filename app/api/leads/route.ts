@@ -144,12 +144,27 @@ export async function POST(request: NextRequest) {
     // Offline resolution runs inline so the lead always has coordinates and the
     // response stays fast; a street-level refinement happens in after(), before
     // matching. Parsing is shared with the cleaner side via lib/geo.
-    const geo = geocodeAddressOffline(address ?? '');
-    const zip = geo?.zip ?? null;
+    const offlineGeo = geocodeAddressOffline(address ?? '');
 
+    // Nothing placeable from the bundled dataset. Before refusing, spend the one
+    // network lookup: a street line with no city or ZIP ("900 Biscayne Blvd") is
+    // unplaceable offline but resolves fine against the geocoder.
+    const geo = offlineGeo ?? await geocodeAddress(address ?? '');
+
+    // An unplaceable address used to be stored at 0,0 with a null ZIP. That makes
+    // the lead's distance unmeasurable, and filterByRadius deliberately keeps every
+    // cleaner when distance is unknown — so a single mistyped ZIP was broadcast to
+    // every verified cleaner in the country, ignoring all of their radii. Refuse it
+    // here instead, and name the part the client can fix while still on the form.
     if (!geo) {
       logWarn('[POST /api/leads]', 'address did not resolve to coordinates', { address });
+      return NextResponse.json(
+        { error: 'We could not locate that address. Check the ZIP code, or add the city and state.' },
+        { status: 422 },
+      );
     }
+
+    const zip = geo.zip;
 
     // Coverage check (only active when admin has set specific ZIPs)
     if (priceConfig.coverageZips.length > 0 && zip && !priceConfig.coverageZips.includes(zip)) {
@@ -171,8 +186,8 @@ export async function POST(request: NextRequest) {
         notes:             notes         || null,
         dateTime:          parsedDate,
         // Store resolved coords so matching has real distance data from the start
-        latitude:          geo?.lat ?? 0,
-        longitude:         geo?.lng ?? 0,
+        latitude:          geo.lat,
+        longitude:         geo.lng,
         zipCode:           zip,
         status:            'NEW',
         bedrooms:          bedrooms      ?? 1,
@@ -198,7 +213,7 @@ export async function POST(request: NextRequest) {
       try {
         const precise = await geocodeAddress(address ?? '');
         if (!precise || precise.precision === 'city') return;
-        if (geo && precise.lat === geo.lat && precise.lng === geo.lng) return;
+        if (precise.lat === geo.lat && precise.lng === geo.lng) return;
 
         await prisma.lead.update({
           where: { id: lead.id },

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Box, HStack, Input, Text, Icon } from '@chakra-ui/react';
 import { LucideMapPin, LucideNavigation, LucideLoader2 } from 'lucide-react';
 
@@ -23,14 +23,25 @@ type Props = {
   value: string;
   onChange: (v: string) => void;
   placeholder?: string;
+  /**
+   * Whether the server could place the current value: true once it resolved,
+   * false once it definitively could not, null while unknown (still typing, or
+   * the check has not answered yet). Lets the form refuse to submit an address
+   * that is already known to match nobody, without guessing when unsure.
+   */
+  onResolve?: (ok: boolean | null) => void;
   // Pass any Chakra Input props (bg, border, h, fontSize, etc.)
   inputProps?: Record<string, any>;
 };
 
 type Resolved = { zip: string | null; city: string | null; state: string | null };
 
-export function AddressInput({ value, onChange, placeholder, inputProps = {} }: Props) {
+export function AddressInput({ value, onChange, placeholder, onResolve, inputProps = {} }: Props) {
   const [detecting, setDetecting] = useState(false);
+  // Held in a ref so an inline callback from the parent cannot re-trigger the
+  // lookup effect on every render.
+  const onResolveRef = useRef(onResolve);
+  useEffect(() => { onResolveRef.current = onResolve; }, [onResolve]);
   const [resolved, setResolved]   = useState<Resolved | null>(null);
   const [checked, setChecked]     = useState(false);
 
@@ -41,7 +52,7 @@ export function AddressInput({ value, onChange, placeholder, inputProps = {} }: 
   // wrong county — the exact failure that leaves a booking matched to nobody.
   useEffect(() => {
     const address = value.trim();
-    if (address.length < 5) { setResolved(null); setChecked(false); return; }
+    if (address.length < 5) { setResolved(null); setChecked(false); onResolveRef.current?.(null); return; }
 
     let cancelled = false;
     const timer = setTimeout(async () => {
@@ -56,6 +67,7 @@ export function AddressInput({ value, onChange, placeholder, inputProps = {} }: 
         if (cancelled) return;
         setResolved(data.resolved ? { zip: data.zip, city: data.city, state: data.state } : null);
         setChecked(true);
+        onResolveRef.current?.(!!data.resolved);
       } catch {
         // Offline or rate-limited — stay quiet rather than showing a false warning.
       }
@@ -67,6 +79,7 @@ export function AddressInput({ value, onChange, placeholder, inputProps = {} }: 
   const handleChange = (v: string) => {
     onChange(v);
     setChecked(false);
+    onResolveRef.current?.(null);
   };
 
   const detect = () => {
@@ -88,7 +101,10 @@ export function AddressInput({ value, onChange, placeholder, inputProps = {} }: 
 
   const zip      = resolved?.zip;
   const place    = [resolved?.city, resolved?.state].filter(Boolean).join(', ');
-  const showHint = checked && !resolved && value.trim().length > 8;
+  // No length guard: a bare ZIP is 5 characters, and suppressing the warning for
+  // short values is exactly what let a mistyped ZIP through with no feedback at
+  // all. `checked` already means the server has answered for this value.
+  const showHint = checked && !resolved;
 
   return (
     <Box>
@@ -138,7 +154,7 @@ export function AddressInput({ value, onChange, placeholder, inputProps = {} }: 
         <HStack gap={1.5} mt={1.5}>
           <Icon as={LucideMapPin} w="11px" h="11px" color="#D97706" />
           <Text fontSize="11px" color="#D97706" fontFamily="heading">
-            We could not place this address. Add the city and state, or your ZIP code.
+            We could not place this address. Check the ZIP code, or add the city and state.
           </Text>
         </HStack>
       ) : null}

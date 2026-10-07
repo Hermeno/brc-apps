@@ -49,6 +49,10 @@ function RequestForm() {
 
   const [serviceType, setServiceType]   = useState(initialService || 'standard');
   const [address, setAddress]           = useState(seededZip);
+  // null until the server has answered for the typed address. Only a definitive
+  // false blocks submission, so a slow or failed check never traps the client —
+  // /api/leads refuses an unplaceable address regardless.
+  const [addressOk, setAddressOk]       = useState<boolean | null>(null);
   const [dateVal, setDateVal]           = useState('');
   const [timeVal, setTimeVal]           = useState('');
   const [bedrooms, setBedrooms]         = useState(2);
@@ -97,6 +101,13 @@ function RequestForm() {
   const handleSubmit = async () => {
     if (!address.trim() || !dateVal || !timeVal) {
       toaster.create({ title: 'Please add your address and preferred date to continue', type: 'error' });
+      return;
+    }
+    if (addressOk === false) {
+      toaster.create({
+        title: 'We could not locate that address. Check the ZIP code, or add the city and state.',
+        type:  'error',
+      });
       return;
     }
     if (status === 'authenticated') {
@@ -309,7 +320,8 @@ function RequestForm() {
               <VStack gap={5} align="stretch">
                 <Box>
                   <FormLabel htmlFor="request-address">Cleaning address or ZIP code</FormLabel>
-                  <AddressInput value={address} onChange={setAddress} placeholder="123 Main St, Hartford, CT 06103"
+                  <AddressInput value={address} onChange={setAddress} onResolve={setAddressOk}
+                    placeholder="123 Main St, Hartford, CT 06103"
                     inputProps={{ ...inputStyle, id: 'request-address', autoComplete: 'street-address' }} />
                 </Box>
                 <SimpleGrid columns={{ base: 1, sm: 2 }} gap={4}>
