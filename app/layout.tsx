@@ -73,6 +73,13 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         translate="no"
         style={{ backgroundColor: '#F8FAFC' }}
       >
+        {/* Scroll-staggered sections start hidden and are revealed by the client
+            once they enter the viewport. The hidden state is server-rendered, so
+            with scripting off the reveal would never arrive. app/site.css covers
+            browsers that support `@media (scripting: none)`; this covers the rest. */}
+        <noscript>
+          <style>{'.vsite [data-stagger]>*{opacity:1!important;transform:none!important;filter:none!important}'}</style>
+        </noscript>
         {/* Detect Google Translate / DeepL activation and warn before React breaks.
             Runs as plain DOM — survives React crashes caused by <font> tag injection. */}
         <Script

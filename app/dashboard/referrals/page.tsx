@@ -64,7 +64,7 @@ export default function ReferralsPage() {
   };
 
   const statItems = [
-    { label: t('cleaner.referrals.statReferred'), value: data ? String(data.referrals.length) : '—', color: '#1E3A5F' },
+    { label: t('cleaner.referrals.statReferred'), value: data ? String(data.referrals.length) : '—', color: '#185FC6' },
     { label: t('cleaner.referrals.statQualified'), value: data ? String(data.referralQualifiedCount) : '—', color: '#22C55E' },
     { label: t('cleaner.referrals.statCredits'), value: data ? String(data.freeLeadCredits) : '—', color: '#D97706' },
   ];
@@ -154,13 +154,13 @@ export default function ReferralsPage() {
                   borderRadius="8px"
                   fontFamily="mono"
                   fontSize="12.5px"
-                  color="#1E3A5F"
+                  color="#185FC6"
                   px={4}
                   onFocus={e => e.target.select()}
                 />
                 <Button
                   onClick={handleCopy}
-                  bg={copied ? '#22C55E' : '#1E3A5F'}
+                  bg={copied ? '#22C55E' : '#185FC6'}
                   color="white"
                   h="40px"
                   px={5}
@@ -182,7 +182,7 @@ export default function ReferralsPage() {
                   <Text fontSize="xs" fontWeight="600" color="slate.600">
                     {t('cleaner.referrals.progressLabel')}
                   </Text>
-                  <Text fontSize="xs" fontWeight="700" color="#1E3A5F">
+                  <Text fontSize="xs" fontWeight="700" color="#185FC6">
                     {data ? `${data.progressInCycle}/${data.qualifyCount}` : '—'}
                   </Text>
                 </HStack>

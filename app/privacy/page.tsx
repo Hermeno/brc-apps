@@ -26,7 +26,7 @@ export default function PrivacyPage() {
           <NextLink href="/" style={{ textDecoration: 'none' }}>
             <HStack gap={2.5}>
               <Image src="/images/brand/verliks-logo-600.png" alt="Verliks" width={131} height={28} style={{ objectFit: 'contain' }} />
-              <Text fontWeight="700" fontSize="15px" letterSpacing="-0.02em" color="#1E3A5F" fontFamily="heading">
+              <Text fontWeight="700" fontSize="15px" letterSpacing="-0.02em" color="#185FC6" fontFamily="heading">
                 Verliks
               </Text>
             </HStack>
@@ -34,7 +34,7 @@ export default function PrivacyPage() {
           <HStack gap={3}>
             <NextLink href="/terms" style={{ textDecoration: 'none' }}>
               <Text fontSize="12px" color="#64748B" fontFamily="heading"
-                _hover={{ color: '#1E3A5F' }} transition="color 0.15s" cursor="pointer">
+                _hover={{ color: '#185FC6' }} transition="color 0.15s" cursor="pointer">
                 Terms of Service
               </Text>
             </NextLink>
@@ -47,12 +47,12 @@ export default function PrivacyPage() {
                   px={3} py={1}
                   fontSize="11px" fontWeight="700" fontFamily="heading"
                   textTransform="uppercase" letterSpacing="0.06em"
-                  bg={locale === lang ? '#1E3A5F' : 'transparent'}
+                  bg={locale === lang ? '#185FC6' : 'transparent'}
                   color={locale === lang ? 'white' : '#64748B'}
                   transition="all 0.15s"
                   cursor="pointer"
                   border="none"
-                  _hover={{ color: locale === lang ? 'white' : '#1E3A5F' }}
+                  _hover={{ color: locale === lang ? 'white' : '#185FC6' }}
                 >
                   {lang.toUpperCase()}
                 </Box>
@@ -65,12 +65,12 @@ export default function PrivacyPage() {
       {/* ── Header ── */}
       <Box bg="#E9F3F5" pt="100px" pb={14} px={{ base: 5, md: 10, lg: 16 }} borderBottom="1px solid #A7C9C7">
         <Box maxW="860px" mx="auto">
-          <Text fontSize="10px" fontWeight="700" letterSpacing="0.16em" color="#1E3A5F"
+          <Text fontSize="10px" fontWeight="700" letterSpacing="0.16em" color="#185FC6"
             textTransform="uppercase" fontFamily="heading" mb={3}>
             Legal
           </Text>
           <Text as="h1" fontSize={{ base: '30px', md: '44px' }} fontWeight="800"
-            letterSpacing="-0.03em" color="#1E3A5F" fontFamily="heading" mb={3}>
+            letterSpacing="-0.03em" color="#185FC6" fontFamily="heading" mb={3}>
             {content.pageTitle}
           </Text>
           <HStack gap={4} flexWrap="wrap">
@@ -82,7 +82,7 @@ export default function PrivacyPage() {
               {content.effectiveDate}
             </Text>
           </HStack>
-          <Box mt={5} p={4} borderRadius="4px" style={{ background: 'rgba(10,128,219,0.08)', borderLeft: '3px solid #1E3A5F' }}>
+          <Box mt={5} p={4} borderRadius="4px" style={{ background: 'rgba(10,128,219,0.08)', borderLeft: '3px solid #185FC6' }}>
             <Text fontSize="13px" color="#A7C9C7" lineHeight="1.7" fontFamily="heading">
               {content.intro}
             </Text>
@@ -266,7 +266,7 @@ export default function PrivacyPage() {
             ].map((l) => (
               <NextLink key={l.href} href={l.href}>
                 <Text fontSize="12px" color="#A7C9C7" cursor="pointer" fontFamily="heading"
-                  _hover={{ color: '#1E3A5F' }} transition="color 0.15s">
+                  _hover={{ color: '#185FC6' }} transition="color 0.15s">
                   {l.label}
                 </Text>
               </NextLink>

@@ -78,13 +78,13 @@ export default function CleanerNav() {
                 <Box position="relative" h="full" px={3} display="flex" alignItems="center" cursor="pointer">
                   <HStack
                     gap={1.5}
-                    color={isActive ? '#1E3A5F' : '#64748B'}
+                    color={isActive ? '#185FC6' : '#64748B'}
                     fontWeight={isActive ? '600' : '400'}
                     fontSize="13.5px"
                     fontFamily="heading"
                     letterSpacing="-0.01em"
                     transition="color 0.15s"
-                    _hover={{ color: '#1E3A5F' }}
+                    _hover={{ color: '#185FC6' }}
                   >
                     <Icon as={item.icon} w="14px" h="14px" />
                     <Text>{t(`nav.cleaner.${item.key}`)}</Text>
@@ -115,7 +115,7 @@ export default function CleanerNav() {
             >
               {initial}
             </Box>
-            <Text fontSize="13px" fontWeight="500" color="#1E3A5F" fontFamily="heading" letterSpacing="-0.01em">
+            <Text fontSize="13px" fontWeight="500" color="#185FC6" fontFamily="heading" letterSpacing="-0.01em">
               {firstName}
             </Text>
           </HStack>
@@ -164,13 +164,13 @@ export default function CleanerNav() {
                     <HStack
                       gap={3} px={3} py={2.5} borderRadius="4px" mb={0.5}
                       bg={isActive ? '#E9F3F5' : 'transparent'}
-                      color={isActive ? '#1E3A5F' : '#64748B'}
+                      color={isActive ? '#185FC6' : '#64748B'}
                       fontWeight={isActive ? '600' : '400'}
                       fontSize="14px" fontFamily="heading"
                       border="1px solid"
                       borderColor={isActive ? '#A7C9C7' : 'transparent'}
                       transition="all 0.15s"
-                      _hover={{ bg: '#F8FAFC', color: '#1E3A5F' }}
+                      _hover={{ bg: '#F8FAFC', color: '#185FC6' }}
                     >
                       <Icon as={item.icon} w={4} h={4} />
                       <Text>{t(`nav.cleaner.${item.key}`)}</Text>
@@ -188,7 +188,7 @@ export default function CleanerNav() {
                     {initial}
                   </Box>
                   <Box>
-                    <Text fontSize="13px" fontWeight="600" color="#1E3A5F" fontFamily="heading">{firstName}</Text>
+                    <Text fontSize="13px" fontWeight="600" color="#185FC6" fontFamily="heading">{firstName}</Text>
                     <Text fontSize="11px" color="#64748B">{t('common.role_cleaner')}</Text>
                   </Box>
                 </HStack>

@@ -32,7 +32,7 @@ type Cleaner = {
 
 const PLAN_COLORS: Record<string, { bg: string; color: string; label: string }> = {
   FREE:    { bg: '#F3F4F6', color: '#6B7280', label: 'Free' },
-  BASIC:   { bg: '#EBF5FE', color: '#1E3A5F', label: 'Basic' },
+  BASIC:   { bg: '#EBF5FE', color: '#185FC6', label: 'Basic' },
   PRO:     { bg: '#FFFBEB', color: '#D97706', label: 'Pro ⭐' },
   PREMIUM: { bg: '#FFFBEB', color: '#D97706', label: 'Pro ⭐' }, // legacy alias
 };
@@ -114,7 +114,7 @@ export default function PublicProfilePage() {
           <Box as="button" onClick={() => router.back()}
             display="inline-flex" alignItems="center" gap={1.5}
             color="#64748B" fontWeight="semibold" fontSize="sm" cursor="pointer"
-            _hover={{ color: '#1E3A5F' }} transition="color 0.15s">
+            _hover={{ color: '#185FC6' }} transition="color 0.15s">
             <Icon as={LucideArrowLeft} w={4} h={4} />
             Back
           </Box>
@@ -160,7 +160,7 @@ export default function PublicProfilePage() {
                         {planStyle.label}
                       </Badge>
                       <Badge
-                        bg="#EBF5FE" color="#1E3A5F"
+                        bg="#EBF5FE" color="#185FC6"
                         borderRadius="4px" px={3} py={0.5}
                         fontSize="xs" fontWeight="bold">
                         {isExperienced ? '⭐ Experienced' : '🆕 New on the platform'}
@@ -207,8 +207,8 @@ export default function PublicProfilePage() {
                 {cleaner.canSeeContact && cleaner.phone && (
                   <HStack gap={2} mt={4} bg="#F7F8FA" border="1px solid" borderColor="#E3E8EE"
                     borderRadius="4px" px={4} py={3}>
-                    <Icon as={LucideMapPin} w={4} h={4} color="#1E3A5F" />
-                    <Text fontSize="sm" fontWeight="semibold" color="#1E3A5F">
+                    <Icon as={LucideMapPin} w={4} h={4} color="#185FC6" />
+                    <Text fontSize="sm" fontWeight="semibold" color="#185FC6">
                       📱 {cleaner.phone}
                     </Text>
                   </HStack>
@@ -262,7 +262,7 @@ export default function PublicProfilePage() {
                         position="relative"
                         paddingBottom="100%"
                         bg="slate.100"
-                        _hover={{ borderColor: '#1E3A5F' }}
+                        _hover={{ borderColor: '#185FC6' }}
                         transition="border-color 0.15s">
                         <img
                           src={photo.url}
@@ -287,7 +287,7 @@ export default function PublicProfilePage() {
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.15 }}>
               <Box bg="white" border="1px solid" borderColor="slate.200" p={6}>
                 <HStack gap={2} mb={5}>
-                  <Icon as={LucideAward} w={5} h={5} color="#1E3A5F" />
+                  <Icon as={LucideAward} w={5} h={5} color="#185FC6" />
                   <Heading size="sm" fontWeight="bold" color="slate.800">Client reviews</Heading>
                   {ratingAvg > 0 && (
                     <HStack gap={1.5}>

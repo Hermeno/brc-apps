@@ -57,7 +57,7 @@ export default function SchedulePage() {
     if (job.status === 'COMPLETED') return '#22C55E';
     const dt = new Date(job.dateTime);
     if (dt.toDateString() === now.toDateString()) return '#F97316';
-    return '#1E3A5F';
+    return '#185FC6';
   };
 
   const SectionPanel = ({ label, items, accentBg }: { label: string; items: Job[]; accentBg: string }) =>
@@ -111,7 +111,7 @@ export default function SchedulePage() {
                           padding: '2px 6px',
                           fontSize: 9.5,
                           fontWeight: 700,
-                          color: job.status === 'COMPLETED' ? '#1E3A5F' : '#1E3A5F',
+                          color: job.status === 'COMPLETED' ? '#185FC6' : '#185FC6',
                         }}>
                         {job.status === 'COMPLETED' ? t('cleaner.schedule.statusCompleted') : t('cleaner.schedule.statusConfirmed')}
                       </Text>
@@ -120,11 +120,11 @@ export default function SchedulePage() {
 
                     <HStack gap={4} flexWrap="wrap">
                       <HStack gap={1.5} color="slate.500" fontSize="sm">
-                        <Icon as={LucideMapPin} w={4} h={4} color="#1E3A5F" />
+                        <Icon as={LucideMapPin} w={4} h={4} color="#185FC6" />
                         <Text>{job.address}</Text>
                       </HStack>
                       <HStack gap={1.5} color="slate.500" fontSize="sm">
-                        <Icon as={LucideCalendar} w={4} h={4} color="#1E3A5F" />
+                        <Icon as={LucideCalendar} w={4} h={4} color="#185FC6" />
                         <Text fontWeight="semibold" color={isPast ? '#94A3B8' : 'slate.700'}>
                           {dt.toLocaleString(dateLocale, { dateStyle: 'full', timeStyle: 'short' })}
                         </Text>
@@ -185,7 +185,7 @@ export default function SchedulePage() {
 
                   <Box textAlign="right" flexShrink={0}>
                     {job.estimatedMinPrice && (
-                      <Text fontWeight="black" fontSize="lg" color="#1E3A5F" fontFamily="heading">
+                      <Text fontWeight="black" fontSize="lg" color="#185FC6" fontFamily="heading">
                         ${job.estimatedMinPrice}–${job.estimatedMaxPrice}
                       </Text>
                     )}
@@ -204,7 +204,7 @@ export default function SchedulePage() {
   // StatStrip counts
   const statItems = [
     { label: t('cleaner.schedule.statToday'), value: today.length, color: '#F97316' },
-    { label: t('cleaner.schedule.statUpcoming'), value: upcoming.length, color: '#1E3A5F' },
+    { label: t('cleaner.schedule.statUpcoming'), value: upcoming.length, color: '#185FC6' },
     { label: t('cleaner.schedule.statCompleted'), value: completed.length, color: '#22C55E' },
   ];
 
@@ -268,7 +268,7 @@ export default function SchedulePage() {
           ) : (
             <>
               <SectionPanel label={t('cleaner.schedule.sectionToday')} items={today} accentBg="#F97316" />
-              <SectionPanel label={t('cleaner.schedule.sectionUpcoming')} items={upcoming} accentBg="#1E3A5F" />
+              <SectionPanel label={t('cleaner.schedule.sectionUpcoming')} items={upcoming} accentBg="#185FC6" />
               <SectionPanel label={t('cleaner.schedule.sectionHistory')} items={completed} accentBg="#22C55E" />
             </>
           )}

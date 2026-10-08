@@ -58,19 +58,16 @@ export default function ServiceAreasPage() {
             </div>
             <div className={styles.coverageGrid}>
               <div className={styles.coverageItem}>
-                <span className={styles.coverageNumber}>01</span>
                 <MapPin aria-hidden="true" size={23} strokeWidth={1.7} />
                 <h3>Tell us where</h3>
                 <p>Enter the address in your request. Its ZIP code places the job within the local matching area.</p>
               </div>
               <div className={styles.coverageItem}>
-                <span className={styles.coverageNumber}>02</span>
                 <span className={styles.coverageGlyph} aria-hidden="true">↗</span>
                 <h3>We look for a fit</h3>
                 <p>The request reaches eligible, available cleaners whose radius includes that location and who offer your selected service.</p>
               </div>
               <div className={styles.coverageItem}>
-                <span className={styles.coverageNumber}>03</span>
                 <span className={styles.coverageGlyph} aria-hidden="true">✓</span>
                 <h3>You hear from a cleaner</h3>
                 <p>When a professional responds, you can discuss the job and decide whether to accept. Response time varies with local availability.</p>

@@ -50,17 +50,14 @@ export default function ContactPage() {
             </div>
             <div className={styles.pathList}>
               <Link href="/request" className={styles.pathItem}>
-                <span className={styles.pathNumber}>01</span>
                 <span><strong>Need a cleaner?</strong><small>Describe the work and start a free request.</small></span>
                 <ArrowUpRight aria-hidden="true" size={22} />
               </Link>
               <Link href="/for-cleaners" className={styles.pathItem}>
-                <span className={styles.pathNumber}>02</span>
                 <span><strong>Work as a cleaner?</strong><small>See how local requests and fees work.</small></span>
                 <ArrowUpRight aria-hidden="true" size={22} />
               </Link>
               <Link href="/auth/login" className={styles.pathItem}>
-                <span className={styles.pathNumber}>03</span>
                 <span><strong>Already have an account?</strong><small>Sign in to review requests, messages or your profile.</small></span>
                 <ArrowUpRight aria-hidden="true" size={22} />
               </Link>

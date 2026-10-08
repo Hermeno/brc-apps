@@ -6,6 +6,7 @@ import styles from './services.module.css';
 import { SERVICES, SERVICE_GROUPS } from '@/lib/services';
 import SiteHeader from '@/components/site/site-header';
 import SiteFooter from '@/components/site/site-footer';
+import { Reveal, Stagger } from '@/components/site/motion';
 import { Icon, IconSprite } from '@/components/site/icons';
 
 const BASE = 'https://verliks.com';
@@ -145,22 +146,21 @@ export default function ServicesIndexPage() {
               <p>Select a service to see what cleaners typically cover, what to prepare, and questions worth asking before you decide.</p>
             </div>
 
-            {groups.map((group, index) => {
+            {groups.map(group => {
               const detail = groupDetails[group.title];
               return (
                 <section className={styles.category} id={group.id} aria-labelledby={`${group.id}-title`} key={group.id}>
-                  <div className={styles.categoryHeading}>
-                    <span className={styles.categoryNumber}>0{index + 1}</span>
+                  <Reveal className={styles.categoryHeading}>
                     <div>
                       <h3 id={`${group.id}-title`}>{group.title}</h3>
                       <p>{detail.intro}</p>
                     </div>
-                  </div>
+                  </Reveal>
                   <div className={styles.categoryGrid}>
                     <figure className={styles.categoryImage}>
                       <Image src={detail.image} alt={detail.alt} fill sizes="(max-width: 800px) 100vw, 38vw" />
                     </figure>
-                    <ul className={styles.serviceList}>
+                    <Stagger as="ul" className={styles.serviceList}>
                       {group.slugs.map(slug => {
                         const service = slug === recurring.slug ? recurring : SERVICES.find(item => item.slug === slug);
                         if (!service) return null;
@@ -176,7 +176,7 @@ export default function ServicesIndexPage() {
                           </li>
                         );
                       })}
-                    </ul>
+                    </Stagger>
                   </div>
                 </section>
               );

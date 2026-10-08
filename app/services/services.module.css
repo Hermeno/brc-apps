@@ -1,14 +1,14 @@
 .page {
-  --ink: #1e3a5f;
+  --ink: #185FC6;
   --paper: #fffefa;
   --mist: #f1f6f9;
   --line: #d8e2e8;
   --graphite: #40556a;
   --slate: #53677a;
-  --ink-soft: #31547a;
+  --ink-soft: #1A54AD;
   --on-ink: #f4f8fb;
-  --navy: #1e3a5f;
-  --navy-deep: #152d4b;
+  --navy: #185FC6;
+  --navy-deep: #134A9A;
   --gold: #d4af37;
   --cream: #faf8f2;
   --bluewash: #f2f7fa;
@@ -72,7 +72,7 @@
   min-height: 54px;
   padding: 13px 20px;
   border: 1px solid var(--navy);
-  border-radius: 3px;
+  border-radius: var(--r-sm);
   background: var(--navy);
   color: #fff;
   font-size: 15px;
@@ -105,7 +105,7 @@
 .page .actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 24px; margin-top: 32px; }
 
 /* Editorial introduction and service directory. */
-.page .indexHero { background: var(--cream); border-bottom: 1px solid var(--line); }
+.page .indexHero { background: var(--cream); }
 .page .indexHeroGrid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, .9fr); gap: clamp(36px, 5vw, 76px); align-items: stretch; }
 .page .indexHeroCopy { align-self: center; padding-block: clamp(50px, 6.5vw, 94px) 88px; }
 .page .indexTitle,
@@ -141,7 +141,7 @@
   box-shadow: 0 14px 34px rgba(20, 45, 73, .12);
 }
 
-.page .categoryNav { border-bottom: 1px solid var(--line); background: var(--paper); }
+.page .categoryNav { background: var(--paper); box-shadow: var(--sh-1); }
 .page .categoryNav .container { display: flex; align-items: center; gap: 32px; min-height: 72px; }
 .page .categoryNavLabel { flex: none; color: var(--slate); }
 .page .categoryLinks { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 28px; }
@@ -163,22 +163,24 @@
   line-height: 1.05;
 }
 .page .catalogIntro p:last-child { max-width: 48ch; color: var(--body); font-size: 17px; line-height: 1.55; }
-.page .category { padding-top: 52px; margin-top: 54px; border-top: 1px solid var(--line); scroll-margin-top: 100px; }
-.page .categoryHeading { display: grid; grid-template-columns: 54px minmax(0, 1fr); gap: 18px; align-items: start; max-width: 800px; margin-bottom: 28px; }
+.page .category { padding-top: 52px; margin-top: 54px; scroll-margin-top: 100px; }
+.page .categoryHeading { max-width: 800px; margin-bottom: 28px; }
 .page .categoryNumber { color: #997d2a; margin-top: 9px; }
 .page .categoryHeading h3 { color: var(--navy); font-size: clamp(1.7rem, 2.5vw, 2.45rem); font-weight: 730; letter-spacing: -.035em; }
 .page .categoryHeading p { max-width: 55ch; margin: 8px 0 0; color: var(--body); font-size: 16px; line-height: 1.55; }
 .page .categoryGrid { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: clamp(30px, 5vw, 72px); align-items: start; }
-.page .categoryImage { position: relative; aspect-ratio: 4 / 3.15; margin: 0; overflow: hidden; background: var(--bluewash); }
+.page .categoryImage { position: relative; aspect-ratio: 4 / 3.15; margin: 0; overflow: hidden; border-radius: var(--r-md); background: var(--bluewash); box-shadow: var(--sh-1); }
 .page .categoryImage img { transition: transform .45s ease; }
 .page .category:hover .categoryImage img { transform: scale(1.025); }
-.page .serviceList { list-style: none; border-top: 2px solid var(--navy); }
-.page .serviceList li { border-bottom: 1px solid var(--line); }
-.page .serviceLink { display: flex; justify-content: space-between; gap: 24px; align-items: flex-start; min-height: 98px; padding: 20px 0; color: var(--navy); text-decoration: none; }
+.page .serviceList { list-style: none; display: grid; gap: 10px; }
+/* Was a ruled list under a 2px header rule. Each entry is now its own surface,
+   matching the home page's service cards. */
+.page .serviceLink { display: flex; justify-content: space-between; gap: 24px; align-items: flex-start; min-height: 92px; padding: 20px 22px; background: var(--surface); border-radius: var(--r-md); box-shadow: var(--sh-1); color: var(--navy); text-decoration: none; transition: transform .25s cubic-bezier(.2,.7,.2,1), box-shadow .25s cubic-bezier(.2,.7,.2,1); }
+.page .serviceLink:hover { transform: translateY(-2px); box-shadow: var(--sh-2); }
 .page .serviceLink strong { display: block; font-size: clamp(17px, 1.55vw, 21px); font-weight: 720; letter-spacing: -.018em; line-height: 1.25; }
 .page .serviceLink small { display: block; max-width: 48ch; margin-top: 5px; color: var(--body); font-size: 14px; line-height: 1.45; }
 .page .serviceLink :global(.icon) { flex: none; margin-top: 3px; transition: transform .2s ease; }
-.page .serviceLink:hover strong { text-decoration: underline; text-underline-offset: 4px; }
+
 .page .serviceLink:hover :global(.icon) { transform: translate(2px, -2px); }
 
 /* Shared navy conversion band. */
@@ -198,10 +200,9 @@
 .page .detailHeroMedia { min-height: 520px; }
 .page .detailHeroMedia img { object-position: center; }
 .page .factBar { background: var(--navy-deep); color: #f3f7fa; }
-.page .factBar .container { display: grid; grid-template-columns: repeat(3, 1fr); }
+.page .factBar .container { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding-block: 12px; }
 .page .factBar span { display: flex; align-items: center; gap: 18px; min-height: 78px; padding: 16px 32px; color: #eed783; font-family: var(--font-plex-mono), ui-monospace, monospace; font-size: 12px; }
-.page .factBar span:first-child { padding-left: 0; }
-.page .factBar span + span { border-left: 1px solid rgba(255, 255, 255, .18); }
+.page .factBar span { background: rgba(255,255,255,.06); border-radius: var(--r-sm); }
 .page .factBar strong { color: #fff; font-family: var(--font-archivo), Arial, sans-serif; font-size: 14px; font-weight: 620; letter-spacing: 0; text-transform: none; }
 
 /* Long service pages read as an article, with a quiet local index. */
@@ -209,13 +210,14 @@
 .page .articleGrid { display: grid; grid-template-columns: minmax(190px, .32fr) minmax(0, 1fr); gap: clamp(48px, 8vw, 138px); align-items: start; }
 .page .articleAside { position: sticky; top: 100px; padding-top: 4px; }
 .page .articleAside .eyebrow { color: var(--slate); margin-bottom: 14px; }
-.page .articleAside nav { display: grid; border-top: 1px solid var(--line); }
-.page .articleAside nav a { display: flex; align-items: center; min-height: 43px; border-bottom: 1px solid var(--line); color: var(--body); font-size: 14px; text-decoration: none; }
+.page .articleAside nav { display: grid; gap: 2px; }
+.page .articleAside nav a { display: flex; align-items: center; min-height: 40px; padding: 6px 10px; border-radius: var(--r-xs); color: var(--body); font-size: 14px; text-decoration: none; transition: background .15s ease, transform .15s cubic-bezier(.2,.7,.2,1); }
+.page .articleAside nav a:hover { background: var(--surface-soft); transform: translateX(3px); }
 .page .articleAside nav a:hover { color: var(--navy); text-decoration: underline; text-underline-offset: 4px; }
 .page .asideCta { display: inline-flex; align-items: center; gap: 10px; margin-top: 25px; color: var(--navy); font-size: 14px; font-weight: 700; text-decoration: underline; text-underline-offset: 4px; }
 .page .asideCta :global(.icon) { width: 16px; height: 16px; }
 .page .article { min-width: 0; }
-.page .articleSection { padding-bottom: 68px; margin-bottom: 70px; border-bottom: 1px solid var(--line); scroll-margin-top: 105px; }
+.page .articleSection { padding-bottom: 0; margin-bottom: 64px; scroll-margin-top: 105px; }
 .page .articleSection h2,
 .page .prepSection h2 {
   max-width: 21ch;
@@ -228,15 +230,15 @@
 }
 .page .introProse { max-width: 67ch; margin: 24px 0 0; color: var(--body); font-size: clamp(17px, 1.5vw, 20px); line-height: 1.65; }
 .page .sectionIntro { max-width: 64ch; margin: 16px 0 0; color: var(--body); font-size: 16px; line-height: 1.6; }
-.page .includedList { display: grid; grid-template-columns: 1fr 1fr; gap: 0 32px; list-style: none; margin-top: 28px; border-top: 1px solid var(--line); }
-.page .includedList li { position: relative; padding: 16px 0 16px 28px; border-bottom: 1px solid var(--line); color: var(--body); font-size: 15px; line-height: 1.5; }
-.page .includedList li::before { content: '✓'; position: absolute; left: 0; top: 16px; color: var(--navy); font-size: 16px; font-weight: 700; }
+.page .includedList { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; list-style: none; margin-top: 28px; }
+.page .includedList li { position: relative; padding: 15px 18px 15px 42px; background: var(--surface-soft); border-radius: var(--r-sm); color: var(--body); font-size: 15px; line-height: 1.5; }
+.page .includedList li::before { content: '✓'; position: absolute; left: 18px; top: 15px; color: var(--navy); font-size: 15px; font-weight: 700; }
 .page .extrasNote { max-width: 63ch; margin: 24px 0 0; color: var(--body); font-size: 14px; line-height: 1.6; }
 .page .extrasNote strong { color: var(--navy); }
 .page .situationsList { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 26px; list-style: none; margin-top: 30px; }
-.page .situationsList li { display: flex; gap: 13px; align-items: flex-start; padding: 16px 0; border-top: 1px solid var(--line); color: var(--body); font-size: 15px; line-height: 1.5; }
-.page .situationsList li span { color: #a58a35; font-size: 21px; line-height: 1; }
-.page .prepSection { padding: clamp(30px, 4vw, 52px); background: var(--bluewash); border-left: 3px solid var(--gold); scroll-margin-top: 105px; }
+.page .situationsList li { display: flex; gap: 13px; align-items: flex-start; padding: 15px 18px; background: var(--surface-soft); border-radius: var(--r-sm); color: var(--body); font-size: 15px; line-height: 1.5; }
+.page .situationsList li span { color: var(--navy); font-size: 18px; line-height: 1.2; }
+.page .prepSection { padding: clamp(30px, 4vw, 52px); background: var(--bluewash); border-radius: var(--r-md); scroll-margin-top: 105px; }
 .page .prepSection p:not(.sectionKicker) { max-width: 62ch; margin: 18px 0 0; color: var(--body); font-size: 16px; line-height: 1.65; }
 .page .inlineCta { display: inline-flex; align-items: center; gap: 10px; min-height: 44px; margin-top: 21px; color: var(--navy); font-size: 15px; font-weight: 700; text-decoration: underline; text-underline-offset: 5px; }
 .page .inlineCta :global(.icon) { width: 16px; height: 16px; }
@@ -254,8 +256,9 @@
 .page .faqGrid { display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 7fr); gap: clamp(40px, 8vw, 125px); }
 .page .faqHeading h2 { max-width: 12ch; }
 .page .faqHeading p:last-child { max-width: 35ch; margin: 18px 0 0; color: var(--body); font-size: 15px; line-height: 1.6; }
-.page .faqList { border-top: 2px solid var(--navy); }
-.page .faqList details { border-bottom: 1px solid var(--line); }
+.page .faqList { display: grid; gap: 10px; }
+.page .faqList details { padding: 0 20px; background: var(--surface); border-radius: var(--r-sm); box-shadow: var(--sh-1); transition: box-shadow .25s cubic-bezier(.2,.7,.2,1); }
+.page .faqList details[open] { box-shadow: var(--sh-2); }
 .page .faqList summary { display: flex; justify-content: space-between; align-items: center; gap: 20px; min-height: 72px; padding: 17px 0; color: var(--navy); cursor: pointer; list-style: none; font-size: 16px; font-weight: 690; line-height: 1.35; }
 .page .faqList summary::-webkit-details-marker { display: none; }
 .page .faqPlus { flex: none; color: #a4872e; font-size: 26px; font-weight: 400; line-height: 1; transition: transform .18s ease; }
@@ -324,8 +327,7 @@
   .page .catalogIntro .eyebrow { margin-bottom: 17px; }
   .page .catalogIntro p:last-child { margin-top: 16px; font-size: 16px; }
   .page .category { margin-top: 48px; padding-top: 34px; }
-  .page .categoryHeading { grid-template-columns: 30px 1fr; gap: 10px; }
-  .page .categoryNumber { margin-top: 7px; }
+
   .page .categoryHeading p { font-size: 15px; }
   .page .categoryImage { aspect-ratio: 4 / 3; }
   .page .serviceLink { min-height: 88px; }

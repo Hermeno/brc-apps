@@ -139,21 +139,19 @@
   margin: 0;
   padding: 0;
   list-style: none;
-  border-top: 1px solid #BED0D9;
-}
-.principleList li {
   display: grid;
-  grid-template-columns: 75px 1fr;
-  gap: 20px;
-  padding: 25px 0;
-  border-bottom: 1px solid #BED0D9;
+  gap: 12px;
 }
-.principleList li > span {
-  color: #9B7C24;
-  font-size: .82rem;
-  font-weight: 800;
-  letter-spacing: .08em;
+/* Same treatment as the home page's process steps: one surface per item,
+   lifted off the page, instead of items divided by rules. */
+.principleList li {
+  padding: 24px 26px;
+  background: var(--surface);
+  border-radius: var(--r-md);
+  box-shadow: var(--sh-1);
+  transition: transform .25s cubic-bezier(.2,.7,.2,1), box-shadow .25s cubic-bezier(.2,.7,.2,1);
 }
+.principleList li:hover { transform: translateY(-2px); box-shadow: var(--sh-2); }
 .principleList h3 { color: var(--navy); font-size: 1.34rem; letter-spacing: -.025em; }
 .principleList p {
   max-width: 440px;
@@ -265,7 +263,7 @@
     gap: 34px;
   }
   .coverageGrid { gap: 20px; }
-  .principleList li { grid-template-columns: 42px 1fr; gap: 12px; }
+  .principleList li { padding: 20px 20px; }
   .trustPhoto { min-height: 430px; }
   .trustCopy h2 { margin-bottom: 17px; }
   .ctaInner { align-items: flex-start; flex-direction: column; }

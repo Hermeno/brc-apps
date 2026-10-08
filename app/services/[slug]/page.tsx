@@ -7,6 +7,7 @@ import styles from '../services.module.css';
 import { SERVICES, getService, REQUEST_EXTRAS, type Service } from '@/lib/services';
 import SiteHeader from '@/components/site/site-header';
 import SiteFooter from '@/components/site/site-footer';
+import { HeroIntro, Reveal, Stagger } from '@/components/site/motion';
 import { Icon, IconSprite } from '@/components/site/icons';
 
 const BASE = 'https://verliks.com';
@@ -158,7 +159,7 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
               <span aria-current="page">{service.name}</span>
             </nav>
             <div className={styles.detailHeroGrid}>
-              <div className={styles.detailHeroCopy}>
+              <HeroIntro className={styles.detailHeroCopy}>
                 <p className={styles.eyebrow}>Cleaning services / {service.name}</p>
                 <h1 id="service-title" className={styles.detailTitle}>{service.name}</h1>
                 <p className={styles.heroLead}>{service.tagline}</p>
@@ -167,7 +168,7 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
                   <Link className={styles.secondaryLink} href="/services">All services <Icon name="arrow-right" /></Link>
                 </div>
                 <p className={styles.heroNote}>Free to send a request. Discuss scope and price before deciding.</p>
-              </div>
+              </HeroIntro>
               <figure className={styles.detailHeroMedia}>
                 <Image src={heroImage} alt="" fill priority sizes="(max-width: 800px) 100vw, 46vw" />
               </figure>
@@ -200,33 +201,33 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
 
               <article className={styles.article}>
                 <section id="overview" className={styles.articleSection} aria-labelledby="overview-title">
-                  <p className={styles.sectionKicker}>01 / The service</p>
+                  <p className={styles.sectionKicker}>The service</p>
                   <h2 id="overview-title">What it is</h2>
                   <p className={styles.introProse}>{service.whatIsIt}</p>
                 </section>
 
                 <section id="included" className={styles.articleSection} aria-labelledby="included-title">
-                  <p className={styles.sectionKicker}>02 / The work</p>
+                  <p className={styles.sectionKicker}>The work</p>
                   <h2 id="included-title">What is usually included</h2>
                   <p className={styles.sectionIntro}>The exact scope is agreed with the cleaner. Use this list as a starting point and put anything unusual in your request notes.</p>
-                  <ul className={styles.includedList}>
+                  <Stagger as="ul" className={styles.includedList}>
                     {service.included.map(item => <li key={item}>{item}</li>)}
-                  </ul>
+                  </Stagger>
                   {service.showExtras && (
                     <p className={styles.extrasNote}><strong>Optional work in the request form:</strong> {REQUEST_EXTRAS.map(extra => extra.label).join(', ')}. Confirm any extras with the cleaner.</p>
                   )}
                 </section>
 
                 <section id="when-to-book" className={styles.articleSection} aria-labelledby="when-title">
-                  <p className={styles.sectionKicker}>03 / The moment</p>
+                  <p className={styles.sectionKicker}>The moment</p>
                   <h2 id="when-title">When this service fits</h2>
-                  <ul className={styles.situationsList}>
+                  <Stagger as="ul" className={styles.situationsList}>
                     {service.rightForYou.map(item => <li key={item}><span aria-hidden="true">↗</span>{item}</li>)}
-                  </ul>
+                  </Stagger>
                 </section>
 
                 <section id="before-request" className={styles.prepSection} aria-labelledby="prep-title">
-                  <p className={styles.sectionKicker}>04 / Prepare your request</p>
+                  <p className={styles.sectionKicker}>Prepare your request</p>
                   <h2 id="prep-title">Worth having ready</h2>
                   <p>{service.beforeYouRequest}</p>
                   <Link href={requestUrl} className={styles.inlineCta}>Request {service.name} <Icon name="arrow-right" /></Link>
@@ -238,20 +239,19 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
 
         <section className={styles.processSection} aria-labelledby="process-title">
           <div className={styles.container}>
-            <div className={styles.processHeading}>
+            <Reveal className={styles.processHeading}>
               <p className={styles.sectionKicker}>From request to decision</p>
               <h2 id="process-title">How it works</h2>
               <p>You stay in control of whom you hire and the price you agree to.</p>
-            </div>
-            <ol className={styles.processList}>
-              {STEPS.map((step, index) => (
+            </Reveal>
+            <Stagger as="ol" className={styles.processList}>
+              {STEPS.map(step => (
                 <li key={step.title}>
-                  <span className={styles.stepNumber}>0{index + 1}</span>
                   <h3>{step.title}</h3>
                   <p>{step.body}</p>
                 </li>
               ))}
-            </ol>
+            </Stagger>
           </div>
         </section>
 
@@ -263,14 +263,14 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
                 <h2 id="faq-title">Questions about {service.name.toLowerCase()}</h2>
                 <p>Ask the cleaner about anything specific to your property before you accept.</p>
               </div>
-              <div className={styles.faqList}>
+              <Stagger className={styles.faqList}>
                 {[...service.faq, ...SHARED_FAQ].map(item => (
                   <details key={item.q}>
                     <summary>{item.q}<span className={styles.faqPlus} aria-hidden="true">+</span></summary>
                     <p>{item.a}</p>
                   </details>
                 ))}
-              </div>
+              </Stagger>
             </div>
           </div>
         </section>
@@ -285,7 +285,7 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
                 </div>
                 <Link href="/services" className={styles.secondaryLink}>View all services <Icon name="arrow-right" /></Link>
               </div>
-              <div className={styles.relatedGrid}>
+              <Stagger className={styles.relatedGrid}>
                 {related.map(item => (
                   <Link key={item.slug} href={`/services/${item.slug}`} className={styles.relatedCard}>
                     <span className={styles.relatedImage}>
@@ -295,7 +295,7 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
                     <span className={styles.relatedTagline}>{item.tagline}</span>
                   </Link>
                 ))}
-              </div>
+              </Stagger>
             </div>
           </section>
         )}

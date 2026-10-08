@@ -15,17 +15,14 @@ export const metadata: Metadata = {
 
 const principles = [
   {
-    number: '01',
     title: 'A clear beginning',
     body: 'Describe the space, choose a service and see a starting estimate. Your request is free, and you can discuss the final scope and price before accepting a cleaner.',
   },
   {
-    number: '02',
     title: 'Room to choose',
     body: 'The professionals on Verliks work independently. They choose which requests to take; you decide who feels right for your home and schedule.',
   },
   {
-    number: '03',
     title: 'The terms stay yours',
     body: 'You pay the cleaner directly under the terms you agree together. Verliks charges the professional a lead fee only when a client confirms them.',
   },
@@ -77,8 +74,7 @@ export default function AboutPage() {
             </div>
             <ol className={styles.principleList}>
               {principles.map(item => (
-                <li key={item.number}>
-                  <span>{item.number}</span>
+                <li key={item.title}>
                   <div><h3>{item.title}</h3><p>{item.body}</p></div>
                 </li>
               ))}

@@ -1,7 +1,11 @@
 .vsite{
-  --navy:#1E3A5F;
-  --navy-deep:#142D4B;
-  --navy-soft:#365878;
+  /* Brand blue sampled from the logo artwork: the dominant solid pixel in
+     public/images/brand/verliks-logo-1200.png is rgb(24,95,198). 6.02:1 on
+     white, so it carries interactive text and buttons but not body copy. */
+  --navy:#185FC6;
+  --navy-deep:#134A9A;        /* pressed / hover, 8.49:1 */
+  --navy-soft:#1A54AD;        /* eyebrows: small bold text needs 4.5:1, this is 7.21:1 */
+  --navy-ink:#0E3468;         /* large dark surfaces, same hue as the logo, 12.3:1 under white */
   --gold:#D4AF37;
   --gold-light:#E9D68B;
   --ink:#18314E;
@@ -11,6 +15,18 @@
   --cream:#F8F8F4;
   --mist:#EDF3F5;
   --white:#FFFFFF;
+  --surface:#FFFFFF;
+  --surface-soft:#F4F7FB;
+
+  /* One radius scale, used everywhere. */
+  --r-xs:6px; --r-sm:10px; --r-md:14px; --r-lg:18px;
+
+  /* Depth instead of hairlines. Tinted to the brand hue rather than black, and
+     built in layers so an edge reads as a surface lifting off the page. */
+  --sh-1:0 0 0 1px rgba(14,52,104,.05), 0 1px 2px -1px rgba(14,52,104,.07), 0 4px 10px -3px rgba(14,52,104,.05);
+  --sh-2:0 0 0 1px rgba(14,52,104,.07), 0 2px 5px -2px rgba(14,52,104,.10), 0 14px 30px -8px rgba(14,52,104,.13);
+  --sh-field:0 0 0 1px rgba(14,52,104,.09), 0 2px 6px -2px rgba(14,52,104,.07);
+  --sh-header:0 1px 0 rgba(14,52,104,.05), 0 6px 20px -8px rgba(14,52,104,.14);
   color:var(--ink);
   background:var(--white);
   font:400 16px/1.6 var(--font-body),system-ui,sans-serif;
@@ -30,20 +46,33 @@
 .vsite .eyebrow{color:var(--navy-soft);font-size:.74rem;font-weight:800;letter-spacing:.16em;line-height:1.4}
 .vsite .eyebrow-rule{display:flex;align-items:center;gap:12px}
 .vsite .eyebrow-rule::before{content:"";width:25px;height:2px;background:var(--gold)}
-.vsite .btn{min-height:50px;padding:12px 22px;display:inline-flex;align-items:center;justify-content:center;gap:18px;border:1px solid transparent;border-radius:5px;font-size:.94rem;font-weight:750;line-height:1.2;text-align:center;cursor:pointer;transition:background .18s ease,transform .18s ease,border-color .18s ease}
-.vsite .btn:hover{transform:translateY(-2px)}
+.vsite .btn{min-height:50px;padding:12px 20px 12px 22px;display:inline-flex;align-items:center;justify-content:center;gap:14px;border:1px solid transparent;border-radius:var(--r-sm);font-size:.94rem;font-weight:750;line-height:1.2;text-align:center;cursor:pointer;transition:background .2s cubic-bezier(.2,.7,.2,1),transform .2s cubic-bezier(.2,.7,.2,1),box-shadow .2s cubic-bezier(.2,.7,.2,1),border-color .2s ease}
+.vsite .btn svg{flex:none;transition:transform .25s cubic-bezier(.2,.7,.2,1)}
+.vsite .btn:hover{transform:translateY(-2px);box-shadow:var(--sh-2)}
+.vsite .btn:hover svg{transform:translateX(3px)}
+/* Pressed state reads as a physical push, and beats the hover lift. */
+.vsite .btn:active{transform:translateY(0) scale(.985);box-shadow:var(--sh-1);transition-duration:.08s}
 .vsite .btn-primary{background:var(--navy);color:#fff}
 .vsite .btn-primary:hover{background:var(--navy-deep)}
-.vsite .btn-gold{background:var(--gold);color:var(--navy-deep)}
+/* Deliberately --navy-ink, not --navy-deep: the brand blue is lighter than the
+   navy it replaced, and on gold it measured 4.04:1. This pairing is 5.85:1. */
+.vsite .btn-gold{background:var(--gold);color:var(--navy-ink)}
 .vsite .btn-gold:hover{background:var(--gold-light)}
 .vsite .btn-outline{border-color:var(--navy);color:var(--navy);background:transparent}
 .vsite .btn-outline:hover{background:var(--mist)}
-.vsite .text-link{display:inline-flex;align-items:center;gap:8px;color:var(--navy);font-size:.94rem;font-weight:750;line-height:1.2;border-bottom:1px solid var(--navy);padding:8px 0;white-space:nowrap}
-.vsite .text-link svg{transition:transform .18s ease}
-.vsite .text-link:hover svg{transform:translate(2px,-2px)}
+.vsite .text-link{position:relative;display:inline-flex;align-items:center;gap:8px;color:var(--navy);font-size:.94rem;font-weight:750;line-height:1.2;padding:8px 0;white-space:nowrap}
+/* The rule is drawn as a pseudo-element so it can wipe in from the left on
+   hover. A border-bottom cannot be animated from one side. */
+.vsite .text-link::after{content:"";position:absolute;left:0;right:0;bottom:0;height:1px;background:currentColor;transform:scaleX(1);transform-origin:left;transition:transform .3s cubic-bezier(.2,.7,.2,1),opacity .2s ease;opacity:.45}
+.vsite .text-link:hover::after{opacity:1}
+.vsite .text-link svg{transition:transform .25s cubic-bezier(.2,.7,.2,1)}
+.vsite .text-link:hover svg{transform:translate(3px,-3px)}
 
 /* Shared public navigation */
-.vsite .site-header{position:sticky;top:0;z-index:100;background:rgba(255,255,255,.97);border-bottom:1px solid var(--line);backdrop-filter:blur(14px)}
+.vsite .site-header{position:sticky;top:0;z-index:100;background:rgba(255,255,255,.97);backdrop-filter:blur(14px);transition:box-shadow .3s cubic-bezier(.2,.7,.2,1)}
+/* No hairline under the header: it earns an edge only once the page has moved,
+   which also tells the reader they have left the top. */
+.vsite .site-header[data-scrolled]{box-shadow:var(--sh-header)}
 .vsite .header-inner{height:76px;display:flex;align-items:center;gap:26px}
 .vsite .brand{display:inline-flex;align-items:center;gap:8px;min-height:44px;flex:none;color:var(--navy);font:700 1.52rem/1 var(--font-display),sans-serif;letter-spacing:-.06em}
 .vsite .brand-mark{width:159px;height:34px;object-fit:contain}
@@ -52,12 +81,39 @@
 .vsite .desktop-nav a:hover,.vsite .sign-in-link:hover{text-decoration:underline;text-underline-offset:6px}
 .vsite .header-actions{display:flex;align-items:center;gap:19px}
 .vsite .header-actions .btn{min-height:42px;padding:10px 16px;font-size:.82rem}
-.vsite .mobile-menu-toggle{display:none;align-items:center;justify-content:center;width:44px;height:44px;border:1px solid var(--line);border-radius:5px;background:white;color:var(--navy);cursor:pointer}
+.vsite .mobile-menu-toggle{display:none;align-items:center;justify-content:center;width:44px;height:44px;border:0;border-radius:var(--r-xs);background:var(--surface-soft);color:var(--navy);cursor:pointer;transition:background .18s ease,transform .18s ease}
 .vsite .mobile-menu{display:none}
 .vsite .mobile-menu[hidden]{display:none!important}
 .vsite .mobile-menu-inner{padding-block:20px 26px;display:grid;gap:0}
-.vsite .mobile-menu-inner>a:not(.btn){display:flex;align-items:center;min-height:52px;border-bottom:1px solid var(--line);font-size:1rem;font-weight:700}
+.vsite .mobile-menu-inner>a:not(.btn){display:flex;align-items:center;min-height:54px;font-size:1rem;font-weight:700}
 .vsite .mobile-menu-inner .btn{margin-top:22px}
+
+/* Services mega-panel.
+   The panel is a DOM child of the trigger's wrapper, so moving the pointer from
+   the button into the panel never fires mouseleave — that descendant
+   relationship is what fixes the panel vanishing mid-reach. It is positioned
+   against .site-header (sticky, so it is already a containing block), which
+   keeps a 4-column panel inside the viewport at any nav position.
+   180ms, origin at the top: it grows down out of the bar, fast enough not to
+   sit between the reader and a click. */
+.vsite .nav-services{position:static}
+.vsite .nav-services-trigger{display:inline-flex;align-items:center;gap:6px;padding:0;border:0;background:none;color:var(--navy);font-size:.88rem;font-weight:700;white-space:nowrap;cursor:pointer}
+.vsite .nav-services-trigger svg{transition:transform .18s cubic-bezier(.2,.7,.2,1)}
+.vsite .nav-services-trigger[aria-expanded="true"] svg{transform:rotate(180deg)}
+.vsite .nav-services-trigger:hover{text-decoration:underline;text-underline-offset:6px}
+.vsite .nav-services-panel{position:absolute;top:100%;left:0;right:0;z-index:99;padding:26px 0 22px;background:var(--surface);box-shadow:var(--sh-header);opacity:0;visibility:hidden;transform:translateY(-8px);transform-origin:top center;transition:opacity .18s cubic-bezier(.2,.7,.2,1),transform .18s cubic-bezier(.2,.7,.2,1),visibility .18s}
+.vsite .nav-services-panel[data-open]{opacity:1;visibility:visible;transform:translateY(0)}
+.vsite .nav-services-grid{width:min(100% - 48px,1220px);margin-inline:auto;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:26px}
+.vsite .nav-services-group{margin-bottom:11px;color:var(--navy-soft);font-size:.68rem;font-weight:800;letter-spacing:.13em;text-transform:uppercase}
+.vsite .nav-services-grid ul{list-style:none;margin:0;padding:0;display:grid;gap:3px}
+.vsite .nav-services-grid a{display:block;padding:8px 11px;border-radius:var(--r-xs);transition:background .15s ease,transform .15s cubic-bezier(.2,.7,.2,1)}
+.vsite .nav-services-grid a:hover{background:var(--surface-soft);transform:translateX(3px)}
+.vsite .nav-services-grid a span{display:block;color:var(--navy);font-size:.87rem;font-weight:700;line-height:1.3}
+.vsite .nav-services-grid a small{display:block;margin-top:2px;color:var(--muted);font-size:.74rem;line-height:1.35}
+.vsite .nav-services-all{display:block;width:min(100% - 48px,1220px);margin:20px auto 0;padding:13px 15px;background:var(--surface-soft);border-radius:var(--r-sm);color:var(--navy);font-size:.84rem;font-weight:750;text-align:center;transition:background .15s ease}
+.vsite .nav-services-all:hover{background:#E9EFF8}
+.vsite .mobile-services{display:flex;flex-wrap:wrap;gap:8px;padding-block:4px 16px}
+.vsite .mobile-services a{display:inline-flex;align-items:center;min-height:38px;padding:8px 13px;background:var(--surface-soft);border-radius:var(--r-sm);color:var(--navy);font-size:.82rem;font-weight:700}
 
 /* Hero */
 .vsite .home-hero{position:relative;min-height:650px;background:var(--cream);overflow:hidden}
@@ -68,25 +124,28 @@
 .vsite .home-hero h1{max-width:680px;margin:22px 0 20px;color:var(--navy);font-size:clamp(3rem,4.5vw,5.15rem);letter-spacing:-.055em;line-height:.99}
 .vsite .home-hero h1 em{font-style:normal;color:#457D8A}
 .vsite .hero-lede{max-width:520px;color:var(--body);font-size:1.08rem;line-height:1.58}
-.vsite .home-search{margin-top:30px;padding:6px;max-width:610px;display:flex;align-items:stretch;gap:5px;background:#fff;border:1px solid #CEDAE0;box-shadow:0 18px 40px rgba(30,58,95,.11);border-radius:7px}
+.vsite .home-search{margin-top:30px;padding:7px;max-width:610px;display:flex;align-items:stretch;gap:6px;background:var(--surface);border:0;border-radius:var(--r-md);box-shadow:var(--sh-field),0 20px 44px -14px rgba(14,52,104,.20);transition:box-shadow .3s cubic-bezier(.2,.7,.2,1)}
+.vsite .home-search:focus-within{box-shadow:0 0 0 1px rgba(24,95,198,.35),0 24px 52px -14px rgba(14,52,104,.24)}
 .vsite .home-search-fields{display:grid;grid-template-columns:1.5fr .8fr;min-width:0;flex:1}
 .vsite .search-field{min-width:0;padding:8px 13px 7px;display:flex;flex-direction:column;justify-content:center}
-.vsite .search-field+.search-field{border-left:1px solid var(--line)}
+
 .vsite .search-field span{color:var(--navy);font-size:.68rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase}
 .vsite .search-field select,.vsite .search-field input{width:100%;min-width:0;padding:3px 0 0;border:0;outline:0;background:transparent;color:var(--ink);font-size:.87rem;font-weight:600}
 .vsite .search-field select{cursor:pointer}
 .vsite .search-field input::placeholder{color:#75899B}
-.vsite .search-field:focus-within{outline:2px solid var(--gold);outline-offset:-2px;border-radius:3px}
+.vsite .search-field:focus-within{outline:2px solid var(--navy);outline-offset:-2px;border-radius:var(--r-xs)}
 .vsite .search-submit{min-height:60px;padding-inline:18px;white-space:nowrap}
 .vsite .search-note{display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin-top:14px;color:var(--body);font-size:.76rem;font-weight:600}
 .vsite .search-note svg{color:#4F857B}
 .vsite .hero-visual-caption{position:absolute;z-index:3;right:0;bottom:0;display:flex;align-items:flex-end;justify-content:space-between;gap:26px;width:min(100%,410px);padding:19px 25px;background:var(--navy);color:#fff;font-size:.85rem;font-weight:600;line-height:1.4}
 .vsite .hero-visual-caption span:first-child{color:var(--gold-light);font-size:.72rem;font-weight:800;letter-spacing:.14em;white-space:nowrap}
-.vsite .benefit-ribbon{background:#E7EFF2;border-bottom:1px solid var(--line)}
-.vsite .benefit-ribbon-inner{display:grid;grid-template-columns:repeat(3,1fr);gap:30px;padding-block:22px}
-.vsite .benefit-ribbon p{display:flex;align-items:center;gap:14px;color:var(--navy);font-size:.85rem;font-weight:750}
-.vsite .benefit-ribbon p+p{border-left:1px solid #BCCED7;padding-left:32px}
-.vsite .benefit-ribbon span{color:#9B7C24;font-size:.72rem;font-weight:800;letter-spacing:.08em}
+.vsite .benefit-ribbon{background:var(--surface-soft)}
+.vsite .benefit-ribbon-inner{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;padding-block:26px}
+/* Was three columns split by vertical rules. Now three surfaces of one colour,
+   lifted off the band — the grouping comes from the gap, not from a line. */
+.vsite .benefit-ribbon p{display:flex;align-items:center;gap:13px;padding:18px 20px;background:var(--surface);border-radius:var(--r-sm);box-shadow:var(--sh-1);color:var(--navy);font-size:.9rem;font-weight:750;transition:transform .25s cubic-bezier(.2,.7,.2,1),box-shadow .25s cubic-bezier(.2,.7,.2,1)}
+.vsite .benefit-ribbon p:hover{transform:translateY(-2px);box-shadow:var(--sh-2)}
+.vsite .benefit-ribbon p svg{flex:none;color:var(--navy)}
 
 /* Home sections */
 .vsite .home-section{padding-block:clamp(70px,8vw,112px)}
@@ -94,44 +153,50 @@
 .vsite h2{color:var(--navy);font-size:clamp(2.25rem,3.4vw,3.8rem);line-height:1.05}
 .vsite .section-intro h2{margin-top:12px;max-width:650px}
 .vsite .featured-grid{display:grid;grid-template-columns:1.1fr .9fr;grid-template-rows:repeat(2,285px);gap:16px}
-.vsite .featured-service{position:relative;min-width:0;overflow:hidden;border-radius:6px;background:var(--navy)}
+.vsite .featured-service{position:relative;min-width:0;overflow:hidden;border-radius:var(--r-md);background:var(--navy-ink);box-shadow:var(--sh-1);transition:transform .35s cubic-bezier(.2,.7,.2,1),box-shadow .35s cubic-bezier(.2,.7,.2,1)}
+.vsite .featured-service:hover{transform:translateY(-4px);box-shadow:var(--sh-2)}
 .vsite .feature-tall{grid-row:span 2}
 .vsite .featured-photo{position:absolute;inset:0}
 .vsite .featured-photo img{object-fit:cover;transition:transform .45s ease}
-.vsite .featured-service:hover .featured-photo img{transform:scale(1.04)}
+.vsite .featured-service:hover .featured-photo img{transform:scale(1.05)}
 .vsite .featured-service::after{content:"";position:absolute;inset:22% 0 0;background:linear-gradient(transparent,rgba(12,34,56,.82));pointer-events:none}
-.vsite .featured-info{position:absolute;z-index:1;left:0;right:0;bottom:0;display:grid;grid-template-columns:35px 1fr 26px;gap:12px;align-items:end;padding:25px;color:white}
-.vsite .featured-number{align-self:start;margin-top:5px;color:var(--gold-light);font-size:.78rem;font-weight:800}
+.vsite .featured-info{position:absolute;z-index:1;left:0;right:0;bottom:0;display:grid;grid-template-columns:1fr 26px;gap:16px;align-items:end;padding:25px;color:white}
 .vsite .featured-info h3{color:white;font-size:clamp(1.45rem,2.1vw,2.3rem)}
 .vsite .featured-info p{margin-top:5px;color:#E7EFF4;font-size:.88rem}
-.vsite .featured-info>svg{align-self:start}
-.vsite .more-services{margin-top:34px;padding-top:18px;border-top:1px solid var(--line);display:grid;grid-template-columns:210px 1fr;gap:20px}
+.vsite .featured-info>svg{align-self:start;transition:transform .3s cubic-bezier(.2,.7,.2,1)}
+.vsite .featured-service:hover .featured-info>svg{transform:translate(3px,-3px)}
+.vsite .more-services{margin-top:34px;display:grid;grid-template-columns:210px 1fr;gap:20px;align-items:start}
 .vsite .more-label{color:var(--muted);font-size:.73rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase}
-.vsite .more-services>div{display:flex;flex-wrap:wrap;gap:8px 24px}
-.vsite .more-services a{display:inline-flex;align-items:center;gap:5px;min-height:30px;color:var(--navy);font-size:.84rem;font-weight:700}
-.vsite .more-services a:hover{text-decoration:underline;text-underline-offset:4px}
+.vsite .more-services>div{display:flex;flex-wrap:wrap;gap:9px}
+/* Each one is its own surface now, so the row needs no rule above it to read
+   as a group, and the hit area is a shape rather than a line of text. */
+.vsite .more-services a{display:inline-flex;align-items:center;gap:7px;min-height:42px;padding:9px 15px;background:var(--surface);border-radius:var(--r-sm);box-shadow:var(--sh-1);color:var(--navy);font-size:.86rem;font-weight:700;transition:transform .2s cubic-bezier(.2,.7,.2,1),box-shadow .2s cubic-bezier(.2,.7,.2,1)}
+.vsite .more-services a svg{flex:none;transition:transform .25s cubic-bezier(.2,.7,.2,1)}
+.vsite .more-services a:hover{transform:translateY(-2px);box-shadow:var(--sh-2)}
+.vsite .more-services a:hover svg{transform:translate(2px,-2px)}
 .vsite .process-section{background:var(--cream)}
 .vsite .process-grid{display:grid;grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr);gap:clamp(40px,8vw,125px)}
 .vsite .process-intro h2{margin:15px 0 18px;max-width:450px}
 .vsite .process-intro>p:not(.eyebrow){max-width:400px;color:var(--body);font-size:1rem}
 .vsite .process-intro .text-link{margin-top:24px}
-.vsite .process-steps{list-style:none;margin:0;padding:0;border-top:1px solid #BED0D9}
-.vsite .process-steps li{display:grid;grid-template-columns:75px 1fr;gap:20px;padding:25px 0;border-bottom:1px solid #BED0D9}
-.vsite .process-steps li>span{color:#9B7C24;font-size:.82rem;font-weight:800;letter-spacing:.08em}
+.vsite .process-steps{list-style:none;margin:0;padding:0;display:grid;gap:12px}
+/* Three stacked rules became three surfaces. Order is carried by position and
+   by the heading, which is what the reader was using anyway. */
+.vsite .process-steps li{padding:24px 26px;background:var(--surface);border-radius:var(--r-md);box-shadow:var(--sh-1);transition:transform .25s cubic-bezier(.2,.7,.2,1),box-shadow .25s cubic-bezier(.2,.7,.2,1)}
+.vsite .process-steps li:hover{transform:translateY(-2px);box-shadow:var(--sh-2)}
 .vsite .process-steps h3{color:var(--navy);font-size:1.34rem;letter-spacing:-.025em}
 .vsite .process-steps p{margin-top:7px;max-width:440px;color:var(--body);font-size:.94rem}
 .vsite .trust-grid{display:grid;grid-template-columns:minmax(0,.95fr) minmax(0,1.05fr);align-items:center;gap:clamp(45px,8vw,120px)}
-.vsite .trust-image{position:relative;min-height:570px;background:var(--mist);border-radius:5px;overflow:hidden}
+.vsite .trust-image{position:relative;min-height:570px;background:var(--mist);border-radius:var(--r-md);overflow:hidden;box-shadow:var(--sh-1)}
 .vsite .trust-image img{object-fit:cover;object-position:50% 31%}
 .vsite .trust-copy h2{max-width:520px;margin:14px 0 22px}
 .vsite .trust-copy>p:not(.eyebrow){max-width:530px;color:var(--body)}
-.vsite .trust-copy ul{list-style:none;margin:24px 0;padding:0;border-block:1px solid var(--line)}
-.vsite .trust-copy li{display:flex;align-items:center;gap:13px;min-height:50px;color:var(--navy);font-size:.94rem;font-weight:700}
-.vsite .trust-copy li+li{border-top:1px solid var(--line)}
-.vsite .trust-copy li svg{color:#568679;flex:none}
+.vsite .trust-copy ul{list-style:none;margin:24px 0;padding:0;display:grid;gap:10px}
+.vsite .trust-copy li{display:flex;align-items:center;gap:13px;min-height:54px;padding:14px 18px;background:var(--surface-soft);border-radius:var(--r-sm);color:var(--navy);font-size:.94rem;font-weight:700}
+.vsite .trust-copy li svg{flex:none;color:var(--navy)}
 .vsite .trust-copy .trust-note{margin-top:12px;font-size:.78rem}
 .vsite .trust-copy .text-link{margin-top:22px}
-.vsite .pro-section{background:var(--navy-deep);color:white}
+.vsite .pro-section{background:var(--navy-ink);color:white}
 .vsite .pro-grid{display:grid;grid-template-columns:1fr .88fr;min-height:520px}
 .vsite .pro-copy{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;padding:64px 55px 64px 0}
 .vsite .pro-copy .eyebrow{color:var(--gold-light)}
@@ -147,20 +212,21 @@
 .vsite .area-grid .text-link{margin-top:23px}
 .vsite .faq-grid{display:grid;grid-template-columns:.8fr 1.2fr;gap:90px}
 .vsite .faq-grid h2{margin-top:14px}
-.vsite .faq-list{border-top:1px solid var(--line)}
-.vsite .faq-list details{border-bottom:1px solid var(--line);padding:0 0 0 1px}
+.vsite .faq-list{display:grid;gap:10px}
+.vsite .faq-list details{padding:0 20px;background:var(--surface);border-radius:var(--r-sm);box-shadow:var(--sh-1);transition:box-shadow .25s cubic-bezier(.2,.7,.2,1)}
+.vsite .faq-list details[open]{box-shadow:var(--sh-2)}
 .vsite .faq-list summary{position:relative;display:block;list-style:none;padding:19px 32px 19px 0;color:var(--navy);font-size:1rem;font-weight:750;cursor:pointer}
 .vsite .faq-list summary::-webkit-details-marker{display:none}
-.vsite .faq-list summary::after{content:"+";position:absolute;right:2px;top:13px;color:#8B6F24;font-size:1.5rem;font-weight:400}
-.vsite .faq-list details[open] summary::after{content:"−"}
+.vsite .faq-list summary::after{content:"+";position:absolute;right:2px;top:13px;color:var(--navy);font-size:1.5rem;font-weight:400;transition:transform .25s cubic-bezier(.2,.7,.2,1)}
+.vsite .faq-list details[open] summary::after{content:"+";transform:rotate(45deg)}
 .vsite .faq-list details p{max-width:610px;padding:0 38px 20px 0;color:var(--body);font-size:.92rem}
-.vsite .final-cta{background:#E7EFF2;border-top:1px solid #CBDCE3}
+.vsite .final-cta{background:var(--surface-soft)}
 .vsite .final-cta-inner{display:flex;align-items:center;justify-content:space-between;gap:35px;padding-block:50px}
 .vsite .final-cta h2{margin-top:10px;font-size:clamp(2rem,3vw,3rem)}
 
 /* Light footer across the public site */
-.vsite .site-footer{background:#F9FAF8;border-top:1px solid var(--line);color:var(--navy)}
-.vsite .footer-top{display:flex;justify-content:space-between;align-items:flex-start;gap:35px;padding-block:55px 44px;border-bottom:1px solid var(--line)}
+.vsite .site-footer{background:var(--surface-soft);color:var(--navy)}
+.vsite .footer-top{display:flex;justify-content:space-between;align-items:flex-start;gap:35px;padding-block:55px 44px}
 .vsite .footer-intro{max-width:320px}
 .vsite .footer-intro p{margin-top:19px;color:var(--body);font-size:.9rem}
 .vsite .footer-links{display:grid;grid-template-columns:repeat(3,minmax(125px,1fr));gap:34px;width:min(100%,620px)}
@@ -171,6 +237,40 @@
 .vsite .footer-links a:hover{text-decoration:underline;text-underline-offset:4px}
 .vsite .footer-bottom{display:flex;justify-content:space-between;gap:25px;align-items:center;padding-block:22px;color:var(--muted);font-size:.75rem}
 .vsite .footer-bottom a{color:var(--navy)}
+
+/* ── Motion ────────────────────────────────────────────────────────────────
+   Entrances follow the Jakub Krehel recipe from design-motion-principles:
+   opacity, a short translateY and a touch of blur, so an element materialises
+   into focus rather than just fading. Easing is a custom curve — the built-in
+   `ease` keywords are too weak to read as intentional. Each element animates
+   once and stays put.
+
+   The per-child delay lives here rather than in a wrapper component, keyed off
+   nth-child, so no element is inserted into the markup and sibling selectors
+   keep working. The container carries data-stagger and gains data-in when it
+   scrolls into view. */
+.vsite [data-stagger]>*{opacity:0;transform:translateY(14px);filter:blur(4px)}
+.vsite [data-stagger][data-in]>*{opacity:1;transform:none;filter:blur(0px);transition:opacity .6s cubic-bezier(.16,1,.3,1),transform .6s cubic-bezier(.16,1,.3,1),filter .6s cubic-bezier(.16,1,.3,1)}
+.vsite [data-stagger][data-in]>*:nth-child(2){transition-delay:70ms}
+.vsite [data-stagger][data-in]>*:nth-child(3){transition-delay:140ms}
+.vsite [data-stagger][data-in]>*:nth-child(4){transition-delay:210ms}
+.vsite [data-stagger][data-in]>*:nth-child(5){transition-delay:280ms}
+.vsite [data-stagger][data-in]>*:nth-child(6){transition-delay:350ms}
+.vsite [data-stagger][data-in]>*:nth-child(n+7){transition-delay:420ms}
+
+/* data-stagger is server-rendered, so without JavaScript data-in would never
+   arrive and the content would stay invisible. Both guards reveal it: the media
+   query for browsers that support it, the <noscript> block in app/layout.tsx
+   for the rest. */
+@media (scripting: none){
+  .vsite [data-stagger]>*{opacity:1;transform:none;filter:none}
+}
+
+/* Hover on a whole card lifts the photograph with it. */
+.vsite .trust-image img,.vsite .pro-image img{transition:transform .6s cubic-bezier(.2,.7,.2,1)}
+.vsite .faq-list summary{transition:color .18s ease}
+.vsite .faq-list summary:hover{color:var(--navy-deep)}
+.vsite .desktop-nav a,.vsite .sign-in-link{transition:color .18s ease}
 
 @media(max-width:1100px){
   .vsite .desktop-nav{gap:17px}
@@ -183,9 +283,10 @@
 }
 @media(max-width:900px){
   .vsite .desktop-nav,.vsite .header-actions .sign-in-link{display:none}
+  .vsite .nav-services-panel{display:none}
   .vsite .header-actions{margin-left:auto}
   .vsite .mobile-menu-toggle{display:inline-flex}
-  .vsite .mobile-menu:not([hidden]){display:block;border-top:1px solid var(--line);background:#fff}
+  .vsite .mobile-menu:not([hidden]){display:block;background:#fff;box-shadow:var(--sh-header)}
   .vsite .home-hero::after{background:linear-gradient(90deg,rgba(248,248,244,.96),rgba(248,248,244,.8) 57%,rgba(248,248,244,.14))}
   .vsite .home-hero-copy{padding:63px 0 82px}
   .vsite .home-hero h1{max-width:720px;font-size:clamp(3.1rem,7.2vw,5rem)}
@@ -210,9 +311,8 @@
   .vsite .home-search{margin-top:25px}
   .vsite .pro-image{margin-inline:-18px;min-height:340px}
   .vsite .hero-visual-caption{width:min(100%,325px);padding:14px 18px;font-size:.72rem}
-  .vsite .benefit-ribbon-inner{grid-template-columns:1fr;gap:0;padding-block:14px}
-  .vsite .benefit-ribbon p{min-height:40px}
-  .vsite .benefit-ribbon p+p{border-left:0;border-top:1px solid #C9D9E0;padding-left:0}
+  .vsite .benefit-ribbon-inner{grid-template-columns:1fr;gap:10px;padding-block:20px}
+  .vsite .benefit-ribbon p{min-height:0;padding:15px 17px}
   .vsite .home-section{padding-block:65px}
   .vsite .section-intro{align-items:flex-start;flex-direction:column;gap:12px}
   .vsite h2{font-size:clamp(2.1rem,8vw,3rem)}
@@ -233,15 +333,23 @@
   .vsite .home-hero h1{font-size:clamp(2.55rem,11vw,3.35rem)}
   .vsite .home-search-fields{grid-template-columns:1fr}
   .vsite .search-field{min-height:56px}
-  .vsite .search-field+.search-field{border-left:0;border-top:1px solid var(--line)}
+
   .vsite .search-note{font-size:.72rem}
   .vsite .home-hero-copy{padding:42px 0 275px}
   .vsite .hero-visual-caption{font-size:.68rem}
   .vsite .featured-service,.vsite .feature-tall{min-height:285px}
-  .vsite .featured-info{grid-template-columns:25px 1fr 20px;gap:8px}
+  .vsite .featured-info{grid-template-columns:1fr 20px;gap:12px}
   .vsite .featured-info h3{font-size:1.5rem}
   .vsite .process-steps li{grid-template-columns:42px 1fr;gap:12px}
   .vsite .footer-links{grid-template-columns:repeat(2,1fr);row-gap:28px}
   .vsite .footer-bottom{align-items:flex-start;flex-direction:column;gap:7px}
 }
-@media(prefers-reduced-motion:reduce){.vsite *,.vsite *::before,.vsite *::after{scroll-behavior:auto!important;animation-duration:.01ms!important;transition-duration:.01ms!important}}
+@media(prefers-reduced-motion:reduce){
+  .vsite *,.vsite *::before,.vsite *::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+  /* Removed, not shortened: the end state is the only state. */
+  /* translateY(0) rather than none: the minifier treats `transform:none` here
+     as redundant and drops it, which would leave the content offset by 14px. */
+  .vsite [data-stagger]>*{opacity:1!important;transform:translateY(0)!important;filter:none!important}
+  .vsite .btn:hover,.vsite .benefit-ribbon p:hover,.vsite .process-steps li:hover,
+  .vsite .more-services a:hover,.vsite .featured-service:hover{transform:none!important}
+}

@@ -61,7 +61,7 @@ function WaveTimer({ lead }: { lead: Lead }) {
 
   const label = isWave2 ? 'Wave 2 · Open' : `Wave ${dist.wave}`;
   const chipBg = urgent ? '#FEF2F2' : '#F8FAFC';
-  const chipColor = urgent ? '#B91C1C' : '#1E3A5F';
+  const chipColor = urgent ? '#B91C1C' : '#185FC6';
 
   return (
     <HStack gap={2}>
@@ -166,7 +166,7 @@ export default function MarketplacePage() {
                 textTransform="uppercase" letterSpacing="0.06em" fontFamily="heading" mb={1}>
                 Instant Book
               </Text>
-              <Text fontSize="2xl" fontWeight="black" color="#1E3A5F" fontFamily="heading" letterSpacing="-0.03em">
+              <Text fontSize="2xl" fontWeight="black" color="#185FC6" fontFamily="heading" letterSpacing="-0.03em">
                 {w0Count}
               </Text>
             </Box>
@@ -176,7 +176,7 @@ export default function MarketplacePage() {
                 textTransform="uppercase" letterSpacing="0.06em" fontFamily="heading" mb={1}>
                 Wave 2 Competitive
               </Text>
-              <Text fontSize="2xl" fontWeight="black" color="#1E3A5F" fontFamily="heading" letterSpacing="-0.03em">
+              <Text fontSize="2xl" fontWeight="black" color="#185FC6" fontFamily="heading" letterSpacing="-0.03em">
                 {w2Count}
               </Text>
             </Box>
@@ -204,7 +204,7 @@ export default function MarketplacePage() {
               {leads.map((lead, i) => {
                 const dist  = lead.distributions?.[0];
                 const wave  = dist?.wave ?? 0;
-                const accentColor = wave === 0 ? '#1E3A5F' : '#7C3AED';
+                const accentColor = wave === 0 ? '#185FC6' : '#7C3AED';
 
                 return (
                   <Box
@@ -263,7 +263,7 @@ export default function MarketplacePage() {
                                     padding: '2px 6px',
                                     fontSize: '9.5px',
                                     fontWeight: 700,
-                                    color: '#1E3A5F',
+                                    color: '#185FC6',
                                   }}>
                                   🔄 {locale === 'pt' ? FREQUENCY_OPTIONS.find(f => f.id === lead.frequency)?.label : FREQUENCY_OPTIONS.find(f => f.id === lead.frequency)?.labelEn}
                                 </Text>
@@ -288,8 +288,8 @@ export default function MarketplacePage() {
                             {lead.estimatedMinPrice && (
                               <HStack gap={3}>
                                 <HStack gap={1.5}>
-                                  <Icon as={LucideBanknote} w={4} h={4} color="#1E3A5F" />
-                                  <Text fontWeight="black" color="#1E3A5F" fontSize="sm">
+                                  <Icon as={LucideBanknote} w={4} h={4} color="#185FC6" />
+                                  <Text fontWeight="black" color="#185FC6" fontSize="sm">
                                     ${lead.estimatedMinPrice}–${lead.estimatedMaxPrice}
                                   </Text>
                                 </HStack>
@@ -304,7 +304,7 @@ export default function MarketplacePage() {
                             {lead.leadPrice && (
                               <HStack gap={1.5}>
                                 <Text fontSize="xs" color="slate.500">Lead fee:</Text>
-                                <Text fontWeight="black" color="#1E3A5F" fontSize="sm">
+                                <Text fontWeight="black" color="#185FC6" fontSize="sm">
                                   ${lead.leadPrice}
                                 </Text>
                               </HStack>
@@ -326,7 +326,7 @@ export default function MarketplacePage() {
                         {/* CTA */}
                         <Button
                           bg="gold.500"
-                          color="#1E3A5F" px={5} py={7} h="auto"
+                          color="#185FC6" px={5} py={7} h="auto"
                           borderRadius="4px" fontWeight="bold" fontSize="sm"
                           flexShrink={0} flexDirection="column" gap={1.5}
                           _hover={{ bg: 'gold.600' }}

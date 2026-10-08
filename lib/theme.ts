@@ -4,16 +4,20 @@ const config = defineConfig({
   theme: {
     tokens: {
       colors: {
-        /* ── Navy/Teal — new brand palette ── */
+        /* ── Brand blue, sampled from the logo artwork ──
+           500 is rgb(24,95,198), the dominant solid pixel in
+           public/images/brand/verliks-logo-1200.png. 50-400 are tints of that
+           same hue: the ramp used to run through teal, which clashed against a
+           blue 500 wherever both steps appeared in one component. */
         brand: {
-          50:  { value: "#E9F3F5" },
-          100: { value: "#CEE8EB" },
-          200: { value: "#A7C9C7" },
-          300: { value: "#7AADB0" },
-          400: { value: "#4D8895" },
-          500: { value: "#1E3A5F" },
-          600: { value: "#182F4D" },
-          700: { value: "#12243B" },
+          50:  { value: "#EEF4FD" },
+          100: { value: "#DCE8FA" },
+          200: { value: "#B9D1F4" },
+          300: { value: "#8CB2EB" },
+          400: { value: "#4B84DB" },
+          500: { value: "#185FC6" },
+          600: { value: "#134A9A" },
+          700: { value: "#0E3468" },
           800: { value: "#0C1929" },
           900: { value: "#060D14" },
         },

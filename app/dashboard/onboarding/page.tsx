@@ -48,7 +48,7 @@ function StepDots({ current, steps }: { current: number; steps: string[] }) {
           <Box
             w={i === current ? '24px' : '8px'} h="8px"
             borderRadius="full"
-            bg={i < current ? '#059669' : i === current ? '#1E3A5F' : '#CBD5E1'}
+            bg={i < current ? '#059669' : i === current ? '#185FC6' : '#CBD5E1'}
             transition="all 0.3s"
           />
           {i < steps.length - 1 && (
@@ -241,7 +241,7 @@ export default function OnboardingPage() {
               {step === 0 && (
                 <VStack gap={6} align="stretch">
                   <Box>
-                    <Text fontSize="xs" fontWeight="700" color="#1E3A5F" textTransform="uppercase" letterSpacing="0.12em" mb={2}>
+                    <Text fontSize="xs" fontWeight="700" color="#185FC6" textTransform="uppercase" letterSpacing="0.12em" mb={2}>
                       {t('onboarding.stepOf', { n: '1', total: String(stepNames.length), name: stepNames[0] ?? '' })}
                     </Text>
                     <Text fontSize="26px" fontWeight="black" color="slate.900" lineHeight="1.2" mb={1}>
@@ -259,14 +259,14 @@ export default function OnboardingPage() {
                         <Box
                           key={s.id} as="button" onClick={() => toggleService(s.id)}
                           bg={selected ? '#EBF5FE' : 'white'}
-                          border="2px solid" borderColor={selected ? '#1E3A5F' : '#E3E8EE'}
+                          border="2px solid" borderColor={selected ? '#185FC6' : '#E3E8EE'}
                           p={4} textAlign="left" cursor="pointer" transition="all 0.15s"
                           position="relative"
-                          _hover={{ borderColor: selected ? '#1E3A5F' : '#A2D3F9', bg: selected ? '#EBF5FE' : '#F8FAFC' }}
+                          _hover={{ borderColor: selected ? '#185FC6' : '#A2D3F9', bg: selected ? '#EBF5FE' : '#F8FAFC' }}
                         >
                           {selected && (
                             <Box position="absolute" top={2} right={2}
-                              w="18px" h="18px" bg="#1E3A5F" borderRadius="full"
+                              w="18px" h="18px" bg="#185FC6" borderRadius="full"
                               display="flex" alignItems="center" justifyContent="center">
                               <Icon as={LucideCheck} w={2.5} h={2.5} color="white" />
                             </Box>
@@ -292,7 +292,7 @@ export default function OnboardingPage() {
               {step === 1 && (
                 <VStack gap={6} align="stretch">
                   <Box>
-                    <Text fontSize="xs" fontWeight="700" color="#1E3A5F" textTransform="uppercase" letterSpacing="0.12em" mb={2}>
+                    <Text fontSize="xs" fontWeight="700" color="#185FC6" textTransform="uppercase" letterSpacing="0.12em" mb={2}>
                       {t('onboarding.stepOf', { n: '2', total: String(stepNames.length), name: stepNames[1] ?? '' })}
                     </Text>
                     <Text fontSize="26px" fontWeight="black" color="slate.900" lineHeight="1.2" mb={1}>
@@ -317,7 +317,7 @@ export default function OnboardingPage() {
                         )}
                       </VStack>
                       <Button
-                        size="sm" bg={locationLabel ? '#ECFDF5' : '#1E3A5F'}
+                        size="sm" bg={locationLabel ? '#ECFDF5' : '#185FC6'}
                         color={locationLabel ? '#059669' : 'white'}
                         border={locationLabel ? '1px solid #A7F3D0' : 'none'}
                         borderRadius="4px" fontWeight="bold" flexShrink={0}
@@ -357,7 +357,7 @@ export default function OnboardingPage() {
                         <Text fontSize="xs" color="slate.400">{t('onboarding.travelHint')}</Text>
                       </VStack>
                       <Box bg="#EBF5FE" px={3} py={1} borderRadius="4px">
-                        <Text fontWeight="black" fontSize="lg" color="#1E3A5F">{serviceRadiusMiles} mi</Text>
+                        <Text fontWeight="black" fontSize="lg" color="#185FC6">{serviceRadiusMiles} mi</Text>
                       </Box>
                     </Flex>
                     <HStack gap={2} flexWrap="wrap">
@@ -369,14 +369,14 @@ export default function OnboardingPage() {
                             key={r} as="button"
                             onClick={() => !locked && setRadius(r)}
                             px={3} py={1.5}
-                            bg={active ? '#1E3A5F' : '#F8FAFC'}
+                            bg={active ? '#185FC6' : '#F8FAFC'}
                             color={active ? 'white' : locked ? '#94A3B8' : '#64748B'}
-                            border="1px solid" borderColor={active ? '#1E3A5F' : '#E3E8EE'}
+                            border="1px solid" borderColor={active ? '#185FC6' : '#E3E8EE'}
                             borderRadius="4px" fontSize="sm" fontWeight="bold"
                             cursor={locked ? 'not-allowed' : 'pointer'}
                             opacity={locked ? 0.4 : 1}
                             transition="all 0.12s"
-                            _hover={locked ? {} : { borderColor: '#1E3A5F' }}>
+                            _hover={locked ? {} : { borderColor: '#185FC6' }}>
                             {r} mi{locked ? ' 🔒' : ''}
                           </Box>
                         );
@@ -390,7 +390,7 @@ export default function OnboardingPage() {
               {step === 2 && (
                 <VStack gap={6} align="stretch">
                   <Box>
-                    <Text fontSize="xs" fontWeight="700" color="#1E3A5F" textTransform="uppercase" letterSpacing="0.12em" mb={2}>
+                    <Text fontSize="xs" fontWeight="700" color="#185FC6" textTransform="uppercase" letterSpacing="0.12em" mb={2}>
                       {t('onboarding.stepOf', { n: '3', total: String(stepNames.length), name: stepNames[2] ?? '' })}
                     </Text>
                     <Text fontSize="26px" fontWeight="black" color="slate.900" lineHeight="1.2" mb={1}>
@@ -488,15 +488,15 @@ export default function OnboardingPage() {
                         <Text fontSize="xs" color="slate.700" fontWeight="semibold">{t('onboarding.zipPrefix')}{zipCode}</Text>
                       ) : null}
                       <HStack gap={1.5} mt={2}>
-                        <Icon as={LucideZap} w={3} h={3} color="#1E3A5F" />
-                        <Text fontSize="xs" color="#1E3A5F" fontWeight="bold">{t('onboarding.miRadius', { n: String(serviceRadiusMiles) })}</Text>
+                        <Icon as={LucideZap} w={3} h={3} color="#185FC6" />
+                        <Text fontSize="xs" color="#185FC6" fontWeight="bold">{t('onboarding.miRadius', { n: String(serviceRadiusMiles) })}</Text>
                       </HStack>
                     </Box>
                   </SimpleGrid>
 
                   <Box bg="#EBF5FE" border="1px solid" borderColor="#A2D3F9" p={4}>
                     <HStack gap={3}>
-                      <Icon as={LucideZap} w={5} h={5} color="#1E3A5F" flexShrink={0} />
+                      <Icon as={LucideZap} w={5} h={5} color="#185FC6" flexShrink={0} />
                       <Text fontSize="sm" color="#065594" lineHeight="1.6">
                         <Text as="span" fontWeight="bold">{t('onboarding.upsellTitle')}</Text>{' '}
                         {t('onboarding.upsellBody')}
@@ -521,7 +521,7 @@ export default function OnboardingPage() {
             )}
 
             <Button
-              bg={step === 3 ? '#059669' : '#1E3A5F'}
+              bg={step === 3 ? '#059669' : '#185FC6'}
               color="white" px={7} h="44px" borderRadius="4px" fontWeight="bold"
               _hover={{ bg: step === 3 ? '#047857' : '#172F4D' }}
               loading={saving}

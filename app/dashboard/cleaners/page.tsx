@@ -30,7 +30,7 @@ type Cleaner = {
 const PLAN_BADGE: Record<string, { label: string; bg: string; color: string } | null> = {
   PRO:     { label: 'Top Cleaner', bg: '#FEF3C7', color: '#92400E' },
   PREMIUM: { label: 'Top Cleaner', bg: '#FEF3C7', color: '#92400E' },
-  BASIC:   { label: 'Verified',    bg: '#E9F3F5', color: '#1E3A5F' },
+  BASIC:   { label: 'Verified',    bg: '#E9F3F5', color: '#185FC6' },
   FREE:    null,
 };
 
@@ -69,7 +69,7 @@ function CleanersBrowser() {
         style={{ boxShadow: '0 1px 6px rgba(0,0,0,0.06)' }}>
         <Flex align="center" h="60px" px={{ base: 4, md: 6, lg: 8 }} maxW="1200px" mx="auto" justify="space-between">
           <NextLink href="/dashboard/client" style={{ textDecoration: 'none' }}>
-            <HStack gap={2} color="#64748B" _hover={{ color: '#1E3A5F' }} transition="color 0.15s">
+            <HStack gap={2} color="#64748B" _hover={{ color: '#185FC6' }} transition="color 0.15s">
               <Icon as={LucideArrowLeft} w={4} h={4} />
               <Text fontSize="13px" fontWeight="500" fontFamily="heading">{t('common.backToHome')}</Text>
             </HStack>
@@ -126,7 +126,7 @@ function CleanersBrowser() {
                         {c.avatarUrl ? (
                           <ChakraImage src={c.avatarUrl} alt={firstName} w="full" h="full" objectFit="cover" />
                         ) : (
-                          <Text fontSize="20px" fontWeight="700" color="#1E3A5F" fontFamily="heading">
+                          <Text fontSize="20px" fontWeight="700" color="#185FC6" fontFamily="heading">
                             {firstName[0]?.toUpperCase()}
                           </Text>
                         )}
@@ -183,13 +183,13 @@ function CleanersBrowser() {
 
                   <HStack gap={0} borderTop="1px solid #E3E8EE">
                     <Button flex={1} variant="ghost" borderRadius={0} h="44px" fontSize="13px" fontWeight="600"
-                      color="#64748B" _hover={{ bg: '#F8FAFC', color: '#1E3A5F' }}
+                      color="#64748B" _hover={{ bg: '#F8FAFC', color: '#185FC6' }}
                       onClick={() => router.push(`/dashboard/profile/${c.id}`)}>
                       {t('clientCleaners.viewProfile')}
                     </Button>
                     <Box w="1px" h="28px" bg="#E3E8EE" />
                     <Button flex={1} borderRadius={0} h="44px" fontSize="13px" fontWeight="700"
-                      bg="gold.500" color="#1E3A5F" _hover={{ bg: 'gold.600' }}
+                      bg="gold.500" color="#185FC6" _hover={{ bg: 'gold.600' }}
                       onClick={() => router.push(`/request?cleaner=${c.id}&name=${encodeURIComponent(c.name ?? '')}${service ? `&service=${service}` : ''}`)}>
                       {t('clientCleaners.contact')}
                     </Button>
@@ -208,7 +208,7 @@ function FilterChip({ active, onClick, label }: { active: boolean; onClick: () =
   return (
     <Box as="button" onClick={onClick} px={3.5} py={2} borderRadius="full" flexShrink={0}
       fontSize="12.5px" fontWeight="600" fontFamily="heading" whiteSpace="nowrap" transition="all 0.12s"
-      bg={active ? '#1E3A5F' : '#F1F5F9'} color={active ? 'white' : '#64748B'}
+      bg={active ? '#185FC6' : '#F1F5F9'} color={active ? 'white' : '#64748B'}
       _hover={{ bg: active ? '#172F4D' : '#E2E8F0' }}>
       {label}
     </Box>

@@ -186,7 +186,7 @@ export default function PlanPage() {
                 const c = PLAN_COLORS[pid];
                 const isActive = currentPlan === pid;
                 const PlanIcon = PLAN_ICONS[pid];
-                const accentColor = pid === 'FREE' ? '#64748B' : pid === 'PRO' ? '#D97706' : '#1E3A5F';
+                const accentColor = pid === 'FREE' ? '#64748B' : pid === 'PRO' ? '#D97706' : '#185FC6';
 
                 return (
                   <Box
@@ -267,7 +267,7 @@ export default function PlanPage() {
                           w="full" size="sm" borderRadius="4px" fontWeight="bold"
                           {...(plan.price === 0
                             ? { variant: 'outline' as const, borderColor: c.border, color: c.text, _hover: { bg: c.bg } }
-                            : { bg: 'gold.500', color: '#1E3A5F', _hover: { bg: 'gold.600' } })}
+                            : { bg: 'gold.500', color: '#185FC6', _hover: { bg: 'gold.600' } })}
                           onClick={() => handleSelectPlan(pid)}
                           loading={redirecting || saving}
                           disabled={redirecting}>
@@ -304,7 +304,7 @@ export default function PlanPage() {
                   cleaners: t('cleaner.plan.wave2Cleaners'),
                   desc: t('cleaner.plan.wave2Desc'),
                   chipBg: '#F5F3FF',
-                  chipColor: '#1E3A5F',
+                  chipColor: '#185FC6',
                 },
               ].map((w, i, arr) => (
                 <HStack

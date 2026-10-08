@@ -73,7 +73,7 @@ function PayForm({ convId, leadFee, onSuccess }: { convId: string; leadFee: numb
       )}
 
       <Button
-        w="full" bg="#1E3A5F" color="white" h="48px" borderRadius="6px"
+        w="full" bg="#185FC6" color="white" h="48px" borderRadius="6px"
         fontWeight="700" fontSize="14px"
         _hover={{ bg: '#172F4D' }} _active={{ bg: '#0760A8' }}
         loading={paying} loadingText="Processing…"

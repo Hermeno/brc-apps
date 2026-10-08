@@ -131,7 +131,7 @@ export function AddressInput({ value, onChange, placeholder, onResolve, inputPro
           cursor={detecting ? 'default' : 'pointer'}
           title="Detect my location"
           style={{ borderRadius: 4, transition: 'all 0.15s', height: (inputProps.h ?? '44px') }}
-          _hover={{ borderColor: '#1E3A5F', color: '#1E3A5F' }}
+          _hover={{ borderColor: '#185FC6', color: '#185FC6' }}
         >
           <Icon
             as={detecting ? LucideLoader2 : LucideNavigation}
@@ -145,8 +145,8 @@ export function AddressInput({ value, onChange, placeholder, onResolve, inputPro
       {/* What the matching engine understood from this address */}
       {resolved ? (
         <HStack gap={1.5} mt={1.5}>
-          <Icon as={LucideMapPin} w="11px" h="11px" color="#1E3A5F" />
-          <Text fontSize="11px" color="#1E3A5F" fontWeight="600" fontFamily="heading">
+          <Icon as={LucideMapPin} w="11px" h="11px" color="#185FC6" />
+          <Text fontSize="11px" color="#185FC6" fontWeight="600" fontFamily="heading">
             {place}{zip ? ` ${zip}` : ''} — cleaners in your area will be notified
           </Text>
         </HStack>

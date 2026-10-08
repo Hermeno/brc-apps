@@ -73,7 +73,7 @@ export default function HowItWorksPage() {
                 sizes="(max-width: 800px) 100vw, 47vw"
                 className={styles.heroImage}
               />
-              <div className={styles.visualCaption}><span>01 / 05</span><span>From request to a clear agreement</span></div>
+              <div className={styles.visualCaption}><span>From request to a clear agreement</span></div>
             </div>
           </div>
         </section>
@@ -88,7 +88,6 @@ export default function HowItWorksPage() {
             <ol className={styles.stepList}>
               {steps.map((step) => (
                 <li className={styles.step} key={step.number}>
-                  <span className={styles.stepNumber} aria-hidden="true">{step.number}</span>
                   <h3 className={styles.stepTitle}>{step.title}</h3>
                   <p className={styles.stepBody}>{step.body}</p>
                 </li>

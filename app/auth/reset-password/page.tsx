@@ -54,7 +54,7 @@ function ResetPasswordForm() {
         <HStack gap={2.5} mb={10} justify="space-between">
           <HStack gap={2.5}>
             <Image src="/images/brand/verliks-logo-600.png" alt="Verliks" width={149} height={32} style={{ objectFit: 'contain', flexShrink: 0 }} />
-            <Text fontWeight="700" fontSize="15px" letterSpacing="-0.02em" color="#1E3A5F" fontFamily="heading">
+            <Text fontWeight="700" fontSize="15px" letterSpacing="-0.02em" color="#185FC6" fontFamily="heading">
               Verliks
             </Text>
           </HStack>
@@ -64,7 +64,7 @@ function ResetPasswordForm() {
         <Box bg="white" border="1px solid #E3E8EE" p={8} style={{ borderRadius: 8 }}>
 
           <Box mb={7}>
-            <Text fontSize="22px" fontWeight="800" color="#1E3A5F" fontFamily="heading" letterSpacing="-0.025em" mb={1}>
+            <Text fontSize="22px" fontWeight="800" color="#185FC6" fontFamily="heading" letterSpacing="-0.025em" mb={1}>
               {t('auth.reset.title')}
             </Text>
             <Text fontSize="14px" color="#425466" fontFamily="heading">
@@ -87,7 +87,7 @@ function ResetPasswordForm() {
                   textAlign="center"
                   fontSize="28px" fontWeight="800" letterSpacing="10px" fontFamily="heading"
                   bg="#F7F8FA" border="1px solid" borderColor="#E3E8EE" h="64px" borderRadius="4px"
-                  _focus={{ bg: 'white', borderColor: '#1E3A5F' }}
+                  _focus={{ bg: 'white', borderColor: '#185FC6' }}
                   maxLength={6}
                 />
                 {codeError ? (
@@ -96,7 +96,7 @@ function ResetPasswordForm() {
                       {codeError}
                     </Text>
                     <NextLink href="/auth/forgot-password">
-                      <Text fontSize="12px" color="#1E3A5F" fontWeight="700" textAlign="center"
+                      <Text fontSize="12px" color="#185FC6" fontWeight="700" textAlign="center"
                         cursor="pointer" fontFamily="heading" _hover={{ color: '#172F4D' }}>
                         {t('auth.reset.backToForgot')}
                       </Text>
@@ -117,7 +117,7 @@ function ResetPasswordForm() {
                     value={password} onChange={e => setPassword(e.target.value)}
                     bg="#F7F8FA" border="1px solid" borderColor="#E3E8EE" h="44px" borderRadius="4px"
                     fontFamily="heading" fontSize="14px"
-                    _focus={{ bg: 'white', borderColor: '#1E3A5F' }}
+                    _focus={{ bg: 'white', borderColor: '#185FC6' }}
                     required
                   />
                 </HStack>
@@ -135,14 +135,14 @@ function ResetPasswordForm() {
                     value={confirm} onChange={e => setConfirm(e.target.value)}
                     bg="#F7F8FA" border="1px solid" borderColor="#E3E8EE" h="44px" borderRadius="4px"
                     fontFamily="heading" fontSize="14px"
-                    _focus={{ bg: 'white', borderColor: '#1E3A5F' }}
+                    _focus={{ bg: 'white', borderColor: '#185FC6' }}
                     required
                   />
                 </HStack>
               </Box>
 
               <Button
-                type="submit" bg="#1E3A5F" color="white" h="44px" borderRadius="4px"
+                type="submit" bg="#185FC6" color="white" h="44px" borderRadius="4px"
                 fontWeight="700" fontSize="14px" fontFamily="heading"
                 _hover={{ bg: '#172F4D' }} transition="background 0.15s"
                 loading={loading} loadingText={t('auth.reset.submitting')}
@@ -158,7 +158,7 @@ function ResetPasswordForm() {
 
         <Box mt={6} textAlign="center">
           <NextLink href="/auth/forgot-password">
-            <Text fontSize="13px" color="#1E3A5F" fontWeight="600" cursor="pointer"
+            <Text fontSize="13px" color="#185FC6" fontWeight="600" cursor="pointer"
               fontFamily="heading" _hover={{ color: '#172F4D' }}>
               {t('auth.reset.resendCode')}
             </Text>

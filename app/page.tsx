@@ -6,6 +6,7 @@ import './site.css';
 import SiteHeader from '@/components/site/site-header';
 import SiteFooter from '@/components/site/site-footer';
 import { SITE_SERVICES } from '@/lib/site-content';
+import { HeroIntro, Reveal, Stagger } from '@/components/site/motion';
 
 export const metadata: Metadata = {
   title: 'Find a Cleaner Near You | Verliks',
@@ -37,7 +38,7 @@ export default function HomePage() {
         <section className="home-hero" aria-labelledby="home-title">
           <Image src="/images/site/verliks-cleaning-hero-editorial-20261006.webp" alt="A cleaning professional at work in a sunlit living room" fill priority sizes="100vw" className="home-hero-backdrop" />
           <div className="wrap home-hero-grid">
-            <div className="home-hero-copy">
+            <HeroIntro className="home-hero-copy">
               <p className="eyebrow eyebrow-rule">CLEANING HELP, ON YOUR TERMS</p>
               <h1 id="home-title">A cleaner home starts with the <em>right person.</em></h1>
               <p className="hero-lede">Tell us what you need. We connect you with an independent cleaning professional who serves your area. You decide on the details and price before you say yes.</p>
@@ -57,75 +58,75 @@ export default function HomePage() {
                 <button className="btn btn-primary search-submit" type="submit">Find a cleaner <ArrowRight size={19} aria-hidden="true" /></button>
               </form>
               <p className="search-note" id="zip-hint"><Check size={16} aria-hidden="true" /> Free to request <span aria-hidden="true">·</span> Availability depends on your ZIP code</p>
-            </div>
+            </HeroIntro>
           </div>
-          <div className="hero-visual-caption"><span>01 / 03</span><span>Real people. Real homes.<br />A better way to connect.</span></div>
+          <div className="hero-visual-caption"><span>Real people. Real homes.<br />A better way to connect.</span></div>
         </section>
 
-        <section className="benefit-ribbon" aria-label="Why request through Verliks"><div className="wrap benefit-ribbon-inner">
-          <p><span>01</span> Tell us what needs doing</p><p><span>02</span> Speak with a local cleaner</p><p><span>03</span> Decide before you book</p>
-        </div></section>
+        <section className="benefit-ribbon" aria-label="Why request through Verliks"><Stagger className="wrap benefit-ribbon-inner">
+          <p><Check size={17} aria-hidden="true" /> Tell us what needs doing</p><p><Check size={17} aria-hidden="true" /> Speak with a local cleaner</p><p><Check size={17} aria-hidden="true" /> Decide before you book</p>
+        </Stagger></section>
 
         <section className="home-section services-section" aria-labelledby="services-title"><div className="wrap">
-          <div className="section-intro"><div><p className="eyebrow">A SERVICE FOR THE SITUATION</p><h2 id="services-title">What can we help you clean?</h2></div>
-            <Link href="/services" className="text-link">Explore all services <ArrowUpRight size={19} aria-hidden="true" /></Link></div>
-          <div className="featured-grid">{featured.map((item, index) => (
+          <Reveal className="section-intro"><div><p className="eyebrow">A SERVICE FOR THE SITUATION</p><h2 id="services-title">What can we help you clean?</h2></div>
+            <Link href="/services" className="text-link">Explore all services <ArrowUpRight size={19} aria-hidden="true" /></Link></Reveal>
+          <Stagger className="featured-grid">{featured.map((item, index) => (
             <Link className={`featured-service ${index === 0 ? 'feature-tall' : ''}`} href={`/services/${item.slug}`} key={item.slug}>
               <div className="featured-photo"><Image src={item.image} alt={item.alt} fill sizes={index === 0 ? '(max-width: 760px) 100vw, 48vw' : '(max-width: 760px) 100vw, 25vw'} /></div>
-              <div className="featured-info"><span className="featured-number">0{index + 1}</span><div><h3>{item.name}</h3><p>{item.detail}</p></div><ArrowUpRight size={22} aria-hidden="true" /></div>
+              <div className="featured-info"><div><h3>{item.name}</h3><p>{item.detail}</p></div><ArrowUpRight size={22} aria-hidden="true" /></div>
             </Link>
-          ))}</div>
-          <div className="more-services"><span className="more-label">More ways we can help</span><div>{moreServices.map(service =>
-            <Link href={`/services/${service.slug}`} key={service.slug}>{service.name}<ArrowUpRight size={15} aria-hidden="true" /></Link>)}</div></div>
+          ))}</Stagger>
+          <Reveal className="more-services"><span className="more-label">More ways we can help</span><div>{moreServices.map(service =>
+            <Link href={`/services/${service.slug}`} key={service.slug}>{service.name}<ArrowUpRight size={15} aria-hidden="true" /></Link>)}</div></Reveal>
         </div></section>
 
         <section className="home-section process-section" aria-labelledby="process-title"><div className="wrap process-grid">
-          <div className="process-intro"><p className="eyebrow">THE VERLIKS WAY</p><h2 id="process-title">Simple from the first request.</h2>
+          <Reveal className="process-intro"><p className="eyebrow">THE VERLIKS WAY</p><h2 id="process-title">Simple from the first request.</h2>
             <p>A cleaning request should be clear from the start. Here is what happens before anyone comes to your home.</p>
-            <Link href="/how-it-works" className="text-link">See how it works <ArrowUpRight size={19} aria-hidden="true" /></Link></div>
-          <ol className="process-steps">
-            <li><span>01</span><div><h3>Tell us about the job</h3><p>Choose a service, share your ZIP code and describe the space. Sending a request is free.</p></div></li>
-            <li><span>02</span><div><h3>Talk through the details</h3><p>An available professional who offers the service in your area can respond. Discuss scope, timing and price together.</p></div></li>
-            <li><span>03</span><div><h3>Choose with confidence</h3><p>Review the professional and accept only when it feels right. You pay the cleaner directly on the terms you agree.</p></div></li>
-          </ol>
+            <Link href="/how-it-works" className="text-link">See how it works <ArrowUpRight size={19} aria-hidden="true" /></Link></Reveal>
+          <Stagger as="ol" className="process-steps">
+            <li><div><h3>Tell us about the job</h3><p>Choose a service, share your ZIP code and describe the space. Sending a request is free.</p></div></li>
+            <li><div><h3>Talk through the details</h3><p>An available professional who offers the service in your area can respond. Discuss scope, timing and price together.</p></div></li>
+            <li><div><h3>Choose with confidence</h3><p>Review the professional and accept only when it feels right. You pay the cleaner directly on the terms you agree.</p></div></li>
+          </Stagger>
         </div></section>
 
         <section className="home-section trust-section" aria-labelledby="trust-title"><div className="wrap trust-grid">
-          <div className="trust-image"><Image src="/images/site/trust-cleaner-portrait-1200.jpg" alt="Portrait of a professional cleaner in a home" fill sizes="(max-width: 820px) 100vw, 43vw" /></div>
-          <div className="trust-copy"><p className="eyebrow">PEOPLE FIRST</p><h2 id="trust-title">Know who you&apos;re welcoming in.</h2>
+          <Reveal className="trust-image"><Image src="/images/site/trust-cleaner-portrait-1200.jpg" alt="Portrait of a professional cleaner in a home" fill sizes="(max-width: 820px) 100vw, 43vw" /></Reveal>
+          <Reveal delay={0.1} className="trust-copy"><p className="eyebrow">PEOPLE FIRST</p><h2 id="trust-title">Know who you&apos;re welcoming in.</h2>
             <p>Verliks connects you with independent professionals. Our team reviews each cleaner&apos;s government ID and selfie before their profile can receive requests.</p>
             <ul><li><Check aria-hidden="true" size={19} /> Identity reviewed by our team</li><li><Check aria-hidden="true" size={19} /> Services and coverage matched to your request</li><li><Check aria-hidden="true" size={19} /> A conversation before you accept</li></ul>
             <p className="trust-note">Identity review is not a criminal background check.</p>
             <Link href="/how-it-works#does-and-doesnt" className="text-link">Our approach to trust <ArrowUpRight size={19} aria-hidden="true" /></Link>
-          </div>
+          </Reveal>
         </div></section>
 
         <section className="pro-section" aria-labelledby="pro-title"><div className="wrap pro-grid">
-          <div className="pro-copy"><p className="eyebrow">FOR INDEPENDENT CLEANERS</p><h2 id="pro-title">Good work deserves a steady way to meet clients.</h2>
+          <Reveal className="pro-copy"><p className="eyebrow">FOR INDEPENDENT CLEANERS</p><h2 id="pro-title">Good work deserves a steady way to meet clients.</h2>
             <p>Set the services and area you cover. See local requests and choose which conversations to start. The lead fee applies when the client confirms you.</p>
-            <Link href="/for-cleaners" className="btn btn-gold">How Verliks works for pros <ArrowRight size={19} aria-hidden="true" /></Link></div>
+            <Link href="/for-cleaners" className="btn btn-gold">How Verliks works for pros <ArrowRight size={19} aria-hidden="true" /></Link></Reveal>
           <div className="pro-image"><Image src="/images/site/about-cleaner-van-1200.jpg" alt="Independent cleaning professional beside a work vehicle" fill sizes="(max-width: 820px) 100vw, 44vw" /></div>
         </div></section>
 
         <section className="home-section area-section" aria-labelledby="area-title"><div className="wrap area-grid">
-          <div><p className="eyebrow">COVERAGE BY ZIP CODE</p><h2 id="area-title">Local starts with your address.</h2></div>
-          <div><p>Verliks is starting in Connecticut and building a network of independent cleaners for more U.S. communities. Enter your ZIP code to begin a request; availability varies by area and service.</p>
-            <Link href="/service-areas" className="text-link"><MapPin size={18} aria-hidden="true" /> Check service areas <ArrowUpRight size={18} aria-hidden="true" /></Link></div>
+          <Reveal><p className="eyebrow">COVERAGE BY ZIP CODE</p><h2 id="area-title">Local starts with your address.</h2></Reveal>
+          <Reveal delay={0.1}><p>Verliks is starting in Connecticut and building a network of independent cleaners for more U.S. communities. Enter your ZIP code to begin a request; availability varies by area and service.</p>
+            <Link href="/service-areas" className="text-link"><MapPin size={18} aria-hidden="true" /> Check service areas <ArrowUpRight size={18} aria-hidden="true" /></Link></Reveal>
         </div></section>
 
         <section className="home-section home-faq" aria-labelledby="faq-title"><div className="wrap faq-grid">
-          <div><p className="eyebrow">A FEW GOOD QUESTIONS</p><h2 id="faq-title">Before you get started.</h2></div>
-          <div className="faq-list"><details><summary>Does it cost anything to request a cleaner?</summary><p>No. Sending a cleaning request is free. You agree on the job and price with the professional before you accept.</p></details>
+          <Reveal><p className="eyebrow">A FEW GOOD QUESTIONS</p><h2 id="faq-title">Before you get started.</h2></Reveal>
+          <Stagger className="faq-list"><details><summary>Does it cost anything to request a cleaner?</summary><p>No. Sending a cleaning request is free. You agree on the job and price with the professional before you accept.</p></details>
             <details><summary>Does Verliks send an employee?</summary><p>No. Cleaners on Verliks work independently. They choose the work they take and agree on the details with you.</p></details>
             <details><summary>How is the cleaner verified?</summary><p>Our team reviews a government ID and selfie before a cleaner can receive requests. We do not conduct criminal background checks.</p></details>
             <details><summary>Who handles payment?</summary><p>You pay the cleaner directly, based on the terms the two of you agree. Verliks does not hold the job payment.</p></details>
-          </div>
+          </Stagger>
         </div></section>
 
-        <section className="final-cta" aria-labelledby="final-title"><div className="wrap final-cta-inner">
+        <section className="final-cta" aria-labelledby="final-title"><Reveal className="wrap final-cta-inner">
           <div><p className="eyebrow">READY WHEN YOU ARE</p><h2 id="final-title">Tell us what home needs today.</h2></div>
           <Link href="/request" className="btn btn-primary">Start a free request <ArrowRight size={19} aria-hidden="true" /></Link>
-        </div></section>
+        </Reveal></section>
       </main>
       <SiteFooter />
     </div>

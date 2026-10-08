@@ -47,7 +47,7 @@ export default function ForgotPasswordPage() {
         <HStack gap={2.5} mb={10} justify="space-between">
           <HStack gap={2.5}>
             <Image src="/images/brand/verliks-logo-600.png" alt="Verliks" width={149} height={32} style={{ objectFit: 'contain', flexShrink: 0 }} />
-            <Text fontWeight="700" fontSize="15px" letterSpacing="-0.02em" color="#1E3A5F" fontFamily="heading">
+            <Text fontWeight="700" fontSize="15px" letterSpacing="-0.02em" color="#185FC6" fontFamily="heading">
               Verliks
             </Text>
           </HStack>
@@ -57,7 +57,7 @@ export default function ForgotPasswordPage() {
         <Box bg="white" border="1px solid #E3E8EE" p={8} style={{ borderRadius: 8 }}>
 
           <Box mb={7}>
-            <Text fontSize="22px" fontWeight="800" color="#1E3A5F" fontFamily="heading" letterSpacing="-0.025em" mb={1}>
+            <Text fontSize="22px" fontWeight="800" color="#185FC6" fontFamily="heading" letterSpacing="-0.025em" mb={1}>
               {t('auth.forgot.title')}
             </Text>
             <Text fontSize="14px" color="#425466" fontFamily="heading">
@@ -76,14 +76,14 @@ export default function ForgotPasswordPage() {
                   type="email" placeholder={t('auth.forgot.emailPlaceholder')}
                   value={email} onChange={e => setEmail(e.target.value)}
                   bg="white" border="1.5px solid" borderColor="#E3E8EE" h="38px" borderRadius="8px"
-                  fontFamily="heading" fontSize="13.5px" color="#1E3A5F" px={4}
-                  _placeholder={{ color: '#B0BAC9' }} _focus={{ borderColor: '#1E3A5F', boxShadow: 'none', outline: 'none' }}
+                  fontFamily="heading" fontSize="13.5px" color="#185FC6" px={4}
+                  _placeholder={{ color: '#B0BAC9' }} _focus={{ borderColor: '#185FC6', boxShadow: 'none', outline: 'none' }}
                   required
                 />
               </Box>
 
               <Button
-                type="submit" bg="#1E3A5F" color="white" h="40px" borderRadius="9999px"
+                type="submit" bg="#185FC6" color="white" h="40px" borderRadius="9999px"
                 fontWeight="600" fontSize="13.5px" letterSpacing="-0.01em" fontFamily="heading"
                 _hover={{ bg: '#172F4D' }} transition="background 0.15s"
                 loading={loading} loadingText={t('auth.forgot.submitting')}
@@ -100,7 +100,7 @@ export default function ForgotPasswordPage() {
           <Text fontSize="13px" color="#425466" fontFamily="heading">
             {t('auth.forgot.rememberPassword')}{' '}
             <NextLink href="/auth/login">
-              <Text as="span" color="#1E3A5F" fontWeight="700" cursor="pointer" _hover={{ color: '#172F4D' }}>
+              <Text as="span" color="#185FC6" fontWeight="700" cursor="pointer" _hover={{ color: '#172F4D' }}>
                 {t('auth.forgot.backToLogin')}
               </Text>
             </NextLink>

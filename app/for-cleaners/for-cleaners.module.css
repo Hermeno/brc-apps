@@ -12,10 +12,10 @@
    ───────────────────────────────────────────────────────────── */
 
 .page {
-  --navy:      #1E3A5F;  /* brand.500 — headings, CTA on light */
-  --navy-mid:  #182F4D;  /* brand.600 — CTA hover */
-  --navy-deep: #12243B;  /* brand.700 — dark bands */
-  --navy-soft: #41757F;  /* brand.400 darkened — secondary text on light */
+  --navy:      #185FC6;  /* brand.500 — headings, CTA on light */
+  --navy-mid:  #134A9A;  /* brand.600 — CTA hover */
+  --navy-deep: #0E3468;  /* brand.700 — dark bands */
+  --navy-soft: #1A54AD;  /* brand.400 darkened — secondary text on light */
   --gold:      #D4AF37;  /* gold.500 — accent + CTA on dark */
   --gold-soft: #E3C868;  /* gold.300 — eyebrow on dark */
   --gold-ink:  #A5851F;  /* gold.700 — gold as text on white */

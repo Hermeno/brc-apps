@@ -340,11 +340,11 @@ export default function ProfilePage() {
                       const sel = serviceTypes.includes(s);
                       return (
                         <Box key={s} as="button" w="full" p={2.5} borderRadius="4px" textAlign="center"
-                          border={sel ? '2px solid #1E3A5F' : '1px solid #E3E8EE'}
+                          border={sel ? '2px solid #185FC6' : '1px solid #E3E8EE'}
                           bg={sel ? '#E9F3F5' : 'white'} cursor="pointer"
                           onClick={() => toggleService(s)} transition="all 0.15s">
                           <Text fontSize="xs" fontWeight={sel ? 'bold' : 'medium'}
-                            color={sel ? '#1E3A5F' : 'slate.600'}>{t(`services.${s}`)}</Text>
+                            color={sel ? '#185FC6' : 'slate.600'}>{t(`services.${s}`)}</Text>
                         </Box>
                       );
                     })}
@@ -352,7 +352,7 @@ export default function ProfilePage() {
                 </Box>
 
                 <Button
-                  bg="#1E3A5F" color="white" borderRadius="4px" fontWeight="bold"
+                  bg="#185FC6" color="white" borderRadius="4px" fontWeight="bold"
                   _hover={{ bg: '#172F4D' }}
                   transition="all 0.2s"
                   loading={saving} loadingText={t('cleaner.profile.savingProfile')}
@@ -397,7 +397,7 @@ export default function ProfilePage() {
                     </Text>
                     <Text style={{
                       borderRadius: 2, background: '#E9F3F5',
-                      padding: '2px 6px', fontSize: '9.5px', fontWeight: 700, color: '#1E3A5F',
+                      padding: '2px 6px', fontSize: '9.5px', fontWeight: 700, color: '#185FC6',
                     }}>
                       {t('cleaner.profile.zipBonus')}
                     </Text>
@@ -432,8 +432,8 @@ export default function ProfilePage() {
                 {locationLabel && (
                   <HStack gap={2} bg="#F7F8FA" border="1px solid" borderColor="#E3E8EE"
                     borderRadius="4px" px={4} py={3}>
-                    <Icon as={LucideMapPin} w={4} h={4} color="#1E3A5F" flexShrink={0} />
-                    <Text fontSize="sm" color="#1E3A5F" fontWeight="semibold">{locationLabel}</Text>
+                    <Icon as={LucideMapPin} w={4} h={4} color="#185FC6" flexShrink={0} />
+                    <Text fontSize="sm" color="#185FC6" fontWeight="semibold">{locationLabel}</Text>
                     <Button size="xs" variant="ghost" color="slate.400" ml="auto" px={1}
                       onClick={() => { setLatitude(null); setLongitude(null); setLocationLabel(''); }}>
                       <Icon as={LucideX} w={3} h={3} />
@@ -469,7 +469,7 @@ export default function ProfilePage() {
                     </Text>
                     <Text style={{
                       fontSize: '9.5px', fontWeight: 700, padding: '2px 7px',
-                      background: '#E9F3F5', color: '#1E3A5F', borderRadius: 2,
+                      background: '#E9F3F5', color: '#185FC6', borderRadius: 2,
                     }}>
                       {t('cleaner.profile.radiusPlan', { max: planMaxRadius })}
                     </Text>
@@ -489,10 +489,10 @@ export default function ProfilePage() {
                           cursor={locked ? 'not-allowed' : 'pointer'}
                           opacity={locked ? 0.38 : 1}
                           transition="all 0.12s"
-                          bg={active ? '#1E3A5F' : 'white'}
+                          bg={active ? '#185FC6' : 'white'}
                           color={active ? 'white' : locked ? 'slate.400' : 'slate.600'}
-                          borderColor={active ? '#1E3A5F' : '#E3E8EE'}
-                          _hover={locked ? {} : { borderColor: '#1E3A5F', color: active ? 'white' : '#1E3A5F' }}
+                          borderColor={active ? '#185FC6' : '#E3E8EE'}
+                          _hover={locked ? {} : { borderColor: '#185FC6', color: active ? 'white' : '#185FC6' }}
                           onClick={() => !locked && setServiceRadius(miles)}
                         >
                           {miles} {t('cleaner.profile.miles')}{locked ? ' 🔒' : ''}
@@ -510,7 +510,7 @@ export default function ProfilePage() {
 
                 {/* Save location button */}
                 <Button
-                  bg="#1E3A5F" color="white" borderRadius="4px" fontWeight="bold"
+                  bg="#185FC6" color="white" borderRadius="4px" fontWeight="bold"
                   _hover={{ bg: '#172F4D' }}
                   transition="all 0.2s"
                   loading={saving} loadingText={t('cleaner.profile.savingLocation')}
@@ -540,7 +540,7 @@ export default function ProfilePage() {
                   </Text>
                 </HStack>
                 {photos.length < 20 && !showPhotoForm && (
-                  <Button size="sm" bg="#1E3A5F" color="white" borderRadius="4px" fontWeight="bold"
+                  <Button size="sm" bg="#185FC6" color="white" borderRadius="4px" fontWeight="bold"
                     _hover={{ bg: '#172F4D' }}
                     loading={uploading} loadingText={t('cleaner.profile.uploadingPhoto')}
                     onClick={() => fileInputRef.current?.click()}>
@@ -579,7 +579,7 @@ export default function ProfilePage() {
                             onClick={() => { setShowPhotoForm(false); setPendingUrl(''); setPhotoCaption(''); }}>
                             {t('common.cancel')}
                           </Button>
-                          <Button size="sm" bg="#1E3A5F" color="white" borderRadius="4px" fontWeight="bold"
+                          <Button size="sm" bg="#185FC6" color="white" borderRadius="4px" fontWeight="bold"
                             _hover={{ bg: '#172F4D' }}
                             loading={addingPhoto} loadingText={t('cleaner.profile.addingPhoto')}
                             onClick={handleAddPhoto}>

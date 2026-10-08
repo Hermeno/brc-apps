@@ -101,10 +101,10 @@ const SIDEBAR_W    = '216px';
 
 const LEAD_STATUS: Record<string, { label: string; color: string; dot: string }> = {
   NEW:       { label: 'New',            color: '#92400E', dot: '#F59E0B' },
-  WAVE2:     { label: 'Matching',       color: '#1E3A5F', dot: '#60A5FA' },
-  WAVE3:     { label: 'Last wave',      color: '#1E3A5F', dot: '#60A5FA' },
+  WAVE2:     { label: 'Matching',       color: '#185FC6', dot: '#60A5FA' },
+  WAVE3:     { label: 'Last wave',      color: '#185FC6', dot: '#60A5FA' },
   IN_REVIEW: { label: 'Pending',        color: '#0369A1', dot: '#38BDF8' },
-  ACCEPTED:  { label: 'Accepted',       color: '#0F4F67', dot: '#1E3A5F' },
+  ACCEPTED:  { label: 'Accepted',       color: '#0F4F67', dot: '#185FC6' },
   COMPLETED: { label: 'Completed',      color: '#047857', dot: '#10B981' },
   CANCELLED: { label: 'Cancelled',      color: '#BE123C', dot: '#F43F5E' },
   UNMATCHED: { label: 'No cleaner',     color: '#475569', dot: '#94A3B8' },
@@ -282,7 +282,7 @@ function Sidebar({ tab, setTab, pendingVerifs, openDisputes, onRefresh, user }: 
                 borderLeft="2px solid"
                 borderLeftColor={isActive ? 'brand.500' : 'transparent'}
                 bg={isActive ? '#E9F3F5' : 'transparent'}
-                color={isActive ? '#1E3A5F' : '#64748B'}
+                color={isActive ? '#185FC6' : '#64748B'}
                 fontWeight={isActive ? '600' : '400'}
                 fontSize="13px"
                 fontFamily="heading"
@@ -290,7 +290,7 @@ function Sidebar({ tab, setTab, pendingVerifs, openDisputes, onRefresh, user }: 
                 transition="all 0.12s"
                 textAlign="left"
                 borderRadius="0"
-                _hover={{ color: '#1E3A5F', bg: '#F8FAFC' }}
+                _hover={{ color: '#185FC6', bg: '#F8FAFC' }}
                 onClick={() => setTab(item.id)}
               >
                 <Icon as={item.icon} w="14px" h="14px" flexShrink={0} />
@@ -330,7 +330,7 @@ function Sidebar({ tab, setTab, pendingVerifs, openDisputes, onRefresh, user }: 
             {user[0]?.toUpperCase() ?? 'A'}
           </Box>
           <Box flex={1} minW={0}>
-            <Text fontSize="12px" fontWeight="600" color="#1E3A5F" fontFamily="heading" lineClamp={1}>{user}</Text>
+            <Text fontSize="12px" fontWeight="600" color="#185FC6" fontFamily="heading" lineClamp={1}>{user}</Text>
             <Text fontSize="10px" color="#64748B" fontFamily="heading">Administrator</Text>
           </Box>
         </HStack>
@@ -339,9 +339,9 @@ function Sidebar({ tab, setTab, pendingVerifs, openDisputes, onRefresh, user }: 
           px={3} py={2} cursor="pointer" fontSize="12px"
           fontFamily="heading" fontWeight="500" borderRadius="0"
           transition="all 0.12s"
-          color={tab === 'settings' ? '#1E3A5F' : '#64748B'}
+          color={tab === 'settings' ? '#185FC6' : '#64748B'}
           bg={tab === 'settings' ? '#E9F3F5' : 'transparent'}
-          _hover={{ color: '#1E3A5F', bg: '#F8FAFC' }}
+          _hover={{ color: '#185FC6', bg: '#F8FAFC' }}
           onClick={() => setTab('settings')}
         >
           <Icon as={LucideSettings} w={3} h={3} />
@@ -352,7 +352,7 @@ function Sidebar({ tab, setTab, pendingVerifs, openDisputes, onRefresh, user }: 
           px={3} py={2} cursor="pointer" color="#64748B" fontSize="12px"
           fontFamily="heading" fontWeight="500" borderRadius="0"
           transition="color 0.12s"
-          _hover={{ color: '#1E3A5F' }}
+          _hover={{ color: '#185FC6' }}
           onClick={onRefresh}
         >
           <Icon as={LucideRefreshCw} w={3} h={3} />
@@ -567,7 +567,7 @@ function UserTableRow({ user, onRefresh }: { user: UserRow; onRefresh: () => voi
               <HStack gap={1.5}>
                 <span style={{ fontSize: 12, fontWeight: 600, color: '#92400E', fontFamily: 'var(--font-dm-sans,sans-serif)' }}>Unverified</span>
                 {user.role === 'CLEANER' && (
-                  <Button size="xs" h="18px" px={1.5} fontSize="10px" bg="#1E3A5F" color="white"
+                  <Button size="xs" h="18px" px={1.5} fontSize="10px" bg="#185FC6" color="white"
                     borderRadius="3px" fontFamily="heading" loading={loading}
                     onClick={() => call({ action: 'verify' })}>
                     Verify
@@ -620,7 +620,7 @@ function UserTableRow({ user, onRefresh }: { user: UserRow; onRefresh: () => voi
             )}
             {suspended ? (
               <Button size="xs" variant="ghost" borderRadius="4px" loading={loading} onClick={() => call({ action: 'unsuspend' })}>
-                <Icon as={LucideUnlock} w={3} h={3} color="#1E3A5F" />
+                <Icon as={LucideUnlock} w={3} h={3} color="#185FC6" />
               </Button>
             ) : (
               <HStack gap={1}>
@@ -630,7 +630,7 @@ function UserTableRow({ user, onRefresh }: { user: UserRow; onRefresh: () => voi
                 <Text fontSize="10px" color="slate.400">d</Text>
                 <Button size="xs" variant="ghost" borderRadius="4px" loading={loading}
                   onClick={() => call({ action: 'suspend', suspendDays })}>
-                  <Icon as={LucideBan} w={3} h={3} color="#1E3A5F" />
+                  <Icon as={LucideBan} w={3} h={3} color="#185FC6" />
                 </Button>
               </HStack>
             )}
@@ -784,7 +784,7 @@ function LeadDetailRow({ lead }: { lead: LeadRow }) {
         </td>
         <td style={TD}>
           {lead.estimatedMinPrice
-            ? <Text fontSize="12px" fontWeight="600" color="#1E3A5F">${lead.estimatedMinPrice}–{lead.estimatedMaxPrice}</Text>
+            ? <Text fontSize="12px" fontWeight="600" color="#185FC6">${lead.estimatedMinPrice}–{lead.estimatedMaxPrice}</Text>
             : <Text fontSize="12px" color="slate.300">—</Text>}
         </td>
         <td style={{ ...TD, textAlign: 'center' }}>
@@ -1222,8 +1222,8 @@ export default function AdminPage() {
                       <AreaChart data={stats?.leadsTimeSeries ?? []} margin={{ top: 4, right: 4, left: -20, bottom: 0 }}>
                         <defs>
                           <linearGradient id="colorLeads" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%"  stopColor="#1E3A5F" stopOpacity={0.15} />
-                            <stop offset="95%" stopColor="#1E3A5F" stopOpacity={0} />
+                            <stop offset="5%"  stopColor="#185FC6" stopOpacity={0.15} />
+                            <stop offset="95%" stopColor="#185FC6" stopOpacity={0} />
                           </linearGradient>
                         </defs>
                         <CartesianGrid strokeDasharray="3 3" stroke="#F1F5F9" />
@@ -1235,7 +1235,7 @@ export default function AdminPage() {
                           labelStyle={{ color: '#0A2540', fontWeight: 700 }}
                           formatter={(v: any) => [v, 'Bookings']}
                         />
-                        <Area type="monotone" dataKey="count" stroke="#1E3A5F" strokeWidth={2} fill="url(#colorLeads)" dot={false} activeDot={{ r: 4 }} />
+                        <Area type="monotone" dataKey="count" stroke="#185FC6" strokeWidth={2} fill="url(#colorLeads)" dot={false} activeDot={{ r: 4 }} />
                       </AreaChart>
                     </ResponsiveContainer>
                   )}
@@ -1348,7 +1348,7 @@ export default function AdminPage() {
                           cx={65} cy={65} innerRadius={40} outerRadius={60}
                           dataKey="value" paddingAngle={3}
                         >
-                          <Cell fill="#1E3A5F" />
+                          <Cell fill="#185FC6" />
                           <Cell fill="#10B981" />
                           <Cell fill="#F59E0B" />
                         </Pie>
@@ -1358,7 +1358,7 @@ export default function AdminPage() {
                       </PieChart>
                       <VStack gap={2} align="flex-start">
                         {[
-                          { color: '#1E3A5F', label: 'Clients',    value: stats?.users.totalClients ?? 0 },
+                          { color: '#185FC6', label: 'Clients',    value: stats?.users.totalClients ?? 0 },
                           { color: '#10B981', label: 'Verified cleaners',  value: stats?.users.verifiedCleaners ?? 0 },
                           { color: '#F59E0B', label: 'Unverified', value: (stats?.users.totalCleaners ?? 0) - (stats?.users.verifiedCleaners ?? 0) },
                         ].map(item => (
@@ -1389,7 +1389,7 @@ export default function AdminPage() {
                       gap={3}
                     >
                       <Box w="6px" h="6px" borderRadius="full" flexShrink={0}
-                        bg={l.status === 'COMPLETED' ? '#10B981' : l.status === 'ACCEPTED' ? '#1E3A5F' : l.status === 'CANCELLED' ? '#F43F5E' : '#F59E0B'} />
+                        bg={l.status === 'COMPLETED' ? '#10B981' : l.status === 'ACCEPTED' ? '#185FC6' : l.status === 'CANCELLED' ? '#F43F5E' : '#F59E0B'} />
                       <Box flex={1} minW={0}>
                         <Text fontSize="13px" fontWeight="500" color="#0A2540" fontFamily="heading" lineClamp={1}>
                           {l.serviceType} — {l.client.name || '?'}
@@ -1721,7 +1721,7 @@ export default function AdminPage() {
               </Box>
               <Button size="sm" variant="outline" borderColor="#E3E8EE" color="slate.600"
                 borderRadius="4px" fontFamily="heading" fontWeight="600" fontSize="13px"
-                _hover={{ borderColor: '#1E3A5F', color: '#1E3A5F' }}
+                _hover={{ borderColor: '#185FC6', color: '#185FC6' }}
                 loading={syncingCards}
                 onClick={handleSyncCards}>
                 <Icon as={LucideCreditCard} w="13px" h="13px" mr={1.5} />
@@ -1729,7 +1729,7 @@ export default function AdminPage() {
               </Button>
               <Button size="sm" variant="outline" borderColor="#E3E8EE" color="slate.600"
                 borderRadius="4px" fontFamily="heading" fontWeight="600" fontSize="13px"
-                _hover={{ borderColor: '#1E3A5F', color: '#1E3A5F' }}
+                _hover={{ borderColor: '#185FC6', color: '#185FC6' }}
                 loading={syncingGeo}
                 onClick={handleSyncGeo}>
                 <Icon as={LucideMapPin} w="13px" h="13px" mr={1.5} />
@@ -1877,7 +1877,7 @@ export default function AdminPage() {
                 { label: 'Credits outstanding', value: referralSummary?.totalCreditsOutstanding },
               ].map((s, i) => (
                 <Box key={s.label} px={6} py={5} borderRight={i < 3 ? { base: 'none', md: '1px solid #E3E8EE' } : 'none'}>
-                  <Text fontSize="22px" fontWeight="800" color="#1E3A5F" fontFamily="heading" letterSpacing="-0.02em">
+                  <Text fontSize="22px" fontWeight="800" color="#185FC6" fontFamily="heading" letterSpacing="-0.02em">
                     {loadingRefs || s.value === undefined ? '—' : s.value}
                   </Text>
                   <Text fontSize="11px" color="#697386" textTransform="uppercase" letterSpacing="0.06em" fontFamily="heading" mt={0.5}>
@@ -2063,7 +2063,7 @@ function AdminSettingsForm() {
 
           <Button
             type="submit"
-            bg="#1E3A5F" color="white" borderRadius="4px" fontWeight="bold"
+            bg="#185FC6" color="white" borderRadius="4px" fontWeight="bold"
             _hover={{ bg: '#172F4D' }} transition="background 0.15s"
             loading={saving} loadingText="Saving…"
             alignSelf="flex-start" px={6}>
@@ -2083,7 +2083,7 @@ interface PlanConfigRow { id: string; price: number; updatedAt?: string }
 
 const PLAN_META: Record<string, { name: string; color: string; badge: string; perks: string[] }> = {
   BASIC: {
-    name: 'Basic', color: '#1E3A5F', badge: 'Popular',
+    name: 'Basic', color: '#185FC6', badge: 'Popular',
     perks: ['Wave 1 + Wave 2', '+15 CFS ranking points', '60 mi radius', 'Verified profile badge'],
   },
   PRO: {
@@ -2242,10 +2242,10 @@ function PlanPricingPanel() {
         <HStack gap={3} align="start">
           <Text fontSize="16px" flexShrink={0}>✅</Text>
           <VStack gap={1} align="start">
-            <Text fontSize="12.5px" fontWeight="700" color="#1E3A5F" fontFamily="heading">
+            <Text fontSize="12.5px" fontWeight="700" color="#185FC6" fontFamily="heading">
               Edit prices here only — Stripe uses this price automatically
             </Text>
-            <Text fontSize="12px" color="#1E3A5F" fontFamily="heading" lineHeight={1.6}>
+            <Text fontSize="12px" color="#185FC6" fontFamily="heading" lineHeight={1.6}>
               New subscribers always pay the current price on this page. No changes needed in Stripe.
               <strong>Active subscriptions</strong> keep their original price (standard subscription behavior).
             </Text>
@@ -2256,7 +2256,7 @@ function PlanPricingPanel() {
       {/* Refresh button */}
       <Flex justify="flex-end">
         <Button size="sm" variant="ghost" color="slate.400" borderRadius="4px" fontFamily="heading"
-          _hover={{ color: '#1E3A5F', bg: 'rgba(26,127,160,0.06)' }}
+          _hover={{ color: '#185FC6', bg: 'rgba(26,127,160,0.06)' }}
           onClick={load}>
           <Icon as={LucideRefreshCw} w={3.5} h={3.5} mr={1.5} />Refresh
         </Button>
@@ -2511,10 +2511,10 @@ function LeadPricingPanel() {
         <HStack gap={3} align="start">
           <Text fontSize="16px" flexShrink={0}>💡</Text>
           <VStack gap={1} align="start">
-            <Text fontSize="12.5px" fontWeight="700" color="#1E3A5F" fontFamily="heading">
+            <Text fontSize="12.5px" fontWeight="700" color="#185FC6" fontFamily="heading">
               How lead pricing works
             </Text>
-            <Text fontSize="12px" color="#1E3A5F" fontFamily="heading" lineHeight={1.6}>
+            <Text fontSize="12px" color="#185FC6" fontFamily="heading" lineHeight={1.6}>
               The base price is charged to the cleaner who accepts the lead.
               Prices are randomly picked within each service range at lead creation.
               ZIP coverage, when configured, restricts which areas can submit leads.
@@ -2525,7 +2525,7 @@ function LeadPricingPanel() {
 
       <Flex justify="flex-end">
         <Button size="sm" variant="ghost" color="slate.400" borderRadius="4px" fontFamily="heading"
-          _hover={{ color: '#1E3A5F', bg: 'rgba(26,127,160,0.06)' }}
+          _hover={{ color: '#185FC6', bg: 'rgba(26,127,160,0.06)' }}
           onClick={load}>
           <Icon as={LucideRefreshCw} w={3.5} h={3.5} mr={1.5} />Refresh
         </Button>

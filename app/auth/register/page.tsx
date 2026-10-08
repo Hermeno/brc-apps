@@ -70,10 +70,10 @@ function RegisterForm() {
     borderRadius: '8px',
     fontFamily: 'heading',
     fontSize: '13.5px',
-    color: '#1E3A5F',
+    color: '#185FC6',
     px: 4,
     _placeholder: { color: '#B0BAC9' },
-    _focus: { borderColor: '#1E3A5F', boxShadow: 'none', outline: 'none' },
+    _focus: { borderColor: '#185FC6', boxShadow: 'none', outline: 'none' },
   };
 
   return (
@@ -82,7 +82,7 @@ function RegisterForm() {
       {/* ── Left panel ── */}
       <Box
         display={{ base: 'none', lg: 'flex' }} flexDirection="column"
-        w="480px" flexShrink={0} bg="#1E3A5F" position="relative" overflow="hidden"
+        w="480px" flexShrink={0} bg="#185FC6" position="relative" overflow="hidden"
       >
         <Box position="absolute" inset={0} style={{ backgroundImage: "url('/abc.png')", backgroundSize: 'cover', backgroundPosition: 'center', opacity: 1 }} />
         {/* Gradient overlay: lighter at top (photo shows) → dark at bottom for text legibility */}
@@ -121,7 +121,7 @@ function RegisterForm() {
           <Flex justify="space-between" align="center" mb={6}>
             <NextLink href="/" style={{ textDecoration: 'none' }}>
               <HStack gap={1.5} display="inline-flex"
-                _hover={{ color: '#1E3A5F' }} color="#697386" transition="color 0.15s">
+                _hover={{ color: '#185FC6' }} color="#697386" transition="color 0.15s">
                 <Icon as={LucideArrowLeft} w={3.5} h={3.5} />
                 <Text fontSize="13px" fontFamily="heading" fontWeight="500">{t('common.backToHome')}</Text>
               </HStack>
@@ -135,7 +135,7 @@ function RegisterForm() {
           </Box>
 
           <Box mb={8}>
-            <Text fontSize="24px" fontWeight="800" color="#1E3A5F" fontFamily="heading" letterSpacing="-0.025em" mb={1}>
+            <Text fontSize="24px" fontWeight="800" color="#185FC6" fontFamily="heading" letterSpacing="-0.025em" mb={1}>
               {t('auth.register.title')}
             </Text>
             <Text fontSize="13px" color="#425466" fontFamily="heading">
@@ -179,7 +179,7 @@ function RegisterForm() {
               </Box>
 
               <Button
-                type="submit" bg="#1E3A5F" color="white" h="40px" borderRadius="9999px"
+                type="submit" bg="#185FC6" color="white" h="40px" borderRadius="9999px"
                 fontWeight="600" fontSize="13.5px" letterSpacing="-0.01em" fontFamily="heading"
                 _hover={{ bg: '#172F4D' }} transition="background 0.15s"
                 loading={loading} loadingText={t('auth.register.submitting')} mt={1}
@@ -195,7 +195,7 @@ function RegisterForm() {
             <Text fontSize="13px" color="#425466" fontFamily="heading" textAlign="center">
               {t('auth.register.hasAccount')}{' '}
               <NextLink href="/auth/login">
-                <Text as="span" color="#1E3A5F" fontWeight="700" cursor="pointer" _hover={{ color: '#172F4D' }}>
+                <Text as="span" color="#185FC6" fontWeight="700" cursor="pointer" _hover={{ color: '#172F4D' }}>
                   {t('auth.register.signIn')}
                 </Text>
               </NextLink>

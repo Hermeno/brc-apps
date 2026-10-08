@@ -81,7 +81,7 @@ function VerifyEmailForm() {
         <HStack gap={2.5} mb={10} justify="space-between">
           <HStack gap={2.5}>
             <Image src="/images/brand/verliks-logo-600.png" alt="Verliks" width={149} height={32} style={{ objectFit: 'contain', flexShrink: 0 }} />
-            <Text fontWeight="700" fontSize="15px" letterSpacing="-0.02em" color="#1E3A5F" fontFamily="heading">
+            <Text fontWeight="700" fontSize="15px" letterSpacing="-0.02em" color="#185FC6" fontFamily="heading">
               Verliks
             </Text>
           </HStack>
@@ -91,13 +91,13 @@ function VerifyEmailForm() {
         <Box bg="white" border="1px solid #E3E8EE" p={8} style={{ borderRadius: 8 }}>
 
           <Box mb={7} textAlign="center">
-            <Text fontSize="22px" fontWeight="800" color="#1E3A5F" fontFamily="heading" letterSpacing="-0.025em" mb={1}>
+            <Text fontSize="22px" fontWeight="800" color="#185FC6" fontFamily="heading" letterSpacing="-0.025em" mb={1}>
               {t('auth.verify.title')}
             </Text>
             <Text fontSize="14px" color="#425466" fontFamily="heading">
               {t('auth.verify.subtitle')}
             </Text>
-            <Text fontSize="14px" fontWeight="700" color="#1E3A5F" fontFamily="heading">
+            <Text fontSize="14px" fontWeight="700" color="#185FC6" fontFamily="heading">
               {email}
             </Text>
           </Box>
@@ -117,7 +117,7 @@ function VerifyEmailForm() {
                   textAlign="center"
                   fontSize="28px" fontWeight="800" letterSpacing="10px" fontFamily="heading"
                   bg="#F7F8FA" border="1px solid" borderColor="#E3E8EE" h="64px" borderRadius="4px"
-                  _focus={{ bg: 'white', borderColor: '#1E3A5F' }}
+                  _focus={{ bg: 'white', borderColor: '#185FC6' }}
                   maxLength={6} autoComplete="one-time-code"
                 />
                 <Text fontSize="12px" color="#697386" textAlign="center" mt={2} fontFamily="heading">
@@ -126,7 +126,7 @@ function VerifyEmailForm() {
               </Box>
 
               <Button
-                type="submit" bg="#1E3A5F" color="white" h="44px" borderRadius="4px"
+                type="submit" bg="#185FC6" color="white" h="44px" borderRadius="4px"
                 fontWeight="700" fontSize="14px" fontFamily="heading"
                 _hover={{ bg: '#172F4D' }} transition="background 0.15s"
                 loading={loading} loadingText={t('auth.verify.submitting')}
@@ -141,7 +141,7 @@ function VerifyEmailForm() {
                 fontWeight="600" fontSize="13px" fontFamily="heading"
                 onClick={handleResend} loading={resending}
                 disabled={countdown > 0 || resending}
-                _hover={{ color: '#1E3A5F', bg: '#E9F3F5' }} type="button"
+                _hover={{ color: '#185FC6', bg: '#E9F3F5' }} type="button"
               >
                 <Icon as={LucideRefreshCw} w={3.5} h={3.5} mr={1.5} />
                 {countdown > 0 ? t('auth.verify.resendCountdown', { n: countdown }) : t('auth.verify.resend')}

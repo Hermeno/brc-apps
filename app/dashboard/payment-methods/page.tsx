@@ -171,7 +171,7 @@ function PaymentMethodsContent() {
               </Text>
             </Box>
             <Button
-              bg="#1E3A5F" color="white" borderRadius="4px" fontWeight="bold"
+              bg="#185FC6" color="white" borderRadius="4px" fontWeight="bold"
               _hover={{ bg: '#172F4D' }}
               loading={adding} loadingText={t('cleaner.payments.redirecting')}
               onClick={handleAdd}>
@@ -228,7 +228,7 @@ function PaymentMethodsContent() {
                   {t('cleaner.payments.noCardsHint')}
                 </Text>
                 <Button
-                  mt={2} bg="#1E3A5F" color="white" borderRadius="4px" fontWeight="bold"
+                  mt={2} bg="#185FC6" color="white" borderRadius="4px" fontWeight="bold"
                   _hover={{ bg: '#172F4D' }}
                   loading={adding} loadingText={t('cleaner.payments.redirecting')}
                   onClick={handleAdd}>
@@ -256,7 +256,7 @@ function PaymentMethodsContent() {
                           {/* Left accent strip */}
                           <Box
                             position="absolute" left={0} top={0} bottom={0} w="3px"
-                            bg={card.isDefault ? '#1E3A5F' : '#E3E8EE'} />
+                            bg={card.isDefault ? '#185FC6' : '#E3E8EE'} />
 
                           <Flex justify="space-between" align="center" gap={3}>
                             <HStack gap={3}>
@@ -270,7 +270,7 @@ function PaymentMethodsContent() {
                                     <Text
                                       style={{
                                         borderRadius: 2,
-                                        background: '#1E3A5F',
+                                        background: '#185FC6',
                                         padding: '2px 6px',
                                         fontSize: 9.5,
                                         fontWeight: 700,
@@ -289,7 +289,7 @@ function PaymentMethodsContent() {
                               {!card.isDefault && (
                                 <Button size="xs" variant="outline" borderColor="#E3E8EE"
                                   color="slate.500" borderRadius="4px" fontWeight="semibold"
-                                  _hover={{ bg: '#E9F3F5', borderColor: '#1E3A5F', color: '#1E3A5F' }}
+                                  _hover={{ bg: '#E9F3F5', borderColor: '#185FC6', color: '#185FC6' }}
                                   loading={settingId === card.id}
                                   onClick={() => handleSetDefault(card.id)}>
                                   <Icon as={LucideStar} w={3} h={3} mr={1} />
@@ -314,7 +314,7 @@ function PaymentMethodsContent() {
                   <Button
                     variant="outline" borderColor="#E3E8EE" color="slate.500"
                     borderRadius="4px" fontWeight="semibold" fontSize="sm"
-                    _hover={{ borderColor: '#1E3A5F', color: '#1E3A5F', bg: '#E9F3F5' }}
+                    _hover={{ borderColor: '#185FC6', color: '#185FC6', bg: '#E9F3F5' }}
                     loading={adding} loadingText={t('cleaner.payments.redirecting')}
                     onClick={handleAdd}>
                     <Icon as={LucidePlus} w={4} h={4} mr={2} />

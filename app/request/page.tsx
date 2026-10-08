@@ -21,7 +21,7 @@ import Image from 'next/image';
 const LABEL_STYLE = {
   fontSize: '12px' as const,
   fontWeight: '700' as const,
-  color: '#1E3A5F',
+  color: '#185FC6',
   textTransform: 'uppercase' as const,
   letterSpacing: '0.08em',
   fontFamily: 'heading',
@@ -29,7 +29,7 @@ const LABEL_STYLE = {
 };
 
 function FormLabel({ htmlFor, children }: { htmlFor: string; children: ReactNode }) {
-  return <label htmlFor={htmlFor} style={{ display: 'block', marginBottom: 9, color: '#1E3A5F', fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.08em' }}>{children}</label>;
+  return <label htmlFor={htmlFor} style={{ display: 'block', marginBottom: 9, color: '#185FC6', fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.08em' }}>{children}</label>;
 }
 
 function RequestForm() {
@@ -171,28 +171,28 @@ function RequestForm() {
     borderColor: '#CBD8E0',
     h: '50px',
     borderRadius: '5px',
-    color: '#1E3A5F',
+    color: '#185FC6',
     fontFamily: 'heading',
     fontSize: '14px',
     px: 3.5,
     _placeholder: { color: '#7B8DA0' },
     _hover: { borderColor: '#8DAABD' },
-    _focusVisible: { borderColor: '#1E3A5F', boxShadow: '0 0 0 3px rgba(212,175,55,.28)' },
+    _focusVisible: { borderColor: '#185FC6', boxShadow: '0 0 0 3px rgba(212,175,55,.28)' },
   } as const;
 
   const estimateSummary = (
     <Box bg="#FFFFFF" border="1px solid #D7E2E8" borderRadius="6px" overflow="hidden">
       <Box bg="#EDF3F5" px={{ base: 5, md: 6 }} py={4} borderBottom="1px solid #D7E2E8">
         <HStack gap={2.5}>
-          <Icon as={LucideBanknote} boxSize="18px" color="#1E3A5F" />
-          <Text fontSize="12px" fontWeight="800" letterSpacing=".1em" color="#1E3A5F" textTransform="uppercase" fontFamily="heading">
+          <Icon as={LucideBanknote} boxSize="18px" color="#185FC6" />
+          <Text fontSize="12px" fontWeight="800" letterSpacing=".1em" color="#185FC6" textTransform="uppercase" fontFamily="heading">
             Your estimate
           </Text>
         </HStack>
       </Box>
       <Box px={{ base: 5, md: 6 }} py={5}>
         <Text fontSize="13px" color="#526A7F" fontFamily="heading" mb={1}>Estimated price range</Text>
-        <Text fontFamily="heading" fontSize={{ base: '30px', md: '34px' }} fontWeight="800" lineHeight="1.1" letterSpacing="-.045em" color="#1E3A5F">
+        <Text fontFamily="heading" fontSize={{ base: '30px', md: '34px' }} fontWeight="800" lineHeight="1.1" letterSpacing="-.045em" color="#185FC6">
           {'$'}{estimate.minPrice}–{'$'}{estimate.maxPrice}
         </Text>
         {estimate.discountPct > 0 && (
@@ -201,9 +201,9 @@ function RequestForm() {
           </Text>
         )}
         <Box h="1px" bg="#E2E9ED" my={5} />
-        <HStack gap={2.5} color="#365878">
+        <HStack gap={2.5} color="#1A54AD">
           <Icon as={LucideClock} boxSize="17px" />
-          <Text fontSize="13px" fontFamily="heading">About <Text as="span" fontWeight="800" color="#1E3A5F">{estimate.hours} hours</Text> of work</Text>
+          <Text fontSize="13px" fontFamily="heading">About <Text as="span" fontWeight="800" color="#185FC6">{estimate.hours} hours</Text> of work</Text>
         </HStack>
         <Text mt={5} fontSize="12px" lineHeight="1.65" color="#526A7F" fontFamily="heading">
           This is a guide, not a final quote. Discuss the work and price with the cleaner before deciding.
@@ -213,7 +213,7 @@ function RequestForm() {
   );
 
   return (
-    <Box minH="100vh" bg="#F8F8F4" color="#1E3A5F">
+    <Box minH="100vh" bg="#F8F8F4" color="#185FC6">
       <Box as="header" bg="#FFFFFF" borderBottom="1px solid #DDE5E9" position="sticky" top={0} zIndex={50}>
         <Flex align="center" justify="space-between" h={{ base: '66px', md: '76px' }} px={{ base: 5, md: 8 }} maxW="1250px" mx="auto">
           <NextLink href="/" aria-label="Verliks home">
@@ -222,7 +222,7 @@ function RequestForm() {
             </HStack>
           </NextLink>
           <NextLink href="/auth/login">
-            <Text fontSize={{ base: '13px', md: '14px' }} fontWeight="700" color="#1E3A5F" fontFamily="heading" _hover={{ textDecoration: 'underline' }} textUnderlineOffset="5px">
+            <Text fontSize={{ base: '13px', md: '14px' }} fontWeight="700" color="#185FC6" fontFamily="heading" _hover={{ textDecoration: 'underline' }} textUnderlineOffset="5px">
               Sign in
             </Text>
           </NextLink>
@@ -234,11 +234,11 @@ function RequestForm() {
           <Box maxW="750px">
             <HStack gap={3} mb={4}>
               <Box w="26px" h="2px" bg="#D4AF37" />
-              <Text fontSize="12px" color="#365878" fontWeight="800" letterSpacing=".15em" textTransform="uppercase" fontFamily="heading">
+              <Text fontSize="12px" color="#1A54AD" fontWeight="800" letterSpacing=".15em" textTransform="uppercase" fontFamily="heading">
                 A cleaner home starts here
               </Text>
             </HStack>
-            <Text as="h1" fontFamily="heading" fontSize={{ base: '37px', sm: '45px', md: '58px' }} fontWeight="800" letterSpacing="-.055em" lineHeight="1.06" color="#1E3A5F">
+            <Text as="h1" fontFamily="heading" fontSize={{ base: '37px', sm: '45px', md: '58px' }} fontWeight="800" letterSpacing="-.055em" lineHeight="1.06" color="#185FC6">
               Tell us what needs cleaning.
             </Text>
             <Text fontSize={{ base: '15px', md: '17px' }} color="#526A7F" lineHeight="1.65" fontFamily="heading" mt={4} maxW="620px">
@@ -247,19 +247,19 @@ function RequestForm() {
                 : 'Share a few details about your space. A local independent cleaner can review your request, then you can agree on the work and price together.'}
             </Text>
           </Box>
-          <HStack align="center" gap={3} flexShrink={0} color="#1E3A5F" pb={{ lg: 1 }}>
-            <Flex w="34px" h="34px" borderRadius="full" bg="#1E3A5F" color="white" align="center" justify="center" fontSize="12px" fontWeight="800">01</Flex>
+          <HStack align="center" gap={3} flexShrink={0} color="#185FC6" pb={{ lg: 1 }}>
+            <Flex w="34px" h="34px" borderRadius="full" bg="#185FC6" color="white" align="center" justify="center" fontSize="12px" fontWeight="800">01</Flex>
             <Text fontSize="13px" fontWeight="800" fontFamily="heading">Request details</Text>
             <Box w="32px" h="1px" bg="#C7D6DE" mx={1} />
-            <Flex w="34px" h="34px" borderRadius="full" bg={showRegister ? '#1E3A5F' : '#E7EFF2'} color={showRegister ? 'white' : '#607990'} align="center" justify="center" fontSize="12px" fontWeight="800">02</Flex>
-            <Text fontSize="13px" fontWeight="700" color={showRegister ? '#1E3A5F' : '#607990'} fontFamily="heading">Send request</Text>
+            <Flex w="34px" h="34px" borderRadius="full" bg={showRegister ? '#185FC6' : '#E7EFF2'} color={showRegister ? 'white' : '#607990'} align="center" justify="center" fontSize="12px" fontWeight="800">02</Flex>
+            <Text fontSize="13px" fontWeight="700" color={showRegister ? '#185FC6' : '#607990'} fontFamily="heading">Send request</Text>
           </HStack>
         </Flex>
 
         {targetCleanerId && (
           <Flex mb={6} align="center" justify="space-between" gap={4} flexWrap="wrap" bg="#EDF3F5" borderLeft="3px solid #D4AF37" px={5} py={4}>
             <HStack gap={3} align="start">
-              <Icon as={LucideUser} boxSize="18px" color="#1E3A5F" mt="2px" />
+              <Icon as={LucideUser} boxSize="18px" color="#185FC6" mt="2px" />
               <Box>
                 <Text fontWeight="800" fontSize="14px" fontFamily="heading">Requesting {targetCleanerName || 'this cleaner'} directly</Text>
                 <Text color="#526A7F" fontSize="13px" fontFamily="heading">Only this professional will receive your request.</Text>
@@ -288,18 +288,18 @@ function RequestForm() {
                     <Button type="button" variant="plain" key={s.id} onClick={() => setServiceType(s.id)}
                       aria-pressed={selected} textAlign="left" minH="73px" px={4} py={3} cursor="pointer"
                       bg={selected ? '#EDF3F5' : '#FFFFFF'} border="1px solid"
-                      borderColor={selected ? '#1E3A5F' : '#DDE5E9'} borderRadius="5px"
+                      borderColor={selected ? '#185FC6' : '#DDE5E9'} borderRadius="5px"
                       _hover={{ borderColor: '#8DAABD', bg: '#F6F9FA' }}
                       _focusVisible={{ outline: '3px solid #D4AF37', outlineOffset: '2px' }}
                       transition="background .15s, border-color .15s"
                     >
                       <Flex align="start" justify="space-between" gap={3}>
                         <Box>
-                          <Text fontSize="14px" fontWeight="800" color="#1E3A5F" fontFamily="heading" lineHeight="1.3">{s.labelEn}</Text>
+                          <Text fontSize="14px" fontWeight="800" color="#185FC6" fontFamily="heading" lineHeight="1.3">{s.labelEn}</Text>
                           <Text mt={0.5} fontSize="12px" lineHeight="1.4" color="#60758A" fontFamily="heading">{s.descEn}</Text>
                         </Box>
-                        <Flex flexShrink={0} w="19px" h="19px" borderRadius="full" border="1.5px solid" borderColor={selected ? '#1E3A5F' : '#A7BAC6'}
-                          bg={selected ? '#1E3A5F' : 'white'} align="center" justify="center" mt={0.5}>
+                        <Flex flexShrink={0} w="19px" h="19px" borderRadius="full" border="1.5px solid" borderColor={selected ? '#185FC6' : '#A7BAC6'}
+                          bg={selected ? '#185FC6' : 'white'} align="center" justify="center" mt={0.5}>
                           {selected && <Icon as={LucideCheck} boxSize="12px" color="white" />}
                         </Flex>
                       </Flex>
@@ -340,11 +340,11 @@ function RequestForm() {
                     <Text {...LABEL_STYLE}>Bedrooms</Text>
                     <HStack w="fit-content" gap={0} border="1px solid #CBD8E0" borderRadius="5px" overflow="hidden">
                       <Button type="button" aria-label="Remove one bedroom" onClick={() => setBedrooms(Math.max(1, bedrooms - 1))}
-                        variant="ghost" h="44px" minW="46px" px={0} color="#1E3A5F" fontSize="20px" fontWeight="400" borderRadius={0}
+                        variant="ghost" h="44px" minW="46px" px={0} color="#185FC6" fontSize="20px" fontWeight="400" borderRadius={0}
                         _hover={{ bg: '#EDF3F5' }} _focusVisible={{ outline: '3px solid #D4AF37', outlineOffset: '-3px' }}>−</Button>
                       <Text minW="44px" textAlign="center" fontSize="15px" fontWeight="800" fontFamily="heading" aria-live="polite">{bedrooms}</Text>
                       <Button type="button" aria-label="Add one bedroom" onClick={() => setBedrooms(bedrooms + 1)}
-                        variant="ghost" h="44px" minW="46px" px={0} color="#1E3A5F" fontSize="20px" fontWeight="400" borderRadius={0}
+                        variant="ghost" h="44px" minW="46px" px={0} color="#185FC6" fontSize="20px" fontWeight="400" borderRadius={0}
                         _hover={{ bg: '#EDF3F5' }} _focusVisible={{ outline: '3px solid #D4AF37', outlineOffset: '-3px' }}>+</Button>
                     </HStack>
                   </Box>
@@ -352,11 +352,11 @@ function RequestForm() {
                     <Text {...LABEL_STYLE}>Bathrooms</Text>
                     <HStack w="fit-content" gap={0} border="1px solid #CBD8E0" borderRadius="5px" overflow="hidden">
                       <Button type="button" aria-label="Remove one bathroom" onClick={() => setBathrooms(Math.max(1, bathrooms - 1))}
-                        variant="ghost" h="44px" minW="46px" px={0} color="#1E3A5F" fontSize="20px" fontWeight="400" borderRadius={0}
+                        variant="ghost" h="44px" minW="46px" px={0} color="#185FC6" fontSize="20px" fontWeight="400" borderRadius={0}
                         _hover={{ bg: '#EDF3F5' }} _focusVisible={{ outline: '3px solid #D4AF37', outlineOffset: '-3px' }}>−</Button>
                       <Text minW="44px" textAlign="center" fontSize="15px" fontWeight="800" fontFamily="heading" aria-live="polite">{bathrooms}</Text>
                       <Button type="button" aria-label="Add one bathroom" onClick={() => setBathrooms(bathrooms + 1)}
-                        variant="ghost" h="44px" minW="46px" px={0} color="#1E3A5F" fontSize="20px" fontWeight="400" borderRadius={0}
+                        variant="ghost" h="44px" minW="46px" px={0} color="#185FC6" fontSize="20px" fontWeight="400" borderRadius={0}
                         _hover={{ bg: '#EDF3F5' }} _focusVisible={{ outline: '3px solid #D4AF37', outlineOffset: '-3px' }}>+</Button>
                     </HStack>
                   </Box>
@@ -380,10 +380,10 @@ function RequestForm() {
                       const selected = frequency === f.id;
                       return (
                         <Button type="button" variant="plain" key={f.id} aria-pressed={selected} onClick={() => setFrequency(f.id)}
-                          minH="48px" px={3} py={2} bg={selected ? '#1E3A5F' : '#FFFFFF'} color={selected ? '#FFFFFF' : '#1E3A5F'}
-                          border="1px solid" borderColor={selected ? '#1E3A5F' : '#CBD8E0'} borderRadius="5px"
+                          minH="48px" px={3} py={2} bg={selected ? '#185FC6' : '#FFFFFF'} color={selected ? '#FFFFFF' : '#185FC6'}
+                          border="1px solid" borderColor={selected ? '#185FC6' : '#CBD8E0'} borderRadius="5px"
                           textAlign="center" fontSize="13px" fontWeight="800" fontFamily="heading" cursor="pointer"
-                          _hover={{ borderColor: '#1E3A5F', bg: selected ? '#29496E' : '#EDF3F5' }}
+                          _hover={{ borderColor: '#185FC6', bg: selected ? '#29496E' : '#EDF3F5' }}
                           _focusVisible={{ outline: '3px solid #D4AF37', outlineOffset: '2px' }}>
                           {f.labelEn}{f.tag && <Text as="span" ml={1.5} color={selected ? '#E9D68B' : '#8A6E1E'} fontSize="11px">{f.tag}</Text>}
                         </Button>
@@ -403,12 +403,12 @@ function RequestForm() {
                           _hover={{ borderColor: '#B89631' }} _focusVisible={{ outline: '3px solid #D4AF37', outlineOffset: '2px' }}>
                           <Flex justify="space-between" align="center" gap={3}>
                             <Box>
-                              <Text fontSize="13px" fontWeight="800" fontFamily="heading" color="#1E3A5F">{ex.labelEn}</Text>
+                              <Text fontSize="13px" fontWeight="800" fontFamily="heading" color="#185FC6">{ex.labelEn}</Text>
                               <Text fontSize="12px" fontFamily="heading" color="#60758A">+{'$'}{ex.price}</Text>
                             </Box>
                             <Flex w="19px" h="19px" flexShrink={0} align="center" justify="center" border="1.5px solid"
                               borderColor={selected ? '#B89631' : '#A7BAC6'} bg={selected ? '#D4AF37' : '#FFFFFF'} borderRadius="3px">
-                              {selected && <Icon as={LucideCheck} boxSize="13px" color="#1E3A5F" />}
+                              {selected && <Icon as={LucideCheck} boxSize="13px" color="#185FC6" />}
                             </Flex>
                           </Flex>
                         </Button>
@@ -420,25 +420,25 @@ function RequestForm() {
                   <FormLabel htmlFor="request-notes">Anything else we should know? <Text as="span" textTransform="none" letterSpacing="normal" color="#6A8092" fontWeight="500">(optional)</Text></FormLabel>
                   <Textarea id="request-notes" value={notes} onChange={e => setNotes(e.target.value)}
                     placeholder="For example, pets at home, parking details, or areas to focus on."
-                    bg="#FFFFFF" border="1px solid #CBD8E0" borderRadius="5px" color="#1E3A5F" fontFamily="heading"
+                    bg="#FFFFFF" border="1px solid #CBD8E0" borderRadius="5px" color="#185FC6" fontFamily="heading"
                     fontSize="14px" rows={3} px={3.5} py={3}
-                    _placeholder={{ color: '#7B8DA0' }} _focusVisible={{ borderColor: '#1E3A5F', boxShadow: '0 0 0 3px rgba(212,175,55,.28)' }} />
+                    _placeholder={{ color: '#7B8DA0' }} _focusVisible={{ borderColor: '#185FC6', boxShadow: '0 0 0 3px rgba(212,175,55,.28)' }} />
                 </Box>
 
                 <Box display={{ base: 'block', lg: 'none' }}>{estimateSummary}</Box>
 
                 {!showRegister ? (
                   <Box pt={1}>
-                    <Button onClick={handleSubmit} bg="#D4AF37" color="#1E3A5F" minH="52px" w={{ base: 'full', sm: 'auto' }}
+                    <Button onClick={handleSubmit} bg="#D4AF37" color="#185FC6" minH="52px" w={{ base: 'full', sm: 'auto' }}
                       px={7} borderRadius="5px" fontWeight="800" fontSize="14px" fontFamily="heading"
-                      _hover={{ bg: '#E5C562' }} _focusVisible={{ outline: '3px solid #1E3A5F', outlineOffset: '3px' }}
+                      _hover={{ bg: '#E5C562' }} _focusVisible={{ outline: '3px solid #185FC6', outlineOffset: '3px' }}
                       loading={loading}>
                       Continue to send request <Icon as={LucideArrowRight} boxSize="17px" ml={2} />
                     </Button>
                     <Text mt={3} fontSize="12px" color="#60758A" fontFamily="heading">Free to request. You decide before booking.</Text>
                   </Box>
                 ) : (
-                  <Text fontSize="13px" color="#365878" fontFamily="heading" fontWeight="700">
+                  <Text fontSize="13px" color="#1A54AD" fontFamily="heading" fontWeight="700">
                     Your details are saved below. Finish the account step to send your request.
                   </Text>
                 )}
@@ -475,16 +475,16 @@ function RequestForm() {
                 </Box>
                 <HStack gap={0} px={{ base: 5, md: 8 }} borderBottom="1px solid #DDE5E9">
                   <Button type="button" variant="plain" flex={1} textAlign="center" minH="50px" px={2} py={3}
-                    borderBottom="2px solid" borderBottomColor={authMode === 'register' ? '#1E3A5F' : 'transparent'}
-                    color={authMode === 'register' ? '#1E3A5F' : '#60758A'} fontSize="13px"
+                    borderBottom="2px solid" borderBottomColor={authMode === 'register' ? '#185FC6' : 'transparent'}
+                    color={authMode === 'register' ? '#185FC6' : '#60758A'} fontSize="13px"
                     fontWeight={authMode === 'register' ? '800' : '600'} fontFamily="heading" cursor="pointer"
                     aria-pressed={authMode === 'register'} onClick={() => setAuthMode('register')}
                     _focusVisible={{ outline: '3px solid #D4AF37', outlineOffset: '-3px' }}>
                     Create account
                   </Button>
                   <Button type="button" variant="plain" flex={1} textAlign="center" minH="50px" px={2} py={3}
-                    borderBottom="2px solid" borderBottomColor={authMode === 'login' ? '#1E3A5F' : 'transparent'}
-                    color={authMode === 'login' ? '#1E3A5F' : '#60758A'} fontSize="13px"
+                    borderBottom="2px solid" borderBottomColor={authMode === 'login' ? '#185FC6' : 'transparent'}
+                    color={authMode === 'login' ? '#185FC6' : '#60758A'} fontSize="13px"
                     fontWeight={authMode === 'login' ? '800' : '600'} fontFamily="heading" cursor="pointer"
                     aria-pressed={authMode === 'login'} onClick={() => setAuthMode('login')}
                     _focusVisible={{ outline: '3px solid #D4AF37', outlineOffset: '-3px' }}>
@@ -543,9 +543,9 @@ function RequestForm() {
                           </HStack>
                         </Box>
                       </SimpleGrid>
-                      <Button onClick={handleRegisterAndSubmit} bg="#D4AF37" color="#1E3A5F" minH="52px"
+                      <Button onClick={handleRegisterAndSubmit} bg="#D4AF37" color="#185FC6" minH="52px"
                         w={{ base: 'full', sm: 'auto' }} px={7} borderRadius="5px" fontWeight="800" fontSize="14px" fontFamily="heading"
-                        _hover={{ bg: '#E5C562' }} _focusVisible={{ outline: '3px solid #1E3A5F', outlineOffset: '3px' }}
+                        _hover={{ bg: '#E5C562' }} _focusVisible={{ outline: '3px solid #185FC6', outlineOffset: '3px' }}
                         loading={loading} loadingText="Setting up your account…">
                         <Icon as={LucideCheckCircle} boxSize="17px" mr={2} /> Create account and send request
                       </Button>
@@ -574,16 +574,16 @@ function RequestForm() {
                           </HStack>
                         </Box>
                       </SimpleGrid>
-                      <Button onClick={handleLoginAndSubmit} bg="#D4AF37" color="#1E3A5F" minH="52px"
+                      <Button onClick={handleLoginAndSubmit} bg="#D4AF37" color="#185FC6" minH="52px"
                         w={{ base: 'full', sm: 'auto' }} px={7} borderRadius="5px" fontWeight="800" fontSize="14px" fontFamily="heading"
-                        _hover={{ bg: '#E5C562' }} _focusVisible={{ outline: '3px solid #1E3A5F', outlineOffset: '3px' }}
+                        _hover={{ bg: '#E5C562' }} _focusVisible={{ outline: '3px solid #185FC6', outlineOffset: '3px' }}
                         loading={loading} loadingText="Signing in…">
                         Sign in and send request <Icon as={LucideArrowRight} boxSize="17px" ml={2} />
                       </Button>
                       <Text fontSize="12px" color="#60758A" fontFamily="heading" mt={4}>
                         Forgot your password?{' '}
                         <NextLink href="/auth/login">
-                          <Text as="span" color="#1E3A5F" fontWeight="800" cursor="pointer" textDecoration="underline" textUnderlineOffset="3px">Go to login page</Text>
+                          <Text as="span" color="#185FC6" fontWeight="800" cursor="pointer" textDecoration="underline" textUnderlineOffset="3px">Go to login page</Text>
                         </NextLink>
                       </Text>
                     </>
@@ -596,7 +596,7 @@ function RequestForm() {
 
         <Flex mt={{ base: 12, md: 16 }} pt={5} borderTop="1px solid #DDE5E9" justify="space-between" align="center" gap={4} flexWrap="wrap">
           <Text fontFamily="heading" fontSize="13px" color="#60758A">Verliks · A clearer way to find cleaning help.</Text>
-          <HStack gap={5} fontFamily="heading" fontSize="13px" color="#1E3A5F" fontWeight="700">
+          <HStack gap={5} fontFamily="heading" fontSize="13px" color="#185FC6" fontWeight="700">
             <NextLink href="/how-it-works">How it works</NextLink>
             <NextLink href="/contact">Contact</NextLink>
           </HStack>

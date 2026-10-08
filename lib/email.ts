@@ -79,7 +79,7 @@ export function emailVerificationHtml(code: string, name: string) {
 export function verificationApprovedHtml(name: string) {
   return `
     <div style="font-family:sans-serif;max-width:520px;margin:auto">
-      <div style="background:#1E3A5F;padding:24px 32px;border-radius:8px 8px 0 0">
+      <div style="background:#185FC6;padding:24px 32px;border-radius:8px 8px 0 0">
         <h1 style="color:white;margin:0;font-size:20px;font-weight:700">Verliks</h1>
       </div>
       <div style="padding:32px;background:#ffffff;border:1px solid #E3E8EE;border-top:none;border-radius:0 0 8px 8px">
@@ -106,7 +106,7 @@ export function verificationApprovedHtml(name: string) {
 export function verificationRejectedHtml(name: string, reason?: string) {
   return `
     <div style="font-family:sans-serif;max-width:520px;margin:auto">
-      <div style="background:#1E3A5F;padding:24px 32px;border-radius:8px 8px 0 0">
+      <div style="background:#185FC6;padding:24px 32px;border-radius:8px 8px 0 0">
         <h1 style="color:white;margin:0;font-size:20px;font-weight:700">Verliks</h1>
       </div>
       <div style="padding:32px;background:#ffffff;border:1px solid #E3E8EE;border-top:none;border-radius:0 0 8px 8px">
@@ -161,7 +161,7 @@ export function notificationHtml(opts: {
   const { name, title, body, ctaUrl, ctaLabel, urgent } = opts;
   return `
     <div style="font-family:sans-serif;max-width:520px;margin:auto">
-      <div style="background:#1E3A5F;padding:24px 32px;border-radius:8px 8px 0 0">
+      <div style="background:#185FC6;padding:24px 32px;border-radius:8px 8px 0 0">
         <h1 style="color:white;margin:0;font-size:20px;font-weight:700">Verliks</h1>
       </div>
       <div style="padding:32px;background:#ffffff;border:1px solid #E3E8EE;border-top:none;border-radius:0 0 8px 8px">
@@ -174,7 +174,7 @@ export function notificationHtml(opts: {
         </div>` : ''}
         <p style="margin:28px 0">
           <a href="${esc(ctaUrl)}"
-             style="background:#1E3A5F;color:#ffffff;text-decoration:none;padding:12px 24px;
+             style="background:#185FC6;color:#ffffff;text-decoration:none;padding:12px 24px;
                     border-radius:6px;font-weight:700;display:inline-block">${esc(ctaLabel)}</a>
         </p>
         <p style="color:#697386;font-size:13px;margin-top:32px">— The Verliks Team</p>
