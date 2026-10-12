@@ -1,4 +1,4 @@
-// @ts-ignore — zipcodes has no bundled types
+// @ts-expect-error — zipcodes ships no types; this flags itself the day it does
 import * as zipcodes from 'zipcodes';
 import { prisma } from './prisma';
 

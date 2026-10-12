@@ -3,6 +3,7 @@ import bcryptjs from 'bcryptjs';
 import { z } from 'zod';
 import { NextRequest, NextResponse } from 'next/server';
 import { verifyCode } from '@/lib/verification';
+import { enforceRateLimit, AUTH_LIMITS } from '@/lib/rate-limit';
 
 const schema = z.object({
   email: z.string().email(),
@@ -11,6 +12,10 @@ const schema = z.object({
 });
 
 export async function POST(request: NextRequest) {
+  // The reset code is short, so attempts have to be bounded.
+  const limited = await enforceRateLimit(request, 'auth:reset-password', AUTH_LIMITS.passwordWrite);
+  if (limited) return limited;
+
   try {
     const body = await request.json();
     const validation = schema.safeParse(body);

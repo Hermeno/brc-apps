@@ -2,6 +2,7 @@ import { prisma } from '@/lib/prisma';
 import bcryptjs from 'bcryptjs';
 import { z } from 'zod';
 import { NextRequest, NextResponse } from 'next/server';
+import { enforceRateLimit, AUTH_LIMITS } from '@/lib/rate-limit';
 
 export const dynamic = 'force-dynamic';
 
@@ -13,6 +14,10 @@ const schema = z.object({
 });
 
 export async function POST(request: NextRequest) {
+  // The only thing between a caller and an ADMIN account is this secret.
+  const limited = await enforceRateLimit(request, 'auth:setup-admin', AUTH_LIMITS.setupAdmin);
+  if (limited) return limited;
+
   const setupSecret = process.env.ADMIN_SETUP_SECRET;
   if (!setupSecret) {
     return NextResponse.json({ error: 'Setup not configured' }, { status: 403 });

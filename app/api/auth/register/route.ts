@@ -5,6 +5,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createVerificationCode } from '@/lib/verification';
 import { sendMail, emailVerificationHtml } from '@/lib/email';
 import { logError } from '@/lib/logger';
+import { enforceRateLimit, AUTH_LIMITS } from '@/lib/rate-limit';
 
 const registerSchema = z.object({
   name:     z.string().min(2, 'Name must be at least 2 characters'),
@@ -16,6 +17,10 @@ const registerSchema = z.object({
 });
 
 export async function POST(request: NextRequest) {
+  // Signup is unauthenticated and writes a row plus sends mail.
+  const limited = await enforceRateLimit(request, 'auth:register', AUTH_LIMITS.register);
+  if (limited) return limited;
+
   try {
     const body = await request.json();
 

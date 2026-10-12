@@ -32,65 +32,65 @@ enum LeadStatus {
 }
 
 model User {
-  id              String        @id @default(cuid())
-  email           String        @unique
-  password        String
-  name            String?
-  role            Role          @default(CLIENT)
-  createdAt       DateTime      @default(now())
-  updatedAt       DateTime      @updatedAt
-  deletedAt       DateTime?
+  id        String    @id @default(cuid())
+  email     String    @unique
+  password  String
+  name      String?
+  role      Role      @default(CLIENT)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
 
-  phone           String?
-  address         String?
-  avatarUrl       String?
-  latitude        Float?
-  longitude       Float?
-  isVerified      Boolean       @default(false)
+  phone      String?
+  address    String?
+  avatarUrl  String?
+  latitude   Float?
+  longitude  Float?
+  isVerified Boolean @default(false)
 
   // Cleaner profile
-  serviceTypes    String[]      @default([])
-  isAvailable     Boolean       @default(true)
-  bio             String?
-  pricePerHour    Float?
-  plan            Plan          @default(FREE)
-  subscriptionEndsAt   DateTime?
-  zipCode              String?
-  serviceRadiusMiles   Float    @default(25)
+  serviceTypes       String[]  @default([])
+  isAvailable        Boolean   @default(true)
+  bio                String?
+  pricePerHour       Float?
+  plan               Plan      @default(FREE)
+  subscriptionEndsAt DateTime?
+  zipCode            String?
+  serviceRadiusMiles Float     @default(25)
 
   // Cleaner referral program — refer N verified cleaners, earn a free lead credit
-  referredById         String?
-  referredBy           User?     @relation("CleanerReferrals", fields: [referredById], references: [id])
-  referrals            User[]    @relation("CleanerReferrals")
-  referralQualifiedCount Int     @default(0)  // referred cleaners who became verified
-  freeLeadCredits      Int       @default(0)  // unused free-lead credits earned via referrals
+  referredById           String?
+  referredBy             User?   @relation("CleanerReferrals", fields: [referredById], references: [id])
+  referrals              User[]  @relation("CleanerReferrals")
+  referralQualifiedCount Int     @default(0) // referred cleaners who became verified
+  freeLeadCredits        Int     @default(0) // unused free-lead credits earned via referrals
 
-  suspendedUntil  DateTime?
+  suspendedUntil DateTime?
 
   // Login rate limiting
-  loginAttempts     Int       @default(0)
-  loginLockedUntil  DateTime?
+  loginAttempts    Int       @default(0)
+  loginLockedUntil DateTime?
 
   // Stripe
-  stripeCustomerId      String?
-  stripeSubscriptionId  String?
-  hasPaymentMethod      Boolean  @default(false)
+  stripeCustomerId     String?
+  stripeSubscriptionId String?
+  hasPaymentMethod     Boolean @default(false)
 
-  leadsCreated    Lead[]        @relation("ClientLeads")
-  leadsAccepted   Lead[]        @relation("CleanerLeads")
-  distributions   LeadDistribution[]
-  stats           CleanerStats?
-  clientConvos    Conversation[] @relation("ClientConversations")
-  cleanerConvos   Conversation[] @relation("CleanerConversations")
-  sentMessages    Message[]      @relation("MessageSender")
-  clientReviews   Review[]       @relation("ClientReviews")
-  cleanerReviews  Review[]       @relation("CleanerReviews")
-  workPhotos      WorkPhoto[]    @relation("CleanerPhotos")
-  notifications   Notification[]
-  verification    CleanerVerification?
-  scheduleBlocks  ScheduleBlock[]
-  disputesAsClient   Dispute[] @relation("DisputeClient")
-  disputesAsCleaner  Dispute[] @relation("DisputeCleaner")
+  leadsCreated      Lead[]               @relation("ClientLeads")
+  leadsAccepted     Lead[]               @relation("CleanerLeads")
+  distributions     LeadDistribution[]
+  stats             CleanerStats?
+  clientConvos      Conversation[]       @relation("ClientConversations")
+  cleanerConvos     Conversation[]       @relation("CleanerConversations")
+  sentMessages      Message[]            @relation("MessageSender")
+  clientReviews     Review[]             @relation("ClientReviews")
+  cleanerReviews    Review[]             @relation("CleanerReviews")
+  workPhotos        WorkPhoto[]          @relation("CleanerPhotos")
+  notifications     Notification[]
+  verification      CleanerVerification?
+  scheduleBlocks    ScheduleBlock[]
+  disputesAsClient  Dispute[]            @relation("DisputeClient")
+  disputesAsCleaner Dispute[]            @relation("DisputeCleaner")
 
   @@index([deletedAt])
   @@index([loginLockedUntil])
@@ -101,7 +101,7 @@ model Notification {
   id        String   @id @default(cuid())
   userId    String
   user      User     @relation(fields: [userId], references: [id])
-  type      String   // lead_received | cleaner_responded | client_accepted | message_received | job_completed | review_received
+  type      String // lead_received | cleaner_responded | client_accepted | message_received | job_completed | review_received
   title     String
   body      String?
   link      String?
@@ -112,54 +112,54 @@ model Notification {
 }
 
 model WorkPhoto {
-  id          String   @id @default(cuid())
-  cleanerId   String
-  cleaner     User     @relation("CleanerPhotos", fields: [cleanerId], references: [id])
-  url         String
-  caption     String?
-  createdAt   DateTime @default(now())
+  id        String   @id @default(cuid())
+  cleanerId String
+  cleaner   User     @relation("CleanerPhotos", fields: [cleanerId], references: [id])
+  url       String
+  caption   String?
+  createdAt DateTime @default(now())
 }
 
 model Lead {
-  id              String        @id @default(cuid())
-  clientId        String
-  client          User          @relation("ClientLeads", fields: [clientId], references: [id])
-  cleanerId       String?
-  cleaner         User?         @relation("CleanerLeads", fields: [cleanerId], references: [id])
-  status          LeadStatus    @default(NEW)
-  address         String
-  latitude        Float
-  longitude       Float
-  serviceType     String
-  dateTime        DateTime
-  notes           String?
-  qualityScore    Float         @default(0)
+  id           String     @id @default(cuid())
+  clientId     String
+  client       User       @relation("ClientLeads", fields: [clientId], references: [id])
+  cleanerId    String?
+  cleaner      User?      @relation("CleanerLeads", fields: [cleanerId], references: [id])
+  status       LeadStatus @default(NEW)
+  address      String
+  latitude     Float
+  longitude    Float
+  serviceType  String
+  dateTime     DateTime
+  notes        String?
+  qualityScore Float      @default(0)
 
   // Property details
-  bedrooms        Int           @default(1)
-  bathrooms       Int           @default(1)
-  squareMeters    Float         @default(0)
-  extras          String[]      @default([])
-  frequency       String        @default("once")
+  bedrooms     Int      @default(1)
+  bathrooms    Int      @default(1)
+  squareMeters Float    @default(0)
+  extras       String[] @default([])
+  frequency    String   @default("once")
 
   // Auto-calculated estimates
   estimatedMinPrice Float?
   estimatedMaxPrice Float?
   estimatedHours    Float?
 
-  clientPhone     String?
+  clientPhone String?
 
-  isInstantBook   Boolean       @default(false)
-  leadPrice       Float?        // OP price charged to winning cleaner
-  zipCode         String?
-  photos          String[]      @default([])
+  isInstantBook Boolean  @default(false)
+  leadPrice     Float? // OP price charged to winning cleaner
+  zipCode       String?
+  photos        String[] @default([])
 
-  createdAt       DateTime      @default(now())
-  updatedAt       DateTime      @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  distributions   LeadDistribution[]
-  conversations   Conversation[]
-  review          Review?
+  distributions LeadDistribution[]
+  conversations Conversation[]
+  review        Review?
 
   @@index([status])
   @@index([clientId])
@@ -167,17 +167,17 @@ model Lead {
 }
 
 model LeadDistribution {
-  id              String        @id @default(cuid())
-  leadId          String
-  lead            Lead          @relation(fields: [leadId], references: [id])
-  cleanerId       String
-  cleaner         User          @relation(fields: [cleanerId], references: [id])
-  wave            Int
-  status          String        // PENDING | RESPONDED | EXPIRED
-  notifiedAt      DateTime?
-  respondedAt     DateTime?
-  createdAt       DateTime      @default(now())
-  expiresAt       DateTime?
+  id          String    @id @default(cuid())
+  leadId      String
+  lead        Lead      @relation(fields: [leadId], references: [id])
+  cleanerId   String
+  cleaner     User      @relation(fields: [cleanerId], references: [id])
+  wave        Int
+  status      String // PENDING | RESPONDED | EXPIRED
+  notifiedAt  DateTime?
+  respondedAt DateTime?
+  createdAt   DateTime  @default(now())
+  expiresAt   DateTime?
 
   @@unique([leadId, cleanerId])
   @@index([cleanerId, status])
@@ -185,52 +185,52 @@ model LeadDistribution {
 }
 
 model CleanerStats {
-  id              String        @id @default(cuid())
-  cleanerId       String        @unique
-  cleaner         User          @relation(fields: [cleanerId], references: [id])
+  id        String @id @default(cuid())
+  cleanerId String @unique
+  cleaner   User   @relation(fields: [cleanerId], references: [id])
 
-  rankingScore    Float         @default(0)
-  acceptanceRate  Float         @default(0)
-  ratingAvg       Float         @default(0)
-  totalLeads      Int           @default(0)
-  noShowCount     Int           @default(0)
+  rankingScore   Float @default(0)
+  acceptanceRate Float @default(0)
+  ratingAvg      Float @default(0)
+  totalLeads     Int   @default(0)
+  noShowCount    Int   @default(0)
 }
 
 // ─── Review ────────────────────────────────────────────────────
 
 model Review {
-  id          String   @id @default(cuid())
-  leadId      String   @unique
-  lead        Lead     @relation(fields: [leadId], references: [id])
-  clientId    String
-  client      User     @relation("ClientReviews", fields: [clientId], references: [id])
-  cleanerId   String
-  cleaner     User     @relation("CleanerReviews", fields: [cleanerId], references: [id])
-  rating      Int      // 1–5
-  comment     String?
-  createdAt   DateTime @default(now())
+  id        String   @id @default(cuid())
+  leadId    String   @unique
+  lead      Lead     @relation(fields: [leadId], references: [id])
+  clientId  String
+  client    User     @relation("ClientReviews", fields: [clientId], references: [id])
+  cleanerId String
+  cleaner   User     @relation("CleanerReviews", fields: [cleanerId], references: [id])
+  rating    Int // 1–5
+  comment   String?
+  createdAt DateTime @default(now())
 }
 
 // ─── Chat / Pay-per-Lead ───────────────────────────────────────
 
 model Conversation {
-  id          String    @id @default(cuid())
-  leadId      String
-  lead        Lead      @relation(fields: [leadId], references: [id])
-  clientId    String
-  client      User      @relation("ClientConversations", fields: [clientId], references: [id])
-  cleanerId   String
-  cleaner     User      @relation("CleanerConversations", fields: [cleanerId], references: [id])
+  id        String @id @default(cuid())
+  leadId    String
+  lead      Lead   @relation(fields: [leadId], references: [id])
+  clientId  String
+  client    User   @relation("ClientConversations", fields: [clientId], references: [id])
+  cleanerId String
+  cleaner   User   @relation("CleanerConversations", fields: [cleanerId], references: [id])
 
-  status      String    @default("active")   // active | closed
+  status      String    @default("active") // active | closed
   leadFee     Float     @default(0)
-  feeStatus   String    @default("pending")  // pending | charged | waived | refunded
-  feeDeadline DateTime?                      // set when auto-charge fails; cron auto-declines after this
+  feeStatus   String    @default("pending") // pending | charged | waived | refunded
+  feeDeadline DateTime? // set when auto-charge fails; cron auto-declines after this
 
-  messages    Message[]
+  messages Message[]
 
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@unique([leadId, cleanerId])
   @@index([cleanerId, status])
@@ -245,7 +245,7 @@ model Message {
   sender         User         @relation("MessageSender", fields: [senderId], references: [id])
   content        String
 
-  createdAt      DateTime     @default(now())
+  createdAt DateTime @default(now())
 
   @@index([conversationId])
 }
@@ -257,21 +257,21 @@ enum VerificationStatus {
 }
 
 model CleanerVerification {
-  id           String             @id @default(cuid())
-  cleanerId    String             @unique
-  cleaner      User               @relation(fields: [cleanerId], references: [id])
-  fullName     String
-  idNumber     String
-  address      String
-  frontDocUrl  String
-  backDocUrl   String
-  selfieUrl    String
-  status       VerificationStatus @default(PENDING)
-  adminNote    String?
-  reviewedBy   String?
-  reviewedAt   DateTime?
-  createdAt    DateTime           @default(now())
-  updatedAt    DateTime           @updatedAt
+  id          String             @id @default(cuid())
+  cleanerId   String             @unique
+  cleaner     User               @relation(fields: [cleanerId], references: [id])
+  fullName    String
+  idNumber    String
+  address     String
+  frontDocUrl String
+  backDocUrl  String
+  selfieUrl   String
+  status      VerificationStatus @default(PENDING)
+  adminNote   String?
+  reviewedBy  String?
+  reviewedAt  DateTime?
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
 
   @@index([status])
 }
@@ -281,7 +281,7 @@ model VerificationToken {
   userId    String
   email     String
   code      String
-  type      String   // EMAIL_VERIFICATION | PASSWORD_RESET
+  type      String // EMAIL_VERIFICATION | PASSWORD_RESET
   expiresAt DateTime
   createdAt DateTime @default(now())
 
@@ -289,14 +289,14 @@ model VerificationToken {
 }
 
 model PlanConfig {
-  id        String   @id  // BASIC | PRO
+  id        String   @id // BASIC | PRO
   price     Float
   updatedAt DateTime @updatedAt
 }
 
 // Tracks every Stripe event ID we've processed — prevents double-execution on retries
 model StripeEvent {
-  id        String   @id  // Stripe event ID (evt_xxx)
+  id        String   @id // Stripe event ID (evt_xxx)
   createdAt DateTime @default(now())
 
   @@index([createdAt])
@@ -304,35 +304,35 @@ model StripeEvent {
 
 // Admin-configurable lead prices per service type
 model LeadPriceConfig {
-  id        String   @id  // service key: standard | deep | post-work | moving …
+  id        String   @id // service key: standard | deep | post-work | moving …
   price     Float
   updatedAt DateTime @updatedAt
 }
 
 // Admin-configurable platform settings (multipliers, coverage ZIPs, etc.)
 model LeadPlatformConfig {
-  id        String   @id  // same_day_multiplier | recurring_multiplier | coverage_zips
+  id        String   @id // same_day_multiplier | recurring_multiplier | coverage_zips
   value     String
   updatedAt DateTime @updatedAt
 }
 
 // Singleton row that stores landing-page configurable content
 model SiteConfig {
-  id           String   @id @default("singleton")
-  heroVideoUrl String?
+  id                String   @id @default("singleton")
+  heroVideoUrl      String?
   heroVideoPublicId String?
-  updatedAt    DateTime @updatedAt
+  updatedAt         DateTime @updatedAt
 }
 
 // Cleaner manually blocks time slots to prevent scheduling conflicts
 model ScheduleBlock {
-  id          String   @id @default(cuid())
-  cleanerId   String
-  cleaner     User     @relation(fields: [cleanerId], references: [id])
-  startTime   DateTime
-  endTime     DateTime
-  reason      String?
-  createdAt   DateTime @default(now())
+  id        String   @id @default(cuid())
+  cleanerId String
+  cleaner   User     @relation(fields: [cleanerId], references: [id])
+  startTime DateTime
+  endTime   DateTime
+  reason    String?
+  createdAt DateTime @default(now())
 
   @@index([cleanerId])
   @@index([startTime, endTime])
@@ -340,20 +340,20 @@ model ScheduleBlock {
 
 // Dispute raised by client or cleaner about a job
 model Dispute {
-  id          String   @id @default(cuid())
+  id          String    @id @default(cuid())
   leadId      String?
   clientId    String
-  client      User     @relation("DisputeClient",  fields: [clientId],  references: [id])
+  client      User      @relation("DisputeClient", fields: [clientId], references: [id])
   cleanerId   String
-  cleaner     User     @relation("DisputeCleaner", fields: [cleanerId], references: [id])
+  cleaner     User      @relation("DisputeCleaner", fields: [cleanerId], references: [id])
   reason      String
   description String
-  status      String   @default("OPEN")   // OPEN | UNDER_REVIEW | RESOLVED | CLOSED
+  status      String    @default("OPEN") // OPEN | UNDER_REVIEW | RESOLVED | CLOSED
   resolution  String?
   resolvedBy  String?
   resolvedAt  DateTime?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 
   @@index([status])
   @@index([clientId])
@@ -363,14 +363,25 @@ model Dispute {
 // Structured platform log for admin visibility
 model AppLog {
   id        String   @id @default(cuid())
-  level     String   // error | warn | info
+  level     String // error | warn | info
   context   String
   message   String
-  meta      String?  // JSON string of extra data
+  meta      String? // JSON string of extra data
   userId    String?
   createdAt DateTime @default(now())
 
   @@index([level])
   @@index([createdAt])
   @@index([userId])
+}
+
+// One row per (bucket, caller) pair — see lib/rate-limit.ts. The window is kept
+// as a start timestamp rather than an expiry so a single SQL statement can both
+// decide whether the window rolled over and bump the counter, with no read first.
+model RateLimit {
+  key         String   @id // "<bucket>|<identifier>", e.g. "auth:login|ip:203.0.113.4"
+  count       Int      @default(0)
+  windowStart DateTime @default(now())
+
+  @@index([windowStart]) // supports pruning old rows
 }

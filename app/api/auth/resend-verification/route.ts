@@ -4,10 +4,15 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createVerificationCode } from '@/lib/verification';
 import { sendMail, emailVerificationHtml } from '@/lib/email';
 import { logError } from '@/lib/logger';
+import { enforceRateLimit, AUTH_LIMITS } from '@/lib/rate-limit';
 
 const schema = z.object({ email: z.string().email() });
 
 export async function POST(request: NextRequest) {
+  // Each call sends an email; without a cap it is a mail relay.
+  const limited = await enforceRateLimit(request, 'auth:resend-verification', AUTH_LIMITS.emailResend);
+  if (limited) return limited;
+
   try {
     const body = await request.json();
     const validation = schema.safeParse(body);

@@ -3,10 +3,15 @@ import { z } from 'zod';
 import { NextRequest, NextResponse } from 'next/server';
 import { createVerificationCode } from '@/lib/verification';
 import { sendMail, passwordResetHtml } from '@/lib/email';
+import { enforceRateLimit, AUTH_LIMITS } from '@/lib/rate-limit';
 
 const schema = z.object({ email: z.string().email() });
 
 export async function POST(request: NextRequest) {
+  // Each call sends an email to an address the caller chose.
+  const limited = await enforceRateLimit(request, 'auth:forgot-password', AUTH_LIMITS.passwordWrite);
+  if (limited) return limited;
+
   try {
     const body = await request.json();
     const validation = schema.safeParse(body);
