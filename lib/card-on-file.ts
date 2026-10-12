@@ -153,6 +153,11 @@ export async function chargeLeadFeeOnFile(opts: {
   amount:      number; // dollars
   description: string;
   metadata:    Record<string, string>;
+  // Stable per charge that should only ever happen once — pass the conversation
+  // it belongs to. A retry, a double-clicked button or a re-sent request then
+  // returns Stripe's original PaymentIntent instead of creating a second one and
+  // billing the cleaner twice for one lead.
+  idempotencyKey?: string;
 }): Promise<LeadChargeResult> {
   const { defaultPaymentMethodId } = await syncCardOnFile(opts.customerId);
   if (!defaultPaymentMethodId) return { status: 'no_card' };
@@ -169,7 +174,7 @@ export async function chargeLeadFeeOnFile(opts: {
       automatic_payment_methods: { enabled: true, allow_redirects: 'never' },
       description: opts.description,
       metadata:    opts.metadata,
-    });
+    }, opts.idempotencyKey ? { idempotencyKey: opts.idempotencyKey } : undefined);
 
     if (pi.status === 'succeeded')       return { status: 'charged', paymentIntentId: pi.id };
     if (pi.status === 'requires_action') return { status: 'requires_action', paymentIntentId: pi.id };

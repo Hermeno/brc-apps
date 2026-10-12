@@ -25,18 +25,39 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
 
   const FEE_PAYMENT_HOURS = 24;
 
-  // Accept this cleaner: lead → ACCEPTED, close all other conversations for this lead
-  await prisma.$transaction([
-    prisma.lead.update({
-      where: { id: conversation.leadId },
-      data:  { status: 'ACCEPTED', cleanerId: conversation.cleanerId },
-    }),
-    prisma.conversation.updateMany({
-      where: { leadId: conversation.leadId, id: { not: id } },
-      data:  { status: 'closed' },
-    }),
-    prisma.conversation.update({ where: { id }, data: { status: 'active' } }),
-  ]);
+  if (conversation.status !== 'active') {
+    return NextResponse.json({ error: 'This conversation is no longer open' }, { status: 409 });
+  }
+
+  // Accept this cleaner: lead → ACCEPTED, close every other conversation for it.
+  //
+  // The lead update is a guarded updateMany rather than a plain update, and it is
+  // what makes this route safe to call twice. A lead is only confirmable while it
+  // sits in IN_REVIEW, so a second click — or a confirm aimed at a conversation
+  // that was already declined or closed — matches zero rows and stops here.
+  // Without that guard the route would re-point the lead at an old cleaner, close
+  // the conversation the client actually chose, and charge the wrong card.
+  try {
+    await prisma.$transaction(async tx => {
+      const claimed = await tx.lead.updateMany({
+        where: { id: conversation.leadId, status: 'IN_REVIEW' },
+        data:  { status: 'ACCEPTED', cleanerId: conversation.cleanerId },
+      });
+      if (claimed.count === 0) {
+        throw Object.assign(new Error('NOT_CONFIRMABLE'), { code: 'NOT_CONFIRMABLE' });
+      }
+
+      await tx.conversation.updateMany({
+        where: { leadId: conversation.leadId, id: { not: id } },
+        data:  { status: 'closed' },
+      });
+    });
+  } catch (err: any) {
+    if (err?.code === 'NOT_CONFIRMABLE') {
+      return NextResponse.json({ error: 'This booking was already handled' }, { status: 409 });
+    }
+    throw err;
+  }
 
   // Automatically charge the cleaner's card on file now that the client confirmed
   let autoCharged = false;
@@ -51,6 +72,9 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
         customerId:  cleanerUser.stripeCustomerId,
         amount:      conversation.leadFee!,
         description: `Lead fee — ${conversation.lead.serviceType}`,
+        // One lead fee per conversation, ever. Stripe collapses a repeat of this
+        // key onto the original charge instead of taking the money twice.
+        idempotencyKey: `lead-fee-${id}`,
         metadata:    {
           type:           'lead_payment',
           conversationId: id,

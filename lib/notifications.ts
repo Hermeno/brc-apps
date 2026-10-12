@@ -10,6 +10,7 @@ export type NotificationType =
   | 'job_completed'
   | 'review_received'
   | 'lead_unmatched'
+  | 'lead_declined'
   | 'verification_approved'
   | 'verification_rejected'
   | 'payment_failed'
@@ -38,6 +39,9 @@ const EMAIL_TYPES: Record<string, { label: string; urgent: boolean }> = {
   client_accepted:   { label: 'Open the chat',      urgent: true  },
   cleaner_responded: { label: 'Review the cleaner', urgent: true  },
   lead_unmatched:    { label: 'Open my booking',    urgent: false },
+  // The cleaner paid for this lead and is being told the fee is kept, so it
+  // cannot depend on them having the dashboard open.
+  lead_declined:     { label: 'View my leads',      urgent: false },
   payment_failed:    { label: 'Fix my payment',     urgent: false },
   job_completed:     { label: 'View the job',       urgent: false },
 };

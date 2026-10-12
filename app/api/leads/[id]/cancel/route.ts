@@ -1,6 +1,7 @@
 import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
-import { stripe } from '@/lib/stripe';
+import { createNotification } from '@/lib/notifications';
+import { resolveFeeOnCancellation } from '@/lib/lead-fee';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
@@ -36,28 +37,24 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
     prisma.conversation.updateMany({ where: { leadId: id }, data: { status: 'closed' } }),
   ]);
 
-  // Refund any cleaners who paid for this lead and mark feeStatus accordingly
+  // Any cleaner who paid for this lead keeps nothing back: the check above
+  // already refuses to cancel while a paid conversation is active, so whoever
+  // reaches this point was charged for a conversation that has since closed and
+  // has had the client's contact details all along. See lib/lead-fee.ts.
   const paidConvs = await prisma.conversation.findMany({
-    where: { leadId: id, feeStatus: 'charged', leadFee: { gt: 0 } },
+    where:  { leadId: id, feeStatus: 'charged', leadFee: { gt: 0 } },
     select: { id: true, cleanerId: true },
   });
+
   for (const conv of paidConvs) {
-    try {
-      const pis = await stripe.paymentIntents.search({
-        query: `metadata['leadId']:'${id}' AND metadata['cleanerId']:'${conv.cleanerId}' AND status:'succeeded'`,
-        limit: 1,
-      });
-      if (pis.data.length > 0) {
-        await stripe.refunds.create({ payment_intent: pis.data[0].id });
-        await prisma.conversation.update({
-          where: { id: conv.id },
-          data: { feeStatus: 'refunded' },
-        });
-      }
-    } catch (e) {
-      console.error('[cancel] refund error:', e);
-      // feeStatus stays 'charged' so the refund can be identified and retried
-    }
+    const fee = resolveFeeOnCancellation('charged');
+    createNotification({
+      userId: conv.cleanerId,
+      type:   'lead_declined',
+      title:  'The client cancelled this booking',
+      body:   fee.reason,
+      link:   '/dashboard/cleaner',
+    }).catch(() => {});
   }
 
   return NextResponse.json({ ok: true });

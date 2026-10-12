@@ -35,7 +35,10 @@ export async function POST(
 
   if (!lead) return NextResponse.json({ error: 'Lead not found' }, { status: 404 });
 
-  // Schedule conflict: check if cleaner already has a job or manual block at this time (±2h window)
+  // Schedule conflict: check if cleaner already has a job or manual block at this
+  // time (±2h window). This early pass exists only to fail fast with a clear
+  // message; the binding check runs inside the transaction below, because two
+  // responses sent at the same moment would both pass this one.
   const windowStart = new Date(lead.dateTime.getTime() - 2 * 60 * 60 * 1000);
   const windowEnd   = new Date(lead.dateTime.getTime() + 2 * 60 * 60 * 1000);
 
@@ -84,6 +87,30 @@ export async function POST(
 
   try {
     await prisma.$transaction(async tx => {
+      // Serialise this cleaner's claims against each other.
+      //
+      // The check above reads leads already marked IN_REVIEW or ACCEPTED, but
+      // under READ COMMITTED a sibling transaction's claim is invisible until it
+      // commits — so a cleaner answering two leads at the same hour in the same
+      // instant passed both checks and ended up double-booked. This lock is
+      // keyed on the cleaner and released when the transaction ends, so only
+      // that one cleaner's concurrent claims queue up; everyone else is
+      // untouched. Re-reading the conflict after taking it is therefore reliable.
+      await tx.$executeRaw`SELECT pg_advisory_xact_lock(hashtext(${cleaner.id}))`;
+
+      const conflictNow = await tx.lead.findFirst({
+        where: {
+          cleanerId: cleaner.id,
+          status:    { in: ['ACCEPTED', 'IN_REVIEW'] },
+          dateTime:  { gte: windowStart, lte: windowEnd },
+          id:        { not: leadId },
+        },
+        select: { id: true },
+      });
+      if (conflictNow) {
+        throw Object.assign(new Error('SCHEDULE_CONFLICT'), { code: 'SCHEDULE_CONFLICT' });
+      }
+
       // Atomically claim the lead — only succeeds if status is still open.
       // If another cleaner won the race, this update matches 0 rows and we throw.
       const claimed = await tx.lead.updateMany({
@@ -133,6 +160,11 @@ export async function POST(
   } catch (txErr: any) {
     if (txErr.code === 'LEAD_TAKEN' || txErr.message === 'LEAD_TAKEN') {
       return NextResponse.json({ error: 'Another cleaner already accepted this lead' }, { status: 409 });
+    }
+    if (txErr.code === 'SCHEDULE_CONFLICT') {
+      // Same message as the early check, so answering two leads at once and
+      // answering them a minute apart look identical to the cleaner.
+      return NextResponse.json({ error: 'You already have a job scheduled within 2 hours of this time' }, { status: 409 });
     }
     if (txErr.code === 'P2002') {
       // Race: this cleaner's own conversation was created by a parallel request

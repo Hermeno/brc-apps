@@ -3,6 +3,7 @@ import { prisma } from '@/lib/prisma';
 import { createNotification } from '@/lib/notifications';
 import { NextRequest, NextResponse } from 'next/server';
 import { logError } from '@/lib/logger';
+import { isFeeSettled, approximateArea } from '@/lib/lead-visibility';
 
 type Params = { params: Promise<{ id: string }> };
 
@@ -27,7 +28,7 @@ export async function GET(_req: NextRequest, { params }: Params) {
           orderBy: { createdAt: 'asc' },
           include: { sender: { select: { name: true, role: true } } },
         },
-        lead:    { select: { serviceType: true, address: true, dateTime: true, status: true, estimatedMinPrice: true, estimatedMaxPrice: true, estimatedHours: true, isInstantBook: true, clientPhone: true } },
+        lead:    { select: { serviceType: true, address: true, zipCode: true, dateTime: true, status: true, estimatedMinPrice: true, estimatedMaxPrice: true, estimatedHours: true, isInstantBook: true, clientPhone: true } },
         client:  { select: { id: true, name: true, phone: true } },
         cleaner: { select: { id: true, name: true } },
       },
@@ -40,26 +41,35 @@ export async function GET(_req: NextRequest, { params }: Params) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
-    const isCleaner   = conversation.cleanerId === user.id;
-    const isDeclined  = conversation.status === 'declined';
-    const feePaid     = conversation.feeStatus === 'charged' || conversation.feeStatus === 'waived';
-    // Chat and contact are locked until the cleaner has paid the lead fee.
-    // Neither side can read messages or see contact info before that point.
-    const chatUnlocked = feePaid || isDeclined;
+    const isCleaner  = conversation.cleanerId === user.id;
+    const isDeclined = conversation.status === 'declined';
+    const feeSettled = isFeeSettled(conversation.feeStatus);
 
-    const safeConversation = !chatUnlocked
-      ? {
+    // Only the cleaner's view is gated: the client is looking at their own job,
+    // and hiding their own address and phone from them helps nobody.
+    //
+    // A declined conversation does NOT unlock it. It used to, which handed the
+    // client's phone number to a cleaner who had paid nothing — being turned
+    // down was enough to collect the contact the fee exists to sell.
+    const contactVisible = !isCleaner || feeSettled;
+
+    const safeConversation = contactVisible
+      ? conversation
+      : {
           ...conversation,
           client:   { id: conversation.client.id, name: conversation.client.name, phone: null },
-          lead:     { ...conversation.lead, clientPhone: null },
+          lead:     {
+            ...conversation.lead,
+            address:     approximateArea(conversation.lead.address, conversation.lead.zipCode),
+            clientPhone: null,
+          },
           messages: [],
-        }
-      : conversation;
+        };
 
     return NextResponse.json({
       conversation: safeConversation,
       userId: user.id,
-      paymentRequired: !chatUnlocked,
+      paymentRequired: !contactVisible,
       declined: isDeclined,
     });
   } catch (err: any) {
@@ -101,8 +111,7 @@ export async function POST(req: NextRequest, { params }: Params) {
 
     // Neither side can message until the lead fee is paid —
     // this prevents contact exchange before the platform captures the fee.
-    const feePaid = conversation.feeStatus === 'charged' || conversation.feeStatus === 'waived';
-    if (!feePaid) {
+    if (!isFeeSettled(conversation.feeStatus)) {
       return NextResponse.json({ error: 'payment_required', leadFee: conversation.leadFee }, { status: 402 });
     }
 

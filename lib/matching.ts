@@ -260,7 +260,7 @@ export async function runMatching(leadId: string) {
       userId: top.cleaner.id,
       type:   'lead_received',
       title:  '⚡ Instant Book — you were matched!',
-      body:   `${lead.serviceType} at ${lead.address}. Accept within 90 seconds.`,
+      body:   `${lead.serviceType} at ${lead.address}. Accept within ${INSTANT_BOOK_WINDOW_MS / 60000} minutes.`,
       link:   '/dashboard/cleaner',
     }]).catch(() => {});
 
@@ -409,7 +409,13 @@ export async function advanceWaves(): Promise<string[]> {
   const nowDate = new Date();
   const rematchIds: string[] = [];
 
-  // ── Instant Book expiry → UNMATCHED ──────────────────────────────────────
+  // ── Instant Book expiry → back into the normal wave ──────────────────────
+  // This used to jump straight to UNMATCHED, which made Instant Book the worst
+  // outcome a lead could get: the single best-scored cleaner sat on it, and if
+  // they never opened the app the lead died without being offered to anyone
+  // else. It now falls back to the ordinary batch of two, exactly like a Wave2
+  // that nobody answered. dispatchNextBatch still sets UNMATCHED by itself when
+  // there is genuinely no one left — but only after trying.
   const expiredInstant = await prisma.lead.findMany({
     where: {
       status:        'IN_REVIEW',
@@ -417,16 +423,18 @@ export async function advanceWaves(): Promise<string[]> {
       conversations: { none: {} },
       distributions: { some: { wave: 0, status: 'INVITED', expiresAt: { lt: nowDate } } },
     },
+    include: { distributions: true },
   });
   for (const lead of expiredInstant) {
     await prisma.leadDistribution.updateMany({
       where: { leadId: lead.id, wave: 0, status: 'INVITED' },
       data:  { status: 'EXPIRED' },
     });
-    await prisma.lead.update({
-      where: { id: lead.id },
-      data:  { status: 'UNMATCHED', isInstantBook: false },
-    });
+    // Clear the flag first: the lead is no longer an Instant Book, and leaving
+    // it set would keep matching this query on the next tick.
+    await prisma.lead.update({ where: { id: lead.id }, data: { isInstantBook: false } });
+
+    await dispatchNextBatch(lead, nowDate, 'WAVE2', OPEN_WINDOW_MS);
   }
 
   // ── Wave 2 expiry → Wave 3 (next batch of 2) ─────────────────────────────

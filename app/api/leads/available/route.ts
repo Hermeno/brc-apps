@@ -2,6 +2,7 @@ import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { NextRequest, NextResponse } from 'next/server';
 import { logError } from '@/lib/logger';
+import { redactLeadForCleaner, leadForCleaner } from '@/lib/lead-visibility';
 
 export async function GET(req: NextRequest) {
   const session = await auth();
@@ -29,6 +30,8 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
+    // The city filter still matches on the full stored address, so a cleaner can
+    // narrow by town without that address being sent back to them.
     const cityWhere = cityFilter
       ? { address: { contains: cityFilter, mode: 'insensitive' as const } }
       : {};
@@ -52,12 +55,33 @@ export async function GET(req: NextRequest) {
       }),
       prisma.lead.findMany({
         where: { cleanerId: dbUser.id, status: { in: ['IN_REVIEW', 'ACCEPTED', 'COMPLETED'] } },
-        include: { client: { select: { name: true } } },
+        include: {
+          client: { select: { name: true } },
+          // The fee lives on the conversation, so it has to come back with the
+          // lead to decide whether this cleaner has earned the full detail.
+          conversations: {
+            where:  { cleanerId: dbUser.id },
+            select: { feeStatus: true },
+            take:   1,
+          },
+        },
         orderBy: { dateTime: 'asc' },
       }),
     ]);
 
-    return NextResponse.json({ available, accepted, conversations: dbUser.cleanerConvos });
+    return NextResponse.json({
+      // No conversation exists for these yet — the query above requires it — so
+      // the fee cannot have been settled and the detail is always withheld.
+      available: available.map(redactLeadForCleaner),
+
+      // Assigned to this cleaner, but IN_REVIEW can still be sitting unpaid.
+      accepted: accepted.map(lead => leadForCleaner(lead, lead.conversations[0]?.feeStatus)),
+
+      conversations: dbUser.cleanerConvos.map(conv => ({
+        ...conv,
+        lead: leadForCleaner(conv.lead, conv.feeStatus),
+      })),
+    });
   } catch (err: any) {
     logError('[leads/available]', err);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });

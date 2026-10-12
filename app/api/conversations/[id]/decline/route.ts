@@ -1,7 +1,8 @@
 import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
-import { stripe } from '@/lib/stripe';
 import { runMatching } from '@/lib/matching';
+import { createNotification } from '@/lib/notifications';
+import { resolveFeeOnCancellation } from '@/lib/lead-fee';
 import { after } from 'next/server';
 import { NextRequest, NextResponse } from 'next/server';
 import { logError } from '@/lib/logger';
@@ -19,34 +20,31 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
   if (!conv || conv.clientId !== user.id)
     return NextResponse.json({ error: 'Not found' }, { status: 404 });
 
-  // Attempt Stripe refund BEFORE marking as refunded in DB — if Stripe fails,
-  // status stays 'charged' so the issue can be retried rather than silently lost.
-  let resolvedFeeStatus = conv.feeStatus === 'charged' ? 'charged' : 'waived';
+  // Declining twice must not run any of this again.
+  if (conv.status !== 'active')
+    return NextResponse.json({ error: 'This conversation is no longer open' }, { status: 409 });
 
-  if (conv.feeStatus === 'charged' && (conv.leadFee ?? 0) > 0) {
-    try {
-      const pis = await stripe.paymentIntents.search({
-        query: `metadata['leadId']:'${conv.leadId}' AND metadata['cleanerId']:'${conv.cleanerId}' AND status:'succeeded'`,
-        limit: 1,
-      });
-      if (pis.data.length > 0) {
-        await stripe.refunds.create({ payment_intent: pis.data[0].id });
-        resolvedFeeStatus = 'refunded';
-      } else {
-        resolvedFeeStatus = 'waived';
-      }
-    } catch (e) {
-      console.error('[decline] refund error:', e);
-      // Keep feeStatus as 'charged' so the refund can be retried manually
-    }
-  } else {
-    resolvedFeeStatus = 'waived';
-  }
+  // A settled fee stays settled — see lib/lead-fee.ts for why the automatic
+  // refund that used to live here was the hole that made the platform free.
+  const fee = resolveFeeOnCancellation(conv.feeStatus);
 
-  await prisma.conversation.update({
-    where: { id },
-    data: { status: 'declined', feeStatus: resolvedFeeStatus },
+  // Guard the transition itself, so two declines racing cannot both proceed.
+  const declined = await prisma.conversation.updateMany({
+    where: { id, status: 'active' },
+    data:  { status: 'declined', feeStatus: fee.feeStatus },
   });
+  if (declined.count === 0)
+    return NextResponse.json({ error: 'This conversation is no longer open' }, { status: 409 });
+
+  if (conv.feeStatus === 'charged') {
+    createNotification({
+      userId: conv.cleanerId,
+      type:   'lead_declined',
+      title:  'The client chose someone else',
+      body:   fee.reason,
+      link:   '/dashboard/cleaner',
+    }).catch(() => {});
+  }
 
   // If no other active conversations → revert lead to NEW and re-run matching
   const remaining = await prisma.conversation.count({
