@@ -1,9 +1,10 @@
 import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
-import { ArrowRight, ArrowUpRight, Check, X } from 'lucide-react';
+import { ArrowUpRight, Check, X } from 'lucide-react';
 import SiteHeader from '@/components/site/site-header';
 import SiteFooter from '@/components/site/site-footer';
+import PhotoHero from '@/components/site/photo-hero';
 import '../site.css';
 import styles from '../informational.module.css';
 
@@ -46,43 +47,25 @@ export default function HowItWorksPage() {
   return (
     <div className={`vsite ${styles.page}`}>
       <a className={styles.skipLink} href="#main">Skip to main content</a>
-      <SiteHeader />
+      <SiteHeader overlay />
       <main id="main" tabIndex={-1} data-inert-when-menu>
-        <section className={styles.hero} aria-labelledby="how-title">
-          <div className={`${styles.container} ${styles.heroGrid}`}>
-            <div className={styles.heroCopy}>
-              <nav className={styles.breadcrumb} aria-label="Breadcrumb">
-                <Link href="/">Home</Link><span aria-hidden="true">/</span><span aria-current="page">How it works</span>
-              </nav>
-              <p className={styles.eyebrow}><span className={styles.eyebrowLine} /> The Verliks process</p>
-              <h1 id="how-title" className={styles.heroTitle}>A cleaner you choose.<br /><em>A plan you understand.</em></h1>
-              <p className={styles.heroLead}>Tell us what your space needs, then speak with an independent cleaner near you. You decide on the work and the price before you say yes.</p>
-              <div className={styles.heroActions}>
-                <Link className={styles.buttonPrimary} href="/request">Start a free request <ArrowRight aria-hidden="true" size={18} /></Link>
-                <Link className={styles.textLink} href="/services">Explore services <ArrowUpRight aria-hidden="true" size={17} /></Link>
-              </div>
-              <p className={styles.heroNote}>Starting in Connecticut · Availability depends on your ZIP code</p>
-            </div>
-            <div className={styles.heroVisual}>
-              <Image
-                src="/images/site/how-it-works-phone-kitchen-1600.jpg"
-                alt="A woman using her phone in a kitchen"
-                width={1600}
-                height={1067}
-                priority
-                sizes="(max-width: 800px) 100vw, 47vw"
-                className={styles.heroImage}
-              />
-              <div className={styles.visualCaption}><span>From request to a clear agreement</span></div>
-            </div>
+        <PhotoHero id="how-title" crumb="How it works"
+          image="/process-bg.jpg" alt="A bright, tidy living room and kitchen"
+          kicker="The Verliks process"
+          title={<><span>A cleaner you choose.</span> <span>A plan you understand.</span></>}
+          lede="Tell us what your space needs, then speak with an independent cleaner near you. You decide on the work and the price before you say yes.">
+          <div className="hero-actions">
+            <Link className="btn-solid" href="/request">Start a free request</Link>
+            <Link className="btn-line" href="/services">Explore services</Link>
           </div>
-        </section>
+          <p className="hero-note">Starting in Connecticut · Availability depends on your ZIP code</p>
+        </PhotoHero>
 
         <section className={styles.section} aria-labelledby="steps-title">
-          <div className={styles.container}>
+          <div className="wrap">
             <div className={styles.sectionHead}>
-              <p className={styles.eyebrow}><span className={styles.eyebrowLine} /> How it unfolds</p>
-              <h2 id="steps-title" className={styles.sectionTitle}>Five steps. Your decision at every turn.</h2>
+              <p className="kicker">How it unfolds</p>
+              <h2 id="steps-title" className="v-title">Five steps. Your decision at every turn.</h2>
               <p className={styles.sectionIntro}>The request starts the conversation. A booking happens only after you choose the cleaner and confirm the details.</p>
             </div>
             <ol className={styles.stepList}>
@@ -96,8 +79,8 @@ export default function HowItWorksPage() {
           </div>
         </section>
 
-        <section className={styles.navySection} id="does-and-doesnt" aria-labelledby="checks-title">
-          <div className={`${styles.container} ${styles.trustGrid}`}>
+        <section className={`${styles.navySection} on-dark`} id="does-and-doesnt" aria-labelledby="checks-title">
+          <div className={`wrap ${styles.trustGrid}`}>
             <div className={styles.trustVisual}>
               <Image
                 src="/images/site/trust-cleaner-portrait-1200.jpg"
@@ -109,8 +92,8 @@ export default function HowItWorksPage() {
               />
             </div>
             <div className={styles.trustCopy}>
-              <p className={`${styles.eyebrow} ${styles.eyebrowOnDark}`}><span className={styles.eyebrowLine} /> Know who you are inviting in</p>
-              <h2 id="checks-title" className={`${styles.sectionTitle} ${styles.titleOnDark}`}>What we check.<br />What we leave to you.</h2>
+              <p className="kicker">Know who you are inviting in</p>
+              <h2 id="checks-title" className="v-title">What we check.<br />What we leave to you.</h2>
               <p className={styles.trustIntro}>Clear information matters when the work happens in your home. Here is how Verliks approaches trust.</p>
               <div className={styles.trustGroup}>
                 <h3>Verliks checks</h3>
@@ -133,10 +116,10 @@ export default function HowItWorksPage() {
         </section>
 
         <section className={styles.section} aria-labelledby="money-title">
-          <div className={`${styles.container} ${styles.moneyGrid}`}>
+          <div className={`wrap ${styles.moneyGrid}`}>
             <div>
-              <p className={styles.eyebrow}><span className={styles.eyebrowLine} /> The money, plainly</p>
-              <h2 id="money-title" className={styles.sectionTitle}>A free request. A price you agree on.</h2>
+              <p className="kicker">The money, plainly</p>
+              <h2 id="money-title" className="v-title">A free request. A price you agree on.</h2>
             </div>
             <div className={styles.moneyCopy}>
               <p>There is no charge to send a request or to decline a cleaner. You see an estimated price range, then discuss the final amount with the professional before confirming.</p>
@@ -146,14 +129,16 @@ export default function HowItWorksPage() {
           </div>
         </section>
 
-        <section className={styles.ctaSection} aria-labelledby="how-cta-title">
-          <div className={`${styles.container} ${styles.ctaGrid}`}>
+        <section className="gold-band" aria-labelledby="how-cta-title">
+          <div className="wrap gold-grid">
             <div>
-              <p className={styles.eyebrow}><span className={styles.eyebrowLine} /> Ready when you are</p>
-              <h2 id="how-cta-title" className={styles.sectionTitle}>Tell us what needs doing.</h2>
+              <p className="kicker">Ready when you are</p>
+              <h2 id="how-cta-title">Tell us what needs doing.</h2>
               <p>Start with the space, the service and your ZIP code. You can decide on a cleaner after the conversation.</p>
             </div>
-            <Link className={styles.buttonPrimary} href="/request">Find a cleaner <ArrowRight aria-hidden="true" size={18} /></Link>
+            <div className="gold-actions">
+              <Link className="btn-ink" href="/request">Find a cleaner</Link>
+            </div>
           </div>
         </section>
       </main>

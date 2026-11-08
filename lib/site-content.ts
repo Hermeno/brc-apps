@@ -145,6 +145,10 @@ export const servicesByGroup = (group: ServiceGroup) =>
 export const getSiteService = (slug: string) =>
   SITE_SERVICES.find(s => s.slug === slug);
 
+/** Section id of a service group on /services, e.g. "Inside the home" → "inside-the-home". */
+export const groupAnchor = (group: string) =>
+  group.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+
 /** Primary nav, in the prototype's order. */
 export const SITE_NAV = [
   { href: '/how-it-works',  label: 'How it works' },

@@ -7,7 +7,7 @@ export default function SiteFooter() {
       <div className="footer-top">
         <div className="footer-intro">
           <Link className="brand" href="/" aria-label="Verliks home">
-            <Image className="brand-mark" src="/images/brand/verliks-logo-600.png" width={159} height={34} alt="" />
+            <Image className="brand-mark" src="/images/brand/verliks-logo-white-600.png" width={200} height={43} alt="" />
           </Link>
           <p>A thoughtful way to connect homes with independent cleaning professionals nearby.</p>
         </div>

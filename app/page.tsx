@@ -1,12 +1,13 @@
 import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
-import { ArrowRight, ArrowUpRight, Check, MapPin } from 'lucide-react';
+import { ArrowUpRight, ClipboardList, MessagesSquare, UserCheck } from 'lucide-react';
 import './site.css';
 import SiteHeader from '@/components/site/site-header';
 import SiteFooter from '@/components/site/site-footer';
-import { SITE_SERVICES } from '@/lib/site-content';
-import { HeroIntro, Reveal, Stagger } from '@/components/site/motion';
+import PhotoHero from '@/components/site/photo-hero';
+import ZipSearch from '@/components/site/zip-search';
+import { SERVICE_GROUP_ORDER, getSiteService, groupAnchor } from '@/lib/site-content';
 
 export const metadata: Metadata = {
   title: 'Find a Cleaner Near You | Verliks',
@@ -21,112 +22,100 @@ export const metadata: Metadata = {
   },
 };
 
-const featured = [
-  { slug: 'standard-cleaning', name: 'Everyday cleaning', detail: 'The fresh start your routine needs.', image: '/images/site/standard-cleaning-dusting-shelves-1600.jpg', alt: 'A professional dusting a living room shelf' },
-  { slug: 'deep-cleaning', name: 'Deep cleaning', detail: 'More attention to the places that need it.', image: '/images/site/deep-cleaning-stovetop-1200.jpg', alt: 'A professional cleaning a kitchen stovetop' },
-  { slug: 'move-in-move-out-cleaning', name: 'Moving cleaning', detail: 'For the home you leave or the one ahead.', image: '/images/site/move-out-empty-bedroom-1600.jpg', alt: 'An empty bedroom ready for move-in cleaning' },
+/* The request flow as it really runs: describe the job, talk with a cleaner
+   who responds, then accept (or not) and pay the cleaner directly. */
+const steps = [
+  { Icon: ClipboardList, title: 'Tell us about the job', body: 'Choose a service, share your ZIP code and describe the space. Sending a request is free.' },
+  { Icon: MessagesSquare, title: 'Talk through the details', body: 'An available professional who offers the service in your area can respond. Discuss scope, timing and price together.' },
+  { Icon: UserCheck, title: 'Choose with confidence', body: 'Review the professional and accept only when it feels right. You pay the cleaner directly on the terms you agree.' },
 ];
 
-const moreServices = SITE_SERVICES.filter(s => !featured.some(f => f.slug === s.slug)).slice(0, 6);
+// Six services with photographs, each opening its own /services page.
+const gallery = [
+  'standard-cleaning', 'deep-cleaning', 'recurring-cleaning',
+  'move-in-move-out-cleaning', 'home-organizing', 'post-construction-cleaning',
+].map(slug => getSiteService(slug)!);
 
 export default function HomePage() {
   return (
     <div className="vsite">
       <a className="skip-link" href="#main">Skip to main content</a>
-      <SiteHeader />
+      <SiteHeader overlay />
       <main id="main">
-        <section className="home-hero" aria-labelledby="home-title">
-          <Image src="/images/site/verliks-cleaning-hero-editorial-20261006.webp" alt="A cleaning professional at work in a sunlit living room" fill priority sizes="100vw" className="home-hero-backdrop" />
-          <div className="wrap home-hero-grid">
-            <HeroIntro className="home-hero-copy">
-              <p className="eyebrow eyebrow-rule">CLEANING HELP, ON YOUR TERMS</p>
-              <h1 id="home-title">A cleaner home starts with the <em>right person.</em></h1>
-              <p className="hero-lede">Tell us what you need. We connect you with an independent cleaning professional who serves your area. You decide on the details and price before you say yes.</p>
-              <form className="home-search" action="/request" method="get" aria-label="Start a cleaning request">
-                <div className="home-search-fields">
-                  <label className="search-field search-service"><span>What needs cleaning?</span>
-                    <select name="service" defaultValue="standard" required>
-                      <option value="standard">Standard cleaning</option><option value="deep">Deep cleaning</option>
-                      <option value="moving">Move-in / move-out</option>
-                      <option value="post-work">Post-construction</option><option value="commercial">Commercial cleaning</option>
-                    </select>
-                  </label>
-                  <label className="search-field search-zip"><span>ZIP code</span>
-                    <input name="zip" type="text" inputMode="numeric" autoComplete="postal-code" pattern="[0-9]{5}" maxLength={5} placeholder="Enter ZIP" required aria-describedby="zip-hint" />
-                  </label>
-                </div>
-                <button className="btn btn-primary search-submit" type="submit">Find a cleaner <ArrowRight size={19} aria-hidden="true" /></button>
-              </form>
-              <p className="search-note" id="zip-hint"><Check size={16} aria-hidden="true" /> Free to request <span aria-hidden="true">·</span> Availability depends on your ZIP code</p>
-            </HeroIntro>
-          </div>
-          <div className="hero-visual-caption"><span>Real people. Real homes.<br />A better way to connect.</span></div>
+        <PhotoHero home id="home-title"
+          image="/images/site/verliks-cleaning-hero-editorial-20261006.webp"
+          alt="A cleaning professional at work in a sunlit living room"
+          kicker="Local cleaning professionals"
+          title={<><span>A cleaner home.</span> <span>The right person.</span></>}
+          lede="Connect with local cleaning professionals for your home.">
+          <ZipSearch id="hero-zip" hint="Free to request · Availability depends on your ZIP code" />
+        </PhotoHero>
+
+        <section className="feature-band" aria-labelledby="steps-title">
+          <h2 id="steps-title" className="sr-only">How a request works</h2>
+          <ol className="wrap feature-list">
+            {steps.map(({ Icon, title, body }) => (
+              <li key={title}>
+                <Icon className="feature-icon" size={64} strokeWidth={2} absoluteStrokeWidth aria-hidden="true" />
+                <div><h3>{title}</h3><p>{body}</p></div>
+              </li>
+            ))}
+          </ol>
         </section>
 
-        <section className="benefit-ribbon" aria-label="Why request through Verliks"><Stagger className="wrap benefit-ribbon-inner">
-          <p><Check size={17} aria-hidden="true" /> Tell us what needs doing</p><p><Check size={17} aria-hidden="true" /> Speak with a local cleaner</p><p><Check size={17} aria-hidden="true" /> Decide before you book</p>
-        </Stagger></section>
+        <section className="intro" aria-labelledby="intro-title">
+          <div className="wrap intro-grid">
+            <div className="intro-photo">
+              <Image src="/images/site/how-it-works-phone-kitchen-1600.jpg" alt="A woman reading a message on her phone in a kitchen" fill sizes="(max-width: 860px) 100vw, 46vw" />
+            </div>
+            <div className="intro-copy">
+              <p className="kicker">The Verliks way</p>
+              <h2 id="intro-title" className="v-title">We make the introduction. You agree on the details.</h2>
+              <p>Verliks connects you with independent cleaning professionals who serve your ZIP code. They work for themselves, not for Verliks.</p>
+              <p>When a cleaner responds, you talk it through in a conversation on Verliks. Agree on the scope, the date and time, and the price before you confirm anyone. You pay the cleaner directly.</p>
+              <p className="intro-links">
+                <Link className="arrow-link" href="/how-it-works">See how it works <ArrowUpRight size={17} aria-hidden="true" /></Link>
+                <Link className="arrow-link" href="/how-it-works#does-and-doesnt">What we check <ArrowUpRight size={17} aria-hidden="true" /></Link>
+              </p>
+            </div>
+          </div>
+        </section>
 
-        <section className="home-section services-section" aria-labelledby="services-title"><div className="wrap">
-          <Reveal className="section-intro"><div><p className="eyebrow">A SERVICE FOR THE SITUATION</p><h2 id="services-title">What can we help you clean?</h2></div>
-            <Link href="/services" className="text-link">Explore all services <ArrowUpRight size={19} aria-hidden="true" /></Link></Reveal>
-          <Stagger className="featured-grid">{featured.map((item, index) => (
-            <Link className={`featured-service ${index === 0 ? 'feature-tall' : ''}`} href={`/services/${item.slug}`} key={item.slug}>
-              <div className="featured-photo"><Image src={item.image} alt={item.alt} fill sizes={index === 0 ? '(max-width: 760px) 100vw, 48vw' : '(max-width: 760px) 100vw, 25vw'} /></div>
-              <div className="featured-info"><div><h3>{item.name}</h3><p>{item.detail}</p></div><ArrowUpRight size={22} aria-hidden="true" /></div>
-            </Link>
-          ))}</Stagger>
-          <Reveal className="more-services"><span className="more-label">More ways we can help</span><div>{moreServices.map(service =>
-            <Link href={`/services/${service.slug}`} key={service.slug}>{service.name}<ArrowUpRight size={15} aria-hidden="true" /></Link>)}</div></Reveal>
-        </div></section>
+        <section className="gallery" aria-labelledby="gallery-title">
+          <div className="wrap">
+            <div className="gallery-head">
+              <div>
+                <h2 id="gallery-title" className="v-title">Cleaning services</h2>
+                <p>Choose the kind of cleaning your home needs, then describe the job in a free request.</p>
+              </div>
+              <Link className="btn-line" href="/services">View all services</Link>
+            </div>
+            <nav className="gallery-groups" aria-label="Browse services by need">
+              <span>Browse by need</span>
+              {SERVICE_GROUP_ORDER.map(group => <Link key={group} href={`/services#${groupAnchor(group)}`}>{group}</Link>)}
+            </nav>
+            <ul className="gallery-grid">
+              {gallery.map(service => (
+                <li key={service.slug}>
+                  <Link href={`/services/${service.slug}`}>
+                    <Image src={`/images/site/${service.image}-800.jpg`} alt="" fill sizes="(max-width: 560px) 100vw, (max-width: 900px) 50vw, 400px" />
+                    <span>{service.name}</span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
 
-        <section className="home-section process-section" aria-labelledby="process-title"><div className="wrap process-grid">
-          <Reveal className="process-intro"><p className="eyebrow">THE VERLIKS WAY</p><h2 id="process-title">Simple from the first request.</h2>
-            <p>A cleaning request should be clear from the start. Here is what happens before anyone comes to your home.</p>
-            <Link href="/how-it-works" className="text-link">See how it works <ArrowUpRight size={19} aria-hidden="true" /></Link></Reveal>
-          <Stagger as="ol" className="process-steps">
-            <li><div><h3>Tell us about the job</h3><p>Choose a service, share your ZIP code and describe the space. Sending a request is free.</p></div></li>
-            <li><div><h3>Talk through the details</h3><p>An available professional who offers the service in your area can respond. Discuss scope, timing and price together.</p></div></li>
-            <li><div><h3>Choose with confidence</h3><p>Review the professional and accept only when it feels right. You pay the cleaner directly on the terms you agree.</p></div></li>
-          </Stagger>
-        </div></section>
-
-        <section className="home-section trust-section" aria-labelledby="trust-title"><div className="wrap trust-grid">
-          <Reveal className="trust-image"><Image src="/images/site/trust-cleaner-portrait-1200.jpg" alt="Portrait of a professional cleaner in a home" fill sizes="(max-width: 820px) 100vw, 43vw" /></Reveal>
-          <Reveal delay={0.1} className="trust-copy"><p className="eyebrow">PEOPLE FIRST</p><h2 id="trust-title">Know who you&apos;re welcoming in.</h2>
-            <p>Verliks connects you with independent professionals. Our team reviews each cleaner&apos;s government ID and selfie before their profile can receive requests.</p>
-            <ul><li><Check aria-hidden="true" size={19} /> Identity reviewed by our team</li><li><Check aria-hidden="true" size={19} /> Services and coverage matched to your request</li><li><Check aria-hidden="true" size={19} /> A conversation before you accept</li></ul>
-            <p className="trust-note">Identity review is not a criminal background check.</p>
-            <Link href="/how-it-works#does-and-doesnt" className="text-link">Our approach to trust <ArrowUpRight size={19} aria-hidden="true" /></Link>
-          </Reveal>
-        </div></section>
-
-        <section className="pro-section" aria-labelledby="pro-title"><div className="wrap pro-grid">
-          <Reveal className="pro-copy"><p className="eyebrow">FOR INDEPENDENT CLEANERS</p><h2 id="pro-title">Good work deserves a steady way to meet clients.</h2>
-            <p>Set the services and area you cover. See local requests and choose which conversations to start. The lead fee applies when the client confirms you.</p>
-            <Link href="/for-cleaners" className="btn btn-gold">How Verliks works for pros <ArrowRight size={19} aria-hidden="true" /></Link></Reveal>
-          <div className="pro-image"><Image src="/images/site/about-cleaner-van-1200.jpg" alt="Independent cleaning professional beside a work vehicle" fill sizes="(max-width: 820px) 100vw, 44vw" /></div>
-        </div></section>
-
-        <section className="home-section area-section" aria-labelledby="area-title"><div className="wrap area-grid">
-          <Reveal><p className="eyebrow">COVERAGE BY ZIP CODE</p><h2 id="area-title">Local starts with your address.</h2></Reveal>
-          <Reveal delay={0.1}><p>Verliks is starting in Connecticut and building a network of independent cleaners for more U.S. communities. Enter your ZIP code to begin a request; availability varies by area and service.</p>
-            <Link href="/service-areas" className="text-link"><MapPin size={18} aria-hidden="true" /> Check service areas <ArrowUpRight size={18} aria-hidden="true" /></Link></Reveal>
-        </div></section>
-
-        <section className="home-section home-faq" aria-labelledby="faq-title"><div className="wrap faq-grid">
-          <Reveal><p className="eyebrow">A FEW GOOD QUESTIONS</p><h2 id="faq-title">Before you get started.</h2></Reveal>
-          <Stagger className="faq-list"><details><summary>Does it cost anything to request a cleaner?</summary><p>No. Sending a cleaning request is free. You agree on the job and price with the professional before you accept.</p></details>
-            <details><summary>Does Verliks send an employee?</summary><p>No. Cleaners on Verliks work independently. They choose the work they take and agree on the details with you.</p></details>
-            <details><summary>How is the cleaner verified?</summary><p>Our team reviews a government ID and selfie before a cleaner can receive requests. We do not conduct criminal background checks.</p></details>
-            <details><summary>Who handles payment?</summary><p>You pay the cleaner directly, based on the terms the two of you agree. Verliks does not hold the job payment.</p></details>
-          </Stagger>
-        </div></section>
-
-        <section className="final-cta" aria-labelledby="final-title"><Reveal className="wrap final-cta-inner">
-          <div><p className="eyebrow">READY WHEN YOU ARE</p><h2 id="final-title">Tell us what home needs today.</h2></div>
-          <Link href="/request" className="btn btn-primary">Start a free request <ArrowRight size={19} aria-hidden="true" /></Link>
-        </Reveal></section>
+        <section className="gold-band" aria-labelledby="ready-title">
+          <div className="wrap gold-grid">
+            <div>
+              <h2 id="ready-title">Ready to find your next cleaner?</h2>
+              <p>Verliks is starting in Connecticut, and availability depends on your ZIP code. <Link href="/service-areas">See service areas</Link></p>
+            </div>
+            <ZipSearch id="closing-zip" tone="gold" />
+          </div>
+        </section>
       </main>
       <SiteFooter />
     </div>

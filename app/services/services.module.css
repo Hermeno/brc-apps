@@ -1,12 +1,6 @@
 .page {
-  --ink: #185FC6;
   --paper: #fffefa;
-  --mist: #f1f6f9;
-  --line: #d8e2e8;
-  --graphite: #40556a;
   --slate: #53677a;
-  --ink-soft: #1A54AD;
-  --on-ink: #f4f8fb;
   --navy: #185FC6;
   --navy-deep: #134A9A;
   --gold: #d4af37;
@@ -36,7 +30,6 @@
 
 .page .eyebrow,
 .page .sectionKicker,
-.page .categoryNavLabel,
 .page .categoryNumber,
 .page .stepNumber {
   font-family: var(--font-plex-mono), ui-monospace, monospace;
@@ -104,11 +97,7 @@
 .page .secondaryLink:hover { text-decoration-thickness: 2px; }
 .page .actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 24px; margin-top: 32px; }
 
-/* Editorial introduction and service directory. */
-.page .indexHero { background: var(--cream); }
-.page .indexHeroGrid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, .9fr); gap: clamp(36px, 5vw, 76px); align-items: stretch; }
-.page .indexHeroCopy { align-self: center; padding-block: clamp(50px, 6.5vw, 94px) 88px; }
-.page .indexTitle,
+/* Service directory. */
 .page .detailTitle {
   max-width: 11ch;
   margin: 0;
@@ -119,38 +108,21 @@
   letter-spacing: -.055em;
   line-height: .98;
 }
-.page .indexTitle em { font-family: Georgia, 'Times New Roman', serif; font-weight: 400; letter-spacing: -.045em; }
 .page .heroLead { max-width: 52ch; margin: 26px 0 0; color: var(--body); font-size: clamp(17px, 1.5vw, 20px); line-height: 1.55; }
-.page .indexHeroMedia,
 .page .detailHeroMedia { position: relative; min-height: 540px; margin: 0; overflow: hidden; background: #e9eef0; }
-.page .indexHeroMedia img,
 .page .detailHeroMedia img,
 .page .categoryImage img,
 .page .relatedImage img { width: 100%; height: 100%; object-fit: cover; }
-.page .indexHeroMedia img { object-position: 52% center; }
-.page .indexHeroMedia figcaption {
-  position: absolute;
-  inset: auto 22px 22px auto;
-  max-width: 230px;
-  padding: 16px 18px;
-  background: var(--paper);
-  color: var(--navy);
-  font-family: var(--font-plex-mono), ui-monospace, monospace;
-  font-size: 11px;
-  line-height: 1.5;
-  box-shadow: 0 14px 34px rgba(20, 45, 73, .12);
-}
 
-.page .categoryNav { background: var(--paper); box-shadow: var(--sh-1); }
-.page .categoryNav .container { display: flex; align-items: center; gap: 32px; min-height: 72px; }
-.page .categoryNavLabel { flex: none; color: var(--slate); }
+.page .categoryNav { background: var(--navy-ink); color: #fff; }
+.page .categoryNav :global(.wrap) { display: flex; align-items: center; gap: 32px; min-height: 72px; }
+.page .categoryNavLabel { flex: none; color: var(--gold); font-size: 12.5px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; }
 .page .categoryLinks { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 28px; }
-.page .categoryLinks a { display: inline-flex; align-items: center; min-height: 44px; color: var(--navy); font-size: 14px; font-weight: 700; text-decoration: none; }
-.page .categoryLinks a:hover { text-decoration: underline; text-underline-offset: 5px; }
-.page .catalog { padding-block: clamp(68px, 8vw, 112px) 110px; }
+.page .categoryLinks a { display: inline-flex; align-items: center; min-height: 44px; color: #fff; font-size: 14px; font-weight: 600; text-decoration: underline; text-decoration-color: rgba(255,255,255,.45); text-underline-offset: 6px; }
+.page .categoryLinks a:hover { text-decoration-color: var(--gold); }
+.page .catalog { padding-block: clamp(68px, 8vw, 112px) 110px; background: var(--white); }
 .page .catalogIntro { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 20px 70px; align-items: end; max-width: 1100px; margin-bottom: 30px; }
-.page .catalogIntro .eyebrow { grid-column: 1 / -1; margin-bottom: 0; }
-.page .catalogIntro h2,
+.page .catalogIntro :global(.kicker) { grid-column: 1 / -1; margin-bottom: 0; }
 .page .guidance h2,
 .page .processHeading h2,
 .page .faqHeading h2,
@@ -166,22 +138,16 @@
 .page .category { padding-top: 52px; margin-top: 54px; scroll-margin-top: 100px; }
 .page .categoryHeading { max-width: 800px; margin-bottom: 28px; }
 .page .categoryNumber { color: #997d2a; margin-top: 9px; }
-.page .categoryHeading h3 { color: var(--navy); font-size: clamp(1.7rem, 2.5vw, 2.45rem); font-weight: 730; letter-spacing: -.035em; }
+.page .categoryHeading h3 { color: var(--ink); font-size: clamp(1.7rem, 2.5vw, 2.45rem); font-weight: 730; letter-spacing: -.035em; }
 .page .categoryHeading p { max-width: 55ch; margin: 8px 0 0; color: var(--body); font-size: 16px; line-height: 1.55; }
 .page .categoryGrid { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: clamp(30px, 5vw, 72px); align-items: start; }
-.page .categoryImage { position: relative; aspect-ratio: 4 / 3.15; margin: 0; overflow: hidden; border-radius: var(--r-md); background: var(--bluewash); box-shadow: var(--sh-1); }
-.page .categoryImage img { transition: transform .45s ease; }
-.page .category:hover .categoryImage img { transform: scale(1.025); }
-.page .serviceList { list-style: none; display: grid; gap: 10px; }
-/* Was a ruled list under a 2px header rule. Each entry is now its own surface,
-   matching the home page's service cards. */
-.page .serviceLink { display: flex; justify-content: space-between; gap: 24px; align-items: flex-start; min-height: 92px; padding: 20px 22px; background: var(--surface); border-radius: var(--r-md); box-shadow: var(--sh-1); color: var(--navy); text-decoration: none; transition: transform .25s cubic-bezier(.2,.7,.2,1), box-shadow .25s cubic-bezier(.2,.7,.2,1); }
-.page .serviceLink:hover { transform: translateY(-2px); box-shadow: var(--sh-2); }
+.page .categoryImage { position: relative; aspect-ratio: 4 / 3.15; margin: 0; overflow: hidden; background: var(--bluewash); }
+.page .serviceList { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
+.page .serviceLink { display: flex; justify-content: space-between; gap: 24px; align-items: flex-start; min-height: 92px; padding: 20px 4px; border-bottom: 1px solid var(--line); color: var(--navy); text-decoration: none; }
+.page .serviceLink:hover strong { text-decoration: underline; text-underline-offset: 4px; }
 .page .serviceLink strong { display: block; font-size: clamp(17px, 1.55vw, 21px); font-weight: 720; letter-spacing: -.018em; line-height: 1.25; }
 .page .serviceLink small { display: block; max-width: 48ch; margin-top: 5px; color: var(--body); font-size: 14px; line-height: 1.45; }
-.page .serviceLink :global(.icon) { flex: none; margin-top: 3px; transition: transform .2s ease; }
-
-.page .serviceLink:hover :global(.icon) { transform: translate(2px, -2px); }
+.page .serviceLink :global(.icon) { flex: none; margin-top: 3px; color: var(--gold); }
 
 /* Shared navy conversion band. */
 .page .guidance { padding-block: clamp(64px, 6vw, 92px); background: var(--navy); color: #fff; }
@@ -285,22 +251,16 @@
 }
 @media (max-width: 1050px) {
   .page .container { width: min(100% - 48px, 1280px); }
-  .page .indexHeroGrid,
   .page .detailHeroGrid { gap: 34px; }
-  .page .indexHeroMedia,
   .page .detailHeroMedia { min-height: 460px; }
   .page .articleGrid { grid-template-columns: 185px minmax(0, 1fr); gap: 55px; }
 }
 @media (max-width: 800px) {
-  .page .indexHeroGrid,
   .page .detailHeroGrid { grid-template-columns: 1fr; gap: 0; }
-  .page .indexHeroCopy,
   .page .detailHeroCopy { padding-block: 45px 55px; }
-  .page .indexHeroMedia,
   .page .detailHeroMedia { min-height: 0; aspect-ratio: 16 / 10; margin-inline: -24px; }
-  .page .indexTitle,
   .page .detailTitle { max-width: 13ch; }
-  .page .categoryNav .container { display: block; padding-block: 14px; }
+  .page .categoryNav :global(.wrap) { display: block; padding-block: 14px; }
   .page .categoryNavLabel { display: block; margin-bottom: 6px; }
   .page .categoryLinks { gap: 2px 22px; }
   .page .categoryGrid { grid-template-columns: 1fr; gap: 25px; }
@@ -312,10 +272,7 @@
 }
 @media (max-width: 650px) {
   .page .container { width: min(100% - 36px, 1280px); }
-  .page .indexHeroMedia,
   .page .detailHeroMedia { margin-inline: -18px; aspect-ratio: 4 / 3; }
-  .page .indexHeroMedia figcaption { right: 13px; bottom: 13px; max-width: 185px; padding: 12px; font-size: 10px; }
-  .page .indexTitle,
   .page .detailTitle { font-size: clamp(2.9rem, 12vw, 4.4rem); }
   .page .heroLead { font-size: 17px; }
   .page .actions { align-items: stretch; }
@@ -324,7 +281,7 @@
   .page .categoryLinks a { font-size: 13px; }
   .page .catalog { padding-block: 62px 74px; }
   .page .catalogIntro { display: block; }
-  .page .catalogIntro .eyebrow { margin-bottom: 17px; }
+  .page .catalogIntro :global(.kicker) { margin-bottom: 17px; }
   .page .catalogIntro p:last-child { margin-top: 16px; font-size: 16px; }
   .page .category { margin-top: 48px; padding-top: 34px; }
 

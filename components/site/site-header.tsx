@@ -1,16 +1,16 @@
 'use client';
 
-import { useEffect, useId, useRef, useState } from 'react';
+import { useEffect, useId, useRef, useState, type PointerEvent } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ChevronDown, Menu, X } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import { SERVICE_GROUP_ORDER, servicesByGroup } from '@/lib/site-content';
 
-/* Motion here follows Emil Kowalski's lens from design-motion-principles:
-   navigation is triggered often, so it stays fast (180ms), interruptible
-   (CSS transitions, not keyframes) and origin-aware — the panel grows from
-   under its trigger rather than from its own centre. */
+/* Header for the public pages, white on dark in both forms. With `overlay` it
+   lies transparent over the page's opening photograph and scrolls away with
+   it; without, it is a solid navy bar that stays at the top. The search for a
+   cleaner lives in the page itself, so the bar carries links only. */
 
 const links = [
   { href: '/how-it-works', label: 'How it works' },
@@ -18,23 +18,14 @@ const links = [
   { href: '/for-cleaners', label: 'For cleaners' },
 ];
 
-export default function SiteHeader() {
-  const [open, setOpen] = useState(false);          // mobile sheet
+export default function SiteHeader({ overlay = false }: { overlay?: boolean }) {
+  const [open, setOpen] = useState(false);          // mobile menu
   const [servicesOpen, setServicesOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
   const panelId = useId();
   const triggerRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => { setOpen(false); setServicesOpen(false); }, [pathname]);
-
-  // The header has no hairline under it; it earns an edge once the page moves.
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 8);
-    onScroll();
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
-  }, []);
 
   useEffect(() => {
     if (!open && !servicesOpen) return;
@@ -47,22 +38,26 @@ export default function SiteHeader() {
     return () => window.removeEventListener('keydown', onKeyDown);
   }, [open, servicesOpen]);
 
+  // Hover opens the panel for a mouse only: a tap fires pointerenter and then
+  // click, which used to open the panel and close it again at once.
+  const hover = (value: boolean) => (event: PointerEvent) => {
+    if (event.pointerType === 'mouse') setServicesOpen(value);
+  };
   const servicesActive = pathname.startsWith('/services');
 
-  return <header className="site-header" data-scrolled={scrolled ? '' : undefined}>
+  return <header className="site-header" data-overlay={overlay ? '' : undefined} data-open={open ? '' : undefined}>
     <div className="wrap header-inner">
       <Link className="brand" href="/" aria-label="Verliks home">
-        <Image className="brand-mark" src="/images/brand/verliks-logo-600.png" width={159} height={34} alt="" priority />
+        <Image className="brand-mark" src="/images/brand/verliks-logo-white-600.png" width={200} height={43} alt="" priority />
       </Link>
 
       <nav className="desktop-nav" aria-label="Main navigation">
         {/* Trigger and panel share one wrapper, so moving the pointer from the
             button down into the panel never leaves the element that owns the
-            open state — the gap that used to close it mid-reach is gone. */}
-        <div className="nav-services"
-          onMouseEnter={() => setServicesOpen(true)}
-          onMouseLeave={() => setServicesOpen(false)}>
-          <button ref={triggerRef} type="button" className="nav-services-trigger"
+            open state. Focus leaving the wrapper closes it, too. */}
+        <div className="nav-services" onPointerEnter={hover(true)} onPointerLeave={hover(false)}
+          onBlur={event => { if (!event.currentTarget.contains(event.relatedTarget)) setServicesOpen(false); }}>
+          <button ref={triggerRef} type="button" className="nav-link nav-services-trigger"
             aria-expanded={servicesOpen} aria-controls={panelId}
             aria-current={servicesActive ? 'page' : undefined}
             onClick={() => setServicesOpen(value => !value)}>
@@ -70,7 +65,7 @@ export default function SiteHeader() {
           </button>
           <div id={panelId} className="nav-services-panel" data-open={servicesOpen ? '' : undefined}
             role="group" aria-label="Cleaning services" aria-hidden={!servicesOpen}>
-            <div className="nav-services-grid">
+            <div className="wrap nav-services-grid">
               {SERVICE_GROUP_ORDER.map(group => (
                 <div key={group}>
                   <p className="nav-services-group">{group}</p>
@@ -87,36 +82,34 @@ export default function SiteHeader() {
                 </div>
               ))}
             </div>
-            <Link className="nav-services-all" href="/services" tabIndex={servicesOpen ? 0 : -1}>
-              See every cleaning service
-            </Link>
+            <div className="wrap">
+              <Link className="nav-services-all" href="/services" tabIndex={servicesOpen ? 0 : -1}>
+                See every cleaning service
+              </Link>
+            </div>
           </div>
         </div>
 
-        {links.map(link => <Link key={link.href} href={link.href} aria-current={pathname === link.href ? 'page' : undefined}>{link.label}</Link>)}
+        {links.map(link => <Link key={link.href} className="nav-link" href={link.href} aria-current={pathname === link.href ? 'page' : undefined}>{link.label}</Link>)}
+        <Link className="nav-link" href="/auth/login">Sign in</Link>
       </nav>
 
-      <div className="header-actions">
-        <Link className="sign-in-link" href="/auth/login">Sign in</Link>
-        <Link className="btn btn-primary" href="/request">Find a cleaner</Link>
-      </div>
-
       <button className="mobile-menu-toggle" type="button" aria-label={open ? 'Close menu' : 'Open menu'} aria-expanded={open} aria-controls="site-mobile-menu" onClick={() => setOpen(value => !value)}>
-        {open ? <X size={22} aria-hidden="true" /> : <Menu size={22} aria-hidden="true" />}
+        {open ? <X size={24} aria-hidden="true" /> : <Menu size={24} aria-hidden="true" />}
       </button>
     </div>
 
     <nav id="site-mobile-menu" className="mobile-menu" aria-label="Mobile navigation" hidden={!open}>
       <div className="wrap mobile-menu-inner">
-        <Link href="/services" onClick={() => setOpen(false)}>Cleaning services</Link>
-        <div className="mobile-services">
+        <Link href="/services" onClick={() => setOpen(false)} aria-current={servicesActive ? 'page' : undefined}>Cleaning services</Link>
+        <ul className="mobile-services">
           {SERVICE_GROUP_ORDER.flatMap(group => servicesByGroup(group)).map(service => (
-            <Link key={service.slug} href={`/services/${service.slug}`} onClick={() => setOpen(false)}>{service.name}</Link>
+            <li key={service.slug}><Link href={`/services/${service.slug}`} onClick={() => setOpen(false)}>{service.name}</Link></li>
           ))}
-        </div>
+        </ul>
         {links.map(link => <Link key={link.href} href={link.href} aria-current={pathname === link.href ? 'page' : undefined} onClick={() => setOpen(false)}>{link.label}</Link>)}
         <Link href="/auth/login" onClick={() => setOpen(false)}>Sign in</Link>
-        <Link className="btn btn-primary" href="/request" onClick={() => setOpen(false)}>Find a cleaner</Link>
+        <Link className="mobile-cta" href="/request" onClick={() => setOpen(false)}>Find a cleaner</Link>
       </div>
     </nav>
   </header>;

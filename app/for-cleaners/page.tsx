@@ -1,7 +1,9 @@
 import type { Metadata } from 'next';
 import NextLink from 'next/link';
-import Image from 'next/image';
+import { MapPin, Receipt, UserPlus } from 'lucide-react';
+import SiteHeader from '@/components/site/site-header';
 import SiteFooter from '@/components/site/site-footer';
+import PhotoHero from '@/components/site/photo-hero';
 import '../site.css';
 import styles from './for-cleaners.module.css';
 import { prisma } from '@/lib/prisma';
@@ -48,12 +50,6 @@ const IcNo = () => (
   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7"
     strokeLinecap="round" aria-hidden="true">
     <path d="M5 12h14" />
-  </svg>
-);
-const IcArrowDown = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9"
-    strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-    <path d="M12 5v14M6 13l6 6 6-6" />
   </svg>
 );
 const IcChevron = () => (
@@ -113,60 +109,37 @@ export default async function ForCleanersPage() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <a href="#main" className={styles.skip}>Skip to content</a>
 
-      {/* ═══ Header + hero: one dark band ═══ */}
-      <div className={styles.dark}>
-        <header className={styles.topbar}>
-          <div className={styles.topbarInner}>
-            <NextLink href="/" className={styles.logo} aria-label="Verliks home">
-              <Image src="/images/brand/verliks-logo-white-600.png" alt="" width={149} height={32} className={styles.logoMark} priority />
-            </NextLink>
-            <div className={styles.topbarRight}>
-              <NextLink href="/auth/login" className={styles.signIn}>Sign in</NextLink>
-              <NextLink href={SIGNUP} className={`${styles.ctaGold} ${styles.topbarCta}`}>
-                Create your profile
-              </NextLink>
-            </div>
+      {/* ═══ Header over the photograph, then the three facts on navy ═══ */}
+      <div className="vsite">
+        <SiteHeader overlay />
+        <PhotoHero id="hero-title" position="50% 24%"
+          image="/images/site/about-cleaner-van-1200.jpg"
+          alt="A cleaning professional with equipment beside an open work van"
+          kicker="For cleaning professionals"
+          title={<><span>Cleaning clients near you,</span> <span>without chasing them.</span></>}
+          lede="Verliks sends local cleaning requests to independent professionals. You set the area you cover and decide which requests to answer. Creating a profile is free, and the per-request fee applies only when a client chooses you.">
+          <div className="hero-actions">
+            <NextLink href={SIGNUP} className="btn-solid">Create your cleaner profile</NextLink>
+            <a href="#how-it-works" className="btn-line">See how it works</a>
           </div>
-        </header>
+        </PhotoHero>
 
-        <section className={styles.hero} aria-labelledby="hero-title">
-          <div className={styles.heroInner}>
-            <p className={`${styles.eyebrow} ${styles.eyebrowGold}`}>For cleaning professionals</p>
-            <h1 id="hero-title" className={styles.heroTitle}>
-              Cleaning clients near you, <em>without chasing them.</em>
-            </h1>
-            <p className={styles.heroLede}>
-              Verliks sends local cleaning requests to independent professionals. You set the area you
-              cover and decide which requests to answer. Creating a profile is free, and the
-              per-request fee applies only when a client chooses you.
-            </p>
-            <div className={styles.heroActions}>
-              <NextLink href={SIGNUP} className={styles.ctaGold}>Create your cleaner profile</NextLink>
-              <a href="#how-it-works" className={styles.ctaGhostDark}>See how it works <IcArrowDown /></a>
-            </div>
-
-            <div className={styles.facts}>
-              <div className={styles.fact}>
-                <p className={styles.factLabel}>Free to join</p>
-                <p className={styles.factBody}>
-                  No monthly fee is required to create a profile or to receive requests.
-                </p>
-              </div>
-              <div className={styles.fact}>
-                <p className={styles.factLabel}>You set the area</p>
-                <p className={styles.factBody}>
-                  A ZIP code and a radius up to {freeMax} miles — up to {proMax} on the Pro plan.
-                </p>
-              </div>
-              <div className={styles.fact}>
-                <p className={styles.factLabel}>Paid only when picked</p>
-                <p className={styles.factBody}>
-                  Reading and answering a request costs nothing. The fee applies when the client
-                  confirms you.
-                </p>
-              </div>
-            </div>
-          </div>
+        <section className="feature-band" aria-labelledby="facts-title">
+          <h2 id="facts-title" className="sr-only">Joining at a glance</h2>
+          <ul className="wrap feature-list">
+            <li>
+              <UserPlus className="feature-icon" size={64} strokeWidth={2} absoluteStrokeWidth aria-hidden="true" />
+              <div><h3>Free to join</h3><p>No monthly fee is required to create a profile or to receive requests.</p></div>
+            </li>
+            <li>
+              <MapPin className="feature-icon" size={64} strokeWidth={2} absoluteStrokeWidth aria-hidden="true" />
+              <div><h3>You set the area</h3><p>A ZIP code and a radius up to {freeMax} miles — up to {proMax} on the Pro plan.</p></div>
+            </li>
+            <li>
+              <Receipt className="feature-icon" size={64} strokeWidth={2} absoluteStrokeWidth aria-hidden="true" />
+              <div><h3>Paid only when picked</h3><p>Reading and answering a request costs nothing. The fee applies when the client confirms you.</p></div>
+            </li>
+          </ul>
         </section>
       </div>
 
@@ -649,27 +622,32 @@ export default async function ForCleanersPage() {
         </section>
       </main>
 
-      {/* ═══ Final CTA ═══ */}
-      <section className={`${styles.dark} ${styles.final}`} aria-labelledby="final-title">
-        <div className={styles.finalInner}>
-          <p className={`${styles.eyebrow} ${styles.eyebrowGold}`}>Get started</p>
-          <h2 id="final-title" className={styles.finalTitle}>Put your profile in front of nearby clients</h2>
-          <p className={styles.finalBody}>
-            Creating a profile is free, and you decide what happens with every request that reaches
-            you.
-          </p>
-          <div className={styles.finalActions}>
-            <NextLink href={SIGNUP} className={styles.ctaGold}>Create your cleaner profile</NextLink>
-            <NextLink href="/auth/login" className={styles.ctaGhostDark}>I already have an account</NextLink>
+      {/* ═══ Final CTA on the gold band, then the shared footer ═══ */}
+      <div className="vsite">
+        <section className="gold-band" aria-labelledby="final-title">
+          <div className="wrap gold-grid">
+            <div>
+              <p className="kicker">Get started</p>
+              <h2 id="final-title">Put your profile in front of nearby clients</h2>
+              <p>
+                Creating a profile is free, and you decide what happens with every request that reaches
+                you.
+              </p>
+            </div>
+            <div>
+              <div className="gold-actions">
+                <NextLink href={SIGNUP} className="btn-ink">Create your cleaner profile</NextLink>
+                <NextLink href="/auth/login">I already have an account</NextLink>
+              </div>
+              <p>
+                Next: create your account and confirm your email. You can then set your services and area,
+                verify your ID and add a card — all from your dashboard.
+              </p>
+            </div>
           </div>
-          <p className={styles.finalNext}>
-            Next: create your account and confirm your email. You can then set your services and area,
-            verify your ID and add a card — all from your dashboard.
-          </p>
-        </div>
-      </section>
-
-      <div className="vsite"><SiteFooter /></div>
+        </section>
+        <SiteFooter />
+      </div>
     </div>
   );
 }

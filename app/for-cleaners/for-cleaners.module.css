@@ -1,29 +1,25 @@
 /* ─────────────────────────────────────────────────────────────
    /for-cleaners — acquisition page for cleaning professionals.
 
-   Same palette, type and spacing vocabulary as the home page
-   (app/platform-home.module.css → lib/theme.ts). The one deliberate
-   departure is the composition: the home page is a light, photographic
-   browse experience for clients; this page is a darker, text-forward
-   document for a professional deciding whether to put a card on file.
+   The opening (header over a photograph, then three facts on navy) and the
+   closing gold band come from app/site.css, shared with the home page. This
+   module styles the document in between: a text-forward page for a
+   professional deciding whether to put a card on file.
 
-   Colour rule used throughout: the conversion CTA is gold on navy and
-   navy on light. Gold behind white text is ~2:1 and never used that way.
+   Colours are the Verliks palette. Gold is for rules and icons; as text on
+   white it is under 4.5:1, so it never carries words here.
    ───────────────────────────────────────────────────────────── */
 
 .page {
-  --navy:      #185FC6;  /* brand.500 — headings, CTA on light */
-  --navy-mid:  #134A9A;  /* brand.600 — CTA hover */
-  --navy-deep: #0E3468;  /* brand.700 — dark bands */
-  --navy-soft: #1A54AD;  /* brand.400 darkened — secondary text on light */
-  --gold:      #D4AF37;  /* gold.500 — accent + CTA on dark */
-  --gold-soft: #E3C868;  /* gold.300 — eyebrow on dark */
-  --gold-ink:  #A5851F;  /* gold.700 — gold as text on white */
-  --cream:     #F7F8FA;
-  --ink:       #0F172A;
-  --muted:     #5F6B7D;
-  --line:      #E3E8EE;
-  --line-dark: rgba(255, 255, 255, 0.16);
+  --navy:      #185FC6;  /* links and actions on light */
+  --navy-mid:  #134A9A;  /* hover */
+  --navy-deep: #0E3468;  /* dark bands */
+  --gold:      #D4AF37;  /* rules, focus */
+  --gold-ink:  #A5851F;  /* check icons on white: 3.5:1, enough for a graphic */
+  --cream:     #F8F8F4;
+  --ink:       #18314E;
+  --muted:     #455B70;
+  --line:      #DDE5E9;
   --white:     #FFFFFF;
 
   color: var(--ink);
@@ -34,26 +30,29 @@
 }
 .page :global(*) { box-sizing: border-box; }
 
-.inner { max-width: 1140px; margin: 0 auto; padding: 0 48px; }
+/* Same column as .wrap in app/site.css: 1220px of content, 24px gutters. */
+.inner { max-width: 1268px; margin: 0 auto; padding: 0 24px; }
 
-/* ── Shared type ── */
+/* ── Shared type: small spaced intro line, title with a short gold rule ── */
 .eyebrow {
-  font-size: 12px; font-weight: 700; letter-spacing: 0.11em;
-  text-transform: uppercase; margin: 0; color: var(--navy-soft);
+  margin: 0; color: var(--ink);
+  font: 500 12.5px/1.5 var(--font-display), system-ui, sans-serif;
+  letter-spacing: .3em; text-transform: uppercase;
 }
-.eyebrowGold { color: var(--gold-soft); }
 
 .h2 {
   font-family: var(--font-display), system-ui, sans-serif;
-  font-size: clamp(1.75rem, 3vw, 2.4rem);
-  font-weight: 700; line-height: 1.14; letter-spacing: -0.025em;
-  color: var(--navy); margin: 14px 0 0;
+  font-size: clamp(1.75rem, 1.2rem + 1.2vw, 2.4rem);
+  font-weight: 600; line-height: 1.22; letter-spacing: -0.015em;
+  color: var(--ink); margin: 16px 0 0;
 }
-.h2Dark { color: var(--white); }
+.h2::after {
+  content: ""; display: block; width: 56px; height: 3px; margin-top: 22px; background: var(--gold);
+}
 
 .lede {
-  font-size: 16.5px; line-height: 1.65; color: var(--muted);
-  margin: 18px 0 0; max-width: 62ch;
+  font-size: 16.5px; line-height: 1.7; color: var(--muted);
+  margin: 22px 0 0; max-width: 62ch;
 }
 
 .skip {
@@ -63,104 +62,27 @@
 }
 .skip:focus { left: 16px; top: 12px; }
 
-/* ── Buttons ── */
-.ctaGold, .ctaNavy {
-  display: inline-flex; align-items: center; justify-content: center; gap: 9px;
-  font-family: var(--font-body), sans-serif;
-  font-size: 15px; font-weight: 600; letter-spacing: -0.01em;
-  padding: 14px 26px; border-radius: 0; border: none;
-  text-decoration: none; cursor: pointer; transition: background 0.15s;
-}
-.ctaGold { background: var(--gold); color: var(--navy-deep); }
-.ctaGold:hover { background: var(--gold-soft); }
-.ctaNavy { background: var(--navy); color: #fff; }
-.ctaNavy:hover { background: var(--navy-mid); }
-
-.ctaGhostDark {
-  display: inline-flex; align-items: center; gap: 8px;
-  font-size: 15px; font-weight: 500; color: rgba(255, 255, 255, 0.82);
-  text-decoration: none; padding: 14px 4px; transition: color 0.15s;
-}
-.ctaGhostDark:hover { color: #fff; text-decoration: underline; text-underline-offset: 4px; }
-
-/* ─────────────────────────────────────────────
-   Header + hero share one dark band
-   ───────────────────────────────────────────── */
-.dark { background: var(--navy-deep); }
-
-.topbar { border-bottom: 1px solid var(--line-dark); }
-.topbarInner {
-  max-width: 1140px; margin: 0 auto; padding: 0 48px; height: 72px;
-  display: flex; align-items: center; gap: 20px;
-}
-.logo {
-  display: inline-flex; align-items: center; gap: 9px;
-  font-family: var(--font-display), sans-serif;
-  font-size: 23px; font-weight: 700; color: #fff;
-  letter-spacing: -0.02em; text-decoration: none; flex-shrink: 0;
-}
-.logoMark { width: 149px; height: 32px; object-fit: contain; flex-shrink: 0; }
-.topbarRight { display: flex; align-items: center; gap: 20px; margin-left: auto; }
-.signIn {
-  font-size: 14.5px; font-weight: 500; color: rgba(255, 255, 255, 0.75);
-  text-decoration: none; transition: color 0.15s;
-}
-.signIn:hover { color: #fff; }
-.topbarCta { padding: 10px 18px; font-size: 14px; }
-
-.hero { padding: 76px 0 0; }
-.heroInner { max-width: 1140px; margin: 0 auto; padding: 0 48px; }
-.heroTitle {
-  font-family: var(--font-display), sans-serif;
-  font-size: clamp(2.5rem, 5.1vw, 4rem);
-  line-height: 1.04; font-weight: 700; letter-spacing: -0.032em;
-  color: #fff; margin: 22px 0 0; max-width: 24ch;
-}
-.heroTitle em { font-style: normal; color: var(--gold); }
-.heroLede {
-  font-size: 17.5px; line-height: 1.62; color: rgba(255, 255, 255, 0.78);
-  margin: 24px 0 0; max-width: 52ch;
-}
-.heroActions {
-  display: flex; align-items: center; gap: 22px; flex-wrap: wrap; margin: 34px 0 0;
-}
-
-/* Three plain facts, separated by hairlines — not cards. */
-.facts {
-  display: grid; grid-template-columns: repeat(3, 1fr);
-  margin: 68px 0 0; border-top: 1px solid var(--line-dark);
-}
-.fact { padding: 26px 30px 34px; border-left: 1px solid var(--line-dark); }
-.fact:first-child { border-left: none; padding-left: 0; }
-.factLabel {
-  font-size: 11.5px; font-weight: 700; letter-spacing: 0.1em;
-  text-transform: uppercase; color: var(--gold-soft); margin: 0 0 9px;
-}
-.factBody {
-  font-size: 14.5px; line-height: 1.55; color: rgba(255, 255, 255, 0.8); margin: 0;
-}
-
 /* ─────────────────────────────────────────────
    Light sections
    ───────────────────────────────────────────── */
-.section { padding: 92px 0; }
+.section { padding: clamp(64px, 6.2vw, 112px) 0; }
 .sectionCream { background: var(--cream); }
 .sectionHead { max-width: 62ch; }
 
-/* ── How it works — numbered rail ── */
-.steps { margin: 54px 0 0; }
+/* ── How it works — ruled steps ── */
+.steps { margin: 54px 0 0; padding: 0; list-style: none; }
 .step {
   padding: 30px 0; border-top: 1px solid var(--line);
 }
 .step:last-child { border-bottom: 1px solid var(--line); }
 .stepTitle {
-  font-size: 17px; font-weight: 700; color: var(--navy);
+  font-size: 17px; font-weight: 700; color: var(--ink);
   margin: 0 0 8px; letter-spacing: -0.01em;
 }
 .stepBody { font-size: 15px; line-height: 1.62; color: var(--muted); margin: 0; max-width: 60ch; }
 .stepNote {
-  display: inline-block; font-size: 13px; font-weight: 600; color: var(--gold-ink);
-  margin: 10px 0 0;
+  display: inline-block; font-size: 13.5px; font-weight: 600; color: var(--ink);
+  margin: 10px 0 0; padding-left: 12px; border-left: 3px solid var(--gold);
 }
 
 /* ── Example opportunity panel ── */
@@ -177,7 +99,7 @@
   font-size: 10.5px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
   color: var(--muted);
 }
-.exampleService { font-size: 14.5px; font-weight: 700; color: var(--navy); }
+.exampleService { font-size: 14.5px; font-weight: 700; color: var(--ink); }
 .exampleRows { list-style: none; margin: 0; padding: 4px 18px 14px; }
 .exampleRow {
   display: flex; gap: 16px; justify-content: space-between; align-items: baseline;
@@ -202,17 +124,17 @@
   padding: 17px 0; border-bottom: 1px solid var(--line);
 }
 .ledgerRow:first-child { border-top: 1px solid var(--line); }
-.ledgerKey { font-size: 15px; font-weight: 600; color: var(--navy); margin: 0; }
+.ledgerKey { font-size: 15px; font-weight: 600; color: var(--ink); margin: 0; }
 .ledgerSub { font-size: 13.5px; line-height: 1.55; color: var(--muted); margin: 5px 0 0; }
 .ledgerVal {
   font-family: var(--font-display), sans-serif;
-  font-size: 15px; font-weight: 700; color: var(--navy); white-space: nowrap;
+  font-size: 15px; font-weight: 700; color: var(--ink); white-space: nowrap;
 }
-.ledgerFree { color: var(--gold-ink); }
+.ledgerFree { color: var(--navy); }
 
 .plansLabel {
   font-size: 12px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
-  color: var(--navy); margin: 40px 0 0;
+  color: var(--ink); margin: 40px 0 0;
 }
 .plansIntro { font-size: 13.5px; line-height: 1.55; color: var(--muted); margin: 8px 0 0; }
 .plans { margin: 18px 0 0; }
@@ -223,7 +145,7 @@
 .planRow:first-child { border-top: 1px solid var(--line); }
 .planName {
   font-family: var(--font-display), sans-serif;
-  font-size: 14.5px; font-weight: 700; color: var(--navy);
+  font-size: 14.5px; font-weight: 700; color: var(--ink);
 }
 .planPrice { font-weight: 400; color: var(--muted); }
 .planWhat { font-size: 13.5px; line-height: 1.6; color: var(--muted); margin: 0; }
@@ -233,20 +155,20 @@
   border-left: 3px solid var(--gold); background: var(--cream);
 }
 .calloutOnCream { background: var(--white); border: 1px solid var(--line); border-left: 3px solid var(--gold); }
-.calloutTitle { font-size: 15px; font-weight: 700; color: var(--navy); margin: 0 0 7px; }
+.calloutTitle { font-size: 15px; font-weight: 700; color: var(--ink); margin: 0 0 7px; }
 .calloutBody { font-size: 14.5px; line-height: 1.62; color: var(--muted); margin: 0; }
 
 /* ── Control list ── */
 .controls { margin: 48px 0 0; display: grid; grid-template-columns: repeat(2, 1fr); gap: 0 56px; }
 .control { padding: 22px 0; border-top: 1px solid var(--line); }
-.controlTitle { font-size: 15.5px; font-weight: 700; color: var(--navy); margin: 0 0 7px; }
+.controlTitle { font-size: 15.5px; font-weight: 700; color: var(--ink); margin: 0 0 7px; }
 .controlBody { font-size: 14.5px; line-height: 1.6; color: var(--muted); margin: 0; }
 
 /* ── Does / doesn't ── */
 .truthGrid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 56px; margin: 48px 0 0; }
 .truthHead {
   font-size: 12px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
-  color: var(--navy); margin: 0 0 4px; padding-bottom: 14px; border-bottom: 1px solid var(--line);
+  color: var(--ink); margin: 0 0 4px; padding-bottom: 14px; border-bottom: 1px solid var(--line);
 }
 .truthList { list-style: none; margin: 0; padding: 0; }
 .truthItem {
@@ -254,10 +176,10 @@
   padding: 17px 0; border-bottom: 1px solid var(--line);
   font-size: 14.5px; line-height: 1.6; color: var(--muted);
 }
-.truthItem strong { color: var(--navy); font-weight: 700; }
+.truthItem strong { color: var(--ink); font-weight: 700; }
 .truthIcon { margin-top: 1px; flex-shrink: 0; }
 .iconYes { color: var(--gold-ink); }
-.iconNo  { color: var(--navy-soft); }
+.iconNo  { color: var(--navy); }
 
 /* ── FAQ ── */
 .faq { margin: 44px 0 0; max-width: 860px; }
@@ -266,11 +188,11 @@
 .faqQ {
   display: flex; align-items: center; justify-content: space-between; gap: 20px;
   padding: 22px 0; cursor: pointer; list-style: none;
-  font-size: 16px; font-weight: 600; color: var(--navy); letter-spacing: -0.01em;
+  font-size: 16px; font-weight: 600; color: var(--ink); letter-spacing: -0.01em;
 }
 .faqQ::-webkit-details-marker { display: none; }
 .faqQ:hover { color: var(--navy-mid); }
-.faqChevron { flex-shrink: 0; color: var(--navy-soft); transition: transform 0.18s ease; }
+.faqChevron { flex-shrink: 0; color: var(--navy); transition: transform 0.18s ease; }
 .faqItem[open] .faqChevron { transform: rotate(180deg); }
 .faqA {
   font-size: 15px; line-height: 1.68; color: var(--muted);
@@ -278,76 +200,28 @@
 }
 .faqA a { color: var(--navy); text-decoration: underline; text-underline-offset: 3px; }
 
-/* ── Final CTA ── */
-.final { padding: 92px 0; }
-.finalInner { max-width: 1140px; margin: 0 auto; padding: 0 48px; }
-.finalTitle {
-  font-family: var(--font-display), sans-serif;
-  font-size: clamp(1.9rem, 3.4vw, 2.7rem);
-  font-weight: 700; line-height: 1.1; letter-spacing: -0.03em; color: #fff;
-  margin: 16px 0 0; max-width: 18ch;
-}
-.finalBody {
-  font-size: 16.5px; line-height: 1.62; color: rgba(255, 255, 255, 0.78);
-  margin: 20px 0 0; max-width: 54ch;
-}
-.finalActions { display: flex; align-items: center; gap: 22px; flex-wrap: wrap; margin: 32px 0 0; }
-.finalNext {
-  font-size: 14px; line-height: 1.6; color: rgba(255, 255, 255, 0.62);
-  margin: 26px 0 0; max-width: 52ch;
-}
-
 /* ── Focus ── */
 .page a:focus-visible, .page button:focus-visible, .page summary:focus-visible {
-  outline: 2px solid var(--gold); outline-offset: 3px;
-}
-.dark a:focus-visible, .final a:focus-visible {
-  outline-color: var(--gold);
+  outline: 3px solid var(--gold); outline-offset: 3px;
 }
 
 /* ─────────────────────────────────────────────
    Responsive — 1440 / 768 / 390 checkpoints
    ───────────────────────────────────────────── */
 @media (max-width: 1000px) {
-  .inner, .topbarInner, .heroInner, .finalInner {
-    padding-left: 32px; padding-right: 32px;
-  }
   .costGrid { grid-template-columns: 1fr; gap: 40px; }
   .truthGrid { grid-template-columns: 1fr; gap: 40px; }
   .controls { grid-template-columns: 1fr; gap: 0; }
-  .facts { grid-template-columns: 1fr; }
-  .fact { border-left: none; border-top: 1px solid var(--line-dark); padding: 22px 0 24px; }
-  .fact:first-child { border-top: none; }
 }
 
-@media (max-width: 720px) {
-  .section, .final { padding: 64px 0; }
-  .hero { padding: 52px 0 0; }
-  .heroTitle { max-width: none; }
-  .heroLede { font-size: 16.5px; }
-  .facts { margin-top: 48px; }
-  .heroActions { gap: 14px; }
-  .heroActions .ctaGold { width: 100%; }
-  .ctaGhostDark { padding: 4px 0; }
-
+@media (max-width: 760px) {
+  .inner { padding: 0 18px; }
   .step { padding: 26px 0; }
-
   .steps { margin-top: 40px; }
   .controls, .truthGrid, .faq { margin-top: 34px; }
-  .finalActions .ctaGold { width: 100%; }
 }
 
 @media (max-width: 520px) {
-  .inner, .topbarInner, .heroInner, .finalInner {
-    padding-left: 20px; padding-right: 20px;
-  }
-  .topbarInner { height: 64px; gap: 12px; }
-  .topbarRight { gap: 14px; }
-  .signIn { display: none; }
-  .topbarCta { padding: 9px 15px; font-size: 13.5px; }
-  .logo { font-size: 20px; }
-  .logoMark { width: 130px; height: 28px; }
-
   .exampleRow { flex-direction: column; gap: 3px; }
   .exampleVal { text-align: left; }
   .ledgerRow { grid-template-columns: 1fr; gap: 6px; }

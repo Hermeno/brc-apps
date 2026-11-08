@@ -2,11 +2,11 @@
   /* Brand blue sampled from the logo artwork: the dominant solid pixel in
      public/images/brand/verliks-logo-1200.png is rgb(24,95,198). 6.02:1 on
      white, so it carries interactive text and buttons but not body copy. */
-  --navy:#185FC6;
+  --navy:#185FC6;             /* primary blue: actions */
   --navy-deep:#134A9A;        /* pressed / hover, 8.49:1 */
   --navy-soft:#1A54AD;        /* eyebrows: small bold text needs 4.5:1, this is 7.21:1 */
-  --navy-ink:#0E3468;         /* large dark surfaces, same hue as the logo, 12.3:1 under white */
-  --gold:#D4AF37;
+  --navy-ink:#0E3468;         /* dark bands, same hue as the logo, 12.3:1 under white */
+  --gold:#D4AF37;             /* accent: icons, rules; navy text on it is 5.85:1 */
   --gold-light:#E9D68B;
   --ink:#18314E;
   --body:#455B70;
@@ -18,15 +18,19 @@
   --surface:#FFFFFF;
   --surface-soft:#F4F7FB;
 
-  /* One radius scale, used everywhere. */
-  --r-xs:6px; --r-sm:10px; --r-md:14px; --r-lg:18px;
+  /* The header lies over the opening photograph, so the photo pads its top
+     by the same amount. At 1920 this puts the logo where the reference has it. */
+  --head-pad:clamp(0px, 4.6vw - 48px, 40px);
+  --head-row:clamp(72px, 2.8vw + 46px, 100px);
 
-  /* Depth instead of hairlines. Tinted to the brand hue rather than black, and
-     built in layers so an edge reads as a surface lifting off the page. */
+  /* One radius scale and soft depth, still used by /about and the service
+     detail pages. The pages rebuilt on the reference use neither. */
+  --r-xs:6px; --r-sm:10px; --r-md:14px; --r-lg:18px;
   --sh-1:0 0 0 1px rgba(14,52,104,.05), 0 1px 2px -1px rgba(14,52,104,.07), 0 4px 10px -3px rgba(14,52,104,.05);
   --sh-2:0 0 0 1px rgba(14,52,104,.07), 0 2px 5px -2px rgba(14,52,104,.10), 0 14px 30px -8px rgba(14,52,104,.13);
   --sh-field:0 0 0 1px rgba(14,52,104,.09), 0 2px 6px -2px rgba(14,52,104,.07);
   --sh-header:0 1px 0 rgba(14,52,104,.05), 0 6px 20px -8px rgba(14,52,104,.14);
+  position:relative;
   color:var(--ink);
   background:var(--white);
   font:400 16px/1.6 var(--font-body),system-ui,sans-serif;
@@ -43,6 +47,9 @@
 .vsite .wrap{width:min(100% - 48px,1220px);margin-inline:auto}
 .vsite .skip-link{position:absolute;top:-120px;left:20px;z-index:1000;background:var(--navy);color:#fff;padding:10px 16px;font-weight:700}
 .vsite .skip-link:focus{top:12px}
+.vsite .sr-only{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+
+/* Helpers still used by /about, which keeps its own composition for now. */
 .vsite .eyebrow{color:var(--navy-soft);font-size:.74rem;font-weight:800;letter-spacing:.16em;line-height:1.4}
 .vsite .eyebrow-rule{display:flex;align-items:center;gap:12px}
 .vsite .eyebrow-rule::before{content:"";width:25px;height:2px;background:var(--gold)}
@@ -50,205 +57,181 @@
 .vsite .btn svg{flex:none;transition:transform .25s cubic-bezier(.2,.7,.2,1)}
 .vsite .btn:hover{transform:translateY(-2px);box-shadow:var(--sh-2)}
 .vsite .btn:hover svg{transform:translateX(3px)}
-/* Pressed state reads as a physical push, and beats the hover lift. */
 .vsite .btn:active{transform:translateY(0) scale(.985);box-shadow:var(--sh-1);transition-duration:.08s}
 .vsite .btn-primary{background:var(--navy);color:#fff}
 .vsite .btn-primary:hover{background:var(--navy-deep)}
-/* Deliberately --navy-ink, not --navy-deep: the brand blue is lighter than the
-   navy it replaced, and on gold it measured 4.04:1. This pairing is 5.85:1. */
-.vsite .btn-gold{background:var(--gold);color:var(--navy-ink)}
-.vsite .btn-gold:hover{background:var(--gold-light)}
-.vsite .btn-outline{border-color:var(--navy);color:var(--navy);background:transparent}
-.vsite .btn-outline:hover{background:var(--mist)}
 .vsite .text-link{position:relative;display:inline-flex;align-items:center;gap:8px;color:var(--navy);font-size:.94rem;font-weight:750;line-height:1.2;padding:8px 0;white-space:nowrap}
-/* The rule is drawn as a pseudo-element so it can wipe in from the left on
-   hover. A border-bottom cannot be animated from one side. */
 .vsite .text-link::after{content:"";position:absolute;left:0;right:0;bottom:0;height:1px;background:currentColor;transform:scaleX(1);transform-origin:left;transition:transform .3s cubic-bezier(.2,.7,.2,1),opacity .2s ease;opacity:.45}
 .vsite .text-link:hover::after{opacity:1}
 .vsite .text-link svg{transition:transform .25s cubic-bezier(.2,.7,.2,1)}
 .vsite .text-link:hover svg{transform:translate(3px,-3px)}
 
-/* Shared public navigation */
-.vsite .site-header{position:sticky;top:0;z-index:100;background:rgba(255,255,255,.97);backdrop-filter:blur(14px);transition:box-shadow .3s cubic-bezier(.2,.7,.2,1)}
-/* No hairline under the header: it earns an edge only once the page has moved,
-   which also tells the reader they have left the top. */
-.vsite .site-header[data-scrolled]{box-shadow:var(--sh-header)}
-.vsite .header-inner{height:76px;display:flex;align-items:center;gap:26px}
-.vsite .brand{display:inline-flex;align-items:center;gap:8px;min-height:44px;flex:none;color:var(--navy);font:700 1.52rem/1 var(--font-display),sans-serif;letter-spacing:-.06em}
-.vsite .brand-mark{width:159px;height:34px;object-fit:contain}
-.vsite .desktop-nav{display:flex;align-items:center;gap:27px;margin-left:auto}
-.vsite .desktop-nav a,.vsite .sign-in-link{font-size:.88rem;font-weight:700;color:var(--navy);white-space:nowrap}
-.vsite .desktop-nav a:hover,.vsite .sign-in-link:hover{text-decoration:underline;text-underline-offset:6px}
-.vsite .header-actions{display:flex;align-items:center;gap:19px}
-.vsite .header-actions .btn{min-height:42px;padding:10px 16px;font-size:.82rem}
-.vsite .mobile-menu-toggle{display:none;align-items:center;justify-content:center;width:44px;height:44px;border:0;border-radius:var(--r-xs);background:var(--surface-soft);color:var(--navy);cursor:pointer;transition:background .18s ease,transform .18s ease}
+/* ── Type and controls of the reference-based pages ─────────────────────────
+   Small letter-spaced intro line, a firm title with a short gold rule under
+   it, rectangular buttons. Capitals stay in the hero, intro lines and
+   buttons; body copy keeps natural case. */
+.vsite .kicker{margin-bottom:clamp(14px,1.2vw,22px);color:var(--ink);font:500 .78rem/1.5 var(--font-display),system-ui,sans-serif;letter-spacing:.3em;text-transform:uppercase}
+.vsite .v-title{color:var(--ink);font:600 clamp(1.85rem,1.2rem + 1.4vw,2.6rem)/1.22 var(--font-display),system-ui,sans-serif;letter-spacing:-.015em;text-wrap:balance}
+.vsite .v-title::after{content:"";display:block;width:56px;height:3px;margin-top:clamp(18px,1.5vw,28px);background:var(--gold)}
+.vsite .btn-solid,.vsite .btn-ink,.vsite .btn-line{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:52px;padding:0 28px;border:1px solid;font:700 .8rem/1.2 var(--font-body),system-ui,sans-serif;letter-spacing:.12em;text-transform:uppercase;text-align:center;cursor:pointer;transition:background .18s ease,border-color .18s ease,color .18s ease}
+.vsite .btn-solid{border-color:var(--navy);background:var(--navy);color:#fff}
+.vsite .btn-solid:hover{border-color:var(--navy-deep);background:var(--navy-deep)}
+.vsite .btn-ink{border-color:var(--navy-ink);background:var(--navy-ink);color:#fff}
+.vsite .btn-ink:hover{border-color:var(--navy-deep);background:var(--navy-deep)}
+.vsite .btn-line{border-color:#fff;background:transparent;color:#fff;white-space:nowrap}
+.vsite .btn-line:hover{background:#fff;color:var(--navy-ink)}
+.vsite .arrow-link{display:inline-flex;align-items:center;gap:8px;min-height:44px;color:var(--navy);font-size:.95rem;font-weight:700;text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:5px}
+.vsite .arrow-link:hover{color:var(--navy-deep);text-decoration-thickness:2px}
+.vsite .arrow-link svg{flex:none}
+
+/* Any section on navy: gold intro line, white title. */
+.vsite .on-dark .kicker,.vsite .feature-band .kicker{color:var(--gold)}
+.vsite .on-dark .v-title,.vsite .feature-band .v-title,.vsite .gallery .v-title{color:#fff}
+
+/* ── Header ──────────────────────────────────────────────────────────────── */
+.vsite .site-header{position:sticky;top:0;z-index:100;background:var(--navy-ink);color:#fff}
+.vsite .site-header[data-overlay]{position:absolute;inset:0 0 auto;padding-top:var(--head-pad);background:transparent}
+.vsite .site-header[data-overlay][data-open]{background:var(--navy-ink)}
+.vsite .header-inner{display:flex;align-items:center;gap:32px;min-height:76px}
+.vsite .site-header[data-overlay] .header-inner{min-height:var(--head-row)}
+.vsite .brand{display:inline-flex;align-items:center;min-height:44px;flex:none}
+.vsite .brand-mark{width:clamp(140px,3.6vw + 106px,176px);height:auto}
+/* The services trigger stretches to the bottom of the bar, so the pointer
+   never crosses a gap on its way down into the panel. */
+.vsite .desktop-nav{display:flex;align-items:center;align-self:stretch;gap:clamp(22px,2vw,36px);margin-left:auto}
+.vsite .nav-services{display:flex;align-items:center;align-self:stretch}
+.vsite .nav-link{position:relative;display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:0;border:0;background:none;color:#fff;font:500 .9375rem/1.2 var(--font-display),system-ui,sans-serif;white-space:nowrap;cursor:pointer}
+.vsite .nav-link::after{content:"";position:absolute;left:0;right:0;bottom:3px;height:3px;background:var(--gold);opacity:0;transition:opacity .18s ease}
+.vsite .nav-link:hover::after{opacity:.55}
+.vsite .nav-link[aria-current="page"]::after{opacity:1}
+.vsite .nav-services-trigger svg{transition:transform .18s ease}
+.vsite .nav-services-trigger[aria-expanded="true"] svg{transform:rotate(180deg)}
+.vsite .nav-services-panel{position:absolute;top:100%;left:0;right:0;z-index:99;padding:28px 0 26px;border-top:3px solid var(--gold);background:var(--white);color:var(--ink);opacity:0;visibility:hidden;transition:opacity .18s ease,visibility .18s}
+.vsite .nav-services-panel[data-open]{opacity:1;visibility:visible}
+.vsite .nav-services-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:26px}
+.vsite .nav-services-group{margin-bottom:10px;color:var(--body);font-size:.78rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase}
+.vsite .nav-services-grid ul{list-style:none;margin:0;padding:0;display:grid;gap:2px}
+.vsite .nav-services-grid a{display:block;padding:8px 10px;transition:background .15s ease}
+.vsite .nav-services-grid a:hover{background:var(--mist)}
+.vsite .nav-services-grid a span{display:block;color:var(--navy);font-size:.9rem;font-weight:700;line-height:1.3}
+.vsite .nav-services-grid a small{display:block;margin-top:2px;color:var(--body);font-size:.78rem;line-height:1.4}
+.vsite .nav-services-all{display:block;margin-top:20px;padding:13px 16px;background:var(--mist);color:var(--navy);font-size:.86rem;font-weight:700;text-align:center;transition:background .15s ease}
+.vsite .nav-services-all:hover{background:var(--line)}
+.vsite .mobile-menu-toggle{display:none;align-items:center;justify-content:center;width:44px;height:44px;margin-left:auto;padding:0;border:1px solid rgba(255,255,255,.4);background:transparent;color:#fff;cursor:pointer}
 .vsite .mobile-menu{display:none}
 .vsite .mobile-menu[hidden]{display:none!important}
-.vsite .mobile-menu-inner{padding-block:20px 26px;display:grid;gap:0}
-.vsite .mobile-menu-inner>a:not(.btn){display:flex;align-items:center;min-height:54px;font-size:1rem;font-weight:700}
-.vsite .mobile-menu-inner .btn{margin-top:22px}
 
-/* Services mega-panel.
-   The panel is a DOM child of the trigger's wrapper, so moving the pointer from
-   the button into the panel never fires mouseleave — that descendant
-   relationship is what fixes the panel vanishing mid-reach. It is positioned
-   against .site-header (sticky, so it is already a containing block), which
-   keeps a 4-column panel inside the viewport at any nav position.
-   180ms, origin at the top: it grows down out of the bar, fast enough not to
-   sit between the reader and a click. */
-.vsite .nav-services{position:static}
-.vsite .nav-services-trigger{display:inline-flex;align-items:center;gap:6px;padding:0;border:0;background:none;color:var(--navy);font-size:.88rem;font-weight:700;white-space:nowrap;cursor:pointer}
-.vsite .nav-services-trigger svg{transition:transform .18s cubic-bezier(.2,.7,.2,1)}
-.vsite .nav-services-trigger[aria-expanded="true"] svg{transform:rotate(180deg)}
-.vsite .nav-services-trigger:hover{text-decoration:underline;text-underline-offset:6px}
-.vsite .nav-services-panel{position:absolute;top:100%;left:0;right:0;z-index:99;padding:26px 0 22px;background:var(--surface);box-shadow:var(--sh-header);opacity:0;visibility:hidden;transform:translateY(-8px);transform-origin:top center;transition:opacity .18s cubic-bezier(.2,.7,.2,1),transform .18s cubic-bezier(.2,.7,.2,1),visibility .18s}
-.vsite .nav-services-panel[data-open]{opacity:1;visibility:visible;transform:translateY(0)}
-.vsite .nav-services-grid{width:min(100% - 48px,1220px);margin-inline:auto;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:26px}
-.vsite .nav-services-group{margin-bottom:11px;color:var(--navy-soft);font-size:.68rem;font-weight:800;letter-spacing:.13em;text-transform:uppercase}
-.vsite .nav-services-grid ul{list-style:none;margin:0;padding:0;display:grid;gap:3px}
-.vsite .nav-services-grid a{display:block;padding:8px 11px;border-radius:var(--r-xs);transition:background .15s ease,transform .15s cubic-bezier(.2,.7,.2,1)}
-.vsite .nav-services-grid a:hover{background:var(--surface-soft);transform:translateX(3px)}
-.vsite .nav-services-grid a span{display:block;color:var(--navy);font-size:.87rem;font-weight:700;line-height:1.3}
-.vsite .nav-services-grid a small{display:block;margin-top:2px;color:var(--muted);font-size:.74rem;line-height:1.35}
-.vsite .nav-services-all{display:block;width:min(100% - 48px,1220px);margin:20px auto 0;padding:13px 15px;background:var(--surface-soft);border-radius:var(--r-sm);color:var(--navy);font-size:.84rem;font-weight:750;text-align:center;transition:background .15s ease}
-.vsite .nav-services-all:hover{background:#E9EFF8}
-.vsite .mobile-services{display:flex;flex-wrap:wrap;gap:8px;padding-block:4px 16px}
-.vsite .mobile-services a{display:inline-flex;align-items:center;min-height:38px;padding:8px 13px;background:var(--surface-soft);border-radius:var(--r-sm);color:var(--navy);font-size:.82rem;font-weight:700}
+/* ── Opening photograph ─────────────────────────────────────────────────────
+   Height follows the reference: the home hero is half the page width (957 of
+   1920), the menu pages a third. One flat navy layer darkens the photo. */
+.vsite .photo-hero{position:relative;isolation:isolate;display:flex;flex-direction:column;min-height:clamp(460px,34vw,660px);padding-top:calc(var(--head-pad) + var(--head-row));overflow:hidden;background:var(--navy-ink);color:#fff;text-align:center}
+.vsite .photo-hero[data-home]{min-height:clamp(560px,50vw,960px)}
+.vsite .photo-hero-img{z-index:-2;object-fit:cover}
+/* .68 is the lightest layer that keeps white text at 4.5:1 or better over a
+   pure-white pixel of the photo (worst case 4.73:1, measured). */
+.vsite .photo-hero::before{content:"";position:absolute;inset:0;z-index:-1;background:rgba(14,52,104,.68)}
+.vsite .photo-hero-inner{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding-block:clamp(36px,3.4vw,64px) clamp(44px,4.2vw,80px)}
+/* Letter-spacing also trails the last letter; the same padding on the left
+   keeps the line optically centred. */
+.vsite .photo-hero .kicker{--track:clamp(.24em,.1em + .3vw,.6em);margin-bottom:clamp(16px,1.8vw,34px);padding-left:var(--track);color:#fff;font-size:clamp(.74rem,.64rem + .28vw,1rem);letter-spacing:var(--track)}
+.vsite .photo-hero h1{max-width:22ch;color:#fff;font:700 clamp(2.15rem,1.1rem + 3.4vw,4.25rem)/1.1 var(--font-display),system-ui,sans-serif;letter-spacing:0;text-transform:uppercase;text-wrap:balance}
+/* Two lines at every width: on phones the size follows the viewport closely
+   enough for "THE RIGHT PERSON." to fit (down to 360px), on desktop it
+   reaches the reference's ~96px. */
+.vsite .photo-hero[data-home] h1{max-width:none;font-size:clamp(1.6rem,min(9.2vw - 4px,1.2rem + 4.4vw),6rem);line-height:1.08}
+.vsite .photo-hero h1 span{display:block}
+.vsite .photo-hero-lede{max-width:38rem;margin-top:clamp(18px,1.9vw,34px);color:#fff;font-size:clamp(1rem,.92rem + .3vw,1.2rem);line-height:1.6}
+.vsite .hero-actions{display:flex;flex-wrap:wrap;justify-content:center;gap:14px 18px;margin-top:clamp(24px,2.4vw,40px)}
+.vsite .hero-note{margin-top:20px;color:#fff;font-size:.88rem;line-height:1.5}
+.vsite .photo-hero-crumbs{display:flex;flex-wrap:wrap;gap:10px;padding-bottom:22px;color:#fff;font-size:.85rem;line-height:1.4;text-align:left}
+.vsite .photo-hero-crumbs a{color:#fff;text-decoration:underline;text-underline-offset:3px}
+.vsite .photo-hero-crumbs [aria-current]{color:#fff;font-weight:600}
 
-/* Hero */
-.vsite .home-hero{position:relative;min-height:650px;background:var(--cream);overflow:hidden}
-.vsite .home-hero-backdrop{z-index:0;object-fit:cover;object-position:center 52%}
-.vsite .home-hero::after{content:"";position:absolute;z-index:1;inset:0;background:linear-gradient(90deg,rgba(248,248,244,.97) 0%,rgba(248,248,244,.88) 35%,rgba(248,248,244,.38) 60%,rgba(248,248,244,.02) 80%);pointer-events:none}
-.vsite .home-hero-grid{position:relative;z-index:2;min-height:650px;display:flex;align-items:center}
-.vsite .home-hero-copy{position:relative;width:min(100%,680px);padding:66px 0 78px;display:flex;flex-direction:column;justify-content:center}
-.vsite .home-hero h1{max-width:680px;margin:22px 0 20px;color:var(--navy);font-size:clamp(3rem,4.5vw,5.15rem);letter-spacing:-.055em;line-height:.99}
-.vsite .home-hero h1 em{font-style:normal;color:#457D8A}
-.vsite .hero-lede{max-width:520px;color:var(--body);font-size:1.08rem;line-height:1.58}
-.vsite .home-search{margin-top:30px;padding:7px;max-width:610px;display:flex;align-items:stretch;gap:6px;background:var(--surface);border:0;border-radius:var(--r-md);box-shadow:var(--sh-field),0 20px 44px -14px rgba(14,52,104,.20);transition:box-shadow .3s cubic-bezier(.2,.7,.2,1)}
-.vsite .home-search:focus-within{box-shadow:0 0 0 1px rgba(24,95,198,.35),0 24px 52px -14px rgba(14,52,104,.24)}
-.vsite .home-search-fields{display:grid;grid-template-columns:1.5fr .8fr;min-width:0;flex:1}
-.vsite .search-field{min-width:0;padding:8px 13px 7px;display:flex;flex-direction:column;justify-content:center}
+/* ZIP search: field and button side by side, square, no card around them. */
+.vsite .zip-search{width:min(100%,560px);margin-top:clamp(26px,2.5vw,44px)}
+.vsite .zip-row{display:flex}
+.vsite .zip-field{flex:1;min-width:0;display:flex;align-items:center;gap:14px;height:58px;padding:0 18px;border:1px solid #fff;background:#fff;color:var(--ink);text-align:left;cursor:text}
+.vsite .zip-field span{flex:none;color:var(--body);font:700 .78rem/1 var(--font-body),system-ui,sans-serif;letter-spacing:.14em;text-transform:uppercase}
+.vsite .zip-field input{flex:1;min-width:0;height:100%;padding:0;border:0;outline:0;background:transparent;color:var(--ink);font-size:1.06rem;font-weight:600;letter-spacing:.04em}
+.vsite .zip-field input::placeholder{color:var(--body);font-weight:500;opacity:1}
+.vsite .zip-field:focus-within{outline:3px solid var(--gold);outline-offset:3px}
+.vsite .zip-search button{flex:none;height:58px;padding:0 28px;border:0;background:var(--navy);color:#fff;font:700 .82rem/1 var(--font-body),system-ui,sans-serif;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;transition:background .18s ease}
+.vsite .zip-search button:hover{background:var(--navy-deep)}
+.vsite .zip-hint{margin-top:14px;color:#fff;font-size:.88rem;line-height:1.5;text-wrap:balance}
+.vsite .zip-search[data-tone="gold"]{margin-top:0}
+.vsite .zip-search[data-tone="gold"] .zip-field{border-color:var(--navy-ink)}
+.vsite .zip-search[data-tone="gold"] button{background:var(--navy-ink)}
+.vsite .zip-search[data-tone="gold"] button:hover{background:var(--navy-deep)}
 
-.vsite .search-field span{color:var(--navy);font-size:.68rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase}
-.vsite .search-field select,.vsite .search-field input{width:100%;min-width:0;padding:3px 0 0;border:0;outline:0;background:transparent;color:var(--ink);font-size:.87rem;font-weight:600}
-.vsite .search-field select{cursor:pointer}
-.vsite .search-field input::placeholder{color:#75899B}
-.vsite .search-field:focus-within{outline:2px solid var(--navy);outline-offset:-2px;border-radius:var(--r-xs)}
-.vsite .search-submit{min-height:60px;padding-inline:18px;white-space:nowrap}
-.vsite .search-note{display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin-top:14px;color:var(--body);font-size:.76rem;font-weight:600}
-.vsite .search-note svg{color:#4F857B}
-.vsite .hero-visual-caption{position:absolute;z-index:3;right:0;bottom:0;display:flex;align-items:flex-end;justify-content:space-between;gap:26px;width:min(100%,410px);padding:19px 25px;background:var(--navy);color:#fff;font-size:.85rem;font-weight:600;line-height:1.4}
-.vsite .hero-visual-caption span:first-child{color:var(--gold-light);font-size:.72rem;font-weight:800;letter-spacing:.14em;white-space:nowrap}
-.vsite .benefit-ribbon{background:var(--surface-soft)}
-.vsite .benefit-ribbon-inner{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;padding-block:26px}
-/* Was three columns split by vertical rules. Now three surfaces of one colour,
-   lifted off the band — the grouping comes from the gap, not from a line. */
-.vsite .benefit-ribbon p{display:flex;align-items:center;gap:13px;padding:18px 20px;background:var(--surface);border-radius:var(--r-sm);box-shadow:var(--sh-1);color:var(--navy);font-size:.9rem;font-weight:750;transition:transform .25s cubic-bezier(.2,.7,.2,1),box-shadow .25s cubic-bezier(.2,.7,.2,1)}
-.vsite .benefit-ribbon p:hover{transform:translateY(-2px);box-shadow:var(--sh-2)}
-.vsite .benefit-ribbon p svg{flex:none;color:var(--navy)}
+/* ── Navy band of three: gold outline icon beside title and text ───────────
+   Open columns, no boxes; the grouping comes from alignment and the gap. */
+.vsite .feature-band{background:var(--navy-ink);color:#fff}
+.vsite .feature-head{max-width:46rem;padding-top:clamp(56px,5.4vw,104px)}
+.vsite .feature-head>p:last-child{margin-top:clamp(16px,1.4vw,24px);color:rgba(255,255,255,.8);font-size:1rem;line-height:1.75}
+.vsite .feature-list{list-style:none;margin-block:0;padding:clamp(48px,4.8vw,92px) 0 clamp(52px,5.6vw,108px);display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(28px,3.1vw,60px)}
+.vsite .feature-head+.feature-list{padding-top:clamp(36px,3.4vw,60px)}
+.vsite .feature-list li{display:grid;grid-template-columns:auto minmax(0,1fr);gap:clamp(16px,1.5vw,28px);align-items:start}
+.vsite .feature-icon{width:clamp(44px,2.2vw + 22px,64px);height:auto;color:var(--gold)}
+.vsite .feature-list h3{color:#fff;font:600 clamp(1.08rem,.96rem + .32vw,1.3rem)/1.3 var(--font-display),system-ui,sans-serif;letter-spacing:-.005em}
+.vsite .feature-list p{margin-top:10px;color:rgba(255,255,255,.8);font-size:clamp(.94rem,.9rem + .12vw,1rem);line-height:1.75}
 
-/* Home sections */
-.vsite .home-section{padding-block:clamp(70px,8vw,112px)}
-.vsite .section-intro{display:flex;justify-content:space-between;align-items:flex-end;gap:28px;margin-bottom:35px}
-.vsite h2{color:var(--navy);font-size:clamp(2.25rem,3.4vw,3.8rem);line-height:1.05}
-.vsite .section-intro h2{margin-top:12px;max-width:650px}
-.vsite .featured-grid{display:grid;grid-template-columns:1.1fr .9fr;grid-template-rows:repeat(2,285px);gap:16px}
-.vsite .featured-service{position:relative;min-width:0;overflow:hidden;border-radius:var(--r-md);background:var(--navy-ink);box-shadow:var(--sh-1);transition:transform .35s cubic-bezier(.2,.7,.2,1),box-shadow .35s cubic-bezier(.2,.7,.2,1)}
-.vsite .featured-service:hover{transform:translateY(-4px);box-shadow:var(--sh-2)}
-.vsite .feature-tall{grid-row:span 2}
-.vsite .featured-photo{position:absolute;inset:0}
-.vsite .featured-photo img{object-fit:cover;transition:transform .45s ease}
-.vsite .featured-service:hover .featured-photo img{transform:scale(1.05)}
-.vsite .featured-service::after{content:"";position:absolute;inset:22% 0 0;background:linear-gradient(transparent,rgba(12,34,56,.82));pointer-events:none}
-.vsite .featured-info{position:absolute;z-index:1;left:0;right:0;bottom:0;display:grid;grid-template-columns:1fr 26px;gap:16px;align-items:end;padding:25px;color:white}
-.vsite .featured-info h3{color:white;font-size:clamp(1.45rem,2.1vw,2.3rem)}
-.vsite .featured-info p{margin-top:5px;color:#E7EFF4;font-size:.88rem}
-.vsite .featured-info>svg{align-self:start;transition:transform .3s cubic-bezier(.2,.7,.2,1)}
-.vsite .featured-service:hover .featured-info>svg{transform:translate(3px,-3px)}
-.vsite .more-services{margin-top:34px;display:grid;grid-template-columns:210px 1fr;gap:20px;align-items:start}
-.vsite .more-label{color:var(--muted);font-size:.73rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase}
-.vsite .more-services>div{display:flex;flex-wrap:wrap;gap:9px}
-/* Each one is its own surface now, so the row needs no rule above it to read
-   as a group, and the hit area is a shape rather than a line of text. */
-.vsite .more-services a{display:inline-flex;align-items:center;gap:7px;min-height:42px;padding:9px 15px;background:var(--surface);border-radius:var(--r-sm);box-shadow:var(--sh-1);color:var(--navy);font-size:.86rem;font-weight:700;transition:transform .2s cubic-bezier(.2,.7,.2,1),box-shadow .2s cubic-bezier(.2,.7,.2,1)}
-.vsite .more-services a svg{flex:none;transition:transform .25s cubic-bezier(.2,.7,.2,1)}
-.vsite .more-services a:hover{transform:translateY(-2px);box-shadow:var(--sh-2)}
-.vsite .more-services a:hover svg{transform:translate(2px,-2px)}
-.vsite .process-section{background:var(--cream)}
-.vsite .process-grid{display:grid;grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr);gap:clamp(40px,8vw,125px)}
-.vsite .process-intro h2{margin:15px 0 18px;max-width:450px}
-.vsite .process-intro>p:not(.eyebrow){max-width:400px;color:var(--body);font-size:1rem}
-.vsite .process-intro .text-link{margin-top:24px}
-.vsite .process-steps{list-style:none;margin:0;padding:0;display:grid;gap:12px}
-/* Three stacked rules became three surfaces. Order is carried by position and
-   by the heading, which is what the reader was using anyway. */
-.vsite .process-steps li{padding:24px 26px;background:var(--surface);border-radius:var(--r-md);box-shadow:var(--sh-1);transition:transform .25s cubic-bezier(.2,.7,.2,1),box-shadow .25s cubic-bezier(.2,.7,.2,1)}
-.vsite .process-steps li:hover{transform:translateY(-2px);box-shadow:var(--sh-2)}
-.vsite .process-steps h3{color:var(--navy);font-size:1.34rem;letter-spacing:-.025em}
-.vsite .process-steps p{margin-top:7px;max-width:440px;color:var(--body);font-size:.94rem}
-.vsite .trust-grid{display:grid;grid-template-columns:minmax(0,.95fr) minmax(0,1.05fr);align-items:center;gap:clamp(45px,8vw,120px)}
-.vsite .trust-image{position:relative;min-height:570px;background:var(--mist);border-radius:var(--r-md);overflow:hidden;box-shadow:var(--sh-1)}
-.vsite .trust-image img{object-fit:cover;object-position:50% 31%}
-.vsite .trust-copy h2{max-width:520px;margin:14px 0 22px}
-.vsite .trust-copy>p:not(.eyebrow){max-width:530px;color:var(--body)}
-.vsite .trust-copy ul{list-style:none;margin:24px 0;padding:0;display:grid;gap:10px}
-.vsite .trust-copy li{display:flex;align-items:center;gap:13px;min-height:54px;padding:14px 18px;background:var(--surface-soft);border-radius:var(--r-sm);color:var(--navy);font-size:.94rem;font-weight:700}
-.vsite .trust-copy li svg{flex:none;color:var(--navy)}
-.vsite .trust-copy .trust-note{margin-top:12px;font-size:.78rem}
-.vsite .trust-copy .text-link{margin-top:22px}
-.vsite .pro-section{background:var(--navy-ink);color:white}
-.vsite .pro-grid{display:grid;grid-template-columns:1fr .88fr;min-height:520px}
-.vsite .pro-copy{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;padding:64px 55px 64px 0}
-.vsite .pro-copy .eyebrow{color:var(--gold-light)}
-.vsite .pro-copy h2{max-width:640px;margin:16px 0 20px;color:white}
-.vsite .pro-copy>p:not(.eyebrow){max-width:510px;color:#D6E3EB}
-.vsite .pro-copy .btn{margin-top:28px}
-.vsite .pro-image{position:relative;min-height:520px;margin-right:calc((min(100vw - 48px,1220px) - 100vw)/2);background:#D7E1E4}
-.vsite .pro-image img{object-fit:cover;object-position:50% 35%}
-.vsite .area-section{background:#EDF3F5}
-.vsite .area-grid{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center}
-.vsite .area-grid h2{max-width:530px;margin-top:14px}
-.vsite .area-grid p:not(.eyebrow){max-width:520px;color:var(--body)}
-.vsite .area-grid .text-link{margin-top:23px}
-.vsite .faq-grid{display:grid;grid-template-columns:.8fr 1.2fr;gap:90px}
-.vsite .faq-grid h2{margin-top:14px}
-.vsite .faq-list{display:grid;gap:10px}
-.vsite .faq-list details{padding:0 20px;background:var(--surface);border-radius:var(--r-sm);box-shadow:var(--sh-1);transition:box-shadow .25s cubic-bezier(.2,.7,.2,1)}
-.vsite .faq-list details[open]{box-shadow:var(--sh-2)}
-.vsite .faq-list summary{position:relative;display:block;list-style:none;padding:19px 32px 19px 0;color:var(--navy);font-size:1rem;font-weight:750;cursor:pointer}
-.vsite .faq-list summary::-webkit-details-marker{display:none}
-.vsite .faq-list summary::after{content:"+";position:absolute;right:2px;top:13px;color:var(--navy);font-size:1.5rem;font-weight:400;transition:transform .25s cubic-bezier(.2,.7,.2,1)}
-.vsite .faq-list details[open] summary::after{content:"+";transform:rotate(45deg)}
-.vsite .faq-list details p{max-width:610px;padding:0 38px 20px 0;color:var(--body);font-size:.92rem}
-.vsite .final-cta{background:var(--surface-soft)}
-.vsite .final-cta-inner{display:flex;align-items:center;justify-content:space-between;gap:35px;padding-block:50px}
-.vsite .final-cta h2{margin-top:10px;font-size:clamp(2rem,3vw,3rem)}
+/* ── White section: photograph left, explanation right ─────────────────────
+   The dashed gold outline behind the photo is the reference's one ornament;
+   it is not repeated anywhere else. */
+.vsite .intro{background:var(--white);padding-block:clamp(64px,6.2vw,120px)}
+.vsite .intro-grid{--offset:clamp(14px,1.3vw,26px);display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(40px,4vw,76px);align-items:center}
+.vsite .intro-photo{position:relative;aspect-ratio:3/2;margin:var(--offset) 0 0 var(--offset);background:var(--mist)}
+.vsite .intro-photo::before{content:"";position:absolute;top:calc(var(--offset) * -1);left:calc(var(--offset) * -1);width:42%;height:80%;border:2px dashed var(--gold);pointer-events:none}
+.vsite .intro-photo img{z-index:1;object-fit:cover}
+.vsite .intro-copy .v-title{max-width:16em}
+.vsite .intro-copy>p:not(.kicker){max-width:36rem;color:var(--body);font-size:1rem;line-height:1.85}
+.vsite .intro-copy .v-title+p{margin-top:clamp(20px,2vw,36px)}
+.vsite .intro-copy p+p{margin-top:14px}
+.vsite .intro-copy .intro-links{display:flex;flex-wrap:wrap;gap:0 28px;margin-top:16px}
 
-/* Light footer across the public site */
-.vsite .site-footer{background:var(--surface-soft);color:var(--navy)}
-.vsite .footer-top{display:flex;justify-content:space-between;align-items:flex-start;gap:35px;padding-block:55px 44px}
+/* ── Services gallery on navy ─────────────────────────────────────────────── */
+.vsite .gallery{background:var(--navy-ink);color:#fff;padding-block:clamp(64px,6.4vw,124px)}
+.vsite .gallery-head{display:flex;align-items:center;justify-content:space-between;gap:24px 48px}
+.vsite .gallery-head p{max-width:34rem;margin-top:clamp(16px,1.4vw,24px);color:rgba(255,255,255,.8);font-size:1rem;line-height:1.75}
+.vsite .gallery-groups{display:flex;flex-wrap:wrap;align-items:center;gap:0 28px;margin:clamp(26px,2.4vw,44px) 0 clamp(18px,1.5vw,28px)}
+.vsite .gallery-groups span{margin-right:4px;color:var(--gold);font-size:.78rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase}
+.vsite .gallery-groups a{display:inline-flex;align-items:center;min-height:44px;color:#fff;font-size:.92rem;font-weight:600;text-decoration:underline;text-decoration-color:rgba(255,255,255,.45);text-underline-offset:6px}
+.vsite .gallery-groups a:hover{text-decoration-color:var(--gold)}
+.vsite .gallery-grid{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.vsite .gallery-grid a{position:relative;display:block;aspect-ratio:3/2;overflow:hidden;background:var(--navy-deep)}
+.vsite .gallery-grid img{object-fit:cover}
+/* Name on a solid navy label, the same on every photo, readable without hover. */
+.vsite .gallery-grid span{position:absolute;z-index:1;left:0;bottom:0;max-width:calc(100% - 24px);padding:11px 18px 12px;background:var(--navy-ink);color:#fff;font:600 .98rem/1.3 var(--font-display),system-ui,sans-serif;transition:background .18s ease}
+.vsite .gallery-grid a:hover span{background:var(--navy)}
+
+/* ── Closing gold band ────────────────────────────────────────────────────── */
+.vsite .gold-band{background:var(--gold);color:var(--navy-ink)}
+.vsite .gold-band :focus-visible,.vsite .gold-band .zip-field:focus-within{outline-color:var(--navy-ink)}
+.vsite .gold-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:center;padding-block:clamp(48px,5.4vw,104px)}
+.vsite .gold-grid>:first-child{padding-right:clamp(28px,3.4vw,64px)}
+.vsite .gold-grid>:last-child{align-self:stretch;display:flex;flex-direction:column;justify-content:center;padding-left:clamp(28px,3.4vw,64px);border-left:1px solid rgba(14,52,104,.4)}
+.vsite .gold-band h2{color:var(--navy-ink);font:600 clamp(1.6rem,1.1rem + 1vw,2.25rem)/1.2 var(--font-display),system-ui,sans-serif;letter-spacing:-.015em;text-wrap:balance}
+.vsite .gold-band p{max-width:34rem;margin-top:12px;color:var(--navy-ink);font-size:1rem;line-height:1.7}
+.vsite .gold-band p a{font-weight:700;text-decoration:underline;text-underline-offset:4px}
+.vsite .gold-actions{display:flex;flex-wrap:wrap;align-items:center;gap:12px 26px}
+.vsite .gold-actions a:not(.btn-ink){display:inline-flex;align-items:center;min-height:44px;font-weight:700;text-decoration:underline;text-underline-offset:5px}
+
+/* ── Footer, navy, after the gold band ────────────────────────────────────── */
+.vsite .site-footer{background:var(--navy-ink);color:#fff}
+.vsite .footer-top{display:flex;justify-content:space-between;align-items:flex-start;gap:35px;padding-block:64px 48px}
 .vsite .footer-intro{max-width:320px}
-.vsite .footer-intro p{margin-top:19px;color:var(--body);font-size:.9rem}
+.vsite .footer-intro p{margin-top:19px;color:rgba(255,255,255,.8);font-size:.92rem}
 .vsite .footer-links{display:grid;grid-template-columns:repeat(3,minmax(125px,1fr));gap:34px;width:min(100%,620px)}
-.vsite .footer-links h2{font:800 .72rem/1.4 var(--font-body),sans-serif;letter-spacing:.13em;text-transform:uppercase;color:#7F6725}
+.vsite .footer-links h2{color:var(--gold);font:700 .78rem/1.4 var(--font-body),system-ui,sans-serif;letter-spacing:.14em;text-transform:uppercase}
 .vsite .footer-links ul{list-style:none;margin:15px 0 0;padding:0}
-.vsite .footer-links li+li{margin-top:10px}
-.vsite .footer-links a{color:var(--navy);font-size:.88rem;font-weight:650}
+.vsite .footer-links li+li{margin-top:8px}
+.vsite .footer-links a{display:inline-block;padding-block:3px;color:#fff;font-size:.92rem;font-weight:500}
 .vsite .footer-links a:hover{text-decoration:underline;text-underline-offset:4px}
-.vsite .footer-bottom{display:flex;justify-content:space-between;gap:25px;align-items:center;padding-block:22px;color:var(--muted);font-size:.75rem}
-.vsite .footer-bottom a{color:var(--navy)}
+.vsite .footer-bottom{display:flex;justify-content:space-between;gap:25px;align-items:center;padding-block:22px;border-top:1px solid rgba(255,255,255,.16);color:rgba(255,255,255,.78);font-size:.8rem}
 
-/* ── Motion ────────────────────────────────────────────────────────────────
-   Entrances follow the Jakub Krehel recipe from design-motion-principles:
-   opacity, a short translateY and a touch of blur, so an element materialises
-   into focus rather than just fading. Easing is a custom curve — the built-in
-   `ease` keywords are too weak to read as intentional. Each element animates
-   once and stays put.
-
-   The per-child delay lives here rather than in a wrapper component, keyed off
-   nth-child, so no element is inserted into the markup and sibling selectors
-   keep working. The container carries data-stagger and gains data-in when it
-   scrolls into view. */
+/* ── Motion, kept for the service detail pages ──────────────────────────────
+   Containers with data-stagger reveal their children once in view; the
+   per-child delay lives here, keyed off nth-child. */
 .vsite [data-stagger]>*{opacity:0;transform:translateY(14px);filter:blur(4px)}
 .vsite [data-stagger][data-in]>*{opacity:1;transform:none;filter:blur(0px);transition:opacity .6s cubic-bezier(.16,1,.3,1),transform .6s cubic-bezier(.16,1,.3,1),filter .6s cubic-bezier(.16,1,.3,1)}
 .vsite [data-stagger][data-in]>*:nth-child(2){transition-delay:70ms}
@@ -266,90 +249,50 @@
   .vsite [data-stagger]>*{opacity:1;transform:none;filter:none}
 }
 
-/* Hover on a whole card lifts the photograph with it. */
-.vsite .trust-image img,.vsite .pro-image img{transition:transform .6s cubic-bezier(.2,.7,.2,1)}
-.vsite .faq-list summary{transition:color .18s ease}
-.vsite .faq-list summary:hover{color:var(--navy-deep)}
-.vsite .desktop-nav a,.vsite .sign-in-link{transition:color .18s ease}
-
 @media(max-width:1100px){
-  .vsite .desktop-nav{gap:17px}
-  .vsite .header-actions{gap:12px}
-  .vsite .home-hero-copy{max-width:630px}
-  .vsite .home-hero h1{font-size:clamp(2.65rem,4.7vw,4.4rem)}
-  .vsite .home-search{flex-wrap:wrap}
-  .vsite .home-search-fields{flex-basis:100%}
-  .vsite .search-submit{width:100%;min-height:48px}
+  .vsite .nav-services-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
 @media(max-width:900px){
-  .vsite .desktop-nav,.vsite .header-actions .sign-in-link{display:none}
-  .vsite .nav-services-panel{display:none}
-  .vsite .header-actions{margin-left:auto}
+  .vsite .desktop-nav{display:none}
   .vsite .mobile-menu-toggle{display:inline-flex}
-  .vsite .mobile-menu:not([hidden]){display:block;background:#fff;box-shadow:var(--sh-header)}
-  .vsite .home-hero::after{background:linear-gradient(90deg,rgba(248,248,244,.96),rgba(248,248,244,.8) 57%,rgba(248,248,244,.14))}
-  .vsite .home-hero-copy{padding:63px 0 82px}
-  .vsite .home-hero h1{max-width:720px;font-size:clamp(3.1rem,7.2vw,5rem)}
-  .vsite .pro-grid{grid-template-columns:1fr}
-  .vsite .pro-copy{padding:65px 0}
-  .vsite .pro-image{margin:0 calc((min(100vw - 48px,1220px) - 100vw)/2);min-height:420px}
-  .vsite .trust-image{min-height:500px}
+  .vsite .mobile-menu:not([hidden]){display:block;max-height:calc(100dvh - 72px);overflow-y:auto;border-top:1px solid rgba(255,255,255,.16);background:var(--navy-ink)}
+  .vsite .mobile-menu-inner{display:grid;padding-block:8px 24px}
+  .vsite .mobile-menu-inner>a:not(.mobile-cta){display:flex;align-items:center;min-height:50px;border-bottom:1px solid rgba(255,255,255,.14);color:#fff;font-size:1rem;font-weight:600}
+  .vsite .mobile-menu-inner>a[aria-current="page"]{color:var(--gold)}
+  .vsite .mobile-services{list-style:none;margin:0;padding:6px 0 12px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 16px;border-bottom:1px solid rgba(255,255,255,.14)}
+  .vsite .mobile-services a{display:flex;align-items:center;min-height:40px;color:rgba(255,255,255,.86);font-size:.9rem}
+  .vsite .mobile-cta{display:flex;align-items:center;justify-content:center;min-height:52px;margin-top:22px;background:var(--navy);color:#fff;font-size:.82rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase}
+}
+@media(max-width:860px){
+  .vsite .feature-list{grid-template-columns:1fr;gap:34px}
+  .vsite .feature-list p{max-width:34rem}
+  .vsite .intro-grid{grid-template-columns:1fr}
+  .vsite .intro-photo{max-width:640px}
+  .vsite .gallery-head{align-items:flex-start;flex-direction:column}
+  .vsite .gallery-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+  .vsite .gold-grid{grid-template-columns:1fr;gap:28px}
+  .vsite .gold-grid>:first-child{padding-right:0}
+  .vsite .gold-grid>:last-child{padding:28px 0 0;border-left:0;border-top:1px solid rgba(14,52,104,.4)}
 }
 @media(max-width:760px){
   .vsite .wrap{width:min(100% - 36px,1220px)}
-  .vsite .header-inner{height:66px}
-  .vsite .brand{font-size:1.36rem}
-  .vsite .brand-mark{width:140px;height:30px}
-  .vsite .header-actions .btn{display:none}
-  .vsite .home-hero{min-height:760px}
-  .vsite .home-hero-backdrop{height:clamp(320px,46vw,400px)!important;top:auto!important;bottom:0!important;object-position:100% center}
-  .vsite .home-hero::after{background:linear-gradient(180deg,rgba(248,248,244,.98) 0%,rgba(248,248,244,.98) 55%,rgba(248,248,244,.58) 68%,rgba(248,248,244,.03) 78%)}
-  .vsite .home-hero-grid{min-height:760px;align-items:flex-start}
-  .vsite .home-hero-copy{padding:48px 0 260px}
-  .vsite .home-hero h1{font-size:clamp(2.8rem,11.8vw,4.2rem);margin:18px 0}
-  .vsite .hero-lede{font-size:.99rem}
-  .vsite .home-search{margin-top:25px}
-  .vsite .pro-image{margin-inline:-18px;min-height:340px}
-  .vsite .hero-visual-caption{width:min(100%,325px);padding:14px 18px;font-size:.72rem}
-  .vsite .benefit-ribbon-inner{grid-template-columns:1fr;gap:10px;padding-block:20px}
-  .vsite .benefit-ribbon p{min-height:0;padding:15px 17px}
-  .vsite .home-section{padding-block:65px}
-  .vsite .section-intro{align-items:flex-start;flex-direction:column;gap:12px}
-  .vsite h2{font-size:clamp(2.1rem,8vw,3rem)}
-  .vsite .featured-grid{grid-template-columns:1fr;grid-template-rows:none;gap:12px}
-  .vsite .featured-service,.vsite .feature-tall{grid-row:auto;min-height:300px}
-  .vsite .featured-info{padding:20px}
-  .vsite .more-services{grid-template-columns:1fr;gap:9px}
-  .vsite .process-grid,.vsite .trust-grid,.vsite .area-grid,.vsite .faq-grid{grid-template-columns:1fr;gap:34px}
-  .vsite .trust-image{min-height:430px}
-  .vsite .trust-copy h2{margin-bottom:17px}
-  .vsite .pro-copy{padding-block:62px}
-  .vsite .area-grid,.vsite .faq-grid{gap:20px}
-  .vsite .final-cta-inner{align-items:flex-start;flex-direction:column;padding-block:50px}
   .vsite .footer-top{flex-direction:column}
   .vsite .footer-links{width:100%}
 }
-@media(max-width:480px){
-  .vsite .home-hero h1{font-size:clamp(2.55rem,11vw,3.35rem)}
-  .vsite .home-search-fields{grid-template-columns:1fr}
-  .vsite .search-field{min-height:56px}
-
-  .vsite .search-note{font-size:.72rem}
-  .vsite .home-hero-copy{padding:42px 0 275px}
-  .vsite .hero-visual-caption{font-size:.68rem}
-  .vsite .featured-service,.vsite .feature-tall{min-height:285px}
-  .vsite .featured-info{grid-template-columns:1fr 20px;gap:12px}
-  .vsite .featured-info h3{font-size:1.5rem}
-  .vsite .process-steps li{grid-template-columns:42px 1fr;gap:12px}
+@media(max-width:560px){
+  .vsite .zip-row{flex-direction:column;gap:10px}
+  .vsite .zip-field{flex:none}
+  .vsite .zip-search button{width:100%}
+  .vsite .gallery-grid{grid-template-columns:1fr}
+  .vsite .hero-actions{flex-direction:column;align-items:stretch;width:100%}
+  .vsite .gold-actions .btn-ink{width:100%}
   .vsite .footer-links{grid-template-columns:repeat(2,1fr);row-gap:28px}
   .vsite .footer-bottom{align-items:flex-start;flex-direction:column;gap:7px}
 }
 @media(prefers-reduced-motion:reduce){
   .vsite *,.vsite *::before,.vsite *::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
-  /* Removed, not shortened: the end state is the only state. */
-  /* translateY(0) rather than none: the minifier treats `transform:none` here
-     as redundant and drops it, which would leave the content offset by 14px. */
+  /* Removed, not shortened: the end state is the only state. translateY(0)
+     rather than none, which the minifier would drop as redundant. */
   .vsite [data-stagger]>*{opacity:1!important;transform:translateY(0)!important;filter:none!important}
-  .vsite .btn:hover,.vsite .benefit-ribbon p:hover,.vsite .process-steps li:hover,
-  .vsite .more-services a:hover,.vsite .featured-service:hover{transform:none!important}
+  .vsite .btn:hover{transform:none!important}
 }
