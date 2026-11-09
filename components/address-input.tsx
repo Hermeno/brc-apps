@@ -32,11 +32,16 @@ type Props = {
   onResolve?: (ok: boolean | null) => void;
   // Pass any Chakra Input props (bg, border, h, fontSize, etc.)
   inputProps?: Record<string, any>;
+  /** "public" uses the public pages' palette (/request); the dashboards keep the default. */
+  tone?: 'public';
 };
 
 type Resolved = { zip: string | null; city: string | null; state: string | null };
 
-export function AddressInput({ value, onChange, placeholder, onResolve, inputProps = {} }: Props) {
+export function AddressInput({ value, onChange, placeholder, onResolve, inputProps = {}, tone }: Props) {
+  const look = tone === 'public'
+    ? { border: '#455B70', borderBusy: '#185FC6', bgBusy: '#EDF3F5', icon: '#455B70', iconBusy: '#185FC6', warn: '#18314E', radius: 2, text: '13px' }
+    : { border: '#E2E8F0', borderBusy: 'brand.300', bgBusy: 'brand.50', icon: 'slate.400', iconBusy: 'brand.500', warn: '#D97706', radius: 4, text: '11px' };
   const [detecting, setDetecting] = useState(false);
   // Held in a ref so an inline callback from the parent cannot re-trigger the
   // lookup effect on every render.
@@ -126,17 +131,17 @@ export function AddressInput({ value, onChange, placeholder, onResolve, inputPro
           w="44px"
           display="flex" alignItems="center" justifyContent="center"
           border="1px solid"
-          borderColor={detecting ? 'brand.300' : '#E2E8F0'}
-          bg={detecting ? 'brand.50' : 'white'}
+          borderColor={detecting ? look.borderBusy : look.border}
+          bg={detecting ? look.bgBusy : 'white'}
           cursor={detecting ? 'default' : 'pointer'}
           title="Detect my location"
-          style={{ borderRadius: 4, transition: 'all 0.15s', height: (inputProps.h ?? '44px') }}
+          style={{ borderRadius: look.radius, transition: 'all 0.15s', height: (inputProps.h ?? '44px') }}
           _hover={{ borderColor: '#185FC6', color: '#185FC6' }}
         >
           <Icon
             as={detecting ? LucideLoader2 : LucideNavigation}
             w="15px" h="15px"
-            color={detecting ? 'brand.500' : 'slate.400'}
+            color={detecting ? look.iconBusy : look.icon}
             style={detecting ? { animation: 'spin 1s linear infinite' } : {}}
           />
         </Box>
@@ -146,14 +151,14 @@ export function AddressInput({ value, onChange, placeholder, onResolve, inputPro
       {resolved ? (
         <HStack gap={1.5} mt={1.5}>
           <Icon as={LucideMapPin} w="11px" h="11px" color="#185FC6" />
-          <Text fontSize="11px" color="#185FC6" fontWeight="600" fontFamily="heading">
+          <Text fontSize={look.text} color="#185FC6" fontWeight="600" fontFamily="heading">
             {place}{zip ? ` ${zip}` : ''} — cleaners in your area will be notified
           </Text>
         </HStack>
       ) : showHint ? (
         <HStack gap={1.5} mt={1.5}>
-          <Icon as={LucideMapPin} w="11px" h="11px" color="#D97706" />
-          <Text fontSize="11px" color="#D97706" fontFamily="heading">
+          <Icon as={LucideMapPin} w="11px" h="11px" color={look.warn} />
+          <Text fontSize={look.text} color={look.warn} fontFamily="heading">
             We could not place this address. Check the ZIP code, or add the city and state.
           </Text>
         </HStack>

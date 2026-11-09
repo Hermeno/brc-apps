@@ -1,10 +1,8 @@
 import type { Metadata } from 'next';
 import NextLink from 'next/link';
-import { MapPin, Receipt, UserPlus } from 'lucide-react';
-import SiteHeader from '@/components/site/site-header';
-import SiteFooter from '@/components/site/site-footer';
-import PhotoHero from '@/components/site/photo-hero';
-import '../site.css';
+import { Check, ChevronDown, MapPin, Minus, Receipt, UserPlus } from 'lucide-react';
+import PublicPage from '@/components/site/public-page';
+import { PageHero } from '@/components/site/photo-hero';
 import styles from './for-cleaners.module.css';
 import { prisma } from '@/lib/prisma';
 import { PLANS, RADIUS_OPTIONS, PLAN_MAX_RADIUS } from '@/lib/plans';
@@ -39,25 +37,10 @@ export const metadata: Metadata = {
   robots: { index: true, follow: true },
 };
 
-/* ── Icons — 24px box, 1.7 stroke, round caps: the same family the home page uses ── */
-const IcYes = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7"
-    strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-    <path d="M4 12.5l5 5L20 6.5" />
-  </svg>
-);
-const IcNo = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7"
-    strokeLinecap="round" aria-hidden="true">
-    <path d="M5 12h14" />
-  </svg>
-);
-const IcChevron = () => (
-  <svg className={styles.faqChevron} width="18" height="18" viewBox="0 0 24 24" fill="none"
-    stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-    <path d="M6 9.5l6 6 6-6" />
-  </svg>
-);
+/* Icons: Lucide, the one family used across the public pages. */
+const IcYes = () => <Check size={20} strokeWidth={1.75} aria-hidden="true" />;
+const IcNo = () => <Minus size={20} strokeWidth={1.75} aria-hidden="true" />;
+const IcChevron = () => <ChevronDown className={styles.faqChevron} size={18} strokeWidth={1.75} aria-hidden="true" />;
 
 /* Live plan prices. An admin can change these in the dashboard (PlanConfig),
    so the page reads them rather than repeating the defaults in copy. */
@@ -105,48 +88,43 @@ export default async function ForCleanersPage() {
   };
 
   return (
-    <div className={styles.page}>
+    <PublicPage>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
-      <a href="#main" className={styles.skip}>Skip to content</a>
+      <PageHero id="hero-title" crumbs={[{ label: 'For cleaners' }]} position="50% 30%"
+        image="/images/site/pressure-washing-siding-1200.jpg" alt="A cleaning professional pressure washing the siding of a house"
+        kicker="For cleaning professionals"
+        title="Cleaning clients near you, without chasing them."
+        lede="Verliks sends local cleaning requests to independent professionals. You set the area you cover and decide which requests to answer. Creating a profile is free, and the per-request fee applies only when a client chooses you.">
+        <div className="hero-actions">
+          <NextLink href={SIGNUP} className="btn btn-primary">Create your cleaner profile</NextLink>
+          <a href="#how-it-works" className="btn btn-ghost">See how it works</a>
+        </div>
+      </PageHero>
 
-      {/* ═══ Header over the photograph, then the three facts on navy ═══ */}
-      <div className="vsite">
-        <SiteHeader overlay />
-        <PhotoHero id="hero-title" position="50% 24%"
-          image="/images/site/about-cleaner-van-1200.jpg"
-          alt="A cleaning professional with equipment beside an open work van"
-          kicker="For cleaning professionals"
-          title={<><span>Cleaning clients near you,</span> <span>without chasing them.</span></>}
-          lede="Verliks sends local cleaning requests to independent professionals. You set the area you cover and decide which requests to answer. Creating a profile is free, and the per-request fee applies only when a client chooses you.">
-          <div className="hero-actions">
-            <NextLink href={SIGNUP} className="btn-solid">Create your cleaner profile</NextLink>
-            <a href="#how-it-works" className="btn-line">See how it works</a>
-          </div>
-        </PhotoHero>
-
-        <section className="feature-band" aria-labelledby="facts-title">
+      <section className="band band-tight band-warm" aria-labelledby="facts-title">
+        <div className="wrap">
           <h2 id="facts-title" className="sr-only">Joining at a glance</h2>
-          <ul className="wrap feature-list">
+          <ul className="cols-3 plain-list">
             <li>
-              <UserPlus className="feature-icon" size={64} strokeWidth={2} absoluteStrokeWidth aria-hidden="true" />
-              <div><h3>Free to join</h3><p>No monthly fee is required to create a profile or to receive requests.</p></div>
+              <div className="col-head"><UserPlus size={32} strokeWidth={1.75} aria-hidden="true" /><h3 className="t-item">Free to join</h3></div>
+              <p className="col-text">No monthly fee is required to create a profile or to receive requests.</p>
             </li>
             <li>
-              <MapPin className="feature-icon" size={64} strokeWidth={2} absoluteStrokeWidth aria-hidden="true" />
-              <div><h3>You set the area</h3><p>A ZIP code and a radius up to {freeMax} miles — up to {proMax} on the Pro plan.</p></div>
+              <div className="col-head"><MapPin size={32} strokeWidth={1.75} aria-hidden="true" /><h3 className="t-item">You set the area</h3></div>
+              <p className="col-text">A ZIP code and a radius up to {freeMax} miles — up to {proMax} on the Pro plan.</p>
             </li>
             <li>
-              <Receipt className="feature-icon" size={64} strokeWidth={2} absoluteStrokeWidth aria-hidden="true" />
-              <div><h3>Paid only when picked</h3><p>Reading and answering a request costs nothing. The fee applies when the client confirms you.</p></div>
+              <div className="col-head"><Receipt size={32} strokeWidth={1.75} aria-hidden="true" /><h3 className="t-item">Paid only when picked</h3></div>
+              <p className="col-text">Reading and answering a request costs nothing. The fee applies when the client confirms you.</p>
             </li>
           </ul>
-        </section>
-      </div>
+        </div>
+      </section>
 
-      <main id="main">
+      <div className={styles.page}>
         {/* ═══ How it works ═══ */}
         <section className={styles.section} id="how-it-works" aria-labelledby="how-title">
-          <div className={styles.inner}>
+          <div className="wrap">
             <div className={styles.sectionHead}>
               <p className={styles.eyebrow}>How it works</p>
               <h2 id="how-title" className={styles.h2}>From sign-up to your first client request</h2>
@@ -252,7 +230,7 @@ export default async function ForCleanersPage() {
 
         {/* ═══ What it costs ═══ */}
         <section className={`${styles.section} ${styles.sectionCream}`} id="pricing" aria-labelledby="cost-title">
-          <div className={styles.inner}>
+          <div className="wrap">
             <div className={styles.costGrid}>
               <div>
                 <p className={styles.eyebrow}>What it costs</p>
@@ -348,7 +326,7 @@ export default async function ForCleanersPage() {
 
         {/* ═══ What you control ═══ */}
         <section className={styles.section} id="your-control" aria-labelledby="control-title">
-          <div className={styles.inner}>
+          <div className="wrap">
             <div className={styles.sectionHead}>
               <p className={styles.eyebrow}>Your control</p>
               <h2 id="control-title" className={styles.h2}>Nothing is booked over your head</h2>
@@ -409,7 +387,7 @@ export default async function ForCleanersPage() {
 
         {/* ═══ What Verliks does and does not do ═══ */}
         <section className={`${styles.section} ${styles.sectionCream}`} id="trust" aria-labelledby="trust-title">
-          <div className={styles.inner}>
+          <div className="wrap">
             <div className={styles.sectionHead}>
               <p className={styles.eyebrow}>Straight answers</p>
               <h2 id="trust-title" className={styles.h2}>What Verliks does, and what it does not</h2>
@@ -513,7 +491,7 @@ export default async function ForCleanersPage() {
 
         {/* ═══ FAQ ═══ */}
         <section className={styles.section} id="faq" aria-labelledby="faq-title">
-          <div className={styles.inner}>
+          <div className="wrap">
             <div className={styles.sectionHead}>
               <p className={styles.eyebrow}>Questions</p>
               <h2 id="faq-title" className={styles.h2}>Before you sign up</h2>
@@ -620,34 +598,25 @@ export default async function ForCleanersPage() {
             </div>
           </div>
         </section>
-      </main>
-
-      {/* ═══ Final CTA on the gold band, then the shared footer ═══ */}
-      <div className="vsite">
-        <section className="gold-band" aria-labelledby="final-title">
-          <div className="wrap gold-grid">
-            <div>
-              <p className="kicker">Get started</p>
-              <h2 id="final-title">Put your profile in front of nearby clients</h2>
-              <p>
-                Creating a profile is free, and you decide what happens with every request that reaches
-                you.
-              </p>
-            </div>
-            <div>
-              <div className="gold-actions">
-                <NextLink href={SIGNUP} className="btn-ink">Create your cleaner profile</NextLink>
-                <NextLink href="/auth/login">I already have an account</NextLink>
-              </div>
-              <p>
-                Next: create your account and confirm your email. You can then set your services and area,
-                verify your ID and add a card — all from your dashboard.
-              </p>
-            </div>
-          </div>
-        </section>
-        <SiteFooter />
       </div>
-    </div>
+
+      <section className="intro-band band-rule" aria-labelledby="final-title">
+        <div className="wrap intro-band-inner">
+          <div>
+            <p className="t-label">Get started</p>
+            <h2 id="final-title" className="t-display">Put your profile in front of nearby clients</h2>
+            <p className="t-lead">
+              Creating a profile is free, and you decide what happens with every request that reaches
+              you. Next: create your account and confirm your email. You can then set your services
+              and area, verify your ID and add a card — all from your dashboard.
+            </p>
+          </div>
+          <div className="btn-row">
+            <NextLink href="/auth/login" className="btn btn-dark">I already have an account</NextLink>
+            <NextLink href={SIGNUP} className="btn btn-primary">Create your cleaner profile</NextLink>
+          </div>
+        </div>
+      </section>
+    </PublicPage>
   );
 }

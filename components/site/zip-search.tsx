@@ -5,8 +5,8 @@
 export default function ZipSearch({ id, hint, tone = 'photo' }: {
   id: string;
   hint?: string;
-  /** "photo" sits on the darkened hero, "gold" on the closing gold band. */
-  tone?: 'photo' | 'gold';
+  /** "photo" sits on a darkened photograph, "light" on a white or pale band. */
+  tone?: 'photo' | 'light';
 }) {
   return (
     <form className="zip-search" data-tone={tone} action="/request" method="get" aria-label="Start a cleaning request">

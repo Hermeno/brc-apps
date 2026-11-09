@@ -1,14 +1,11 @@
 import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
-import '../site.css';
-import styles from './services.module.css';
+import { CircleArrowRight } from 'lucide-react';
 import { SERVICES, SERVICE_GROUPS } from '@/lib/services';
-import { groupAnchor } from '@/lib/site-content';
-import SiteHeader from '@/components/site/site-header';
-import SiteFooter from '@/components/site/site-footer';
-import PhotoHero from '@/components/site/photo-hero';
-import { Icon, IconSprite } from '@/components/site/icons';
+import { getSiteService, groupAnchor } from '@/lib/site-content';
+import PublicPage from '@/components/site/public-page';
+import { PageHero } from '@/components/site/photo-hero';
 
 const BASE = 'https://verliks.com';
 
@@ -26,27 +23,11 @@ const groups = SERVICE_GROUPS.map(group => ({
     : group.slugs,
 }));
 
-const groupDetails: Record<string, { intro: string; image: string; alt: string }> = {
-  'Inside the home': {
-    intro: 'For the rooms you live in, from a regular reset to detailed work on the places that need more attention.',
-    image: '/images/site/standard-cleaning-dusting-shelves-1600.jpg',
-    alt: 'A cleaning professional dusting shelves inside a home',
-  },
-  'Moving or finishing work': {
-    intro: 'When the space is changing hands, opening back up, or still carrying the dust from a project.',
-    image: '/images/site/post-construction-kitchen-renovation-1600.jpg',
-    alt: 'A kitchen after renovation work',
-  },
-  'Outside the home': {
-    intro: 'For the surfaces and drainage around the house that weather and time leave behind.',
-    image: '/images/site/deck-wooden-terrace-1600.jpg',
-    alt: 'A wooden outdoor deck',
-  },
-  'For businesses': {
-    intro: 'Cleaning for workspaces, planned around how the space is actually used.',
-    image: '/images/site/commercial-hallway-cart-1600.jpg',
-    alt: 'Cleaning equipment in a commercial hallway',
-  },
+const groupIntro: Record<string, string> = {
+  'Inside the home': 'For the rooms you live in, from a regular reset to detailed work on the places that need more attention.',
+  'Moving or finishing work': 'When the space is changing hands, opening back up, or still carrying the dust from a project.',
+  'Outside the home': 'For the surfaces and drainage around the house that weather and time leave behind.',
+  'For businesses': 'Cleaning for workspaces, planned around how the space is actually used.',
 };
 
 export const metadata: Metadata = {
@@ -66,10 +47,11 @@ export const metadata: Metadata = {
   robots: { index: true, follow: true },
 };
 
+const findService = (slug: string) => slug === recurring.slug ? recurring : SERVICES.find(service => service.slug === slug);
+
 export default function ServicesIndexPage() {
-  const listedServices = groups.flatMap(group => group.slugs.map(slug =>
-    slug === recurring.slug ? recurring : SERVICES.find(service => service.slug === slug),
-  ).filter((service): service is typeof recurring => Boolean(service)));
+  const listedServices = groups.flatMap(group => group.slugs.map(findService)
+    .filter((service): service is typeof recurring => Boolean(service)));
 
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -100,93 +82,77 @@ export default function ServicesIndexPage() {
   };
 
   return (
-    <div className={`vsite ${styles.page}`}>
-      <IconSprite />
+    <PublicPage>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
-      <a href="#main" className={styles.skip}>Skip to main content</a>
-      <SiteHeader overlay />
+      <PageHero id="services-title" crumbs={[{ label: 'Services' }]} position="50% 35%"
+        image="/images/site/home-organizing-closet-1600.jpg" alt="A person sorting clothes in a bedroom closet"
+        kicker="The Verliks service guide"
+        title="The right clean for what needs doing."
+        lede="Explore the work, understand the scope, then describe your place to cleaners near you. You agree on the details and price before accepting anyone.">
+        <div className="hero-actions">
+          <Link className="btn btn-primary" href="/request">Find a cleaner</Link>
+          <a className="btn btn-ghost" href="#service-catalog">Explore services</a>
+        </div>
+      </PageHero>
 
-      <main id="main" data-inert-when-menu>
-        <PhotoHero id="services-title" crumb="Services"
-          image="/images/site/standard-cleaning-dusting-shelves-1600.jpg"
-          alt="A cleaning professional dusting shelves inside a home"
-          kicker="The Verliks service guide"
-          title={<><span>The right clean</span> <span>for what needs doing.</span></>}
-          lede="Explore the work, understand the scope, then describe your place to cleaners near you. You agree on the details and price before accepting anyone.">
-          <div className="hero-actions">
-            <Link className="btn-solid" href="/request">Find a cleaner</Link>
-            <a className="btn-line" href="#service-catalog">Explore services</a>
-          </div>
-        </PhotoHero>
+      <nav className="subnav" aria-label="Service categories">
+        <div className="wrap subnav-inner">
+          <span>Browse by need</span>
+          {groups.map(group => <a key={group.id} href={`#${group.id}`}>{group.title}</a>)}
+        </div>
+      </nav>
 
-        <nav className={styles.categoryNav} aria-label="Service categories">
+      <section id="service-catalog" className="intro-band" aria-labelledby="catalog-title">
+        <div className="wrap">
+          <h2 id="catalog-title" className="t-display">A clear place to start.</h2>
+          <p className="t-lead">Select a service to see what cleaners typically cover, what to prepare, and questions worth asking before you decide.</p>
+        </div>
+      </section>
+
+      {groups.map((group, index) => (
+        <section key={group.id} id={group.id} className={`band band-rule${index % 2 === 0 ? ' band-warm' : ''}`} aria-labelledby={`${group.id}-title`}>
           <div className="wrap">
-            <span className={styles.categoryNavLabel}>Browse by need</span>
-            <div className={styles.categoryLinks}>
-              {groups.map(group => <a key={group.id} href={`#${group.id}`}>{group.title}</a>)}
+            <div className="band-head">
+              <h3 id={`${group.id}-title`} className="t-col">{group.title}</h3>
+              <p className="t-lead">{groupIntro[group.title]}</p>
             </div>
-          </div>
-        </nav>
-
-        <section id="service-catalog" className={styles.catalog} aria-labelledby="catalog-title">
-          <div className="wrap">
-            <div className={styles.catalogIntro}>
-              <p className="kicker">Explore the work</p>
-              <h2 id="catalog-title" className="v-title">A clear place to start.</h2>
-              <p>Select a service to see what cleaners typically cover, what to prepare, and questions worth asking before you decide.</p>
-            </div>
-
-            {groups.map(group => {
-              const detail = groupDetails[group.title];
-              return (
-                <section className={styles.category} id={group.id} aria-labelledby={`${group.id}-title`} key={group.id}>
-                  <div className={styles.categoryHeading}>
-                    <h3 id={`${group.id}-title`}>{group.title}</h3>
-                    <p>{detail.intro}</p>
-                  </div>
-                  <div className={styles.categoryGrid}>
-                    <figure className={styles.categoryImage}>
-                      <Image src={detail.image} alt={detail.alt} fill sizes="(max-width: 800px) 100vw, 38vw" />
-                    </figure>
-                    <ul className={styles.serviceList}>
-                      {group.slugs.map(slug => {
-                        const service = slug === recurring.slug ? recurring : SERVICES.find(item => item.slug === slug);
-                        if (!service) return null;
-                        return (
-                          <li key={service.slug}>
-                            <Link href={`/services/${service.slug}`} className={styles.serviceLink}>
-                              <span>
-                                <strong>{service.name}</strong>
-                                <small>{service.tagline}</small>
-                              </span>
-                              <Icon name="arrow-up-right" />
-                            </Link>
-                          </li>
-                        );
-                      })}
-                    </ul>
-                  </div>
-                </section>
-              );
-            })}
-          </div>
-        </section>
-
-        <section className="gold-band" aria-labelledby="guidance-title">
-          <div className="wrap gold-grid">
-            <div>
-              <p className="kicker">Need a hand choosing?</p>
-              <h2 id="guidance-title">You can start with the situation.</h2>
-              <p>Choose the closest service and describe the work in your request. A cleaner can discuss the right scope with you before you accept.</p>
-            </div>
-            <div className="gold-actions">
-              <Link className="btn-ink" href="/request">Describe your job</Link>
+            <div className="cols-3">
+              {group.slugs.map(slug => {
+                const service = findService(slug);
+                const site = getSiteService(slug);
+                if (!service || !site) return null;
+                return (
+                  <article key={slug}>
+                    <h4 className="t-item">{service.name}</h4>
+                    <Link className="col-photo" href={`/services/${slug}`} tabIndex={-1} aria-hidden="true">
+                      <Image src={`/images/site/${site.image}-800.jpg`} alt="" fill sizes="(max-width: 860px) 100vw, 30vw" />
+                    </Link>
+                    <p className="col-text">{service.tagline}</p>
+                    <Link className="more-link col-more" href={`/services/${slug}`}>
+                      Learn more<span className="sr-only"> about {service.name}</span>
+                      <CircleArrowRight size={20} strokeWidth={1.75} aria-hidden="true" />
+                    </Link>
+                  </article>
+                );
+              })}
             </div>
           </div>
         </section>
-      </main>
+      ))}
 
-      <SiteFooter />
-    </div>
+      <section className="intro-band band-rule" aria-labelledby="guidance-title">
+        <div className="wrap intro-band-inner">
+          <div>
+            <p className="t-label">Need a hand choosing?</p>
+            <h2 id="guidance-title" className="t-display">You can start with the situation.</h2>
+            <p className="t-lead">Choose the closest service and describe the work in your request. A cleaner can discuss the right scope with you before you accept.</p>
+          </div>
+          <div className="btn-row">
+            <Link className="btn btn-dark" href="/how-it-works">How it works</Link>
+            <Link className="btn btn-primary" href="/request">Describe your job</Link>
+          </div>
+        </div>
+      </section>
+    </PublicPage>
   );
 }

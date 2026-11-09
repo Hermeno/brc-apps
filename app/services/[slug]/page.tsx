@@ -2,13 +2,10 @@ import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import '../../site.css';
-import styles from '../services.module.css';
+import { CircleArrowRight, ClipboardList, MessagesSquare, UserCheck } from 'lucide-react';
 import { SERVICES, getService, REQUEST_EXTRAS, type Service } from '@/lib/services';
-import SiteHeader from '@/components/site/site-header';
-import SiteFooter from '@/components/site/site-footer';
-import { HeroIntro, Reveal, Stagger } from '@/components/site/motion';
-import { Icon, IconSprite } from '@/components/site/icons';
+import PublicPage from '@/components/site/public-page';
+import { PageHero } from '@/components/site/photo-hero';
 
 const BASE = 'https://verliks.com';
 
@@ -77,14 +74,17 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 const STEPS = [
   {
+    Icon: ClipboardList,
     title: 'Describe the job',
     body: 'Add your ZIP code, property details, preferred day and anything specific. Sending a request costs nothing.',
   },
   {
+    Icon: MessagesSquare,
     title: 'Discuss the details',
     body: 'A cleaner who offers this service and covers your ZIP can reply. Use the conversation to agree on the scope, timing and price.',
   },
   {
+    Icon: UserCheck,
     title: 'Decide who to hire',
     body: 'Review the cleaner’s profile and rating. Accept or decline before anything is booked, then pay the cleaner directly for the work.',
   },
@@ -109,6 +109,10 @@ const SHARED_FAQ = [
   },
 ];
 
+const imageFor = (slug: string) => slug === recurring.slug
+  ? '/images/site/recurring-cleaning-bedroom-1200.jpg'
+  : `/images/services/${slug}.jpg`;
+
 export default async function ServicePage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const service = getPageService(slug);
@@ -116,9 +120,6 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
 
   const related = service.related.map(getPageService).filter((item): item is Service => Boolean(item));
   const requestUrl = `/request?service=${service.id}`;
-  const heroImage = slug === recurring.slug
-    ? '/images/site/recurring-cleaning-bedroom-1200.jpg'
-    : `/images/services/${service.slug}.jpg`;
 
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -144,177 +145,137 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
   };
 
   return (
-    <div className={`vsite ${styles.page}`}>
-      <IconSprite />
+    <PublicPage>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
-      <a href="#main" className={styles.skip}>Skip to main content</a>
-      <SiteHeader />
+      <PageHero id="service-title" image={imageFor(service.slug)} position="50% 40%"
+        crumbs={[{ href: '/services', label: 'Services' }, { label: service.name }]}
+        kicker="Cleaning services"
+        title={service.name}
+        lede={service.tagline}>
+        <div className="hero-actions">
+          <Link className="btn btn-primary" href={requestUrl}>Request this service</Link>
+          <Link className="btn btn-ghost" href="/services">All services</Link>
+        </div>
+        <p className="hero-note">Free to send a request. Discuss scope and price before deciding.</p>
+      </PageHero>
 
-      <main id="main" data-inert-when-menu>
-        <section className={styles.detailHero} aria-labelledby="service-title">
-          <div className={styles.container}>
-            <nav className={styles.breadcrumbs} aria-label="Breadcrumb">
-              <Link href="/">Home</Link><span aria-hidden="true">/</span>
-              <Link href="/services">Services</Link><span aria-hidden="true">/</span>
-              <span aria-current="page">{service.name}</span>
-            </nav>
-            <div className={styles.detailHeroGrid}>
-              <HeroIntro className={styles.detailHeroCopy}>
-                <p className={styles.eyebrow}>Cleaning services / {service.name}</p>
-                <h1 id="service-title" className={styles.detailTitle}>{service.name}</h1>
-                <p className={styles.heroLead}>{service.tagline}</p>
-                <div className={styles.actions}>
-                  <Link className={styles.primaryButton} href={requestUrl}>Request this service <Icon name="arrow-right" /></Link>
-                  <Link className={styles.secondaryLink} href="/services">All services <Icon name="arrow-right" /></Link>
-                </div>
-                <p className={styles.heroNote}>Free to send a request. Discuss scope and price before deciding.</p>
-              </HeroIntro>
-              <figure className={styles.detailHeroMedia}>
-                <Image src={heroImage} alt="" fill priority sizes="(max-width: 800px) 100vw, 46vw" />
-              </figure>
-            </div>
+      <nav className="subnav" aria-label="On this page">
+        <div className="wrap subnav-inner">
+          <span>On this page</span>
+          <a href="#overview">Overview</a>
+          <a href="#included">Typical scope</a>
+          <a href="#when-to-book">When it fits</a>
+          <a href="#before-request">Before you request</a>
+          <a href="#questions">Questions</a>
+        </div>
+      </nav>
+
+      <section className="band" aria-labelledby="overview-title">
+        <div className="wrap split">
+          <div id="overview">
+            <p className="t-label">The service</p>
+            <h2 id="overview-title" className="t-display">What it is</h2>
+            <div className="prose mt-2"><p>{service.whatIsIt}</p></div>
           </div>
-        </section>
-
-        <div className={styles.factBar} aria-label="How Verliks works">
-          <div className={styles.container}>
-            <span>01 <strong>Describe the work</strong></span>
-            <span>02 <strong>Discuss with a cleaner</strong></span>
-            <span>03 <strong>Decide before booking</strong></span>
+          <div id="before-request">
+            <h3 className="t-col">Worth having ready</h3>
+            <div className="prose mt-1"><p>{service.beforeYouRequest}</p></div>
+            <Link className="more-link mt-1" href={requestUrl}>
+              Request {service.name} <CircleArrowRight size={20} strokeWidth={1.75} aria-hidden="true" />
+            </Link>
           </div>
         </div>
+      </section>
 
-        <div className={styles.detailContent}>
-          <div className={styles.container}>
-            <div className={styles.articleGrid}>
-              <aside className={styles.articleAside} aria-label="On this page">
-                <p className={styles.eyebrow}>On this page</p>
-                <nav>
-                  <a href="#overview">Overview</a>
-                  <a href="#included">Typical scope</a>
-                  <a href="#when-to-book">When it fits</a>
-                  <a href="#before-request">Before you request</a>
-                  <a href="#questions">Questions</a>
-                </nav>
-                <Link className={styles.asideCta} href={requestUrl}>Start a request <Icon name="arrow-right" /></Link>
-              </aside>
-
-              <article className={styles.article}>
-                <section id="overview" className={styles.articleSection} aria-labelledby="overview-title">
-                  <p className={styles.sectionKicker}>The service</p>
-                  <h2 id="overview-title">What it is</h2>
-                  <p className={styles.introProse}>{service.whatIsIt}</p>
-                </section>
-
-                <section id="included" className={styles.articleSection} aria-labelledby="included-title">
-                  <p className={styles.sectionKicker}>The work</p>
-                  <h2 id="included-title">What is usually included</h2>
-                  <p className={styles.sectionIntro}>The exact scope is agreed with the cleaner. Use this list as a starting point and put anything unusual in your request notes.</p>
-                  <Stagger as="ul" className={styles.includedList}>
-                    {service.included.map(item => <li key={item}>{item}</li>)}
-                  </Stagger>
-                  {service.showExtras && (
-                    <p className={styles.extrasNote}><strong>Optional work in the request form:</strong> {REQUEST_EXTRAS.map(extra => extra.label).join(', ')}. Confirm any extras with the cleaner.</p>
-                  )}
-                </section>
-
-                <section id="when-to-book" className={styles.articleSection} aria-labelledby="when-title">
-                  <p className={styles.sectionKicker}>The moment</p>
-                  <h2 id="when-title">When this service fits</h2>
-                  <Stagger as="ul" className={styles.situationsList}>
-                    {service.rightForYou.map(item => <li key={item}><span aria-hidden="true">↗</span>{item}</li>)}
-                  </Stagger>
-                </section>
-
-                <section id="before-request" className={styles.prepSection} aria-labelledby="prep-title">
-                  <p className={styles.sectionKicker}>Prepare your request</p>
-                  <h2 id="prep-title">Worth having ready</h2>
-                  <p>{service.beforeYouRequest}</p>
-                  <Link href={requestUrl} className={styles.inlineCta}>Request {service.name} <Icon name="arrow-right" /></Link>
-                </section>
-              </article>
-            </div>
+      <section className="band band-warm band-rule" aria-label="Scope and fit">
+        <div className="wrap split">
+          <div id="included">
+            <h2 className="t-col">What is usually included</h2>
+            <p className="t-lead mt-1">The exact scope is agreed with the cleaner. Use this list as a starting point and put anything unusual in your request notes.</p>
+            <ul className="ruled mt-2">{service.included.map(item => <li key={item}>{item}</li>)}</ul>
+            {service.showExtras && (
+              <p className="t-lead mt-2"><strong>Optional work in the request form:</strong> {REQUEST_EXTRAS.map(extra => extra.label).join(', ')}. Confirm any extras with the cleaner.</p>
+            )}
+          </div>
+          <div id="when-to-book">
+            <h2 className="t-col">When this service fits</h2>
+            <ul className="ruled mt-2">{service.rightForYou.map(item => <li key={item}>{item}</li>)}</ul>
           </div>
         </div>
+      </section>
 
-        <section className={styles.processSection} aria-labelledby="process-title">
-          <div className={styles.container}>
-            <Reveal className={styles.processHeading}>
-              <p className={styles.sectionKicker}>From request to decision</p>
-              <h2 id="process-title">How it works</h2>
-              <p>You stay in control of whom you hire and the price you agree to.</p>
-            </Reveal>
-            <Stagger as="ol" className={styles.processList}>
-              {STEPS.map(step => (
-                <li key={step.title}>
-                  <h3>{step.title}</h3>
-                  <p>{step.body}</p>
-                </li>
-              ))}
-            </Stagger>
+      <section className="band band-rule" aria-labelledby="process-title">
+        <div className="wrap">
+          <div className="band-head">
+            <p className="t-label">From request to decision</p>
+            <h2 id="process-title" className="t-display">How it works</h2>
+            <p className="t-lead">You stay in control of whom you hire and the price you agree to.</p>
           </div>
-        </section>
+          <ol className="cols-3 plain-list">
+            {STEPS.map(({ Icon, title, body }) => (
+              <li key={title}>
+                <div className="col-head"><Icon size={32} strokeWidth={1.75} aria-hidden="true" /><h3 className="t-item">{title}</h3></div>
+                <p className="col-text">{body}</p>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </section>
 
-        <section id="questions" className={styles.faqSection} aria-labelledby="faq-title">
-          <div className={styles.container}>
-            <div className={styles.faqGrid}>
-              <div className={styles.faqHeading}>
-                <p className={styles.sectionKicker}>Good to know</p>
-                <h2 id="faq-title">Questions about {service.name.toLowerCase()}</h2>
-                <p>Ask the cleaner about anything specific to your property before you accept.</p>
-              </div>
-              <Stagger className={styles.faqList}>
-                {[...service.faq, ...SHARED_FAQ].map(item => (
-                  <details key={item.q}>
-                    <summary>{item.q}<span className={styles.faqPlus} aria-hidden="true">+</span></summary>
-                    <p>{item.a}</p>
-                  </details>
-                ))}
-              </Stagger>
+      <section id="questions" className="band band-mist" aria-labelledby="faq-title">
+        <div className="wrap split">
+          <div>
+            <p className="t-label">Good to know</p>
+            <h2 id="faq-title" className="t-display">Questions about {service.name.toLowerCase()}</h2>
+            <p className="t-lead mt-1">Ask the cleaner about anything specific to your property before you accept.</p>
+          </div>
+          <div className="faq">
+            {[...service.faq, ...SHARED_FAQ].map(item => (
+              <details key={item.q}><summary>{item.q}</summary><p>{item.a}</p></details>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {related.length > 0 && (
+        <section className="band band-warm" aria-labelledby="related-title">
+          <div className="wrap">
+            <div className="band-head">
+              <p className="t-label">Keep exploring</p>
+              <h2 id="related-title" className="t-display">Related services</h2>
             </div>
-          </div>
-        </section>
-
-        {related.length > 0 && (
-          <section className={styles.relatedSection} aria-labelledby="related-title">
-            <div className={styles.container}>
-              <div className={styles.relatedHeading}>
-                <div>
-                  <p className={styles.sectionKicker}>Keep exploring</p>
-                  <h2 id="related-title">Related services</h2>
-                </div>
-                <Link href="/services" className={styles.secondaryLink}>View all services <Icon name="arrow-right" /></Link>
-              </div>
-              <Stagger className={styles.relatedGrid}>
-                {related.map(item => (
-                  <Link key={item.slug} href={`/services/${item.slug}`} className={styles.relatedCard}>
-                    <span className={styles.relatedImage}>
-                      <Image src={item.slug === recurring.slug ? '/images/site/recurring-cleaning-bedroom-1200.jpg' : `/images/services/${item.slug}.jpg`} alt="" fill sizes="(max-width: 700px) 100vw, 30vw" />
-                    </span>
-                    <span className={styles.relatedText}><strong>{item.name}</strong><Icon name="arrow-up-right" /></span>
-                    <span className={styles.relatedTagline}>{item.tagline}</span>
+            <div className="cols-3">
+              {related.map(item => (
+                <article key={item.slug}>
+                  <h3 className="t-item">{item.name}</h3>
+                  <Link className="col-photo" href={`/services/${item.slug}`} tabIndex={-1} aria-hidden="true">
+                    <Image src={imageFor(item.slug)} alt="" fill sizes="(max-width: 860px) 100vw, 30vw" />
                   </Link>
-                ))}
-              </Stagger>
-            </div>
-          </section>
-        )}
-
-        <section className={styles.guidance} aria-labelledby="request-title">
-          <div className={styles.container}>
-            <p className={styles.eyebrow}>Ready when you are</p>
-            <div className={styles.guidanceGrid}>
-              <div>
-                <h2 id="request-title">Tell a cleaner what you need.</h2>
-                <p>The request opens with {service.name.toLowerCase()} selected. Sending it costs nothing, and you can discuss the price before deciding.</p>
-              </div>
-              <Link className={styles.goldButton} href={requestUrl}>Request {service.name} <Icon name="arrow-right" /></Link>
+                  <p className="col-text">{item.tagline}</p>
+                  <Link className="more-link col-more" href={`/services/${item.slug}`}>
+                    Learn more<span className="sr-only"> about {item.name}</span>
+                    <CircleArrowRight size={20} strokeWidth={1.75} aria-hidden="true" />
+                  </Link>
+                </article>
+              ))}
             </div>
           </div>
         </section>
-      </main>
+      )}
 
-      <SiteFooter />
-    </div>
+      <section className="intro-band band-rule" aria-labelledby="request-title">
+        <div className="wrap intro-band-inner">
+          <div>
+            <p className="t-label">Ready when you are</p>
+            <h2 id="request-title" className="t-display">Tell a cleaner what you need.</h2>
+            <p className="t-lead">The request opens with {service.name.toLowerCase()} selected. Sending it costs nothing, and you can discuss the price before deciding.</p>
+          </div>
+          <div className="btn-row">
+            <Link className="btn btn-dark" href="/services">View all services</Link>
+            <Link className="btn btn-primary" href={requestUrl}>Request {service.name}</Link>
+          </div>
+        </div>
+      </section>
+    </PublicPage>
   );
 }

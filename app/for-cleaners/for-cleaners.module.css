@@ -1,21 +1,16 @@
 /* ─────────────────────────────────────────────────────────────
    /for-cleaners — acquisition page for cleaning professionals.
 
-   The opening (header over a photograph, then three facts on navy) and the
-   closing gold band come from app/site.css, shared with the home page. This
-   module styles the document in between: a text-forward page for a
-   professional deciding whether to put a card on file.
-
-   Colours are the Verliks palette. Gold is for rules and icons; as text on
-   white it is under 4.5:1, so it never carries words here.
+   The opening, the facts, the closing band, header and footer come from
+   app/site.css through components/site/public-page.tsx. This module styles the
+   document in between: a text-forward page for a professional deciding
+   whether to put a card on file. Palette values only; blue is the one accent.
    ───────────────────────────────────────────────────────────── */
 
 .page {
   --navy:      #185FC6;  /* links and actions on light */
   --navy-mid:  #134A9A;  /* hover */
   --navy-deep: #0E3468;  /* dark bands */
-  --gold:      #D4AF37;  /* rules, focus */
-  --gold-ink:  #A5851F;  /* check icons on white: 3.5:1, enough for a graphic */
   --cream:     #F8F8F4;
   --ink:       #18314E;
   --muted:     #455B70;
@@ -30,47 +25,33 @@
 }
 .page :global(*) { box-sizing: border-box; }
 
-/* Same column as .wrap in app/site.css: 1220px of content, 24px gutters. */
-.inner { max-width: 1268px; margin: 0 auto; padding: 0 24px; }
-
-/* ── Shared type: small spaced intro line, title with a short gold rule ── */
+/* ── Shared type: the levels of app/site.css (t-label, t-display, t-lead) ── */
 .eyebrow {
-  margin: 0; color: var(--ink);
-  font: 500 12.5px/1.5 var(--font-display), system-ui, sans-serif;
-  letter-spacing: .3em; text-transform: uppercase;
+  margin: 0; color: var(--muted);
+  font-size: 13px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase;
 }
 
 .h2 {
   font-family: var(--font-display), system-ui, sans-serif;
-  font-size: clamp(1.75rem, 1.2rem + 1.2vw, 2.4rem);
-  font-weight: 600; line-height: 1.22; letter-spacing: -0.015em;
-  color: var(--ink); margin: 16px 0 0;
-}
-.h2::after {
-  content: ""; display: block; width: 56px; height: 3px; margin-top: 22px; background: var(--gold);
+  font-size: clamp(1.75rem, 1.2rem + 1.1vw, 2.25rem);
+  font-weight: 300; line-height: 1.15; letter-spacing: -0.01em;
+  color: var(--ink); margin: 6px 0 0;
 }
 
 .lede {
-  font-size: 16.5px; line-height: 1.7; color: var(--muted);
-  margin: 22px 0 0; max-width: 62ch;
+  font-size: 16px; line-height: 1.65; color: var(--muted);
+  margin: 12px 0 0; max-width: 62ch;
 }
-
-.skip {
-  position: absolute; left: -9999px; top: 0;
-  background: var(--navy); color: #fff; padding: 10px 16px; border-radius: 0;
-  z-index: 200; font-size: 14px; font-weight: 600;
-}
-.skip:focus { left: 16px; top: 12px; }
 
 /* ─────────────────────────────────────────────
    Light sections
    ───────────────────────────────────────────── */
-.section { padding: clamp(64px, 6.2vw, 112px) 0; }
+.section { padding: clamp(44px, 4.2vw, 64px) 0; border-top: 1px solid var(--line); }
 .sectionCream { background: var(--cream); }
 .sectionHead { max-width: 62ch; }
 
 /* ── How it works — ruled steps ── */
-.steps { margin: 54px 0 0; padding: 0; list-style: none; }
+.steps { margin: 28px 0 0; padding: 0; list-style: none; }
 .step {
   padding: 30px 0; border-top: 1px solid var(--line);
 }
@@ -82,7 +63,7 @@
 .stepBody { font-size: 15px; line-height: 1.62; color: var(--muted); margin: 0; max-width: 60ch; }
 .stepNote {
   display: inline-block; font-size: 13.5px; font-weight: 600; color: var(--ink);
-  margin: 10px 0 0; padding-left: 12px; border-left: 3px solid var(--gold);
+  margin: 10px 0 0; padding-left: 12px; border-left: 3px solid var(--navy);
 }
 
 /* ── Example opportunity panel ── */
@@ -152,20 +133,20 @@
 
 .callout {
   margin: 34px 0 0; padding: 22px 24px;
-  border-left: 3px solid var(--gold); background: var(--cream);
+  border-left: 3px solid var(--navy); background: var(--cream);
 }
-.calloutOnCream { background: var(--white); border: 1px solid var(--line); border-left: 3px solid var(--gold); }
+.calloutOnCream { background: var(--white); border: 1px solid var(--line); border-left: 3px solid var(--navy); }
 .calloutTitle { font-size: 15px; font-weight: 700; color: var(--ink); margin: 0 0 7px; }
 .calloutBody { font-size: 14.5px; line-height: 1.62; color: var(--muted); margin: 0; }
 
 /* ── Control list ── */
-.controls { margin: 48px 0 0; display: grid; grid-template-columns: repeat(2, 1fr); gap: 0 56px; }
+.controls { margin: 28px 0 0; display: grid; grid-template-columns: repeat(2, 1fr); gap: 0 56px; }
 .control { padding: 22px 0; border-top: 1px solid var(--line); }
 .controlTitle { font-size: 15.5px; font-weight: 700; color: var(--ink); margin: 0 0 7px; }
 .controlBody { font-size: 14.5px; line-height: 1.6; color: var(--muted); margin: 0; }
 
 /* ── Does / doesn't ── */
-.truthGrid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 56px; margin: 48px 0 0; }
+.truthGrid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 56px; margin: 28px 0 0; }
 .truthHead {
   font-size: 12px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
   color: var(--ink); margin: 0 0 4px; padding-bottom: 14px; border-bottom: 1px solid var(--line);
@@ -178,11 +159,11 @@
 }
 .truthItem strong { color: var(--ink); font-weight: 700; }
 .truthIcon { margin-top: 1px; flex-shrink: 0; }
-.iconYes { color: var(--gold-ink); }
-.iconNo  { color: var(--navy); }
+.iconYes { color: var(--navy); }
+.iconNo  { color: var(--ink); }
 
 /* ── FAQ ── */
-.faq { margin: 44px 0 0; max-width: 860px; }
+.faq { margin: 28px 0 0; max-width: 860px; }
 .faqItem { border-top: 1px solid var(--line); }
 .faqItem:last-of-type { border-bottom: 1px solid var(--line); }
 .faqQ {
@@ -200,11 +181,6 @@
 }
 .faqA a { color: var(--navy); text-decoration: underline; text-underline-offset: 3px; }
 
-/* ── Focus ── */
-.page a:focus-visible, .page button:focus-visible, .page summary:focus-visible {
-  outline: 3px solid var(--gold); outline-offset: 3px;
-}
-
 /* ─────────────────────────────────────────────
    Responsive — 1440 / 768 / 390 checkpoints
    ───────────────────────────────────────────── */
@@ -215,7 +191,6 @@
 }
 
 @media (max-width: 760px) {
-  .inner { padding: 0 18px; }
   .step { padding: 26px 0; }
   .steps { margin-top: 40px; }
   .controls, .truthGrid, .faq { margin-top: 34px; }
