@@ -55,7 +55,7 @@ function UploadBox({
   return (
     <Box
       border="2px dashed" borderColor={value ? '#185FC6' : 'slate.200'}
-      borderRadius="4px" p={4} bg={value ? '#F8FAFC' : 'slate.50'}
+      borderRadius="2px" p={4} bg={value ? '#F8F8F4' : 'slate.50'}
       cursor="pointer" onClick={() => ref.current?.click()}
       transition="all 0.2s" _hover={{ borderColor: 'brand.300', bg: 'brand.50' }}
     >
@@ -65,7 +65,7 @@ function UploadBox({
         {value ? (
           <>
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={value} alt={label} style={{ width: '100%', maxHeight: 140, objectFit: 'contain', borderRadius: 4 }} />
+            <img src={value} alt={label} style={{ width: '100%', maxHeight: 140, objectFit: 'contain', borderRadius: 2 }} />
             <HStack gap={1}>
               <Icon as={LucideCheckCircle} w={4} h={4} color="#185FC6" />
               <Text fontSize="xs" color="#185FC6" fontWeight="bold">{uploadedLabel}</Text>
@@ -149,17 +149,17 @@ export default function CleanerVerifyPage() {
   );
 
   const statusBanner = existing?.status === 'APPROVED' ? (
-    <Box bg="#ECFDF5" border="1px solid" borderColor="#A7F3D0" borderRadius="4px" p={6}>
+    <Box bg="#EDF3F5" border="1px solid" borderColor="#DDE5E9" borderRadius="2px" p={6}>
       <HStack gap={3}>
-        <Icon as={LucideCheckCircle} w={7} h={7} color="#059669" />
+        <Icon as={LucideCheckCircle} w={7} h={7} color="#185FC6" />
         <Box>
-          <Text fontWeight="black" color="#047857" fontSize="lg">{t('cleaner.verify.statusApproved_title')}</Text>
-          <Text color="#059669" fontSize="sm">{t('cleaner.verify.statusApproved_desc')}</Text>
+          <Text fontWeight="black" color="#185FC6" fontSize="lg">{t('cleaner.verify.statusApproved_title')}</Text>
+          <Text color="#185FC6" fontSize="sm">{t('cleaner.verify.statusApproved_desc')}</Text>
         </Box>
       </HStack>
     </Box>
   ) : existing?.status === 'PENDING' ? (
-    <Box bg="#F7F8FA" border="1px solid" borderColor="#E3E8EE" borderRadius="4px" p={6}>
+    <Box bg="#F8F8F4" border="1px solid" borderColor="#DDE5E9" borderRadius="2px" p={6}>
       <HStack gap={3}>
         <Icon as={LucideClock} w={7} h={7} color="#185FC6" />
         <Box>
@@ -169,7 +169,7 @@ export default function CleanerVerifyPage() {
       </HStack>
     </Box>
   ) : existing?.status === 'REJECTED' ? (
-    <Box bg="red.50" border="1px solid" borderColor="red.200" borderRadius="4px" p={6}>
+    <Box bg="red.50" border="1px solid" borderColor="red.200" borderRadius="2px" p={6}>
       <HStack gap={3}>
         <Icon as={LucideXCircle} w={7} h={7} color="red.500" />
         <Box>
@@ -190,7 +190,7 @@ export default function CleanerVerifyPage() {
       <Box bg="white" borderBottom="1px solid" borderColor="slate.100" position="sticky" top={0} zIndex={50}>
         <Container maxW="2xl" py={4}>
           <Flex align="center" gap={3}>
-            <Button variant="ghost" size="sm" onClick={() => router.back()} borderRadius="4px">
+            <Button variant="ghost" size="sm" onClick={() => router.back()} borderRadius="2px">
               <Icon as={LucideArrowLeft} w={4} h={4} mr={1} /> {t('common.back')}
             </Button>
             <Text fontWeight="black" fontSize="md" color="slate.900">{t('cleaner.verify.title')}</Text>
@@ -214,7 +214,7 @@ export default function CleanerVerifyPage() {
                 {[1, 2].map(s => (
                   <Flex key={s} align="center">
                     <Box
-                      w="32px" h="32px" borderRadius="4px"
+                      w="32px" h="32px" borderRadius="2px"
                       bg={step >= s ? 'brand.500' : 'slate.200'}
                       display="flex" alignItems="center" justifyContent="center"
                       cursor="pointer" onClick={() => s < step && setStep(s)}
@@ -227,7 +227,7 @@ export default function CleanerVerifyPage() {
               </HStack>
             )}
 
-            <Box bg="white" borderRadius="4px" border="1px solid" borderColor="slate.200" p={8}>
+            <Box bg="white" borderRadius="2px" border="1px solid" borderColor="slate.200" p={8}>
               {step === 1 && (
                 <VStack gap={5} align="stretch">
                   <Text fontWeight="black" color="slate.900" fontSize="lg">{t('cleaner.verify.step1Title')}</Text>
@@ -239,7 +239,7 @@ export default function CleanerVerifyPage() {
                       <Icon as={LucideUser} w={4} h={4} color="slate.400" />
                       <Input value={fullName} onChange={e => setFullName(e.target.value)}
                         placeholder={t('cleaner.verify.fullNamePlaceholder')}
-                        bg="slate.50" border="1px solid" borderColor="slate.200" h="11" borderRadius="4px"
+                        bg="slate.50" border="1px solid" borderColor="slate.200" h="11" borderRadius="2px"
                         _focus={{ bg: 'white', borderColor: 'brand.300' }}
                         disabled={!canEdit} />
                     </HStack>
@@ -252,7 +252,7 @@ export default function CleanerVerifyPage() {
                       <Icon as={LucideIdCard} w={4} h={4} color="slate.400" />
                       <Input value={idNumber} onChange={e => setIdNumber(e.target.value)}
                         placeholder={t('cleaner.verify.idPlaceholder')}
-                        bg="slate.50" border="1px solid" borderColor="slate.200" h="11" borderRadius="4px"
+                        bg="slate.50" border="1px solid" borderColor="slate.200" h="11" borderRadius="2px"
                         _focus={{ bg: 'white', borderColor: 'brand.300' }}
                         disabled={!canEdit} />
                     </HStack>
@@ -265,7 +265,7 @@ export default function CleanerVerifyPage() {
                       <Icon as={LucideMapPin} w={4} h={4} color="slate.400" />
                       <Input value={address} onChange={e => setAddress(e.target.value)}
                         placeholder={t('cleaner.verify.addressPlaceholder')}
-                        bg="slate.50" border="1px solid" borderColor="slate.200" h="11" borderRadius="4px"
+                        bg="slate.50" border="1px solid" borderColor="slate.200" h="11" borderRadius="2px"
                         _focus={{ bg: 'white', borderColor: 'brand.300' }}
                         disabled={!canEdit} />
                     </HStack>
@@ -278,7 +278,7 @@ export default function CleanerVerifyPage() {
                       }
                       setStep(2);
                     }}
-                      bg="brand.500" color="white" h="11" borderRadius="4px" fontWeight="bold"
+                      bg="brand.500" color="white" h="11" borderRadius="2px" fontWeight="bold"
                       _hover={{ bg: 'brand.600' }}>
                       {t('cleaner.verify.continueBtn')}
                     </Button>
@@ -290,7 +290,7 @@ export default function CleanerVerifyPage() {
                 <VStack gap={5} align="stretch">
                   <HStack justify="space-between">
                     <Text fontWeight="black" color="slate.900" fontSize="lg">{t('cleaner.verify.step2Title')}</Text>
-                    <Badge bg="#F7F8FA" color="#185FC6" borderRadius="4px" px={3}>
+                    <Badge bg="#F8F8F4" color="#185FC6" borderRadius="2px" px={3}>
                       <Icon as={LucideCamera} w={3} h={3} mr={1} />All required
                     </Badge>
                   </HStack>
@@ -332,11 +332,11 @@ export default function CleanerVerifyPage() {
                   </Box>
 
                   <HStack gap={3}>
-                    <Button onClick={() => setStep(1)} variant="outline" h="11" borderRadius="4px"
+                    <Button onClick={() => setStep(1)} variant="outline" h="11" borderRadius="2px"
                       flex={1} fontWeight="bold">{t('cleaner.verify.backBtn')}</Button>
                     {canEdit && (
                       <Button onClick={handleSubmit}
-                        bg="brand.500" color="white" h="11" borderRadius="4px" fontWeight="bold"
+                        bg="brand.500" color="white" h="11" borderRadius="2px" fontWeight="bold"
                         loading={submitting} loadingText={t('cleaner.verify.submitting')}
                         flex={2} _hover={{ bg: 'brand.600' }}>
                         {t('cleaner.verify.submitBtn')}
@@ -347,7 +347,7 @@ export default function CleanerVerifyPage() {
               )}
             </Box>
 
-            <Box bg="slate.100" borderRadius="4px" p={4}>
+            <Box bg="slate.100" borderRadius="2px" p={4}>
               <Text fontSize="xs" color="slate.500" textAlign="center">
                 {t('cleaner.verify.privacy')}
               </Text>

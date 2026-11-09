@@ -10,6 +10,8 @@ import {
 } from 'lucide-react';
 import CleanerNav from '@/components/cleaner-nav';
 import { useLocale } from '@/lib/i18n';
+import { serviceLabel } from '@/lib/estimate';
+import Glyph from '@/components/glyph';
 
 type Job = {
   id: string; serviceType: string; address: string; dateTime: string;
@@ -24,7 +26,7 @@ function StarRow({ rating }: { rating: number }) {
   return (
     <HStack gap={0.5}>
       {[1, 2, 3, 4, 5].map(s => (
-        <Text key={s} fontSize="sm" color={rating >= s ? '#F59E0B' : '#E5E7EB'}>★</Text>
+        <Text key={s} fontSize="sm" color={rating >= s ? '#18314E' : '#DDE5E9'}>★</Text>
       ))}
     </HStack>
   );
@@ -54,22 +56,22 @@ export default function SchedulePage() {
   const completed = jobs.filter(j => j.status === 'COMPLETED');
 
   const accentColor = (job: Job) => {
-    if (job.status === 'COMPLETED') return '#22C55E';
+    if (job.status === 'COMPLETED') return '#185FC6';
     const dt = new Date(job.dateTime);
-    if (dt.toDateString() === now.toDateString()) return '#F97316';
+    if (dt.toDateString() === now.toDateString()) return '#18314E';
     return '#185FC6';
   };
 
   const SectionPanel = ({ label, items, accentBg }: { label: string; items: Job[]; accentBg: string }) =>
     items.length === 0 ? null : (
-      <Box border="1px solid #E3E8EE" style={{ borderRadius: 8 }} overflow="hidden">
+      <Box border="1px solid #DDE5E9" style={{ borderRadius: 2 }} overflow="hidden">
         {/* Section header */}
-        <Box bg="#F7F8FA" px={5} py={3} borderBottom="1px solid #E3E8EE">
+        <Box bg="#F8F8F4" px={5} py={3} borderBottom="1px solid #DDE5E9">
           <HStack gap={2}>
             <Text
               fontSize="10.5px"
               fontWeight={700}
-              color="#697386"
+              color="#455B70"
               textTransform="uppercase"
               fontFamily="heading"
               letterSpacing="0.07em">
@@ -96,7 +98,7 @@ export default function SchedulePage() {
                 bg="white"
                 px={5}
                 py={4}
-                borderBottom={isLast ? undefined : '1px solid #F1F5F9'}>
+                borderBottom={isLast ? undefined : '1px solid #F8F8F4'}>
                 {/* Left accent strip */}
                 <Box position="absolute" left={0} top={0} bottom={0} w="3px" bg={leftColor} />
 
@@ -107,7 +109,7 @@ export default function SchedulePage() {
                       <Text
                         style={{
                           borderRadius: 2,
-                          background: job.status === 'COMPLETED' ? '#F8FAFC' : '#E9F3F5',
+                          background: job.status === 'COMPLETED' ? '#F8F8F4' : '#EDF3F5',
                           padding: '2px 6px',
                           fontSize: 9.5,
                           fontWeight: 700,
@@ -115,7 +117,7 @@ export default function SchedulePage() {
                         }}>
                         {job.status === 'COMPLETED' ? t('cleaner.schedule.statusCompleted') : t('cleaner.schedule.statusConfirmed')}
                       </Text>
-                      <Text fontWeight="bold" color="slate.900" fontFamily="heading">{job.serviceType}</Text>
+                      <Text fontWeight="bold" color="slate.900" fontFamily="heading">{serviceLabel(job.serviceType, locale)}</Text>
                     </HStack>
 
                     <HStack gap={4} flexWrap="wrap">
@@ -125,7 +127,7 @@ export default function SchedulePage() {
                       </HStack>
                       <HStack gap={1.5} color="slate.500" fontSize="sm">
                         <Icon as={LucideCalendar} w={4} h={4} color="#185FC6" />
-                        <Text fontWeight="semibold" color={isPast ? '#94A3B8' : 'slate.700'}>
+                        <Text fontWeight="semibold" color={isPast ? '#455B70' : 'slate.700'}>
                           {dt.toLocaleString(dateLocale, { dateStyle: 'full', timeStyle: 'short' })}
                         </Text>
                       </HStack>
@@ -135,13 +137,13 @@ export default function SchedulePage() {
                     {(job.bedrooms || job.bathrooms || (job.squareMeters ?? 0) > 0 || job.estimatedHours) && (
                       <HStack gap={3} flexWrap="wrap">
                         {job.bedrooms && (
-                          <Text fontSize="xs" color="slate.500">🛏 {job.bedrooms}bd</Text>
+                          <Text fontSize="xs" color="slate.500"><Glyph name="bed" />{job.bedrooms}bd</Text>
                         )}
                         {job.bathrooms && (
-                          <Text fontSize="xs" color="slate.500">🚿 {job.bathrooms}ba</Text>
+                          <Text fontSize="xs" color="slate.500"><Glyph name="bath" />{job.bathrooms}ba</Text>
                         )}
                         {(job.squareMeters ?? 0) > 0 && (
-                          <Text fontSize="xs" color="slate.500">📐 {job.squareMeters}m²</Text>
+                          <Text fontSize="xs" color="slate.500"><Glyph name="area" />{job.squareMeters}m²</Text>
                         )}
                         {job.estimatedHours && (
                           <HStack gap={1}>
@@ -171,7 +173,7 @@ export default function SchedulePage() {
                     {/* Review: flat stars inline */}
                     {job.review && (
                       <HStack gap={2}>
-                        <Icon as={LucideStar} w={4} h={4} color="#F59E0B" />
+                        <Icon as={LucideStar} w={4} h={4} color="#18314E" />
                         <StarRow rating={job.review.rating} />
                         {job.review.comment && (
                           <Text fontSize="xs" color="slate.500" fontStyle="italic">
@@ -203,9 +205,9 @@ export default function SchedulePage() {
 
   // StatStrip counts
   const statItems = [
-    { label: t('cleaner.schedule.statToday'), value: today.length, color: '#F97316' },
+    { label: t('cleaner.schedule.statToday'), value: today.length, color: '#18314E' },
     { label: t('cleaner.schedule.statUpcoming'), value: upcoming.length, color: '#185FC6' },
-    { label: t('cleaner.schedule.statCompleted'), value: completed.length, color: '#22C55E' },
+    { label: t('cleaner.schedule.statCompleted'), value: completed.length, color: '#185FC6' },
   ];
 
   return (
@@ -214,13 +216,13 @@ export default function SchedulePage() {
       <Box p={6} maxW="1200px" mx="auto">
 
         <HStack gap={2.5} mb={6}>
-          <Heading size="md" fontWeight="bold" color="slate.900" fontFamily="heading">{t('cleaner.schedule.title')}</Heading>
+          <Heading fontWeight="300" fontSize={{ base: '24px', md: '28px' }} letterSpacing="-0.01em" size="md" color="slate.900" fontFamily="heading">{t('cleaner.schedule.title')}</Heading>
         </HStack>
 
         <VStack gap={6} align="stretch">
 
           {/* StatStrip */}
-          <Box border="1px solid #E3E8EE" bg="white" style={{ borderRadius: 8 }}>
+          <Box border="1px solid #DDE5E9" bg="white" style={{ borderRadius: 2 }}>
             <Flex>
               {statItems.map((s, i) => (
                 <Box
@@ -228,11 +230,11 @@ export default function SchedulePage() {
                   flex={1}
                   px={5}
                   py={4}
-                  borderRight={i < statItems.length - 1 ? '1px solid #E3E8EE' : undefined}
+                  borderRight={i < statItems.length - 1 ? '1px solid #DDE5E9' : undefined}
                   textAlign="center">
                   <Text
                     fontSize="22px"
-                    fontWeight={800}
+                    fontWeight={700}
                     fontFamily="heading"
                     color={s.color}
                     letterSpacing="-0.03em"
@@ -241,7 +243,7 @@ export default function SchedulePage() {
                   </Text>
                   <Text
                     fontSize="11px"
-                    color="#697386"
+                    color="#455B70"
                     textTransform="uppercase"
                     fontFamily="heading"
                     letterSpacing="0.07em"
@@ -258,7 +260,7 @@ export default function SchedulePage() {
               <Text color="slate.400">{t('cleaner.schedule.loading')}</Text>
             </Box>
           ) : jobs.length === 0 ? (
-            <Box border="1px solid #E3E8EE" p={16} textAlign="center" bg="white">
+            <Box border="1px solid #DDE5E9" p={16} textAlign="center" bg="white">
               <Icon as={LucideCalendarDays} w={14} h={14} color="slate.300" mb={4} />
               <Text color="slate.600" fontWeight="bold" fontSize="lg" fontFamily="heading">{t('cleaner.schedule.noJobs')}</Text>
               <Text color="slate.400" fontSize="sm" mt={1}>
@@ -267,9 +269,9 @@ export default function SchedulePage() {
             </Box>
           ) : (
             <>
-              <SectionPanel label={t('cleaner.schedule.sectionToday')} items={today} accentBg="#F97316" />
+              <SectionPanel label={t('cleaner.schedule.sectionToday')} items={today} accentBg="#18314E" />
               <SectionPanel label={t('cleaner.schedule.sectionUpcoming')} items={upcoming} accentBg="#185FC6" />
-              <SectionPanel label={t('cleaner.schedule.sectionHistory')} items={completed} accentBg="#22C55E" />
+              <SectionPanel label={t('cleaner.schedule.sectionHistory')} items={completed} accentBg="#185FC6" />
             </>
           )}
 

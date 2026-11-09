@@ -13,6 +13,12 @@ export const SERVICE_TYPES = [
   { id: 'commercial',        label: 'Limpeza Comercial',         labelEn: 'Commercial Cleaning',         icon: '🏢', desc: 'Escritórios e espaços comerciais',   descEn: 'Offices and commercial spaces' },
 ];
 
+// A lead stores its service as an id ('deep', from /request) or a label ('Deep Clean', from the client dashboard).
+export const serviceLabel = (v: string, locale: string) => {
+  const s = SERVICE_TYPES.find(s => s.id === v || s.labelEn === v || s.label === v);
+  return s ? (locale === 'pt' ? s.label : s.labelEn) : v;
+};
+
 export const FREQUENCY_OPTIONS = [
   { id: 'once',      label: 'Única vez', labelEn: 'One-time', discount: 0,    tag: '' },
   { id: 'biweekly',  label: 'Quinzenal', labelEn: 'Biweekly', discount: 0.10, tag: '-10%' },

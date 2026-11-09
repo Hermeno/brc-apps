@@ -28,9 +28,9 @@ type Cleaner = {
 };
 
 const PLAN_BADGE: Record<string, { label: string; bg: string; color: string } | null> = {
-  PRO:     { label: 'Top Cleaner', bg: '#FEF3C7', color: '#92400E' },
-  PREMIUM: { label: 'Top Cleaner', bg: '#FEF3C7', color: '#92400E' },
-  BASIC:   { label: 'Verified',    bg: '#E9F3F5', color: '#185FC6' },
+  PRO:     { label: 'Top Cleaner', bg: '#EDF3F5', color: '#18314E' },
+  PREMIUM: { label: 'Top Cleaner', bg: '#EDF3F5', color: '#18314E' },
+  BASIC:   { label: 'Verified',    bg: '#EDF3F5', color: '#185FC6' },
   FREE:    null,
 };
 
@@ -65,11 +65,11 @@ function CleanersBrowser() {
   return (
     <Box minH="100vh" bg="white">
       {/* Header */}
-      <Box bg="white" borderBottom="1px solid #E2E8F0" position="sticky" top={0} zIndex={50}
-        style={{ boxShadow: '0 1px 6px rgba(0,0,0,0.06)' }}>
+      <Box bg="white" borderBottom="1px solid #DDE5E9" position="sticky" top={0} zIndex={50}
+        style={{ boxShadow: 'none' }}>
         <Flex align="center" h="60px" px={{ base: 4, md: 6, lg: 8 }} maxW="1200px" mx="auto" justify="space-between">
           <NextLink href="/dashboard/client" style={{ textDecoration: 'none' }}>
-            <HStack gap={2} color="#64748B" _hover={{ color: '#185FC6' }} transition="color 0.15s">
+            <HStack gap={2} color="#455B70" _hover={{ color: '#185FC6' }} transition="color 0.15s">
               <Icon as={LucideArrowLeft} w={4} h={4} />
               <Text fontSize="13px" fontWeight="500" fontFamily="heading">{t('common.backToHome')}</Text>
             </HStack>
@@ -82,7 +82,7 @@ function CleanersBrowser() {
       </Box>
 
       <Box maxW="1200px" mx="auto" px={{ base: 4, md: 6 }} py={7}>
-        <Heading size="lg" fontWeight="bold" color="slate.900" fontFamily="heading" mb={1}>
+        <Heading fontWeight="300" fontSize={{ base: '24px', md: '28px' }} letterSpacing="-0.01em" size="lg" color="slate.900" fontFamily="heading" mb={1}>
           {t('clientCleaners.title')}
         </Heading>
         <Text color="slate.500" fontSize="sm" mb={6}>{t('clientCleaners.subtitle')}</Text>
@@ -96,7 +96,7 @@ function CleanersBrowser() {
                 key={s.id}
                 active={service === s.id}
                 onClick={() => setService(s.id)}
-                label={`${s.icon} ${locale === 'pt' ? s.label : s.labelEn}`}
+                label={locale === 'pt' ? s.label : s.labelEn}
               />
             ))}
           </HStack>
@@ -116,13 +116,13 @@ function CleanersBrowser() {
               const badge = PLAN_BADGE[c.plan] ?? null;
               const firstName = c.name?.split(' ')[0] ?? 'Cleaner';
               return (
-                <Box key={c.id} border="1px solid #E3E8EE" borderRadius="10px" overflow="hidden"
+                <Box key={c.id} border="1px solid #DDE5E9" borderRadius="2px" overflow="hidden"
                   display="flex" flexDirection="column" transition="box-shadow 0.15s"
-                  _hover={{ boxShadow: '0 4px 14px rgba(30,58,95,0.10)' }}>
+                  _hover={{ boxShadow: 'none' }}>
                   <Box p={5} flex={1}>
                     <HStack gap={3} align="start">
                       <Box w="52px" h="52px" borderRadius="full" overflow="hidden" flexShrink={0}
-                        bg="#E9F3F5" display="flex" alignItems="center" justifyContent="center">
+                        bg="#EDF3F5" display="flex" alignItems="center" justifyContent="center">
                         {c.avatarUrl ? (
                           <ChakraImage src={c.avatarUrl} alt={firstName} w="full" h="full" objectFit="cover" />
                         ) : (
@@ -136,11 +136,11 @@ function CleanersBrowser() {
                           <Text fontWeight="700" color="slate.800" fontFamily="heading" fontSize="15px" lineClamp={1}>
                             {c.name ?? 'Cleaner'}
                           </Text>
-                          <Icon as={LucideBadgeCheck} w={4} h={4} color="#2563EB" flexShrink={0} />
+                          <Icon as={LucideBadgeCheck} w={4} h={4} color="#185FC6" flexShrink={0} />
                         </HStack>
                         <HStack gap={2} mt={0.5} flexWrap="wrap">
                           <HStack gap={0.5}>
-                            <Icon as={LucideStar} w={3.5} h={3.5} color="#F59E0B" fill="#F59E0B" />
+                            <Icon as={LucideStar} w={3.5} h={3.5} color="#18314E" fill="#18314E" />
                             <Text fontSize="12.5px" fontWeight="600" color="slate.700">
                               {c.ratingAvg > 0 ? c.ratingAvg.toFixed(1) : t('clientCleaners.newPro')}
                             </Text>
@@ -157,7 +157,7 @@ function CleanersBrowser() {
                         )}
                       </Box>
                       {badge && (
-                        <Box style={{ background: badge.bg, color: badge.color, borderRadius: 4, padding: '2px 7px', fontSize: 9.5, fontWeight: 700, whiteSpace: 'nowrap' }}>
+                        <Box style={{ background: badge.bg, color: badge.color, borderRadius: 2, padding: '2px 7px', fontSize: 9.5, fontWeight: 700, whiteSpace: 'nowrap' }}>
                           {badge.label}
                         </Box>
                       )}
@@ -170,7 +170,7 @@ function CleanersBrowser() {
                     {c.serviceTypes.length > 0 && (
                       <HStack gap={1.5} mt={3} flexWrap="wrap">
                         {c.serviceTypes.slice(0, 3).map(st => (
-                          <Text key={st} style={{ background: '#F1F5F9', color: '#475569', borderRadius: 4, padding: '2px 7px', fontSize: 10.5, fontWeight: 600 }}>
+                          <Text key={st} style={{ background: '#F8F8F4', color: '#455B70', borderRadius: 2, padding: '2px 7px', fontSize: 10.5, fontWeight: 600 }}>
                             {serviceLabel(st)}
                           </Text>
                         ))}
@@ -181,15 +181,15 @@ function CleanersBrowser() {
                     )}
                   </Box>
 
-                  <HStack gap={0} borderTop="1px solid #E3E8EE">
+                  <HStack gap={0} borderTop="1px solid #DDE5E9">
                     <Button flex={1} variant="ghost" borderRadius={0} h="44px" fontSize="13px" fontWeight="600"
-                      color="#64748B" _hover={{ bg: '#F8FAFC', color: '#185FC6' }}
+                      color="#455B70" _hover={{ bg: '#F8F8F4', color: '#185FC6' }}
                       onClick={() => router.push(`/dashboard/profile/${c.id}`)}>
                       {t('clientCleaners.viewProfile')}
                     </Button>
-                    <Box w="1px" h="28px" bg="#E3E8EE" />
+                    <Box w="1px" h="28px" bg="#DDE5E9" />
                     <Button flex={1} borderRadius={0} h="44px" fontSize="13px" fontWeight="700"
-                      bg="gold.500" color="#185FC6" _hover={{ bg: 'gold.600' }}
+                      bg="brand.500" color="white" _hover={{ bg: 'brand.600' }}
                       onClick={() => router.push(`/request?cleaner=${c.id}&name=${encodeURIComponent(c.name ?? '')}${service ? `&service=${service}` : ''}`)}>
                       {t('clientCleaners.contact')}
                     </Button>
@@ -206,10 +206,10 @@ function CleanersBrowser() {
 
 function FilterChip({ active, onClick, label }: { active: boolean; onClick: () => void; label: string }) {
   return (
-    <Box as="button" onClick={onClick} px={3.5} py={2} borderRadius="full" flexShrink={0}
+    <Box as="button" onClick={onClick} px={3.5} py={2} borderRadius="2px" flexShrink={0}
       fontSize="12.5px" fontWeight="600" fontFamily="heading" whiteSpace="nowrap" transition="all 0.12s"
-      bg={active ? '#185FC6' : '#F1F5F9'} color={active ? 'white' : '#64748B'}
-      _hover={{ bg: active ? '#172F4D' : '#E2E8F0' }}>
+      bg={active ? '#185FC6' : '#F8F8F4'} color={active ? 'white' : '#455B70'}
+      _hover={{ bg: active ? '#18314E' : '#DDE5E9' }}>
       {label}
     </Box>
   );

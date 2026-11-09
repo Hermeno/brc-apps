@@ -3,7 +3,7 @@
 import { useLocale } from '@/lib/i18n';
 import { Box, Text } from '@chakra-ui/react';
 
-export default function LanguageSwitcher({ dark = false, square = false }: { dark?: boolean; square?: boolean }) {
+export default function LanguageSwitcher({ dark = false }: { dark?: boolean }) {
   const { locale, setLocale, t } = useLocale();
 
   return (
@@ -12,11 +12,11 @@ export default function LanguageSwitcher({ dark = false, square = false }: { dar
       onClick={() => setLocale(locale === 'pt' ? 'en' : 'pt')}
       h="34px"
       px={2.5}
-      borderRadius={square ? '0' : 'lg'}
+      borderRadius="2px"
       border="1px solid"
-      borderColor={dark ? 'rgba(255,255,255,0.15)' : '#E3E8EE'}
-      bg={dark ? 'rgba(255,255,255,0.06)' : 'transparent'}
-      color={dark ? '#CBD5E1' : '#425466'}
+      borderColor={dark ? 'rgba(255, 255, 255, 0.15)' : '#DDE5E9'}
+      bg={dark ? 'rgba(255, 255, 255, 0.06)' : 'transparent'}
+      color={dark ? '#DDE5E9' : '#455B70'}
       fontSize="11px"
       fontWeight="700"
       fontFamily="heading"
@@ -27,8 +27,8 @@ export default function LanguageSwitcher({ dark = false, square = false }: { dar
       alignItems="center"
       gap={1}
       _hover={dark
-        ? { bg: 'rgba(255,255,255,0.12)', color: 'white' }
-        : { bg: '#F7F8FA', borderColor: '#CBD5E1', color: '#0A2540' }
+        ? { bg: 'rgba(255, 255, 255, 0.12)', color: 'white' }
+        : { bg: '#F8F8F4', borderColor: '#DDE5E9', color: '#18314E' }
       }
       title={locale === 'pt' ? 'Switch to English' : 'Mudar para Português'}
     >

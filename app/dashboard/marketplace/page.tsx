@@ -8,11 +8,12 @@ import {
   LucideMapPin, LucideCalendar, LucideUser, LucideRefreshCw,
   LucideBanknote, LucideClock, LucideCompass, LucideZap, LucideUsers,
 } from 'lucide-react';
-import { EXTRAS, FREQUENCY_OPTIONS } from '@/lib/estimate';
+import { EXTRAS, FREQUENCY_OPTIONS, serviceLabel } from '@/lib/estimate';
 import CleanerNav from '@/components/cleaner-nav';
 import { toaster } from '@/lib/toaster';
 import { useRouter } from 'next/navigation';
 import { useLocale } from '@/lib/i18n';
+import Glyph from '@/components/glyph';
 
 type Distribution = {
   wave: number;
@@ -60,8 +61,8 @@ function WaveTimer({ lead }: { lead: Lead }) {
   const expired = secsLeft === 0;
 
   const label = isWave2 ? 'Wave 2 · Open' : `Wave ${dist.wave}`;
-  const chipBg = urgent ? '#FEF2F2' : '#F8FAFC';
-  const chipColor = urgent ? '#B91C1C' : '#185FC6';
+  const chipBg = urgent ? '#EDF3F5' : '#F8F8F4';
+  const chipColor = urgent ? '#18314E' : '#185FC6';
 
   return (
     <HStack gap={2}>
@@ -76,7 +77,7 @@ function WaveTimer({ lead }: { lead: Lead }) {
           letterSpacing: '0.04em',
           textTransform: 'uppercase',
         }}>
-        {'👥 '}{label}
+        <Glyph name="people" />{label}
       </Text>
       {!expired && (
         <Text fontSize="xs" color={urgent ? 'red.600' : 'slate.500'} fontFamily="mono" fontVariantNumeric="tabular-nums">
@@ -138,21 +139,21 @@ export default function MarketplacePage() {
       <CleanerNav />
       <Box p={6} maxW="1200px" mx="auto">
         <Flex justify="space-between" align="center" mb={6}>
-          <Heading size="md" fontWeight="bold" color="slate.900" fontFamily="heading">
+          <Heading fontWeight="300" fontSize={{ base: '24px', md: '28px' }} letterSpacing="-0.01em" size="md" color="slate.900" fontFamily="heading">
             Lead Marketplace
           </Heading>
           <Button size="sm" variant="ghost" color="slate.400" _hover={{ color: 'brand.500', bg: 'brand.50' }}
-            onClick={fetchLeads} loading={loading} borderRadius="4px">
+            onClick={fetchLeads} loading={loading} borderRadius="2px">
             <Icon as={LucideRefreshCw} w={4} h={4} mr={1} />Refresh
           </Button>
         </Flex>
 
         {/* Stats horizontal strip */}
-        <Box bg="white" border="1px solid #E3E8EE" mb={6} style={{ borderRadius: 8 }}>
+        <Box bg="white" border="1px solid #DDE5E9" mb={6} style={{ borderRadius: 2 }}>
           <HStack gap={0} divideX="1px">
             <Box px={6} py={4} flex={1}>
               <Text
-                fontSize="10.5px" fontWeight={700} color="#697386"
+                fontSize="10.5px" fontWeight={700} color="#455B70"
                 textTransform="uppercase" letterSpacing="0.06em" fontFamily="heading" mb={1}>
                 Available
               </Text>
@@ -162,7 +163,7 @@ export default function MarketplacePage() {
             </Box>
             <Box px={6} py={4} flex={1}>
               <Text
-                fontSize="10.5px" fontWeight={700} color="#697386"
+                fontSize="10.5px" fontWeight={700} color="#455B70"
                 textTransform="uppercase" letterSpacing="0.06em" fontFamily="heading" mb={1}>
                 Instant Book
               </Text>
@@ -172,7 +173,7 @@ export default function MarketplacePage() {
             </Box>
             <Box px={6} py={4} flex={1}>
               <Text
-                fontSize="10.5px" fontWeight={700} color="#697386"
+                fontSize="10.5px" fontWeight={700} color="#455B70"
                 textTransform="uppercase" letterSpacing="0.06em" fontFamily="heading" mb={1}>
                 Wave 2 Competitive
               </Text>
@@ -184,9 +185,9 @@ export default function MarketplacePage() {
         </Box>
 
         {/* Section panel */}
-        <Box border="1px solid #E3E8EE" style={{ borderRadius: 8 }} overflow="hidden">
-          <Box bg="#F7F8FA" px={5} py={3} borderBottom="1px solid #E3E8EE">
-            <Text fontSize="10.5px" fontWeight={700} color="#697386" textTransform="uppercase" letterSpacing="0.06em" fontFamily="heading">
+        <Box border="1px solid #DDE5E9" style={{ borderRadius: 2 }} overflow="hidden">
+          <Box bg="#F8F8F4" px={5} py={3} borderBottom="1px solid #DDE5E9">
+            <Text fontSize="10.5px" fontWeight={700} color="#455B70" textTransform="uppercase" letterSpacing="0.06em" fontFamily="heading">
               Available leads
             </Text>
           </Box>
@@ -204,15 +205,15 @@ export default function MarketplacePage() {
               {leads.map((lead, i) => {
                 const dist  = lead.distributions?.[0];
                 const wave  = dist?.wave ?? 0;
-                const accentColor = wave === 0 ? '#185FC6' : '#7C3AED';
+                const accentColor = wave === 0 ? '#185FC6' : '#185FC6';
 
                 return (
                   <Box
                     key={lead.id}
                     position="relative"
-                    borderBottom={i < leads.length - 1 ? '1px solid #E3E8EE' : undefined}
+                    borderBottom={i < leads.length - 1 ? '1px solid #DDE5E9' : undefined}
                     bg="white"
-                    _hover={{ bg: '#FAFBFD' }}
+                    _hover={{ bg: '#F8F8F4' }}
                     transition="background 0.15s">
 
                     {/* Left accent strip */}
@@ -226,7 +227,7 @@ export default function MarketplacePage() {
                           <WaveTimer lead={lead} />
 
                           <Text fontWeight="black" fontSize="lg" color="slate.900" fontFamily="heading">
-                            {lead.serviceType}
+                            {serviceLabel(lead.serviceType, locale)}
                           </Text>
 
                           <HStack gap={5} flexWrap="wrap">
@@ -246,26 +247,26 @@ export default function MarketplacePage() {
                           {(lead.bedrooms || lead.squareMeters) && (
                             <HStack gap={3} flexWrap="wrap">
                               {lead.bedrooms && (
-                                <Text fontSize="xs" color="slate.600">🛏 {lead.bedrooms}bd</Text>
+                                <Text fontSize="xs" color="slate.600"><Glyph name="bed" />{lead.bedrooms}bd</Text>
                               )}
                               {lead.bathrooms && (
-                                <Text fontSize="xs" color="slate.600">🚿 {lead.bathrooms}ba</Text>
+                                <Text fontSize="xs" color="slate.600"><Glyph name="bath" />{lead.bathrooms}ba</Text>
                               )}
                               {(lead.squareMeters ?? 0) > 0 && (
-                                <Text fontSize="xs" color="slate.600">📐 {lead.squareMeters}m²</Text>
+                                <Text fontSize="xs" color="slate.600"><Glyph name="area" />{lead.squareMeters}m²</Text>
                               )}
                               {lead.frequency && lead.frequency !== 'once' && (
                                 <Text
                                   fontSize="xs"
                                   style={{
                                     borderRadius: 2,
-                                    background: '#F7F8FA',
+                                    background: '#F8F8F4',
                                     padding: '2px 6px',
                                     fontSize: '9.5px',
                                     fontWeight: 700,
                                     color: '#185FC6',
                                   }}>
-                                  🔄 {locale === 'pt' ? FREQUENCY_OPTIONS.find(f => f.id === lead.frequency)?.label : FREQUENCY_OPTIONS.find(f => f.id === lead.frequency)?.labelEn}
+                                  <Glyph name="repeat" />{locale === 'pt' ? FREQUENCY_OPTIONS.find(f => f.id === lead.frequency)?.label : FREQUENCY_OPTIONS.find(f => f.id === lead.frequency)?.labelEn}
                                 </Text>
                               )}
                             </HStack>
@@ -277,7 +278,7 @@ export default function MarketplacePage() {
                               {lead.extras.map(exId => {
                                 const ex = EXTRAS.find(e => e.id === exId);
                                 return ex ? (
-                                  <Text key={exId} fontSize="xs" color="slate.600">{ex.icon} {locale === 'pt' ? ex.label : ex.labelEn}</Text>
+                                  <Text key={exId} fontSize="xs" color="slate.600">{locale === 'pt' ? ex.label : ex.labelEn}</Text>
                                 ) : null;
                               })}
                             </HStack>
@@ -325,11 +326,11 @@ export default function MarketplacePage() {
 
                         {/* CTA */}
                         <Button
-                          bg="gold.500"
-                          color="#185FC6" px={5} py={7} h="auto"
-                          borderRadius="4px" fontWeight="bold" fontSize="sm"
+                          bg="brand.500"
+                          color="white" px={5} py={7} h="auto"
+                          borderRadius="2px" fontWeight="bold" fontSize="sm"
                           flexShrink={0} flexDirection="column" gap={1.5}
-                          _hover={{ bg: 'gold.600' }}
+                          _hover={{ bg: 'brand.600' }}
                           transition="background 0.15s"
                           onClick={() => handleRespond(lead.id)}
                           loading={responding === lead.id}

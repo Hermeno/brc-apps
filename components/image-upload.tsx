@@ -23,7 +23,7 @@ export function ImageUpload({
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState('');
 
-  const borderRadius = shape === 'circle' ? '50%' : '16px';
+  const borderRadius = shape === 'circle' ? '50%' : '2px';
 
   const handleFile = async (file: File) => {
     setError('');
@@ -79,7 +79,7 @@ export function ImageUpload({
             {/* Overlay on hover */}
             <Box
               position="absolute" inset={0}
-              bg="rgba(0,0,0,0.45)"
+              bg="rgba(14, 52, 104, 0.45)"
               display="flex" alignItems="center" justifyContent="center"
               opacity={0} _groupHover={{ opacity: 1 }}
               transition="opacity 0.15s"
@@ -90,7 +90,7 @@ export function ImageUpload({
             {/* Overlay always visible as thin strip at bottom */}
             <Box
               position="absolute" bottom={0} left={0} right={0}
-              bg="rgba(0,0,0,0.5)"
+              bg="rgba(14, 52, 104, 0.5)"
               display="flex" alignItems="center" justifyContent="center"
               py="3px"
             >
@@ -169,14 +169,14 @@ export function MultiImageUpload({ values, onChange, max = 4 }: MultiImageUpload
       />
       <Flex gap={2} flexWrap="wrap">
         {values.map((url, i) => (
-          <Box key={i} position="relative" w="72px" h="72px" borderRadius="xl" overflow="hidden"
+          <Box key={i} position="relative" w="72px" h="72px" borderRadius="2px" overflow="hidden"
             border="1px solid" borderColor="slate.200" flexShrink={0}>
             <img src={url} alt={`foto ${i + 1}`}
               style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
             <Box
               position="absolute" top="3px" right="3px"
-              w="18px" h="18px" borderRadius="full"
-              bg="rgba(0,0,0,0.6)"
+              w="18px" h="18px" borderRadius="2px"
+              bg="rgba(14, 52, 104, 0.6)"
               display="flex" alignItems="center" justifyContent="center"
               cursor="pointer"
               onClick={() => remove(i)}
@@ -190,7 +190,7 @@ export function MultiImageUpload({ values, onChange, max = 4 }: MultiImageUpload
 
         {values.length < max && (
           <Box
-            w="72px" h="72px" borderRadius="xl"
+            w="72px" h="72px" borderRadius="2px"
             border="2px dashed" borderColor={uploading ? 'brand.300' : 'slate.300'}
             bg="slate.50"
             display="flex" flexDirection="column" alignItems="center" justifyContent="center" gap={1}

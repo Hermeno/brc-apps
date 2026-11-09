@@ -7,6 +7,8 @@ import { motion, AnimatePresence } from 'motion/react';
 import { useRouter } from 'next/navigation';
 import { useT } from '@/lib/i18n';
 import { toaster } from '@/lib/toaster';
+import Glyph from '@/components/glyph';
+import { BadgeCheck, Bell, CircleCheck, CreditCard, MessageSquare, SearchX, Star, TriangleAlert, UserCheck, type LucideIcon } from 'lucide-react';
 
 type Notification = {
   id: string;
@@ -18,16 +20,16 @@ type Notification = {
   createdAt: string;
 };
 
-const TYPE_ICONS: Record<string, string> = {
-  lead_received:     '🔔',
-  cleaner_responded: '👷',
-  client_accepted:   '✅',
-  message_received:  '💬',
-  job_completed:     '🎉',
-  review_received:   '⭐',
-  lead_unmatched:    '😔',
-  card_added:        '💳',
-  payment_failed:    '⚠️',
+const TYPE_ICONS: Record<string, LucideIcon> = {
+  lead_received:     Bell,
+  cleaner_responded: UserCheck,
+  client_accepted:   CircleCheck,
+  message_received:  MessageSquare,
+  job_completed:     BadgeCheck,
+  review_received:   Star,
+  lead_unmatched:    SearchX,
+  card_added:        CreditCard,
+  payment_failed:    TriangleAlert,
 };
 
 export default function NotificationBell({ dark = false }: { dark?: boolean }) {
@@ -162,13 +164,13 @@ export default function NotificationBell({ dark = false }: { dark?: boolean }) {
         position="relative"
         w="34px" h="34px"
         display="flex" alignItems="center" justifyContent="center"
-        borderRadius="lg"
-        color={open ? (dark ? 'white' : 'brand.600') : (dark ? '#94A3B8' : 'slate.500')}
-        bg={open ? (dark ? 'rgba(26,127,160,0.15)' : 'brand.50') : 'transparent'}
+        borderRadius="2px"
+        color={open ? (dark ? 'white' : 'brand.600') : (dark ? '#455B70' : 'slate.500')}
+        bg={open ? (dark ? 'rgba(14, 52, 104, 0.15)' : 'brand.50') : 'transparent'}
         border="1px solid"
-        borderColor={open ? (dark ? 'rgba(26,127,160,0.3)' : 'brand.200') : 'transparent'}
+        borderColor={open ? (dark ? 'rgba(14, 52, 104, 0.3)' : 'brand.200') : 'transparent'}
         _hover={dark
-          ? { bg: 'rgba(255,255,255,0.08)', color: '#E2E8F0', borderColor: 'rgba(255,255,255,0.12)' }
+          ? { bg: 'rgba(255, 255, 255, 0.08)', color: '#DDE5E9', borderColor: 'rgba(255, 255, 255, 0.12)' }
           : { bg: 'slate.100', color: 'slate.700', borderColor: 'slate.200' }
         }
         transition="all 0.15s"
@@ -192,9 +194,9 @@ export default function NotificationBell({ dark = false }: { dark?: boolean }) {
               <Box
                 minW="14px" h="14px" bg="red.500" borderRadius="full"
                 display="flex" alignItems="center" justifyContent="center"
-                style={{ border: `2px solid ${dark ? '#0B1120' : 'white'}` }}
+                style={{ border: `2px solid ${dark ? '#18314E' : 'white'}` }}
               >
-                <Text color="white" fontSize="7px" fontWeight="800" lineHeight={1} fontFamily="heading">
+                <Text color="white" fontSize="7px" fontWeight="700" lineHeight={1} fontFamily="heading">
                   {unread > 9 ? '9+' : unread}
                 </Text>
               </Box>
@@ -221,11 +223,11 @@ export default function NotificationBell({ dark = false }: { dark?: boolean }) {
           >
             <Box
               bg="white"
-              borderRadius="16px"
+              borderRadius="2px"
               border="1px solid"
               borderColor="slate.200"
               overflow="hidden"
-              style={{ boxShadow: '0 8px 32px rgba(15,23,42,0.10), 0 1px 4px rgba(15,23,42,0.06)' }}
+              style={{ boxShadow: 'none' }}
             >
               {/* Header */}
               <Flex
@@ -243,7 +245,7 @@ export default function NotificationBell({ dark = false }: { dark?: boolean }) {
                   {unread > 0 && (
                     <Badge
                       bg="brand.500" color="white"
-                      borderRadius="full" px={2} fontSize="9px" fontWeight="700"
+                      borderRadius="2px" px={2} fontSize="9px" fontWeight="700"
                       fontFamily="heading"
                     >
                       {unread} {unread === 1 ? 'new' : 'new'}
@@ -258,7 +260,7 @@ export default function NotificationBell({ dark = false }: { dark?: boolean }) {
                       display="flex" alignItems="center" gap={1}
                       fontSize="11px" color="brand.600" fontWeight="600"
                       fontFamily="heading"
-                      cursor="pointer" px={2} py={1} borderRadius="md"
+                      cursor="pointer" px={2} py={1} borderRadius="2px"
                       _hover={{ bg: 'brand.50' }} transition="background 0.12s"
                     >
                       <Icon as={LucideCheck} w={3} h={3} />
@@ -270,7 +272,7 @@ export default function NotificationBell({ dark = false }: { dark?: boolean }) {
                       as="button" onClick={clearAll}
                       display="flex" alignItems="center"
                       fontSize="11px" color="slate.400" fontWeight="600"
-                      cursor="pointer" p={1.5} borderRadius="md"
+                      cursor="pointer" p={1.5} borderRadius="2px"
                       _hover={{ bg: 'red.50', color: 'red.500' }} transition="all 0.12s"
                     >
                       <Icon as={LucideTrash2} w={3} h={3} />
@@ -284,13 +286,13 @@ export default function NotificationBell({ dark = false }: { dark?: boolean }) {
                 {loading ? (
                   <VStack py={5} gap={2} px={4}>
                     {[1, 2, 3].map(i => (
-                      <Box key={i} h="52px" bg="slate.100" borderRadius="10px" w="full"
+                      <Box key={i} h="52px" bg="slate.100" borderRadius="2px" w="full"
                         style={{ animation: 'pulse 1.5s ease-in-out infinite' }} />
                     ))}
                   </VStack>
                 ) : notifications.length === 0 ? (
                   <VStack py={10} gap={2} textAlign="center">
-                    <Text fontSize="2xl">🔕</Text>
+                    <Text fontSize="2xl" color="#185FC6"><Glyph name="bellOff" /></Text>
                     <Text color="slate.400" fontSize="13px" fontFamily="heading" fontWeight="500">
                       {t('notifications.empty')}
                     </Text>
@@ -310,9 +312,9 @@ export default function NotificationBell({ dark = false }: { dark?: boolean }) {
                         onClick={() => handleClick(n)}
                       >
                         <HStack gap={3} align="start">
-                          <Text fontSize="16px" flexShrink={0} mt={0.5}>
-                            {TYPE_ICONS[n.type] ?? '🔔'}
-                          </Text>
+                          <Box flexShrink={0} mt={0.5} color="#185FC6">
+                            {(() => { const TypeIcon = TYPE_ICONS[n.type] ?? Bell; return <TypeIcon size={16} strokeWidth={1.75} aria-hidden="true" />; })()}
+                          </Box>
                           <Box flex={1} minW={0}>
                             <Text
                               fontSize="13px"

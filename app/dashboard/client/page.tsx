@@ -19,27 +19,28 @@ import { useRouter } from 'next/navigation';
 import { toaster } from '@/lib/toaster';
 import { AnimatePresence, motion } from 'motion/react';
 import {
-  SERVICE_TYPES, FREQUENCY_OPTIONS, EXTRAS, calculateEstimate,
+  SERVICE_TYPES, FREQUENCY_OPTIONS, EXTRAS, calculateEstimate, serviceLabel,
 } from '@/lib/estimate';
 import NotificationBell from '@/components/notification-bell';
 import { signOut } from 'next-auth/react';
 import { LucideLogOut } from 'lucide-react';
 import { AddressInput } from '@/components/address-input';
 import Image from 'next/image';
-import { useT } from '@/lib/i18n';
+import { useT, useLocale } from '@/lib/i18n';
 import LanguageSwitcher from '@/components/language-switcher';
+import Glyph from '@/components/glyph';
 
 /* ─── types ──────────────────────────────────────────────────── */
 function makeStatusMap(t: (k: string) => string): Record<string, { label: string; bg: string; color: string; border: string }> {
   return {
-    NEW:       { label: t('client.dashboard.statusAwaiting'),  bg: '#F8FAFC', color: '#64748B', border: '#E3E8EE' },
-    WAVE2:     { label: t('client.dashboard.statusFinding'),   bg: '#F8FAFC', color: '#185FC6', border: '#E3E8EE' },
-    WAVE3:     { label: t('client.dashboard.statusFinding'),   bg: '#F8FAFC', color: '#185FC6', border: '#E3E8EE' },
-    IN_REVIEW: { label: t('client.dashboard.statusReady'),     bg: '#ECFDF5', color: '#059669', border: '#A7F3D0' },
-    ACCEPTED:  { label: t('client.dashboard.statusBooked'),    bg: '#ECFDF5', color: '#059669', border: '#A7F3D0' },
-    COMPLETED: { label: t('client.dashboard.statusCompleted'), bg: '#ECFDF5', color: '#047857', border: '#A7F3D0' },
-    CANCELLED: { label: t('client.dashboard.statusCancelled'), bg: '#FEF2F2', color: '#DC2626', border: '#FECACA' },
-    UNMATCHED: { label: t('client.dashboard.statusNoMatch'),   bg: '#FEF2F2', color: '#DC2626', border: '#FECACA' },
+    NEW:       { label: t('client.dashboard.statusAwaiting'),  bg: '#F8F8F4', color: '#455B70', border: '#DDE5E9' },
+    WAVE2:     { label: t('client.dashboard.statusFinding'),   bg: '#F8F8F4', color: '#185FC6', border: '#DDE5E9' },
+    WAVE3:     { label: t('client.dashboard.statusFinding'),   bg: '#F8F8F4', color: '#185FC6', border: '#DDE5E9' },
+    IN_REVIEW: { label: t('client.dashboard.statusReady'),     bg: '#EDF3F5', color: '#185FC6', border: '#DDE5E9' },
+    ACCEPTED:  { label: t('client.dashboard.statusBooked'),    bg: '#EDF3F5', color: '#185FC6', border: '#DDE5E9' },
+    COMPLETED: { label: t('client.dashboard.statusCompleted'), bg: '#EDF3F5', color: '#185FC6', border: '#DDE5E9' },
+    CANCELLED: { label: t('client.dashboard.statusCancelled'), bg: '#EDF3F5', color: '#18314E', border: '#DDE5E9' },
+    UNMATCHED: { label: t('client.dashboard.statusNoMatch'),   bg: '#EDF3F5', color: '#18314E', border: '#DDE5E9' },
   };
 }
 
@@ -162,8 +163,8 @@ function StarRating({ value, onChange }: { value: number; onChange: (v: number) 
         <motion.button key={s} type="button" whileTap={{ scale: 0.85 }} whileHover={{ scale: 1.15 }}
           onClick={() => onChange(s)} onMouseEnter={() => setHover(s)} onMouseLeave={() => setHover(0)}>
           <Icon as={LucideStar} w={8} h={8}
-            color={(hover || value) >= s ? '#F59E0B' : '#E5E7EB'}
-            fill={(hover || value) >= s ? '#F59E0B' : 'none'}
+            color={(hover || value) >= s ? '#18314E' : '#DDE5E9'}
+            fill={(hover || value) >= s ? '#18314E' : 'none'}
             transition="all 0.15s" style={{ cursor: 'pointer' }} />
         </motion.button>
       ))}
@@ -182,17 +183,17 @@ function StatusTimeline({ status, labels }: { status: string; labels: string[] }
             <Flex align="center">
               <Box
                 w="8px" h="8px" borderRadius="full" flexShrink={0}
-                bg={i <= step ? '#185FC6' : '#E3E8EE'}
-                style={{ outline: `2px solid ${i <= step ? 'rgba(10,128,219,0.18)' : 'transparent'}`, outlineOffset: 1 }}
+                bg={i <= step ? '#185FC6' : '#DDE5E9'}
+                style={{ outline: `2px solid ${i <= step ? 'rgba(14, 52, 104, 0.18)' : 'transparent'}`, outlineOffset: 1 }}
               />
               {i < labels.length - 1 && (
-                <Box flex={1} h="1.5px" bg={i < step ? '#185FC6' : '#E3E8EE'} />
+                <Box flex={1} h="1.5px" bg={i < step ? '#185FC6' : '#DDE5E9'} />
               )}
             </Flex>
             <Text
               position="absolute" top="12px" left="-6px"
               fontSize="8.5px" fontWeight={i === step ? 700 : 400}
-              color={i <= step ? '#185FC6' : '#94A3B8'}
+              color={i <= step ? '#185FC6' : '#455B70'}
               whiteSpace="nowrap" userSelect="none">
               {label}
             </Text>
@@ -223,6 +224,7 @@ export default function ClientPage() {
   const { data: session } = useSession();
   const router = useRouter();
   const t = useT();
+  const { locale } = useLocale();
   const STATUS_MAP = makeStatusMap(t);
   const CANCEL_REASONS = CANCEL_REASONS_KEYS.map(k => t(`client.dashboard.${k}`));
   const TIMELINE_LABELS = [
@@ -564,21 +566,18 @@ export default function ClientPage() {
 
       {/* ── Client header ── */}
       <Box
-        bg="white" borderBottom="1px solid #E2E8F0"
+        bg="white" borderBottom="1px solid #DDE5E9"
         position="sticky" top={0} zIndex={50}
-        style={{ boxShadow: '0 1px 6px rgba(0,0,0,0.06)' }}
+        style={{ boxShadow: 'none' }}
       >
         <Flex align="center" h="60px" px={{ base: 4, md: 6, lg: 8 }} maxW="1440px" mx="auto" justify="space-between">
           <HStack gap={2}>
-            <Image src="/images/brand/verliks-logo-600.png" alt="Verliks" width={149} height={32} style={{ borderRadius: "50%", objectFit: "cover", flexShrink: 0 }} />
-            <Text fontWeight="700" fontSize={{ base: '13px', sm: '15px' }} letterSpacing="-0.02em" color="#185FC6" fontFamily="heading">
-              Verliks
-            </Text>
+            <Image src="/images/brand/verliks-logo-600.png" alt="Verliks" width={149} height={32} style={{ objectFit: "cover", flexShrink: 0 }} />
           </HStack>
           <HStack gap={1.5}>
             <HStack gap={2} display={{ base: 'none', lg: 'flex' }}
-              bg="#F8FAFC" border="1px solid" borderColor="#E2E8F0"
-              borderRadius="full" px={3} py={1.5}>
+              bg="#F8F8F4" border="1px solid" borderColor="#DDE5E9"
+              borderRadius="2px" px={3} py={1.5}>
               <Box w="22px" h="22px" bg="brand.500" borderRadius="full"
                 display="flex" alignItems="center" justifyContent="center"
                 fontSize="9px" fontWeight="700" color="white">
@@ -591,8 +590,8 @@ export default function ClientPage() {
 
             <LanguageSwitcher />
             <NotificationBell />
-            <Button size="sm" variant="ghost" color="#6B7280" px={2} h="34px" borderRadius="lg"
-              _hover={{ color: '#F43F5E', bg: 'rgba(244,63,94,0.1)' }} transition="all 0.15s"
+            <Button size="sm" variant="ghost" color="#455B70" px={2} h="34px" borderRadius="2px"
+              _hover={{ color: '#18314E', bg: 'rgba(14, 52, 104, 0.1)' }} transition="all 0.15s"
               onClick={() => signOut({ callbackUrl: '/auth/login' })} title={t('common.signOut')}>
               <Icon as={LucideLogOut} w={4} h={4} />
             </Button>
@@ -604,7 +603,7 @@ export default function ClientPage() {
         <VStack gap={6} align="stretch">
 
           {/* ── Profile Card ── */}
-          <Box bg="white" border="1px solid #E3E8EE">
+          <Box bg="white" border="1px solid #DDE5E9">
             <Box px={5} py={4}>
               <Flex justify="space-between" align="center" mb={3}>
                 <Box w="44px" h="44px" borderRadius="full" overflow="hidden"
@@ -621,7 +620,7 @@ export default function ClientPage() {
                   )}
                 </Box>
                 <Button size="sm" variant="outline" borderColor="slate.200" color="slate.500"
-                  borderRadius="4px" fontWeight="semibold" fontSize="xs"
+                  borderRadius="2px" fontWeight="semibold" fontSize="xs"
                   _hover={{ bg: 'brand.50', borderColor: 'brand.300', color: 'brand.600' }}
                   transition="all 0.15s"
                   onClick={() => router.push('/dashboard/client/profile')}>
@@ -637,31 +636,31 @@ export default function ClientPage() {
                   </Text>
                   <Text fontSize="xs" color="slate.400" mt={0.5}>{profile?.email ?? session?.user?.email}</Text>
                   {profile?.phone && (
-                    <Text fontSize="xs" color="slate.500" mt={0.5}>📱 {formatPhone(profile.phone)}</Text>
+                    <Text fontSize="xs" color="slate.500" mt={0.5}><Glyph name="phone" />{formatPhone(profile.phone)}</Text>
                   )}
                 </Box>
 
                 {/* Stats */}
-                <HStack gap={0} borderLeft="1px solid #E3E8EE" flexShrink={0} flexWrap="wrap">
+                <HStack gap={0} borderLeft="1px solid #DDE5E9" flexShrink={0} flexWrap="wrap">
                   <Box textAlign="center" px={4}>
                     <Text fontWeight="black" fontSize="lg" color="brand.600" fontFamily="heading">{leads.length}</Text>
                     <Text fontSize="10px" color="slate.400" fontWeight="700" textTransform="uppercase" letterSpacing="wider" fontFamily="heading">{t('client.dashboard.statBookings')}</Text>
                   </Box>
-                  <Box textAlign="center" px={4} borderLeft="1px solid #E3E8EE">
+                  <Box textAlign="center" px={4} borderLeft="1px solid #DDE5E9">
                     <Text fontWeight="black" fontSize="lg" color="#185FC6" fontFamily="heading">
                       {leads.filter(l => l.status === 'COMPLETED').length}
                     </Text>
                     <Text fontSize="10px" color="slate.400" fontWeight="700" textTransform="uppercase" letterSpacing="wider" fontFamily="heading">{t('client.dashboard.statCompleted')}</Text>
                   </Box>
                   {totalSpent > 0 && (
-                    <Box textAlign="center" px={4} borderLeft="1px solid #E3E8EE">
+                    <Box textAlign="center" px={4} borderLeft="1px solid #DDE5E9">
                       <Text fontWeight="black" fontSize="lg" color="slate.800" fontFamily="heading">${totalSpent}</Text>
                       <Text fontSize="10px" color="slate.400" fontWeight="700" textTransform="uppercase" letterSpacing="wider" fontFamily="heading">{t('client.dashboard.statInvested')}</Text>
                     </Box>
                   )}
                   {avgRating !== null && (
-                    <Box textAlign="center" px={4} borderLeft="1px solid #E3E8EE">
-                      <Text fontWeight="black" fontSize="lg" color="#F59E0B" fontFamily="heading">{avgRating}★</Text>
+                    <Box textAlign="center" px={4} borderLeft="1px solid #DDE5E9">
+                      <Text fontWeight="black" fontSize="lg" color="#18314E" fontFamily="heading">{avgRating}★</Text>
                       <Text fontSize="10px" color="slate.400" fontWeight="700" textTransform="uppercase" letterSpacing="wider" fontFamily="heading">{t('client.dashboard.statAvgGiven')}</Text>
                     </Box>
                   )}
@@ -675,11 +674,11 @@ export default function ClientPage() {
             const diff = new Date(nextCleaning.dateTime).getTime() - Date.now();
             const cleanerConv = (nextCleaning.conversations ?? []).find(c => c.cleanerId === nextCleaning.cleanerId);
             return (
-              <Box border="1px solid #E3E8EE" bg="#F8FAFC" px={5} py={4} position="relative" overflow="hidden">
+              <Box border="1px solid #DDE5E9" bg="#F8F8F4" px={5} py={4} position="relative" overflow="hidden">
                 <Box position="absolute" left={0} top={0} bottom={0} w="3px" bg="#185FC6" />
                 <Flex justify="space-between" align="center" gap={4} pl={1}>
                   <Box>
-                    <Text fontSize="9.5px" fontWeight="700" color="#697386" textTransform="uppercase"
+                    <Text fontSize="9.5px" fontWeight="700" color="#455B70" textTransform="uppercase"
                       letterSpacing="0.1em" fontFamily="heading" mb={1}>
                       {t('client.dashboard.nextCleaning')}
                     </Text>
@@ -688,7 +687,7 @@ export default function ClientPage() {
                         <Avatar name={cleanerConv.cleaner.name} src={cleanerConv.cleaner.avatarUrl} size={22} />
                       )}
                       <Text fontWeight="bold" color="slate.900" fontSize="sm" fontFamily="heading">
-                        {nextCleaning.serviceType}
+                        {serviceLabel(nextCleaning.serviceType, locale)}
                         {nextCleaning.cleaner && (
                           <Text as="span" fontWeight="400" color="slate.500"> {t('client.dashboard.with')} {nextCleaning.cleaner.name}</Text>
                         )}
@@ -716,10 +715,10 @@ export default function ClientPage() {
             );
           })()}
 
-          {/* ── Title Row ── */}
-          <Flex justify="space-between" align="center">
+          {/* ── Title Row ── (wraps on phones, where title and both buttons do not fit one line) */}
+          <Flex justify="space-between" align="center" flexWrap="wrap" gap={3}>
             <Box>
-              <Heading size="lg" fontWeight="black" color="slate.900" fontFamily="heading">{t('client.dashboard.myBookings')}</Heading>
+              <Heading fontWeight="300" fontSize={{ base: '24px', md: '28px' }} letterSpacing="-0.01em" size="lg" color="slate.900" fontFamily="heading">{t('client.dashboard.myBookings')}</Heading>
               <Text color="slate.500" fontSize="sm" mt={1}>
                 {(() => {
                   const n = leads.filter(l => !['COMPLETED', 'CANCELLED'].includes(l.status)).length;
@@ -729,19 +728,19 @@ export default function ClientPage() {
                 })()}
               </Text>
             </Box>
-            <HStack gap={2}>
+            <HStack gap={2} flexWrap="wrap">
               <Button
-                variant="outline" borderColor="#A7C9C7" color="#185FC6"
-                borderRadius="4px" fontWeight="bold" fontSize="sm" px={4}
-                _hover={{ bg: '#E9F3F5' }} transition="background 0.15s"
+                variant="outline" borderColor="#455B70" color="#185FC6"
+                borderRadius="2px" fontWeight="bold" fontSize="sm" px={4}
+                _hover={{ bg: '#EDF3F5' }} transition="background 0.15s"
                 onClick={() => router.push('/dashboard/cleaners')}>
                 <Icon as={LucideUsers} w={4} h={4} mr={2} />
                 {t('client.dashboard.browseCleaners')}
               </Button>
               <Button
-                bg={showForm ? 'slate.100' : 'gold.500'} color={showForm ? 'slate.700' : '#185FC6'}
-                borderRadius="4px" fontWeight="bold" fontSize="sm" px={5}
-                _hover={{ bg: showForm ? 'slate.200' : 'gold.600' }}
+                bg={showForm ? 'slate.100' : 'brand.500'} color={showForm ? 'slate.700' : 'white'}
+                borderRadius="2px" fontWeight="bold" fontSize="sm" px={5}
+                _hover={{ bg: showForm ? 'slate.200' : 'brand.600' }}
                 transition="background 0.15s"
                 onClick={() => { setShowForm(v => !v); if (showForm) setForm(emptyForm); }}>
                 <Icon as={showForm ? LucideX : LucidePlus} w={4} h={4} mr={2} />
@@ -778,8 +777,8 @@ export default function ClientPage() {
               <>
                 {/* ── Active leads / empty state ── */}
                 {activeLeads.length === 0 ? (
-                  <Box border="1px solid #E3E8EE" p={12} textAlign="center" bg="white">
-                    <Box fontSize="4xl" mb={4} lineHeight={1}>🧹</Box>
+                  <Box border="1px solid #DDE5E9" p={12} textAlign="center" bg="white">
+                    <Box fontSize="4xl" mb={4} lineHeight={1} color="#185FC6"><Glyph name="sparkles" /></Box>
                     <Text fontWeight="black" fontSize="xl" color="slate.900" fontFamily="heading" mb={2}>
                       {historyLeads.length > 0 ? t('client.dashboard.allCaughtUp') : t('client.dashboard.homeWaiting')}
                     </Text>
@@ -788,14 +787,14 @@ export default function ClientPage() {
                         ? t('client.dashboard.allCaughtUpDesc')
                         : t('client.dashboard.homeWaitingDesc')}
                     </Text>
-                    <Button bg="gold.500" color="#185FC6" borderRadius="4px" fontWeight="bold" px={6}
-                      _hover={{ bg: 'gold.600' }} transition="background 0.15s"
+                    <Button bg="brand.500" color="white" borderRadius="2px" fontWeight="bold" px={6}
+                      _hover={{ bg: 'brand.600' }} transition="background 0.15s"
                       onClick={() => setShowForm(true)}>
                       <Icon as={LucidePlus} w={4} h={4} mr={2} />
                       {t('client.dashboard.bookCleaning')}
                     </Button>
                     {historyLeads.length > 0 && (
-                      <Button variant="ghost" color="slate.500" ml={3} borderRadius="4px" fontWeight="semibold"
+                      <Button variant="ghost" color="slate.500" ml={3} borderRadius="2px" fontWeight="semibold"
                         onClick={() => setShowHistory(v => !v)}>
                         {t('client.dashboard.viewHistory')}
                       </Button>
@@ -804,7 +803,7 @@ export default function ClientPage() {
                 ) : (
                   <VStack gap={3} align="stretch">
                     {activeLeads.map((lead) => {
-                      const s              = STATUS_MAP[lead.status] ?? { label: lead.status, bg: '#F3F4F6', color: '#6B7280', border: '#E5E7EB' };
+                      const s              = STATUS_MAP[lead.status] ?? { label: lead.status, bg: '#F8F8F4', color: '#455B70', border: '#DDE5E9' };
                       const now            = new Date();
                       const scheduledTime  = new Date(lead.dateTime);
                       const timeHasPassed  = scheduledTime < now;
@@ -820,9 +819,9 @@ export default function ClientPage() {
                         ? (lead.conversations ?? []).filter(c => c.status === 'active')
                         : [];
                       const accentColor    = lead.status === 'ACCEPTED' ? '#185FC6'
-                        : lead.status === 'IN_REVIEW' ? '#10B981'
-                        : lead.status === 'COMPLETED' ? '#10B981'
-                        : lead.status === 'CANCELLED' ? '#EF4444' : '#F59E0B';
+                        : lead.status === 'IN_REVIEW' ? '#185FC6'
+                        : lead.status === 'COMPLETED' ? '#185FC6'
+                        : lead.status === 'CANCELLED' ? '#18314E' : '#18314E';
                       const cleanerAvatar  = (lead.conversations ?? []).find(c => c.cleanerId === lead.cleanerId)?.cleaner;
                       const nextCycle      = lead.frequency && lead.frequency !== 'once'
                         ? getNextCycleDate(lead.dateTime, lead.frequency)
@@ -832,7 +831,7 @@ export default function ClientPage() {
                         <Box
                           key={lead.id}
                           position="relative"
-                          bg="white" border="1px solid #E3E8EE"
+                          bg="white" border="1px solid #DDE5E9"
                           overflow="hidden"
                           transition="background 0.15s">
                           <Box position="absolute" left={0} top={0} bottom={0} w="3px" bg={accentColor} />
@@ -847,10 +846,10 @@ export default function ClientPage() {
                                   <Text style={{ borderRadius: 2, background: s.bg, color: s.color, border: `1px solid ${s.border}`, padding: '2px 8px', fontSize: '10px', fontWeight: 700, display: 'inline-block' }}>
                                     {s.label}
                                   </Text>
-                                  <Text fontWeight="bold" fontSize="sm" color="slate.800" fontFamily="heading">{lead.serviceType}</Text>
+                                  <Text fontWeight="bold" fontSize="sm" color="slate.800" fontFamily="heading">{serviceLabel(lead.serviceType, locale)}</Text>
                                   {lead.isInstantBook && (
-                                    <Text style={{ borderRadius: 2, background: '#FEF9C3', color: '#854D0E', border: '1px solid #FDE68A', padding: '2px 6px', fontSize: '10px', fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: 4 }}>
-                                      ⚡ Instant
+                                    <Text style={{ borderRadius: 2, background: '#EDF3F5', color: '#18314E', border: '1px solid #DDE5E9', padding: '2px 6px', fontSize: '10px', fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                                      <Glyph name="instant" />Instant
                                     </Text>
                                   )}
                                 </HStack>
@@ -881,13 +880,13 @@ export default function ClientPage() {
                                 {/* Property details */}
                                 {(lead.bedrooms || lead.squareMeters) && (
                                   <HStack gap={3} flexWrap="wrap">
-                                    {lead.bedrooms && <Text fontSize="xs" color="slate.600">🛏 {lead.bedrooms}bd</Text>}
-                                    {lead.bathrooms && <Text fontSize="xs" color="slate.600">🚿 {lead.bathrooms}ba</Text>}
-                                    {(lead.squareMeters ?? 0) > 0 && <Text fontSize="xs" color="slate.600">📐 {Math.round((lead.squareMeters ?? 0) * 10.764)} sq ft</Text>}
+                                    {lead.bedrooms && <Text fontSize="xs" color="slate.600"><Glyph name="bed" />{lead.bedrooms}bd</Text>}
+                                    {lead.bathrooms && <Text fontSize="xs" color="slate.600"><Glyph name="bath" />{lead.bathrooms}ba</Text>}
+                                    {(lead.squareMeters ?? 0) > 0 && <Text fontSize="xs" color="slate.600"><Glyph name="area" />{Math.round((lead.squareMeters ?? 0) * 10.764)} sq ft</Text>}
                                     {freqLabel && freqLabel !== 'One-time' && (
                                       <HStack gap={1}>
-                                        <Text style={{ borderRadius: 2, background: '#F7F8FA', padding: '2px 6px', fontSize: '9.5px', fontWeight: 700, color: '#185FC6' }}>
-                                          🔄 {freqLabel}
+                                        <Text style={{ borderRadius: 2, background: '#F8F8F4', padding: '2px 6px', fontSize: '9.5px', fontWeight: 700, color: '#185FC6' }}>
+                                          <Glyph name="repeat" />{freqLabel}
                                         </Text>
                                         {nextCycle && (
                                           <Text fontSize="9.5px" color="slate.400" fontWeight="600">
@@ -928,8 +927,8 @@ export default function ClientPage() {
                                   const convCleaner  = cleanerAvatar;
                                   return (
                                     <HStack gap={2} flexWrap="wrap">
-                                      <HStack gap={2} bg="#F7F8FA" px={3} py={1.5}
-                                        border="1px solid #E3E8EE">
+                                      <HStack gap={2} bg="#F8F8F4" px={3} py={1.5}
+                                        border="1px solid #DDE5E9">
                                         <Avatar
                                           name={lead.cleaner.name}
                                           src={convCleaner?.avatarUrl ?? lead.cleaner.avatarUrl}
@@ -941,14 +940,14 @@ export default function ClientPage() {
                                         </HStack>
                                       </HStack>
                                       <Button size="xs" variant="outline" borderColor="slate.200" color="slate.600"
-                                        borderRadius="4px" fontWeight="semibold"
+                                        borderRadius="2px" fontWeight="semibold"
                                         _hover={{ bg: 'brand.50', borderColor: 'brand.200', color: 'brand.600' }}
                                         onClick={() => router.push(`/dashboard/profile/${lead.cleanerId}`)}>
                                         <Icon as={LucideExternalLink} w={3} h={3} mr={1} />
                                         {t('client.dashboard.viewProfile')}
                                       </Button>
                                       {acceptedConv && (
-                                        <Button size="xs" bg="brand.500" color="white" borderRadius="4px" fontWeight="bold"
+                                        <Button size="xs" bg="brand.500" color="white" borderRadius="2px" fontWeight="bold"
                                           _hover={{ bg: 'brand.600' }}
                                           onClick={() => router.push(`/dashboard/chat/${acceptedConv.id}`)}>
                                           <Icon as={LucideMessageCircle} w={3} h={3} mr={1} />
@@ -969,8 +968,8 @@ export default function ClientPage() {
                                     </Text>
                                     <VStack align="start" gap={2}>
                                       {activeConvs.map(conv => (
-                                        <HStack key={conv.id} gap={2} bg="#F7F8FA" px={3} py={2}
-                                          border="1px solid #E3E8EE" flexWrap="wrap">
+                                        <HStack key={conv.id} gap={2} bg="#F8F8F4" px={3} py={2}
+                                          border="1px solid #DDE5E9" flexWrap="wrap">
                                           <Avatar name={conv.cleaner.name} src={conv.cleaner.avatarUrl} size={28} />
                                           <HStack gap={1.5} flex={1}>
                                             <Text fontSize="sm" fontWeight="semibold" color="slate.700">
@@ -981,21 +980,21 @@ export default function ClientPage() {
                                             )}
                                           </HStack>
                                           <Button size="xs" variant="outline" borderColor="slate.200" color="slate.600"
-                                            borderRadius="4px" fontWeight="semibold"
+                                            borderRadius="2px" fontWeight="semibold"
                                             _hover={{ bg: 'brand.50', borderColor: 'brand.200', color: 'brand.600' }}
                                             onClick={() => router.push(`/dashboard/profile/${conv.cleaner.id}`)}>
                                             <Icon as={LucideExternalLink} w={3} h={3} mr={1} />
                                             {t('client.dashboard.viewProfile')}
                                           </Button>
-                                          <Button size="xs" bg="#185FC6" color="white" borderRadius="4px" fontWeight="bold"
-                                            _hover={{ bg: '#172F4D' }}
+                                          <Button size="xs" bg="#185FC6" color="white" borderRadius="2px" fontWeight="bold"
+                                            _hover={{ bg: '#18314E' }}
                                             loading={accepting === conv.id}
                                             onClick={() => handleAccept(conv.id)}>
                                             <Icon as={LucideCheckCircle} w={3} h={3} mr={1} />
                                             {t('client.dashboard.acceptCleaner')}
                                           </Button>
                                           <Button size="xs" variant="outline" color="red.500" borderColor="red.200"
-                                            borderRadius="4px" fontWeight="bold"
+                                            borderRadius="2px" fontWeight="bold"
                                             _hover={{ bg: 'red.50' }}
                                             loading={declining === conv.id}
                                             onClick={() => handleDecline(conv.id)}>
@@ -1012,7 +1011,7 @@ export default function ClientPage() {
                                 {(lead.photos ?? []).length > 0 && (
                                   <HStack gap={2} flexWrap="wrap">
                                     {(lead.photos ?? []).map((url, pi) => (
-                                      <Box key={pi} w="48px" h="48px" borderRadius="lg" overflow="hidden"
+                                      <Box key={pi} w="48px" h="48px" borderRadius="2px" overflow="hidden"
                                         border="1px solid" borderColor="slate.200" flexShrink={0}>
                                         <img src={url} alt={`Photo ${pi + 1}`}
                                           style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
@@ -1026,12 +1025,12 @@ export default function ClientPage() {
 
                                 {/* Rating already submitted */}
                                 {lead.review && (
-                                  <HStack gap={1.5} bg="#F7F8FA" px={3} py={1.5}
-                                    border="1px solid #FDE68A">
+                                  <HStack gap={1.5} bg="#F8F8F4" px={3} py={1.5}
+                                    border="1px solid #DDE5E9">
                                     {[1,2,3,4,5].map(st => (
                                       <Icon key={st} as={LucideStar} w={4} h={4}
-                                        color={lead.review!.rating >= st ? '#F59E0B' : '#E5E7EB'}
-                                        fill={lead.review!.rating >= st ? '#F59E0B' : 'none'} />
+                                        color={lead.review!.rating >= st ? '#18314E' : '#DDE5E9'}
+                                        fill={lead.review!.rating >= st ? '#18314E' : 'none'} />
                                     ))}
                                     <Text fontSize="xs" color="#185FC6" fontWeight="semibold">{t('client.dashboard.rated')}</Text>
                                   </HStack>
@@ -1048,13 +1047,13 @@ export default function ClientPage() {
                           {/* ── Action Bar ── */}
                           {(canCancel || canTerminate || canRate || canReactivate ||
                             (isActive && !timeHasPassed && !feePaid && ['NEW','WAVE2','WAVE3','UNMATCHED'].includes(lead.status))) && (
-                            <Box borderTop="1px solid #F1F5F9" px={5} py={3}>
+                            <Box borderTop="1px solid #F8F8F4" px={5} py={3}>
                               <Flex gap={2} align="center" flexWrap="wrap">
 
                                 {/* Edit */}
                                 {isActive && !timeHasPassed && ['NEW','WAVE2','WAVE3','UNMATCHED'].includes(lead.status) && (
                                   <Button size="sm" variant="outline" borderColor="slate.200" color="slate.600"
-                                    borderRadius="4px" fontWeight="semibold"
+                                    borderRadius="2px" fontWeight="semibold"
                                     _hover={{ bg: 'slate.50', borderColor: 'brand.300', color: 'brand.600' }}
                                     transition="background 0.15s"
                                     disabled={saving}
@@ -1067,7 +1066,7 @@ export default function ClientPage() {
                                 {/* Cancel — opens reason modal */}
                                 {canCancel && (
                                   <Button size="sm" variant="outline" borderColor="red.200" color="red.500"
-                                    borderRadius="4px" fontWeight="semibold"
+                                    borderRadius="2px" fontWeight="semibold"
                                     _hover={{ bg: 'red.50' }} transition="background 0.15s"
                                     onClick={() => { setCancelReasonModal(lead.id); setCancelReason(''); }}>
                                     {t('client.dashboard.cancelBookingBtn')}
@@ -1076,8 +1075,8 @@ export default function ClientPage() {
 
                                 {/* Reactivate */}
                                 {canReactivate && (
-                                  <Button size="sm" bg="#185FC6" color="white" borderRadius="4px" fontWeight="bold"
-                                    _hover={{ bg: '#172F4D' }} transition="background 0.15s"
+                                  <Button size="sm" bg="#185FC6" color="white" borderRadius="2px" fontWeight="bold"
+                                    _hover={{ bg: '#18314E' }} transition="background 0.15s"
                                     onClick={() => {
                                       if (reactivateId === lead.id) {
                                         setReactivateId(null);
@@ -1095,8 +1094,8 @@ export default function ClientPage() {
 
                                 {/* Mark complete */}
                                 {canTerminate && confirmComplete !== lead.id && (
-                                  <Button size="sm" bg="#185FC6" color="white" borderRadius="4px" fontWeight="bold"
-                                    _hover={{ bg: '#172F4D' }} transition="background 0.15s"
+                                  <Button size="sm" bg="#185FC6" color="white" borderRadius="2px" fontWeight="bold"
+                                    _hover={{ bg: '#18314E' }} transition="background 0.15s"
                                     onClick={() => setConfirmComplete(lead.id)}>
                                     <Icon as={LucideCheckCircle} w={4} h={4} mr={1.5} />
                                     {t('client.dashboard.markComplete')}
@@ -1104,9 +1103,9 @@ export default function ClientPage() {
                                 )}
 
                                 {confirmComplete === lead.id && (
-                                  <HStack gap={2} bg="#F7F8FA" px={3} py={2} border="1px solid #E3E8EE">
+                                  <HStack gap={2} bg="#F8F8F4" px={3} py={2} border="1px solid #DDE5E9">
                                     <Text fontSize="sm" color="#185FC6" fontWeight="semibold">{t('client.dashboard.confirmCompleteQ')}</Text>
-                                    <Button size="xs" bg="#185FC6" color="white" borderRadius="4px"
+                                    <Button size="xs" bg="#185FC6" color="white" borderRadius="2px"
                                       loading={completing === lead.id}
                                       onClick={() => handleComplete(lead.id)}>{t('client.dashboard.yesComplete')}</Button>
                                     <Button size="xs" variant="ghost" color="slate.500"
@@ -1116,8 +1115,8 @@ export default function ClientPage() {
 
                                 {/* Rate */}
                                 {canRate && (
-                                  <Button size="sm" bg="#185FC6" color="white" borderRadius="4px" fontWeight="bold"
-                                    _hover={{ bg: '#172F4D' }} transition="background 0.15s"
+                                  <Button size="sm" bg="#185FC6" color="white" borderRadius="2px" fontWeight="bold"
+                                    _hover={{ bg: '#18314E' }} transition="background 0.15s"
                                     onClick={() => setRatingLead(lead)}>
                                     <Icon as={LucideStar} w={4} h={4} mr={1.5} />
                                     {t('client.dashboard.ratePro')}
@@ -1130,16 +1129,16 @@ export default function ClientPage() {
 
                           {/* ── Reactivate Form (inline) ── */}
                           {reactivateId === lead.id && (
-                            <Box borderTop="1px solid #FED7AA" bg="#FFF7ED" p={5}>
+                            <Box borderTop="1px solid #DDE5E9" bg="#EDF3F5" p={5}>
                               <Text fontSize="sm" fontWeight="bold" color="#185FC6" mb={4}>{t('client.dashboard.pickNewDateTitle')}</Text>
                               <VStack gap={3} align="stretch">
                                 <HStack gap={3}>
                                   <Box position="relative" flex={1} cursor="pointer"
                                     onClick={() => (reactivateDateRef.current as any)?.showPicker?.()}>
-                                    <Box h="11" bg="white" border="1px solid" borderColor="#E3E8EE"
-                                      borderRadius="4px" px={3} display="flex" alignItems="center"
+                                    <Box h="11" bg="white" border="1px solid" borderColor="#DDE5E9"
+                                      borderRadius="2px" px={3} display="flex" alignItems="center"
                                       style={{ pointerEvents:'none' }}>
-                                      <Text fontSize="sm" color={reactivateDate ? '#185FC6' : '#A0AEC0'}>
+                                      <Text fontSize="sm" color={reactivateDate ? '#185FC6' : '#455B70'}>
                                         {reactivateDate ? isoDateToUs(reactivateDate) : 'MM/DD/YYYY'}
                                       </Text>
                                     </Box>
@@ -1152,13 +1151,13 @@ export default function ClientPage() {
                                   </Box>
                                   <Input type="time" value={reactivateTime}
                                     onChange={e => setReactivateTime(e.target.value)}
-                                    bg="white" borderRadius="4px" h="11" flex={1}
-                                    border="1px solid" borderColor="#E3E8EE" />
+                                    bg="white" borderRadius="2px" h="11" flex={1}
+                                    border="1px solid" borderColor="#DDE5E9" />
                                 </HStack>
                                 <HStack gap={3} justify="flex-end">
                                   <Button size="sm" variant="ghost" color="slate.500" onClick={() => setReactivateId(null)}>{t('client.dashboard.discard')}</Button>
-                                  <Button size="sm" bg="#185FC6" color="white" borderRadius="4px" fontWeight="bold"
-                                    _hover={{ bg: '#172F4D' }} loading={reactivating} loadingText={t('client.dashboard.reactivatingLabel')}
+                                  <Button size="sm" bg="#185FC6" color="white" borderRadius="2px" fontWeight="bold"
+                                    _hover={{ bg: '#18314E' }} loading={reactivating} loadingText={t('client.dashboard.reactivatingLabel')}
                                     onClick={() => handleReactivate(lead.id)}>
                                     <Icon as={LucideRotateCcw} w={4} h={4} mr={1.5} />
                                     {t('client.dashboard.confirmDate')}
@@ -1170,7 +1169,7 @@ export default function ClientPage() {
 
                           {/* ── Edit Form (inline) ── */}
                           {editingId === lead.id && (
-                            <Box borderTop="1px solid #E3E8EE" bg="#F7F8FA" p={5}>
+                            <Box borderTop="1px solid #DDE5E9" bg="#F8F8F4" p={5}>
                               <Text fontSize="sm" fontWeight="bold" color="brand.700" mb={4}>{t('client.dashboard.updateDetails')}</Text>
                               <VStack gap={4} align="stretch">
                                 <SimpleGrid columns={2} gap={3}>
@@ -1182,7 +1181,7 @@ export default function ClientPage() {
                                       onClick={() => setEditField('serviceType', sv.id)}
                                       transition="all 0.15s">
                                       <HStack gap={2}>
-                                        <Text>{sv.icon}</Text>
+                                        
                                         <Text fontSize="xs" fontWeight="bold"
                                           color={editForm.serviceType === sv.id ? 'brand.700' : 'slate.700'}>{sv.labelEn}</Text>
                                       </HStack>
@@ -1193,15 +1192,15 @@ export default function ClientPage() {
                                   value={editForm.address}
                                   onChange={v => setEditField('address', v)}
                                   placeholder="123 Main St, City, ST 00000"
-                                  inputProps={{ bg: 'white', borderRadius: '4px', h: '11', border: '1px solid', borderColor: 'slate.200' }}
+                                  inputProps={{ bg: 'white', borderRadius: '2px', h: '11', border: '1px solid', borderColor: 'slate.200' }}
                                 />
                                 <HStack gap={3}>
                                   <Box position="relative" flex={1} cursor="pointer"
                                     onClick={() => (editDateRef.current as any)?.showPicker?.()}>
                                     <Box h="11" bg="white" border="1px solid" borderColor="slate.200"
-                                      borderRadius="4px" px={3} display="flex" alignItems="center"
+                                      borderRadius="2px" px={3} display="flex" alignItems="center"
                                       style={{ pointerEvents:'none' }}>
-                                      <Text fontSize="sm" color={editForm.date ? '#185FC6' : '#A0AEC0'}>
+                                      <Text fontSize="sm" color={editForm.date ? '#185FC6' : '#455B70'}>
                                         {editForm.date ? isoDateToUs(editForm.date) : 'MM/DD/YYYY'}
                                       </Text>
                                     </Box>
@@ -1214,12 +1213,12 @@ export default function ClientPage() {
                                   </Box>
                                   <Input type="time" value={editForm.time}
                                     onChange={e => setEditField('time', e.target.value)}
-                                    bg="white" borderRadius="4px" h="11" flex={1}
+                                    bg="white" borderRadius="2px" h="11" flex={1}
                                     border="1px solid" borderColor="slate.200" />
                                 </HStack>
                                 <HStack gap={3} justify="flex-end">
                                   <Button size="sm" variant="ghost" color="slate.500" onClick={() => setEditingId(null)}>{t('client.dashboard.discard')}</Button>
-                                  <Button size="sm" bg="brand.500" color="white" borderRadius="4px" fontWeight="bold"
+                                  <Button size="sm" bg="brand.500" color="white" borderRadius="2px" fontWeight="bold"
                                     _hover={{ bg: 'brand.600' }} loading={saving} loadingText={t('client.dashboard.savingLabel')}
                                     onClick={() => handleSaveEdit(lead.id)}>
                                     {t('client.dashboard.saveChanges')}
@@ -1237,33 +1236,33 @@ export default function ClientPage() {
 
                 {/* ── History Section ── */}
                 {historyLeads.length > 0 && (
-                  <Box border="1px solid #E3E8EE" overflow="hidden">
+                  <Box border="1px solid #DDE5E9" overflow="hidden">
                     <Box
-                      as="button" w="full" bg="#F7F8FA" px={5} py={3}
-                      borderBottom={showHistory ? '1px solid #E3E8EE' : undefined}
+                      as="button" w="full" bg="#F8F8F4" px={5} py={3}
+                      borderBottom={showHistory ? '1px solid #DDE5E9' : undefined}
                       onClick={() => setShowHistory(v => !v)}
                       display="flex" alignItems="center" justifyContent="space-between"
-                      cursor="pointer" _hover={{ bg: '#F1F5F9' }} transition="background 0.12s">
-                      <Text fontSize="10.5px" fontWeight={700} color="#697386" textTransform="uppercase"
+                      cursor="pointer" _hover={{ bg: '#F8F8F4' }} transition="background 0.12s">
+                      <Text fontSize="10.5px" fontWeight={700} color="#455B70" textTransform="uppercase"
                         fontFamily="heading" letterSpacing="0.07em">
                         {t('client.dashboard.history')} ({historyLeads.length})
                       </Text>
-                      <Icon as={showHistory ? LucideChevronUp : LucideChevronDown} w={4} h={4} color="#697386" />
+                      <Icon as={showHistory ? LucideChevronUp : LucideChevronDown} w={4} h={4} color="#455B70" />
                     </Box>
 
                     {showHistory && (
                       <VStack gap={0} align="stretch">
                         {historyLeads.map((lead, i) => {
-                          const s            = STATUS_MAP[lead.status] ?? { label: lead.status, bg: '#F3F4F6', color: '#6B7280', border: '#E5E7EB' };
+                          const s            = STATUS_MAP[lead.status] ?? { label: lead.status, bg: '#F8F8F4', color: '#455B70', border: '#DDE5E9' };
                           const scheduledTime = new Date(lead.dateTime);
                           const freqLabel    = FREQUENCY_OPTIONS.find(f => f.id === lead.frequency)?.labelEn;
                           const canRate      = lead.status === 'COMPLETED' && lead.cleanerId && !lead.review;
                           const isLast       = i === historyLeads.length - 1;
-                          const histAccent   = lead.status === 'COMPLETED' ? '#10B981' : '#EF4444';
+                          const histAccent   = lead.status === 'COMPLETED' ? '#185FC6' : '#18314E';
                           const convCleaner  = (lead.conversations ?? []).find(c => c.cleanerId === lead.cleanerId)?.cleaner;
                           return (
                             <Box key={lead.id} position="relative" bg="white"
-                              borderBottom={isLast ? undefined : '1px solid #F1F5F9'}>
+                              borderBottom={isLast ? undefined : '1px solid #F8F8F4'}>
                               <Box position="absolute" left={0} top={0} bottom={0} w="3px" bg={histAccent} />
                               <Box pl={6} pr={5} py={4}>
                                 <Flex justify="space-between" align="start" gap={4}>
@@ -1274,7 +1273,7 @@ export default function ClientPage() {
                                       <Text style={{ borderRadius: 2, background: s.bg, color: s.color, border: `1px solid ${s.border}`, padding: '2px 8px', fontSize: '10px', fontWeight: 700 }}>
                                         {s.label}
                                       </Text>
-                                      <Text fontWeight="bold" fontSize="sm" color="slate.700" fontFamily="heading">{lead.serviceType}</Text>
+                                      <Text fontWeight="bold" fontSize="sm" color="slate.700" fontFamily="heading">{serviceLabel(lead.serviceType, locale)}</Text>
                                     </HStack>
 
                                     {/* Cleaner */}
@@ -1300,10 +1299,10 @@ export default function ClientPage() {
                                     {/* Details */}
                                     {(lead.bedrooms || lead.squareMeters) && (
                                       <HStack gap={3} flexWrap="wrap">
-                                        {lead.bedrooms && <Text fontSize="xs" color="slate.500">🛏 {lead.bedrooms}bd</Text>}
-                                        {lead.bathrooms && <Text fontSize="xs" color="slate.500">🚿 {lead.bathrooms}ba</Text>}
-                                        {(lead.squareMeters ?? 0) > 0 && <Text fontSize="xs" color="slate.500">📐 {Math.round((lead.squareMeters ?? 0) * 10.764)} sq ft</Text>}
-                                        {freqLabel && freqLabel !== 'One-time' && <Text style={{ borderRadius: 2, background: '#F7F8FA', padding: '2px 6px', fontSize: '9.5px', fontWeight: 700, color: '#185FC6' }}>🔄 {freqLabel}</Text>}
+                                        {lead.bedrooms && <Text fontSize="xs" color="slate.500"><Glyph name="bed" />{lead.bedrooms}bd</Text>}
+                                        {lead.bathrooms && <Text fontSize="xs" color="slate.500"><Glyph name="bath" />{lead.bathrooms}ba</Text>}
+                                        {(lead.squareMeters ?? 0) > 0 && <Text fontSize="xs" color="slate.500"><Glyph name="area" />{Math.round((lead.squareMeters ?? 0) * 10.764)} sq ft</Text>}
+                                        {freqLabel && freqLabel !== 'One-time' && <Text style={{ borderRadius: 2, background: '#F8F8F4', padding: '2px 6px', fontSize: '9.5px', fontWeight: 700, color: '#185FC6' }}><Glyph name="repeat" />{freqLabel}</Text>}
                                       </HStack>
                                     )}
                                     {lead.estimatedMinPrice && (
@@ -1315,11 +1314,11 @@ export default function ClientPage() {
 
                                     {/* Review */}
                                     {lead.review && (
-                                      <HStack gap={1} bg="#F7F8FA" px={2.5} py={1} border="1px solid #FDE68A">
+                                      <HStack gap={1} bg="#F8F8F4" px={2.5} py={1} border="1px solid #DDE5E9">
                                         {[1,2,3,4,5].map(st => (
                                           <Icon key={st} as={LucideStar} w={3} h={3}
-                                            color={lead.review!.rating >= st ? '#F59E0B' : '#E5E7EB'}
-                                            fill={lead.review!.rating >= st ? '#F59E0B' : 'none'} />
+                                            color={lead.review!.rating >= st ? '#18314E' : '#DDE5E9'}
+                                            fill={lead.review!.rating >= st ? '#18314E' : 'none'} />
                                         ))}
                                         <Text fontSize="xs" color="#185FC6" fontWeight="semibold" ml={0.5}>{t('client.dashboard.yourRating')}</Text>
                                       </HStack>
@@ -1328,8 +1327,8 @@ export default function ClientPage() {
                                     {/* Actions */}
                                     <HStack gap={2} mt={0.5} flexWrap="wrap">
                                       {canRate && (
-                                        <Button size="xs" bg="#185FC6" color="white" borderRadius="4px" fontWeight="bold"
-                                          _hover={{ bg: '#172F4D' }} transition="background 0.15s"
+                                        <Button size="xs" bg="#185FC6" color="white" borderRadius="2px" fontWeight="bold"
+                                          _hover={{ bg: '#18314E' }} transition="background 0.15s"
                                           onClick={() => setRatingLead(lead)}>
                                           <Icon as={LucideStar} w={3} h={3} mr={1} />
                                           {t('client.dashboard.ratePro')}
@@ -1337,7 +1336,7 @@ export default function ClientPage() {
                                       )}
                                       {lead.status === 'COMPLETED' && (
                                         <Button size="xs" variant="outline" borderColor="slate.200" color="slate.600"
-                                          borderRadius="4px" fontWeight="semibold"
+                                          borderRadius="2px" fontWeight="semibold"
                                           _hover={{ bg: 'brand.50', borderColor: 'brand.300', color: 'brand.600' }}
                                           loading={rebooking === lead.id}
                                           onClick={() => handleRebook(lead)}>
@@ -1346,8 +1345,8 @@ export default function ClientPage() {
                                         </Button>
                                       )}
                                       {lead.status === 'CANCELLED' && (
-                                        <Button size="xs" bg="#185FC6" color="white" borderRadius="4px" fontWeight="bold"
-                                          _hover={{ bg: '#172F4D' }} transition="background 0.15s"
+                                        <Button size="xs" bg="#185FC6" color="white" borderRadius="2px" fontWeight="bold"
+                                          _hover={{ bg: '#18314E' }} transition="background 0.15s"
                                           onClick={() => {
                                             if (reactivateId === lead.id) {
                                               setReactivateId(null);
@@ -1366,16 +1365,16 @@ export default function ClientPage() {
 
                                     {/* Reactivate picker — inline under the actions */}
                                     {reactivateId === lead.id && lead.status === 'CANCELLED' && (
-                                      <Box bg="#F7F8FA" border="1px solid #E3E8EE" p={3} mt={1}>
+                                      <Box bg="#F8F8F4" border="1px solid #DDE5E9" p={3} mt={1}>
                                         <Text fontSize="xs" fontWeight="bold" color="#185FC6" mb={2}>
                                           {t('client.dashboard.reactivatePickTitle')}
                                         </Text>
                                         <HStack gap={2} mb={2}>
                                           <Box position="relative" flex={1}>
-                                            <Box h="9" bg="white" border="1px solid" borderColor="#E3E8EE"
-                                              borderRadius="4px" px={3} display="flex" alignItems="center"
+                                            <Box h="9" bg="white" border="1px solid" borderColor="#DDE5E9"
+                                              borderRadius="2px" px={3} display="flex" alignItems="center"
                                               style={{ pointerEvents:'none' }}>
-                                              <Text fontSize="xs" color={reactivateDate ? '#185FC6' : '#A0AEC0'}>
+                                              <Text fontSize="xs" color={reactivateDate ? '#185FC6' : '#455B70'}>
                                                 {reactivateDate ? isoDateToUs(reactivateDate) : 'MM/DD/YYYY'}
                                               </Text>
                                             </Box>
@@ -1387,14 +1386,14 @@ export default function ClientPage() {
                                           </Box>
                                           <Input type="time" value={reactivateTime}
                                             onChange={e => setReactivateTime(e.target.value)}
-                                            bg="white" borderRadius="4px" h="9" flex={1}
-                                            border="1px solid" borderColor="#E3E8EE" fontSize="xs" />
+                                            bg="white" borderRadius="2px" h="9" flex={1}
+                                            border="1px solid" borderColor="#DDE5E9" fontSize="xs" />
                                         </HStack>
                                         <HStack gap={2} justify="flex-end">
                                           <Button size="xs" variant="ghost" color="slate.500"
                                             onClick={() => setReactivateId(null)}>{t('common.cancel')}</Button>
-                                          <Button size="xs" bg="#185FC6" color="white" borderRadius="4px" fontWeight="bold"
-                                            _hover={{ bg: '#172F4D' }} loading={reactivating} loadingText={t('client.dashboard.reactivatingLabel')}
+                                          <Button size="xs" bg="#185FC6" color="white" borderRadius="2px" fontWeight="bold"
+                                            _hover={{ bg: '#18314E' }} loading={reactivating} loadingText={t('client.dashboard.reactivatingLabel')}
                                             onClick={() => handleReactivate(lead.id)}>
                                             {t('client.dashboard.confirmDate')}
                                           </Button>
@@ -1417,10 +1416,10 @@ export default function ClientPage() {
 
                 {/* ── Your Cleaners ── */}
                 {myCleaners.length > 0 && (
-                  <Box border="1px solid #E3E8EE" bg="white" px={5} py={4}>
+                  <Box border="1px solid #DDE5E9" bg="white" px={5} py={4}>
                     <HStack gap={2} mb={4}>
                       <Icon as={LucideUsers} w={4} h={4} color="slate.400" />
-                      <Text fontSize="10.5px" fontWeight={700} color="#697386" textTransform="uppercase"
+                      <Text fontSize="10.5px" fontWeight={700} color="#455B70" textTransform="uppercase"
                         fontFamily="heading" letterSpacing="0.07em">
                         {t('client.dashboard.yourCleaners')} ({myCleaners.length})
                       </Text>
@@ -1429,7 +1428,7 @@ export default function ClientPage() {
                       {myCleaners.map(c => (
                         <HStack
                           key={c.id} gap={2.5} px={3} py={2}
-                          border="1px solid #E3E8EE" bg="#F8FAFC"
+                          border="1px solid #DDE5E9" bg="#F8F8F4"
                           as="button" cursor="pointer" transition="all 0.15s"
                           _hover={{ borderColor: '#185FC6', bg: 'white' }}
                           onClick={() => router.push(`/dashboard/profile/${c.id}`)}>
@@ -1460,12 +1459,12 @@ export default function ClientPage() {
               exit={{ opacity: 0, scale: 0.95, y: 12 }}
               transition={{ duration: 0.2, ease: 'easeOut' }}
               style={{ position: 'relative', zIndex: 1, width: '100%', maxWidth: '440px', margin: '0 16px' }}>
-              <Box bg="white" border="1px solid #E3E8EE" p={8}
-                style={{ boxShadow: '0 16px 48px rgba(0,0,0,0.14)' }}>
+              <Box bg="white" border="1px solid #DDE5E9" p={8}
+                style={{ boxShadow: 'none' }}>
                 <VStack gap={5} align="center" textAlign="center">
-                  <Box w="48px" h="48px" bg="#F7F8FA" border="1px solid #FDE68A"
+                  <Box w="48px" h="48px" bg="#F8F8F4" border="1px solid #DDE5E9"
                     display="flex" alignItems="center" justifyContent="center">
-                    <Text fontSize="2xl">⭐</Text>
+                    <Text fontSize="2xl" color="#185FC6"><Glyph name="star" /></Text>
                   </Box>
                   <Box>
                     <Heading size="md" fontWeight="black" color="slate.900" fontFamily="heading">{t('client.dashboard.rateModal_title')}</Heading>
@@ -1482,17 +1481,17 @@ export default function ClientPage() {
                     value={ratingComment}
                     onChange={e => setRatingComment(e.target.value)}
                     bg="slate.50" border="1px solid" borderColor="slate.200"
-                    borderRadius="4px" rows={3} fontSize="sm"
+                    borderRadius="2px" rows={3} fontSize="sm"
                     _focus={{ borderColor: 'brand.300', bg: 'white' }}
                     resize="none"
                   />
                   <HStack gap={3} w="full">
                     <Button flex={1} variant="outline" borderColor="slate.200" color="slate.500"
-                      borderRadius="4px" onClick={() => setRatingLead(null)}>
+                      borderRadius="2px" onClick={() => setRatingLead(null)}>
                       {t('client.dashboard.rateModal_laterBtn')}
                     </Button>
-                    <Button flex={1} bg="#185FC6" color="white" borderRadius="4px" fontWeight="bold"
-                      _hover={{ bg: '#172F4D' }}
+                    <Button flex={1} bg="#185FC6" color="white" borderRadius="2px" fontWeight="bold"
+                      _hover={{ bg: '#18314E' }}
                       loading={sendingRating} loadingText={t('client.dashboard.rateModal_submitting')}
                       onClick={handleSubmitRating} disabled={starValue === 0}>
                       {t('client.dashboard.rateModal_submitBtn')}
@@ -1517,13 +1516,13 @@ export default function ClientPage() {
               exit={{ opacity: 0, scale: 0.95, y: 12 }}
               transition={{ duration: 0.2, ease: 'easeOut' }}
               style={{ position: 'relative', zIndex: 1, width: '100%', maxWidth: '400px', margin: '0 16px' }}>
-              <Box bg="white" border="1px solid #E3E8EE" p={7}
-                style={{ boxShadow: '0 16px 48px rgba(0,0,0,0.14)' }}>
+              <Box bg="white" border="1px solid #DDE5E9" p={7}
+                style={{ boxShadow: 'none' }}>
                 <Flex justify="space-between" align="center" mb={5}>
                   <Heading size="sm" fontWeight="black" color="slate.900" fontFamily="heading">
                     {t('client.dashboard.cancelModal_title')}
                   </Heading>
-                  <Button size="sm" variant="ghost" color="slate.400" borderRadius="4px" px={1.5}
+                  <Button size="sm" variant="ghost" color="slate.400" borderRadius="2px" px={1.5}
                     onClick={() => setCancelReasonModal(null)}>
                     <Icon as={LucideX} w={4} h={4} />
                   </Button>
@@ -1536,8 +1535,8 @@ export default function ClientPage() {
                     <Box
                       key={reason} as="button" textAlign="left" px={3} py={2.5}
                       border="1.5px solid"
-                      borderColor={cancelReason === reason ? '#185FC6' : '#E3E8EE'}
-                      bg={cancelReason === reason ? '#E9F3F5' : 'white'}
+                      borderColor={cancelReason === reason ? '#185FC6' : '#DDE5E9'}
+                      bg={cancelReason === reason ? '#EDF3F5' : 'white'}
                       transition="all 0.12s" cursor="pointer"
                       onClick={() => setCancelReason(reason)}>
                       <HStack gap={2} justify="space-between">
@@ -1546,7 +1545,7 @@ export default function ClientPage() {
                           {reason}
                         </Text>
                         {cancelReason === reason && (
-                          <Box w="16px" h="16px" bg="#185FC6" borderRadius="full"
+                          <Box w="16px" h="16px" bg="#185FC6" borderRadius="2px"
                             display="flex" alignItems="center" justifyContent="center" flexShrink={0}>
                             <Text fontSize="8px" color="white" fontWeight="black">✓</Text>
                           </Box>
@@ -1557,10 +1556,10 @@ export default function ClientPage() {
                 </VStack>
                 <HStack gap={3}>
                   <Button flex={1} variant="outline" borderColor="slate.200" color="slate.500"
-                    borderRadius="4px" onClick={() => setCancelReasonModal(null)}>
+                    borderRadius="2px" onClick={() => setCancelReasonModal(null)}>
                     {t('client.dashboard.cancelModal_keepBtn')}
                   </Button>
-                  <Button flex={1} bg="red.500" color="white" borderRadius="4px" fontWeight="bold"
+                  <Button flex={1} bg="red.500" color="white" borderRadius="2px" fontWeight="bold"
                     _hover={{ bg: 'red.600' }}
                     loading={cancelling === cancelReasonModal}
                     loadingText={t('client.dashboard.cancelModal_cancelling')}
@@ -1584,15 +1583,15 @@ function OrderForm({ form, setField, toggleExtra, estimate, progress, onSubmit, 
   const t = useT();
   const serviceLabel = SERVICE_TYPES.find(s => s.id === form.serviceType)?.labelEn ?? '';
   return (
-    <Box bg="white" border="1px solid #E3E8EE">
+    <Box bg="white" border="1px solid #DDE5E9">
       {/* Form header */}
-      <Box bg="#F7F8FA" px={5} py={3} borderBottom="1px solid #E3E8EE">
+      <Box bg="#F8F8F4" px={5} py={3} borderBottom="1px solid #DDE5E9">
         <Flex justify="space-between" align="center">
-          <Text fontSize="10.5px" fontWeight={700} color="#697386" textTransform="uppercase"
+          <Text fontSize="10.5px" fontWeight={700} color="#455B70" textTransform="uppercase"
             letterSpacing="0.07em" fontFamily="heading">
             {t('client.dashboard.formTitle')}
           </Text>
-          <Button size="sm" variant="ghost" color="slate.400" onClick={onCancel} borderRadius="4px" minW={0} px={1.5}>
+          <Button size="sm" variant="ghost" color="slate.400" onClick={onCancel} borderRadius="2px" minW={0} px={1.5}>
             <Icon as={LucideX} w={4} h={4} />
           </Button>
         </Flex>
@@ -1610,7 +1609,7 @@ function OrderForm({ form, setField, toggleExtra, estimate, progress, onSubmit, 
             <Text fontSize="sm" fontWeight="black" color='#185FC6'>{progress}%</Text>
           </Flex>
           <Box bg="slate.100" h="6px" overflow="hidden">
-            <motion.div style={{ height: '100%', background: progress === 100 ? '#22C55E' : '#185FC6' }}
+            <motion.div style={{ height: '100%', background: progress === 100 ? '#185FC6' : '#185FC6' }}
               animate={{ width: `${progress}%` }} transition={{ duration: 0.4, ease: 'easeOut' }} />
           </Box>
         </Box>
@@ -1619,7 +1618,7 @@ function OrderForm({ form, setField, toggleExtra, estimate, progress, onSubmit, 
           <VStack gap={6} align="stretch">
             {/* Service type */}
             <Box>
-              <Text fontSize="10.5px" fontWeight={700} color="#697386" textTransform="uppercase" mb={3}
+              <Text fontSize="10.5px" fontWeight={700} color="#455B70" textTransform="uppercase" mb={3}
                 letterSpacing="0.07em" fontFamily="heading">{t('client.dashboard.serviceType')}</Text>
               <SimpleGrid columns={2} gap={3}>
                 {SERVICE_TYPES.map(s => (
@@ -1641,17 +1640,17 @@ function OrderForm({ form, setField, toggleExtra, estimate, progress, onSubmit, 
 
             {/* Property size */}
             <Box>
-              <Text fontSize="10.5px" fontWeight={700} color="#697386" textTransform="uppercase" mb={4}
+              <Text fontSize="10.5px" fontWeight={700} color="#455B70" textTransform="uppercase" mb={4}
                 letterSpacing="0.07em" fontFamily="heading">{t('client.dashboard.propertySize')}</Text>
               <SimpleGrid columns={{ base: 1, sm: 3 }} gap={4}>
-                <Box><Text fontSize="sm" color="slate.600" mb={2} fontWeight="medium">🛏 {t('client.dashboard.bedroomsLabel')}</Text><Stepper value={form.bedrooms} onChange={v => setField('bedrooms', v)} /></Box>
-                <Box><Text fontSize="sm" color="slate.600" mb={2} fontWeight="medium">🚿 {t('client.dashboard.bathroomsLabel')}</Text><Stepper value={form.bathrooms} onChange={v => setField('bathrooms', v)} /></Box>
+                <Box><Text fontSize="sm" color="slate.600" mb={2} fontWeight="medium"><Glyph name="bed" />{t('client.dashboard.bedroomsLabel')}</Text><Stepper value={form.bedrooms} onChange={v => setField('bedrooms', v)} /></Box>
+                <Box><Text fontSize="sm" color="slate.600" mb={2} fontWeight="medium"><Glyph name="bath" />{t('client.dashboard.bathroomsLabel')}</Text><Stepper value={form.bathrooms} onChange={v => setField('bathrooms', v)} /></Box>
                 <Box>
-                  <Text fontSize="sm" color="slate.600" mb={2} fontWeight="medium">📐 {t('client.dashboard.areaLabel')}</Text>
+                  <Text fontSize="sm" color="slate.600" mb={2} fontWeight="medium"><Glyph name="area" />{t('client.dashboard.areaLabel')}</Text>
                   <Input type="number" placeholder={t('client.dashboard.areaPlaceholder')} value={form.squareMeters || ''}
                     onChange={e => setField('squareMeters', Number(e.target.value))}
                     bg="slate.50" border="1px solid" borderColor={form.squareMeters > 0 ? 'brand.300' : 'slate.200'}
-                    h="10" borderRadius="4px" fontSize="sm"
+                    h="10" borderRadius="2px" fontSize="sm"
                     _focus={{ bg: 'white', borderColor: 'brand.400' }} transition="all 0.15s" />
                 </Box>
               </SimpleGrid>
@@ -1660,7 +1659,7 @@ function OrderForm({ form, setField, toggleExtra, estimate, progress, onSubmit, 
             {/* Add-ons */}
             <Box>
               <HStack gap={2} mb={3}>
-                <Text fontSize="10.5px" fontWeight={700} color="#697386" textTransform="uppercase"
+                <Text fontSize="10.5px" fontWeight={700} color="#455B70" textTransform="uppercase"
                   letterSpacing="0.07em" fontFamily="heading">{t('client.dashboard.addons')}</Text>
                 <Text fontSize="xs" color="slate.400">{t('client.dashboard.addonsOptional')}</Text>
               </HStack>
@@ -1673,7 +1672,7 @@ function OrderForm({ form, setField, toggleExtra, estimate, progress, onSubmit, 
                       bg={sel ? 'slate.50' : 'white'} cursor="pointer"
                       onClick={() => toggleExtra(ex.id)} transition="all 0.15s">
                       <Flex justify="space-between" align="center">
-                        <HStack gap={2}><Text fontSize="lg">{ex.icon}</Text><Box><Text fontSize="xs" fontWeight="bold" color="slate.700">{ex.labelEn}</Text><Text fontSize="xs" color="slate.400">+${ex.price}</Text></Box></HStack>
+                        <HStack gap={2}><Box><Text fontSize="xs" fontWeight="bold" color="slate.700">{ex.labelEn}</Text><Text fontSize="xs" color="slate.400">+${ex.price}</Text></Box></HStack>
                         <Box w="16px" h="16px" bg={sel ? 'slate.300' : 'slate.200'} display="flex" alignItems="center" justifyContent="center" transition="all 0.15s">
                           {sel && <Text fontSize="9px" color="white" fontWeight="black">✓</Text>}
                         </Box>
@@ -1686,13 +1685,13 @@ function OrderForm({ form, setField, toggleExtra, estimate, progress, onSubmit, 
 
             {/* Frequency */}
             <Box>
-              <Text fontSize="10.5px" fontWeight={700} color="#697386" textTransform="uppercase" mb={3}
+              <Text fontSize="10.5px" fontWeight={700} color="#455B70" textTransform="uppercase" mb={3}
                 letterSpacing="0.07em" fontFamily="heading">{t('client.dashboard.frequency')}</Text>
               <SimpleGrid columns={3} gap={3}>
                 {FREQUENCY_OPTIONS.map(f => (
                   <Box key={f.id} as="button" w="full" p={3} textAlign="center"
                     border="2px solid" borderColor={form.frequency === f.id ? '#185FC6' : 'slate.200'}
-                    bg={form.frequency === f.id ? '#F8FAFC' : 'white'} cursor="pointer"
+                    bg={form.frequency === f.id ? '#F8F8F4' : 'white'} cursor="pointer"
                     onClick={() => setField('frequency', f.id)} transition="all 0.15s">
                     <Text fontSize="sm" fontWeight="bold" color={form.frequency === f.id ? '#185FC6' : 'slate.700'}>{f.labelEn}</Text>
                     {f.tag && <Text fontSize="10px" color="#185FC6" fontWeight="bold">{f.tag}</Text>}
@@ -1703,7 +1702,7 @@ function OrderForm({ form, setField, toggleExtra, estimate, progress, onSubmit, 
 
             {/* Location & date */}
             <Box>
-              <Text fontSize="10.5px" fontWeight={700} color="#697386" textTransform="uppercase" mb={4}
+              <Text fontSize="10.5px" fontWeight={700} color="#455B70" textTransform="uppercase" mb={4}
                 letterSpacing="0.07em" fontFamily="heading">{t('client.dashboard.locationDate')}</Text>
               <VStack gap={4} align="stretch">
                 {/* Address book */}
@@ -1718,9 +1717,9 @@ function OrderForm({ form, setField, toggleExtra, estimate, progress, onSubmit, 
                         <Box
                           key={i} as="button"
                           px={3} py={1.5}
-                          border="1px solid #E3E8EE"
-                          bg={form.address === addr ? '#E9F3F5' : '#F8FAFC'}
-                          borderColor={form.address === addr ? '#185FC6' : '#E3E8EE'}
+                          border="1px solid #DDE5E9"
+                          bg={form.address === addr ? '#EDF3F5' : '#F8F8F4'}
+                          borderColor={form.address === addr ? '#185FC6' : '#DDE5E9'}
                           onClick={() => onSelectAddress(addr)}
                           transition="all 0.12s" cursor="pointer" maxW="240px">
                           <HStack gap={1}>
@@ -1742,7 +1741,7 @@ function OrderForm({ form, setField, toggleExtra, estimate, progress, onSubmit, 
                   inputProps={{
                     bg: 'slate.50', border: '1px solid',
                     borderColor: form.address ? 'brand.300' : 'slate.200',
-                    h: '12', borderRadius: '4px', fontSize: 'sm',
+                    h: '12', borderRadius: '2px', fontSize: 'sm',
                     _focus: { bg: 'white', borderColor: 'brand.400' }, transition: 'all 0.15s',
                   }}
                 />
@@ -1750,9 +1749,9 @@ function OrderForm({ form, setField, toggleExtra, estimate, progress, onSubmit, 
                   <Box position="relative" flex={1}>
                     <Box h="12" bg="slate.50" border="1px solid"
                       borderColor={form.date ? 'brand.300' : 'slate.200'}
-                      borderRadius="4px" px={3} display="flex" alignItems="center"
+                      borderRadius="2px" px={3} display="flex" alignItems="center"
                       style={{ pointerEvents:'none' }}>
-                      <Text fontSize="sm" color={form.date ? '#185FC6' : '#A0AEC0'}>
+                      <Text fontSize="sm" color={form.date ? '#185FC6' : '#455B70'}>
                         {form.date ? isoDateToUs(form.date) : 'MM/DD/YYYY'}
                       </Text>
                     </Box>
@@ -1764,27 +1763,27 @@ function OrderForm({ form, setField, toggleExtra, estimate, progress, onSubmit, 
                   </Box>
                   <Input type="time" value={form.time} onChange={e => setField('time', e.target.value)}
                     bg="slate.50" border="1px solid" borderColor={form.time ? 'brand.300' : 'slate.200'}
-                    h="12" borderRadius="4px" fontSize="sm" flex={1}
+                    h="12" borderRadius="2px" fontSize="sm" flex={1}
                     _focus={{ bg: 'white', borderColor: 'brand.400' }} transition="all 0.15s" />
                 </HStack>
                 <textarea value={form.notes} onChange={e => setField('notes', e.target.value)}
                   placeholder={t('client.dashboard.notesPlaceholder')} rows={2}
-                  style={{ background: '#F9FAFB', border: '1px solid #E5E7EB', borderRadius: '4px', padding: '12px 16px',
-                    width: '100%', fontSize: '14px', color: '#1F2937', resize: 'vertical', outline: 'none', fontFamily: 'inherit' }} />
+                  style={{ background: '#F8F8F4', border: '1px solid #DDE5E9', borderRadius: '2px', padding: '12px 16px',
+                    width: '100%', fontSize: '14px', color: '#18314E', resize: 'vertical', outline: 'none', fontFamily: 'inherit' }} />
               </VStack>
             </Box>
 
             {/* Estimate */}
             {estimate && (
-              <Box bg="#F7F8FA" border="1px solid #E3E8EE" p={5} style={{ borderRadius: 8 }}>
+              <Box bg="#F8F8F4" border="1px solid #DDE5E9" p={5} style={{ borderRadius: 2 }}>
                 <HStack gap={2} mb={3}>
                   <Icon as={LucideSparkles} w={4} h={4} color="brand.500" />
-                  <Text fontSize="10.5px" fontWeight={700} color="#697386" textTransform="uppercase"
+                  <Text fontSize="10.5px" fontWeight={700} color="#455B70" textTransform="uppercase"
                     letterSpacing="0.07em" fontFamily="heading">
                     {t('client.dashboard.estimateLabel')} — {serviceLabel}
                   </Text>
                   {estimate.discountPct > 0 && (
-                    <Text style={{ borderRadius: 2, background: '#F7F8FA', padding: '2px 6px', fontSize: '9.5px', fontWeight: 700, color: '#185FC6' }}>
+                    <Text style={{ borderRadius: 2, background: '#F8F8F4', padding: '2px 6px', fontSize: '9.5px', fontWeight: 700, color: '#185FC6' }}>
                       -{estimate.discountPct}%
                     </Text>
                   )}
@@ -1803,9 +1802,9 @@ function OrderForm({ form, setField, toggleExtra, estimate, progress, onSubmit, 
               </Box>
             )}
 
-            <Button type="submit" bg='gold.500' color="#185FC6"
-              h="12" borderRadius="4px" fontWeight="bold" fontSize="md"
-              _hover={{ bg: 'gold.600' }}
+            <Button type="submit" bg='brand.500' color="white"
+              h="12" borderRadius="2px" fontWeight="bold" fontSize="md"
+              _hover={{ bg: 'brand.600' }}
               transition="background 0.15s" loading={submitting} loadingText={t('client.dashboard.submitting')}>
               {progress === 100 ? `✓ ${t('client.dashboard.submitBooking')}` : t('client.dashboard.submitBooking')}
             </Button>

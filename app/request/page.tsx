@@ -310,7 +310,7 @@ function RequestForm() {
               <VStack gap={5} align="stretch">
                 <Box>
                   <FormLabel htmlFor="request-address">Cleaning address or ZIP code</FormLabel>
-                  <AddressInput tone="public" value={address} onChange={setAddress} onResolve={setAddressOk}
+                  <AddressInput value={address} onChange={setAddress} onResolve={setAddressOk}
                     placeholder="123 Main St, Hartford, CT 06103"
                     inputProps={{ ...inputStyle, id: 'request-address', autoComplete: 'street-address' }} />
                 </Box>

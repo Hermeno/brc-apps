@@ -59,29 +59,29 @@ export default function LoginPage() {
         display={{ base: 'none', lg: 'flex' }} flexDirection="column"
         w="480px" flexShrink={0} bg="#185FC6" position="relative" overflow="hidden"
       >
-        <Box position="absolute" inset={0} style={{ backgroundImage: "url('/abc.png')", backgroundSize: 'cover', backgroundPosition: 'center', opacity: 1 }} />
-        {/* Gradient overlay: lighter at top (photo shows) → dark at bottom for text legibility */}
-        <Box position="absolute" inset={0} style={{ background: 'linear-gradient(to bottom, rgba(20,40,66,0.45) 0%, rgba(15,29,48,0.86) 78%)' }} />
+        <Box position="absolute" inset={0} style={{ backgroundImage: "url('/abc.png')", backgroundSize: 'cover', backgroundPosition: 'center', filter: 'grayscale(1) brightness(.8)' }} />
+        {/* One flat navy layer over the greyed photo, as on the public pages */}
+        <Box position="absolute" inset={0} style={{ background: 'rgba(14, 52, 104, 0.62)' }} />
 
         <Flex direction="column" justify="space-between" h="full" position="relative" p={10}>
           <Image src="/images/brand/verliks-logo-white-600.png" alt="Verliks" width={280} height={60} style={{ objectFit: 'contain' }} />
 
           <Box>
-            <Text fontSize="10.5px" fontWeight="700" letterSpacing="0.14em" color="rgba(255,255,255,0.8)"
+            <Text fontSize="10.5px" fontWeight="700" letterSpacing="0.14em" color="#FFFFFF"
               textTransform="uppercase" fontFamily="heading" mb={4}
-              style={{ borderLeft: '2px solid #C5A33B', paddingLeft: 10 }}>
+              style={{ borderLeft: '2px solid #FFFFFF', paddingLeft: 10 }}>
               {t('auth.login.tagline')}
             </Text>
-            <Text fontSize="26px" fontWeight="800" color="white" fontFamily="heading"
+            <Text fontSize="26px" fontWeight="700" color="white" fontFamily="heading"
               letterSpacing="-0.03em" lineHeight="1.15" mb={6} whiteSpace="pre-line"
-              style={{ textShadow: '0 1px 12px rgba(0,0,0,0.35)' }}>
+              >
               {t('auth.login.hero')}
             </Text>
             <VStack align="stretch" gap={2.5}>
               {(['feature1', 'feature2', 'feature3'] as const).map(k => (
                 <HStack key={k} gap={2.5}>
-                  <Icon as={LucideCheckCircle} w="16px" h="16px" color="#C5A33B" flexShrink={0} />
-                  <Text fontSize="13.5px" color="rgba(255,255,255,0.92)" fontFamily="heading">{t(`auth.login.${k}`)}</Text>
+                  <Icon as={LucideCheckCircle} w="16px" h="16px" color="white" flexShrink={0} />
+                  <Text fontSize="13.5px" color="rgba(255, 255, 255, 0.92)" fontFamily="heading">{t(`auth.login.${k}`)}</Text>
                 </HStack>
               ))}
             </VStack>
@@ -96,7 +96,7 @@ export default function LoginPage() {
           <Flex justify="space-between" align="center" mb={6}>
             <NextLink href="/" style={{ textDecoration: 'none' }}>
               <HStack gap={1.5} display="inline-flex"
-                _hover={{ color: '#185FC6' }} color="#697386" transition="color 0.15s">
+                _hover={{ color: '#185FC6' }} color="#455B70" transition="color 0.15s">
                 <Icon as={LucideArrowLeft} w={3.5} h={3.5} />
                 <Text fontSize="13px" fontFamily="heading" fontWeight="500">{t('common.backToHome')}</Text>
               </HStack>
@@ -110,10 +110,10 @@ export default function LoginPage() {
           </Box>
 
           <Box mb={8}>
-            <Text fontSize="24px" fontWeight="800" color="#185FC6" fontFamily="heading" letterSpacing="-0.025em" mb={1}>
+            <Text as="h1" fontSize="28px" fontWeight="300" color="#18314E" fontFamily="heading" letterSpacing="-0.01em" mb={1}>
               {t('auth.login.title')}
             </Text>
-            <Text fontSize="14px" color="#425466" fontFamily="heading">
+            <Text fontSize="14px" color="#455B70" fontFamily="heading">
               {t('auth.login.subtitle')}
             </Text>
           </Box>
@@ -122,26 +122,26 @@ export default function LoginPage() {
             <VStack gap={5} align="stretch">
 
               <Box>
-                <Text fontSize="12px" fontWeight="500" color="#425466" letterSpacing="-0.01em" fontFamily="heading" mb={1.5}>
+                <Text fontSize="12px" fontWeight="500" color="#455B70" letterSpacing="-0.01em" fontFamily="heading" mb={1.5}>
                   {t('auth.login.email')}
                 </Text>
                 <Input
                   placeholder={t('auth.login.emailPlaceholder')}
                   value={email} onChange={e => setEmail(e.target.value)}
-                  bg="white" border="1.5px solid" borderColor="#E3E8EE" h="38px" borderRadius="8px"
+                  bg="white" border="1.5px solid" borderColor="#DDE5E9" h="38px" borderRadius="2px"
                   fontFamily="heading" fontSize="13.5px" color="#185FC6" px={4}
-                  _placeholder={{ color: '#B0BAC9' }} _focus={{ borderColor: '#185FC6', boxShadow: 'none', outline: 'none' }}
+                  _placeholder={{ color: '#455B70' }} _focus={{ borderColor: '#185FC6', boxShadow: 'none', outline: 'none' }}
                   type="email" required
                 />
               </Box>
 
               <Box>
                 <Flex justify="space-between" align="center" mb={1.5}>
-                  <Text fontSize="12px" fontWeight="500" color="#425466" letterSpacing="-0.01em" fontFamily="heading">
+                  <Text fontSize="12px" fontWeight="500" color="#455B70" letterSpacing="-0.01em" fontFamily="heading">
                     {t('auth.login.password')}
                   </Text>
                   <NextLink href="/auth/forgot-password">
-                    <Text fontSize="12px" color="#185FC6" fontWeight="500" cursor="pointer" fontFamily="heading" _hover={{ color: '#172F4D' }}>
+                    <Text fontSize="12px" color="#185FC6" fontWeight="500" cursor="pointer" fontFamily="heading" _hover={{ color: '#18314E' }}>
                       {t('auth.login.forgotPassword')}
                     </Text>
                   </NextLink>
@@ -149,17 +149,17 @@ export default function LoginPage() {
                 <Input
                   type="password" placeholder={t('auth.login.passwordPlaceholder')}
                   value={password} onChange={e => setPassword(e.target.value)}
-                  bg="white" border="1.5px solid" borderColor="#E3E8EE" h="38px" borderRadius="8px"
+                  bg="white" border="1.5px solid" borderColor="#DDE5E9" h="38px" borderRadius="2px"
                   fontFamily="heading" fontSize="13.5px" color="#185FC6" px={4}
-                  _placeholder={{ color: '#B0BAC9' }} _focus={{ borderColor: '#185FC6', boxShadow: 'none', outline: 'none' }}
+                  _placeholder={{ color: '#455B70' }} _focus={{ borderColor: '#185FC6', boxShadow: 'none', outline: 'none' }}
                   required
                 />
               </Box>
 
               <Button
-                type="submit" bg="#185FC6" color="white" h="40px" borderRadius="9999px"
+                type="submit" bg="#185FC6" color="white" h="40px" borderRadius="2px"
                 fontWeight="600" fontSize="13.5px" letterSpacing="-0.01em" fontFamily="heading"
-                _hover={{ bg: '#172F4D' }} transition="background 0.15s"
+                _hover={{ bg: '#18314E' }} transition="background 0.15s"
                 loading={loading} loadingText={t('auth.login.submitting')} mt={1}
               >
                 {t('auth.login.submit')}
@@ -169,11 +169,11 @@ export default function LoginPage() {
             </VStack>
           </form>
 
-          <Box mt={7} pt={6} borderTop="1px solid #E3E8EE">
-            <Text fontSize="13px" color="#425466" fontFamily="heading" textAlign="center">
+          <Box mt={7} pt={6} borderTop="1px solid #DDE5E9">
+            <Text fontSize="13px" color="#455B70" fontFamily="heading" textAlign="center">
               {t('auth.login.noAccount')}{' '}
               <NextLink href="/auth/register">
-                <Text as="span" color="#185FC6" fontWeight="700" cursor="pointer" _hover={{ color: '#172F4D' }}>
+                <Text as="span" color="#185FC6" fontWeight="700" cursor="pointer" _hover={{ color: '#18314E' }}>
                   {t('auth.login.createAccount')}
                 </Text>
               </NextLink>

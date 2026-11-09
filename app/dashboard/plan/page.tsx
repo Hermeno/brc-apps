@@ -12,6 +12,8 @@ import CleanerNav from '@/components/cleaner-nav';
 import { toaster } from '@/lib/toaster';
 import { PLANS } from '@/lib/plans';
 import { useT } from '@/lib/i18n';
+import Glyph from '@/components/glyph';
+import { Gem, MapPin, Sparkles, Star } from 'lucide-react';
 
 type PlanId = 'FREE' | 'BASIC' | 'PRO';
 
@@ -24,7 +26,7 @@ const PLAN_ICONS: Record<PlanId, any> = {
 const PLAN_COLORS: Record<PlanId, { bg: string; border: string; text: string; btn: string; btnHover: string }> = {
   FREE:  { bg: 'slate.50',  border: 'slate.200', text: 'slate.600', btn: 'slate.600', btnHover: 'slate.700' },
   BASIC: { bg: 'brand.50',  border: 'brand.300', text: 'brand.700', btn: 'brand.500', btnHover: 'brand.600' },
-  PRO:   { bg: '#FFFBEB',   border: '#FDE68A',   text: '#92400E',   btn: '#D97706',   btnHover: '#B45309'   },
+  PRO:   { bg: '#EDF3F5',   border: '#DDE5E9',   text: '#18314E',   btn: '#18314E',   btnHover: '#18314E'   },
 };
 
 export default function PlanPage() {
@@ -131,19 +133,19 @@ export default function PlanPage() {
     <Box minH="100vh" bg="white">
       <CleanerNav />
       <Box p={6} maxW="960px" mx="auto">
-        <Heading size="md" fontWeight="bold" color="slate.900" fontFamily="heading" mb={6}>
+        <Heading fontWeight="300" fontSize={{ base: '24px', md: '28px' }} letterSpacing="-0.01em" size="md" color="slate.900" fontFamily="heading" mb={6}>
           {t('cleaner.plan.title')}
         </Heading>
 
         <VStack gap={8} align="stretch">
 
           {/* CFS explainer — flat section panel */}
-          <Box border="1px solid #E3E8EE" style={{ borderRadius: 8 }} overflow="hidden">
-            <Box bg="#F7F8FA" px={5} py={3} borderBottom="1px solid #E3E8EE">
+          <Box border="1px solid #DDE5E9" style={{ borderRadius: 2 }} overflow="hidden">
+            <Box bg="#F8F8F4" px={5} py={3} borderBottom="1px solid #DDE5E9">
               <HStack gap={3}>
                 <Icon as={LucideTrendingUp} w={4} h={4} color="brand.500" />
                 <Box>
-                  <Text fontSize="10.5px" fontWeight={700} color="#697386" textTransform="uppercase" letterSpacing="0.06em" fontFamily="heading">
+                  <Text fontSize="10.5px" fontWeight={700} color="#455B70" textTransform="uppercase" letterSpacing="0.06em" fontFamily="heading">
                     {t('cleaner.plan.rankTitle')}
                   </Text>
                   <Text fontSize="xs" color="slate.500">{t('cleaner.plan.rankSubtitle')}</Text>
@@ -153,13 +155,13 @@ export default function PlanPage() {
             <Box p={5}>
               <SimpleGrid columns={{ base: 2, sm: 4 }} gap={3}>
                 {[
-                  { label: t('cleaner.plan.factorPlan'), max: '30 pts', icon: '💎', desc: t('cleaner.plan.factorPlanDesc') },
-                  { label: t('cleaner.plan.factorService'), max: '40 pts', icon: '🧹', desc: t('cleaner.plan.factorServiceDesc') },
-                  { label: t('cleaner.plan.factorRating'), max: '20 pts', icon: '⭐', desc: t('cleaner.plan.factorRatingDesc') },
-                  { label: t('cleaner.plan.factorArea'), max: '10 pts', icon: '📍', desc: t('cleaner.plan.factorAreaDesc') },
+                  { label: t('cleaner.plan.factorPlan'), max: '30 pts', icon: Gem, desc: t('cleaner.plan.factorPlanDesc') },
+                  { label: t('cleaner.plan.factorService'), max: '40 pts', icon: Sparkles, desc: t('cleaner.plan.factorServiceDesc') },
+                  { label: t('cleaner.plan.factorRating'), max: '20 pts', icon: Star, desc: t('cleaner.plan.factorRatingDesc') },
+                  { label: t('cleaner.plan.factorArea'), max: '10 pts', icon: MapPin, desc: t('cleaner.plan.factorAreaDesc') },
                 ].map(item => (
-                  <Box key={item.label} border="1px solid #E3E8EE" p={3} textAlign="center">
-                    <Text fontSize="lg" mb={1}>{item.icon}</Text>
+                  <Box key={item.label} border="1px solid #DDE5E9" p={3} textAlign="center">
+                    <Box mb={1} color="#185FC6"><item.icon size={20} strokeWidth={1.75} aria-hidden="true" /></Box>
                     <Text fontSize="xs" fontWeight="bold" color="slate.700">{item.label}</Text>
                     <Text fontSize="xs" color="brand.600" fontWeight="black">{item.max}</Text>
                     <Text fontSize="10px" color="slate.400">{item.desc}</Text>
@@ -186,20 +188,20 @@ export default function PlanPage() {
                 const c = PLAN_COLORS[pid];
                 const isActive = currentPlan === pid;
                 const PlanIcon = PLAN_ICONS[pid];
-                const accentColor = pid === 'FREE' ? '#64748B' : pid === 'PRO' ? '#D97706' : '#185FC6';
+                const accentColor = pid === 'FREE' ? '#455B70' : pid === 'PRO' ? '#18314E' : '#185FC6';
 
                 return (
                   <Box
                     key={plan.id}
                     bg={isActive ? c.bg : 'white'}
                     border="1px solid"
-                    borderColor={isActive ? c.border : '#E3E8EE'}
+                    borderColor={isActive ? c.border : '#DDE5E9'}
                     p={5}
                     h="full"
                     display="flex" flexDirection="column"
                     position="relative"
                     overflow="hidden"
-                    style={{ borderRadius: 8 }}
+                    style={{ borderRadius: 2 }}
                     transition="background 0.15s">
 
                     {/* Active left accent strip */}
@@ -213,11 +215,11 @@ export default function PlanPage() {
                         <Text
                           style={{
                             borderRadius: 2,
-                            background: isActive ? accentColor : '#F1F5F9',
+                            background: isActive ? accentColor : '#F8F8F4',
                             padding: '2px 6px',
                             fontSize: '9.5px',
                             fontWeight: 700,
-                            color: isActive ? 'white' : '#64748B',
+                            color: isActive ? 'white' : '#455B70',
                           }}>
                           {plan.badge}
                         </Text>
@@ -225,7 +227,7 @@ export default function PlanPage() {
                     )}
 
                     <VStack align="start" gap={3} flex={1}>
-                      <Box w="40px" h="40px" bg={isActive ? accentColor : '#F1F5F9'}
+                      <Box w="40px" h="40px" bg={isActive ? accentColor : '#F8F8F4'}
                         display="flex" alignItems="center" justifyContent="center">
                         <Icon as={PlanIcon} w={5} h={5} color={isActive ? 'white' : 'slate.400'} />
                       </Box>
@@ -235,7 +237,7 @@ export default function PlanPage() {
                         {plan.price === 0 ? (
                           <Text fontSize="sm" color="slate.400">Free</Text>
                         ) : loading ? (
-                          <Text fontWeight="black" fontSize="xl" color="slate.200" fontFamily="heading">—</Text>
+                          <Text fontWeight="black" fontSize="xl" color="#455B70" fontFamily="heading">—</Text>
                         ) : (
                           <HStack gap={1} align="baseline">
                             <Text fontWeight="black" fontSize="xl" color={c.text} fontFamily="heading" letterSpacing="-0.03em">
@@ -264,10 +266,10 @@ export default function PlanPage() {
                         </Box>
                       ) : (
                         <Button
-                          w="full" size="sm" borderRadius="4px" fontWeight="bold"
+                          w="full" size="sm" borderRadius="2px" fontWeight="bold"
                           {...(plan.price === 0
                             ? { variant: 'outline' as const, borderColor: c.border, color: c.text, _hover: { bg: c.bg } }
-                            : { bg: 'gold.500', color: '#185FC6', _hover: { bg: 'gold.600' } })}
+                            : { bg: 'brand.500', color: 'white', _hover: { bg: 'brand.600' } })}
                           onClick={() => handleSelectPlan(pid)}
                           loading={redirecting || saving}
                           disabled={redirecting}>
@@ -282,9 +284,9 @@ export default function PlanPage() {
           </Box>
 
           {/* Wave info — flat section panel */}
-          <Box border="1px solid #E3E8EE" style={{ borderRadius: 8 }} overflow="hidden">
-            <Box bg="#F7F8FA" px={5} py={3} borderBottom="1px solid #E3E8EE">
-              <Text fontSize="10.5px" fontWeight={700} color="#697386" textTransform="uppercase" letterSpacing="0.06em" fontFamily="heading">
+          <Box border="1px solid #DDE5E9" style={{ borderRadius: 2 }} overflow="hidden">
+            <Box bg="#F8F8F4" px={5} py={3} borderBottom="1px solid #DDE5E9">
+              <Text fontSize="10.5px" fontWeight={700} color="#455B70" textTransform="uppercase" letterSpacing="0.06em" fontFamily="heading">
                 {t('cleaner.plan.leadsTitle')}
               </Text>
             </Box>
@@ -295,22 +297,22 @@ export default function PlanPage() {
                   time: t('cleaner.plan.instantTime'),
                   cleaners: t('cleaner.plan.instantCleaners'),
                   desc: t('cleaner.plan.instantDesc'),
-                  chipBg: '#FEFCE8',
-                  chipColor: '#854D0E',
+                  chipBg: '#EDF3F5',
+                  chipColor: '#18314E',
                 },
                 {
                   wave: t('cleaner.plan.wave2'),
                   time: t('cleaner.plan.wave2Time'),
                   cleaners: t('cleaner.plan.wave2Cleaners'),
                   desc: t('cleaner.plan.wave2Desc'),
-                  chipBg: '#F5F3FF',
+                  chipBg: '#EDF3F5',
                   chipColor: '#185FC6',
                 },
               ].map((w, i, arr) => (
                 <HStack
                   key={w.wave}
                   gap={4}
-                  border="1px solid #E3E8EE"
+                  border="1px solid #DDE5E9"
                   borderTop={i > 0 ? 'none' : undefined}
                   borderLeft="none"
                   borderRight="none"
@@ -332,7 +334,7 @@ export default function PlanPage() {
                   <VStack align="start" gap={0.5}>
                     <HStack gap={3}>
                       <Text fontSize="xs" color="slate.500">⏱ {w.time}</Text>
-                      <Text fontSize="xs" color="slate.500">👥 {w.cleaners}</Text>
+                      <Text fontSize="xs" color="slate.500"><Glyph name="people" />{w.cleaners}</Text>
                     </HStack>
                     <Text fontSize="sm" color="slate.600">{w.desc}</Text>
                   </VStack>
@@ -343,7 +345,7 @@ export default function PlanPage() {
 
           {/* Manage subscription — flat panel */}
           {hasSubscription && (
-            <Box bg="white" border="1px solid #E3E8EE" p={5} style={{ borderRadius: 8 }}>
+            <Box bg="white" border="1px solid #DDE5E9" p={5} style={{ borderRadius: 2 }}>
               <Flex justify="space-between" align="center">
                 <Box>
                   <Text fontWeight="bold" color="slate.800">{t('cleaner.plan.billingTitle')}</Text>
@@ -353,7 +355,7 @@ export default function PlanPage() {
                 </Box>
                 <Button
                   size="sm" variant="outline" borderColor="slate.300" color="slate.600"
-                  borderRadius="4px" fontWeight="semibold"
+                  borderRadius="2px" fontWeight="semibold"
                   _hover={{ bg: 'slate.50' }}
                   onClick={handleManageSubscription}
                   loading={redirecting}>

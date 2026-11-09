@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import CleanerNav from '@/components/cleaner-nav';
 import { useLocale } from '@/lib/i18n';
+import { serviceLabel } from '@/lib/estimate';
 
 type Transaction = {
   id: string;
@@ -56,12 +57,12 @@ export default function FinancesPage() {
     {
       label: t('cleaner.finances.statFeesPaid'),
       value: data ? `$${data.totalFeesPaid.toFixed(2)}` : '—',
-      color: '#EF4444',
+      color: '#18314E',
     },
     {
       label: t('cleaner.finances.statJobs'),
       value: data ? String(data.totalJobsCompleted) : '—',
-      color: '#22C55E',
+      color: '#185FC6',
     },
     {
       label: t('cleaner.finances.statEarnings'),
@@ -70,8 +71,8 @@ export default function FinancesPage() {
     },
     {
       label: t('cleaner.finances.statRating'),
-      value: data?.ratingAvg ? `${data.ratingAvg.toFixed(1)} ⭐` : '—',
-      color: '#F59E0B',
+      value: data?.ratingAvg ? `${data.ratingAvg.toFixed(1)} ★` : '—',
+      color: '#18314E',
     },
   ];
 
@@ -80,13 +81,13 @@ export default function FinancesPage() {
       <CleanerNav />
       <Box p={6} maxW="1200px" mx="auto">
         <HStack gap={2.5} mb={6}>
-          <Heading size="md" fontWeight="bold" color="slate.900" fontFamily="heading">{t('cleaner.finances.title')}</Heading>
+          <Heading fontWeight="300" fontSize={{ base: '24px', md: '28px' }} letterSpacing="-0.01em" size="md" color="slate.900" fontFamily="heading">{t('cleaner.finances.title')}</Heading>
         </HStack>
 
         <VStack gap={6} align="stretch">
 
           {/* StatStrip — horizontal bar with 4 metrics and vertical dividers */}
-          <Box border="1px solid #E3E8EE" bg="white" style={{ borderRadius: 8 }}>
+          <Box border="1px solid #DDE5E9" bg="white" style={{ borderRadius: 2 }}>
             <Flex>
               {statItems.map((s, i) => (
                 <Box
@@ -94,11 +95,11 @@ export default function FinancesPage() {
                   flex={1}
                   px={5}
                   py={4}
-                  borderRight={i < statItems.length - 1 ? '1px solid #E3E8EE' : undefined}
+                  borderRight={i < statItems.length - 1 ? '1px solid #DDE5E9' : undefined}
                   textAlign="center">
                   <Text
                     fontSize="22px"
-                    fontWeight={800}
+                    fontWeight={700}
                     fontFamily="heading"
                     color={s.color}
                     letterSpacing="-0.03em"
@@ -107,7 +108,7 @@ export default function FinancesPage() {
                   </Text>
                   <Text
                     fontSize="11px"
-                    color="#697386"
+                    color="#455B70"
                     textTransform="uppercase"
                     fontFamily="heading"
                     letterSpacing="0.07em"
@@ -121,12 +122,12 @@ export default function FinancesPage() {
 
           {/* ROI callout: flat panel, no gradient */}
           {data && data.totalFeesPaid > 0 && (
-            <Box bg="#F7F8FA" border="1px solid #E3E8EE" p={5} style={{ borderRadius: 8 }}>
+            <Box bg="#F8F8F4" border="1px solid #DDE5E9" p={5} style={{ borderRadius: 2 }}>
               <HStack gap={3}>
                 <Box
                   w="40px" h="40px"
                   bg="white"
-                  border="1px solid #E3E8EE"
+                  border="1px solid #DDE5E9"
                   display="flex" alignItems="center" justifyContent="center"
                   flexShrink={0}>
                   <Icon as={LucideTrendingUp} w={5} h={5} color="#185FC6" />
@@ -150,14 +151,14 @@ export default function FinancesPage() {
           )}
 
           {/* Transactions section panel */}
-          <Box border="1px solid #E3E8EE" style={{ borderRadius: 8 }} overflow="hidden">
+          <Box border="1px solid #DDE5E9" style={{ borderRadius: 2 }} overflow="hidden">
             {/* Section header */}
-            <Box bg="#F7F8FA" px={5} py={3} borderBottom="1px solid #E3E8EE">
+            <Box bg="#F8F8F4" px={5} py={3} borderBottom="1px solid #DDE5E9">
               <HStack gap={2}>
                 <Text
                   fontSize="10.5px"
                   fontWeight={700}
-                  color="#697386"
+                  color="#455B70"
                   textTransform="uppercase"
                   fontFamily="heading"
                   letterSpacing="0.07em">
@@ -165,7 +166,7 @@ export default function FinancesPage() {
                 </Text>
                 {data && (
                   <Text
-                    style={{ borderRadius: 2, background: '#E3E8EE', padding: '2px 6px', fontSize: 9.5, fontWeight: 700, color: '#64748B' }}>
+                    style={{ borderRadius: 2, background: '#DDE5E9', padding: '2px 6px', fontSize: 9.5, fontWeight: 700, color: '#455B70' }}>
                     {data.transactions.length}
                   </Text>
                 )}
@@ -189,8 +190,8 @@ export default function FinancesPage() {
                 {data.transactions.map((tx, i) => {
                   const isLast = i === data.transactions.length - 1;
                   const leftColor =
-                    tx.lead.status === 'COMPLETED' ? '#22C55E' :
-                    tx.lead.status === 'ACCEPTED'  ? '#185FC6' : '#CBD5E1';
+                    tx.lead.status === 'COMPLETED' ? '#185FC6' :
+                    tx.lead.status === 'ACCEPTED'  ? '#185FC6' : '#DDE5E9';
                   return (
                     <Box
                       key={tx.id}
@@ -198,7 +199,7 @@ export default function FinancesPage() {
                       bg="white"
                       px={5}
                       py={4}
-                      borderBottom={isLast ? undefined : '1px solid #F1F5F9'}>
+                      borderBottom={isLast ? undefined : '1px solid #F8F8F4'}>
                       {/* Left accent strip */}
                       <Box position="absolute" left={0} top={0} bottom={0} w="3px" bg={leftColor} />
 
@@ -207,10 +208,10 @@ export default function FinancesPage() {
                           {/* Status dot */}
                           <Box
                             w="7px" h="7px" borderRadius="full" flexShrink={0}
-                            bg={tx.lead.status === 'COMPLETED' ? '#22C55E' : tx.lead.status === 'ACCEPTED' ? '#185FC6' : '#CBD5E1'} />
+                            bg={tx.lead.status === 'COMPLETED' ? '#185FC6' : tx.lead.status === 'ACCEPTED' ? '#185FC6' : '#DDE5E9'} />
 
                           <VStack align="start" gap={0.5}>
-                            <Text fontWeight="semibold" color="slate.800" fontSize="sm">{tx.lead.serviceType}</Text>
+                            <Text fontWeight="semibold" color="slate.800" fontSize="sm">{serviceLabel(tx.lead.serviceType, locale)}</Text>
                             <HStack gap={2} color="slate.400" fontSize="xs">
                               <Icon as={LucideCalendar} w={3} h={3} />
                               <Text>
@@ -229,11 +230,11 @@ export default function FinancesPage() {
                           <Text
                             style={{
                               borderRadius: 2,
-                              background: tx.lead.status === 'COMPLETED' ? '#F8FAFC' : '#F1F5F9',
+                              background: tx.lead.status === 'COMPLETED' ? '#F8F8F4' : '#F8F8F4',
                               padding: '2px 6px',
                               fontSize: 9.5,
                               fontWeight: 700,
-                              color: tx.lead.status === 'COMPLETED' ? '#185FC6' : '#64748B',
+                              color: tx.lead.status === 'COMPLETED' ? '#185FC6' : '#455B70',
                             }}>
                             {tx.lead.status === 'COMPLETED' ? t('cleaner.finances.statusCompleted') :
                              tx.lead.status === 'ACCEPTED' ? t('cleaner.finances.statusInProgress') : tx.lead.status}

@@ -32,16 +32,12 @@ type Props = {
   onResolve?: (ok: boolean | null) => void;
   // Pass any Chakra Input props (bg, border, h, fontSize, etc.)
   inputProps?: Record<string, any>;
-  /** "public" uses the public pages' palette (/request); the dashboards keep the default. */
-  tone?: 'public';
 };
 
 type Resolved = { zip: string | null; city: string | null; state: string | null };
 
-export function AddressInput({ value, onChange, placeholder, onResolve, inputProps = {}, tone }: Props) {
-  const look = tone === 'public'
-    ? { border: '#455B70', borderBusy: '#185FC6', bgBusy: '#EDF3F5', icon: '#455B70', iconBusy: '#185FC6', warn: '#18314E', radius: 2, text: '13px' }
-    : { border: '#E2E8F0', borderBusy: 'brand.300', bgBusy: 'brand.50', icon: 'slate.400', iconBusy: 'brand.500', warn: '#D97706', radius: 4, text: '11px' };
+export function AddressInput({ value, onChange, placeholder, onResolve, inputProps = {} }: Props) {
+  const look = { border: '#455B70', borderBusy: '#185FC6', bgBusy: '#EDF3F5', icon: '#455B70', iconBusy: '#185FC6', warn: '#18314E', radius: 2, text: '13px' };
   const [detecting, setDetecting] = useState(false);
   // Held in a ref so an inline callback from the parent cannot re-trigger the
   // lookup effect on every render.
