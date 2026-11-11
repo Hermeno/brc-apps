@@ -1,6 +1,7 @@
 import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { createNotification } from '@/lib/notifications';
+import { CLIENT_DECISION_HOURS } from '@/lib/lead-policy';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(
@@ -180,7 +181,7 @@ export async function POST(
     userId: lead.clientId,
     type:   'cleaner_responded',
     title:  'Cleaner available!',
-    body:   'A professional responded to your request. Accept or decline.',
+    body:   `A professional responded to your request. Accept or decline within ${CLIENT_DECISION_HOURS} hours.`,
     link:   '/dashboard/client',
   }).catch(() => {});
 

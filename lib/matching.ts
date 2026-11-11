@@ -4,6 +4,8 @@ import { createNotificationMany, createNotification } from './notifications';
 import { haversineDistance, resolveCoords, ensureRadiusColumn } from './geo';
 import { PLAN_MAX_RADIUS, DEFAULT_RADIUS_MILES } from './plans';
 import { logWarn } from './logger';
+import { resolveFeeOnCancellation } from './lead-fee';
+import { DIRECT_REQUEST_HOURS, CLIENT_DECISION_HOURS, AUTO_COMPLETE_HOURS } from './lead-policy';
 
 // ─── CFS (Cleaner Fit Score) ─────────────────────────────────────────────────
 // Max 100 points: Plan(30) + Service(40) + Rating(20) + Proximity(10)
@@ -149,6 +151,7 @@ async function logNoMatch(
 const WAVE_BATCH_SIZE      = 2;
 const OPEN_WINDOW_MS       = 90 * 1000;
 const INSTANT_BOOK_WINDOW_MS = 10 * 60 * 1000;
+const HOUR_MS                = 60 * 60 * 1000;
 
 // ─── Direct request ───────────────────────────────────────────────────────────
 // Client picked a specific cleaner (Thumbtack-style). Instead of the wave
@@ -199,8 +202,15 @@ export async function dispatchDirect(leadId: string, cleanerId: string): Promise
 export async function runMatching(leadId: string) {
   await ensureRadiusColumn();
 
-  const lead = await prisma.lead.findUnique({ where: { id: leadId } });
+  const lead = await prisma.lead.findUnique({ where: { id: leadId }, include: { distributions: true } });
   if (!lead) return { type: 'error' };
+
+  // A re-match (after a decline or an unpaid fee) keeps its invite history: new
+  // cleaners first, never again the one who already answered. Starting over here
+  // collided with that history and could leave the lead stuck in NEW or WAVE2.
+  if (lead.distributions.length > 0) {
+    return { type: (await dispatchNextBatch(lead, new Date(), 'WAVE2', OPEN_WINDOW_MS)) ? 'wave2' : 'unmatched' };
+  }
 
   const leadCoords = resolveCoords(lead.latitude, lead.longitude, lead.zipCode);
 
@@ -296,13 +306,22 @@ export async function runMatching(leadId: string) {
 // Finds the next 2 cleaners not yet invited. Marks previous batch EXPIRED first.
 // If no candidates remain → UNMATCHED.
 async function dispatchNextBatch(
-  lead: { id: string; latitude: number; longitude: number; zipCode: string | null; serviceType: string; address: string; distributions: { cleanerId: string }[] },
+  lead: {
+    id: string; clientId: string; latitude: number; longitude: number; zipCode: string | null; serviceType: string; address: string;
+    distributions: { cleanerId: string; status: string; createdAt: Date; notifiedAt: Date | null }[];
+  },
   nowDate: Date,
   nextStatus: 'WAVE2' | 'WAVE3',
   windowMs: number,
 ): Promise<boolean> {
   const leadCoords = resolveCoords(lead.latitude, lead.longitude, lead.zipCode);
   const usedIds    = lead.distributions.map(d => d.cleanerId);
+  // One second chance per cleaner, never for the one who already answered (turned
+  // down, or let the fee lapse). Uncapped, the same two cleaners were re-notified
+  // every 90 seconds until the job date and the client never heard "no match".
+  const retryIds   = lead.distributions
+    .filter(d => d.status !== 'ACCEPTED' && !(d.notifiedAt && d.notifiedAt.getTime() - d.createdAt.getTime() >= OPEN_WINDOW_MS))
+    .map(d => d.cleanerId);
 
   const candidates = await prisma.user.findMany({
     where: {
@@ -327,7 +346,7 @@ async function dispatchNextBatch(
     // No new candidates — cycle back through previously invited cleaners if any are still available
     const recycled = await prisma.user.findMany({
       where: {
-        id: { in: usedIds },
+        id: { in: retryIds },
         role: 'CLEANER', isAvailable: true, isVerified: true,
         hasPaymentMethod: true,
         verification: { status: 'APPROVED' },
@@ -356,6 +375,13 @@ async function dispatchNextBatch(
         nowDate,
       );
       await prisma.lead.update({ where: { id: lead.id }, data: { status: 'UNMATCHED' } });
+      createNotification({
+        userId: lead.clientId,
+        type:   'lead_unmatched',
+        title:  'No cleaner available',
+        body:   'None of the nearby cleaners accepted your request. Pick another time, or choose a cleaner directly.',
+        link:   '/dashboard/client',
+      }).catch(() => {});
       return false;
     }
 
@@ -527,6 +553,129 @@ export async function advanceWaves(): Promise<string[]> {
 
       rematchIds.push(conv.leadId);
     }
+  }
+
+  // ── Nobody waits forever: deadlines from lib/lead-policy.ts ──────────────
+
+  // A cleaner the client picked directly never answered → offer it to the others.
+  const unansweredDirect = await prisma.lead.findMany({
+    where: {
+      status:        'NEW',
+      dateTime:      { gt: nowDate },
+      distributions: { some: { status: 'INVITED', expiresAt: null, notifiedAt: { lt: new Date(nowDate.getTime() - DIRECT_REQUEST_HOURS * HOUR_MS) } } },
+    },
+    include: { distributions: true },
+  });
+  for (const lead of unansweredDirect) {
+    const expired = await prisma.leadDistribution.updateMany({
+      where: { leadId: lead.id, status: 'INVITED', expiresAt: null },
+      data:  { status: 'EXPIRED' },
+    });
+    if (expired.count === 0) continue; // another instance handled it
+    if (await dispatchNextBatch(lead, nowDate, 'WAVE2', OPEN_WINDOW_MS)) {
+      createNotification({
+        userId: lead.clientId,
+        type:   'lead_unmatched',
+        title:  'Offering your request to other cleaners',
+        body:   `The cleaner you chose did not answer within ${DIRECT_REQUEST_HOURS} hours, so other cleaners nearby can take it now.`,
+        link:   '/dashboard/client',
+      }).catch(() => {});
+    }
+  }
+
+  // A cleaner answered but the client never accepted or declined. The cleaner was
+  // held (and their calendar blocked around the job) for as long as the client
+  // stayed silent: release them and close the request. Nothing was charged yet.
+  const undecided = await prisma.conversation.findMany({
+    where: {
+      status: 'active',
+      lead:   { status: 'IN_REVIEW' },
+      OR: [
+        { createdAt: { lt: new Date(nowDate.getTime() - CLIENT_DECISION_HOURS * HOUR_MS) } },
+        { lead: { dateTime: { lt: nowDate } } },
+      ],
+    },
+    select: { id: true, leadId: true, cleanerId: true, clientId: true, feeStatus: true },
+  });
+  for (const conv of undecided) {
+    const closed = await prisma.conversation.updateMany({
+      where: { id: conv.id, status: 'active' },
+      data:  { status: 'closed', feeStatus: resolveFeeOnCancellation(conv.feeStatus).feeStatus },
+    });
+    if (closed.count === 0) continue;
+    await prisma.lead.updateMany({ where: { id: conv.leadId, status: 'IN_REVIEW' }, data: { status: 'CANCELLED' } });
+    createNotification({
+      userId: conv.cleanerId,
+      type:   'lead_declined',
+      title:  'You are free to take other jobs',
+      body:   'The client did not accept or decline in time, so the request was closed. No lead fee was charged.',
+      link:   '/dashboard/cleaner',
+    }).catch(() => {});
+    createNotification({
+      userId: conv.clientId,
+      type:   'lead_unmatched',
+      title:  'Your request was closed',
+      body:   'A cleaner was ready, but you did not accept or decline in time, so they were released. You can reactivate the request from your dashboard.',
+      link:   '/dashboard/client',
+    }).catch(() => {});
+  }
+
+  // Still open when the job time arrives → closed; matching a past date is pointless.
+  const OPEN = ['NEW', 'WAVE2', 'WAVE3', 'IN_REVIEW'] as const;
+  const lapsed = await prisma.lead.findMany({
+    where:  { status: { in: [...OPEN] }, dateTime: { lt: nowDate }, conversations: { none: { status: 'active' } } },
+    select: { id: true, clientId: true },
+  });
+  for (const lead of lapsed) {
+    const closed = await prisma.lead.updateMany({
+      where: { id: lead.id, status: { in: [...OPEN] } },
+      data:  { status: 'CANCELLED' },
+    });
+    if (closed.count === 0) continue;
+    await prisma.leadDistribution.updateMany({ where: { leadId: lead.id, status: 'INVITED' }, data: { status: 'EXPIRED' } });
+    createNotification({
+      userId: lead.clientId,
+      type:   'lead_unmatched',
+      title:  'Your request date has passed',
+      body:   'No cleaner was confirmed before the scheduled time, so the request was closed. You can reactivate it with a new date from your dashboard.',
+      link:   '/dashboard/client',
+    }).catch(() => {});
+  }
+
+  // A booked job long past its time. Only the client can mark it complete, so a
+  // client who vanished left the cleaner without closure or a review, forever.
+  const overdue = await prisma.lead.findMany({
+    where: {
+      status:        'ACCEPTED',
+      dateTime:      { lt: new Date(nowDate.getTime() - AUTO_COMPLETE_HOURS * HOUR_MS) },
+      conversations: { some: { status: 'active', feeStatus: { in: ['charged', 'waived'] } } },
+    },
+    select: { id: true, clientId: true, cleanerId: true, frequency: true },
+  });
+  for (const lead of overdue) {
+    const disputed = await prisma.dispute.count({ where: { leadId: lead.id, status: { in: ['OPEN', 'UNDER_REVIEW'] } } });
+    if (disputed > 0) continue; // an admin decides this one
+    const done = await prisma.lead.updateMany({ where: { id: lead.id, status: 'ACCEPTED' }, data: { status: 'COMPLETED' } });
+    if (done.count === 0) continue;
+    if (lead.frequency === 'once') {
+      await prisma.conversation.updateMany({ where: { leadId: lead.id, status: 'active' }, data: { status: 'closed' } });
+    }
+    if (lead.cleanerId) {
+      createNotification({
+        userId: lead.cleanerId,
+        type:   'job_completed',
+        title:  'Job completed',
+        body:   `The job was marked completed automatically ${AUTO_COMPLETE_HOURS} hours after its scheduled time.`,
+        link:   '/dashboard/cleaner',
+      }).catch(() => {});
+    }
+    createNotification({
+      userId: lead.clientId,
+      type:   'job_completed',
+      title:  'Your cleaning was marked completed',
+      body:   `It closed automatically ${AUTO_COMPLETE_HOURS} hours after the scheduled time. You can leave a review, or open a dispute if something went wrong.`,
+      link:   '/dashboard/client',
+    }).catch(() => {});
   }
 
   return rematchIds;

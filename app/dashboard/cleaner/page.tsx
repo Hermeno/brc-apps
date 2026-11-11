@@ -15,6 +15,7 @@ import { toaster } from '@/lib/toaster';
 import { motion, AnimatePresence } from 'motion/react';
 import { useRouter } from 'next/navigation';
 import { useT, useLocale } from '@/lib/i18n';
+import { CLIENT_DECISION_HOURS } from '@/lib/lead-policy';
 import Glyph from '@/components/glyph';
 
 type Lead = {
@@ -469,6 +470,9 @@ export default function CleanerDashboard() {
             count={pendingConversations.length}
             accentColor="#185FC6"
           >
+            <Text fontSize="12px" color="#455B70" px={6} pl={8} pt={3} pb={1}>
+              {t('cleaner.dashboard.awaitingHint', { h: CLIENT_DECISION_HOURS })}
+            </Text>
             {pendingConversations.map((conv, i) => (
               <Box
                 key={conv.id} bg="white"

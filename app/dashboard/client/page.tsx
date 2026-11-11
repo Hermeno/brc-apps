@@ -27,6 +27,7 @@ import { LucideLogOut } from 'lucide-react';
 import { AddressInput } from '@/components/address-input';
 import Image from 'next/image';
 import { useT, useLocale } from '@/lib/i18n';
+import { CLIENT_DECISION_HOURS } from '@/lib/lead-policy';
 import LanguageSwitcher from '@/components/language-switcher';
 import Glyph from '@/components/glyph';
 
@@ -961,10 +962,13 @@ export default function ClientPage() {
                                 {/* Active conversations — respond / decline */}
                                 {activeConvs.length > 0 && (
                                   <Box w="full">
-                                    <Text fontSize="xs" color="brand.600" fontWeight="bold" mb={2}>
+                                    <Text fontSize="xs" color="brand.600" fontWeight="bold" mb={1}>
                                       {activeConvs.length === 1
                                         ? t('client.dashboard.cleanerReady_one')
                                         : t('client.dashboard.cleanerReady_other').replace('{{n}}', String(activeConvs.length))}
+                                    </Text>
+                                    <Text fontSize="xs" color="#455B70" mb={2}>
+                                      {t('client.dashboard.decideWithin', { h: CLIENT_DECISION_HOURS })}
                                     </Text>
                                     <VStack align="start" gap={2}>
                                       {activeConvs.map(conv => (
