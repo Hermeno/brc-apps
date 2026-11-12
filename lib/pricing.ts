@@ -8,30 +8,31 @@ type ServiceKey =
   | 'deck-cleaning' | 'pressure-washing' | 'gutter-cleaning' | 'flashing-cleaning'
   | 'tile-grout' | 'home-organizing' | 'garage-attic' | 'commercial';
 
-const PRICE_RANGE: Record<ServiceKey, [number, number]> = {
-  standard:           [8,  12],
-  deep:               [15, 25],
-  'post-work':        [25, 40],
-  moving:             [25, 40],
-  'deck-cleaning':    [10, 18],
-  'pressure-washing': [12, 20],
-  'gutter-cleaning':  [15, 25],
-  'flashing-cleaning':[10, 18],
-  'tile-grout':       [12, 20],
-  'home-organizing':  [15, 25],
-  'garage-attic':     [15, 25],
-  commercial:         [25, 40],
+// Fee per accepted lead: about 6% of lib/estimate's price for a 2-bed job of that
+// type. Defaults only — the admin Lead Prices screen (LeadPriceConfig) overrides each.
+export const LEAD_PRICE_DEFAULTS: Record<ServiceKey, number> = {
+  standard:            15,
+  deep:                25,
+  moving:              25,
+  'post-work':         39,
+  commercial:          35,
+  'tile-grout':        20,
+  'pressure-washing':  20,
+  'gutter-cleaning':   15,
+  'home-organizing':   15,
+  'garage-attic':      15,
+  'deck-cleaning':     15,
+  'flashing-cleaning': 10,
 };
 
-function randInRange(min: number, max: number): number {
-  return Math.round(min + Math.random() * (max - min));
-}
+// A weekly/biweekly client is worth many visits, but many book only once — so 1.5×, not more.
+export const RECURRING_MULTIPLIER = 1.5;
 
 export function detectServiceKey(serviceType: string): ServiceKey {
   const s = serviceType.toLowerCase();
   if (s.includes('pesada') || s.includes('deep') || s.includes('profunda') || s === 'deep_cleaning') return 'deep';
   if (s.includes('obra')   || s.includes('post') || s === 'post_construction')                       return 'post-work';
-  if (s.includes('mudança') || s.includes('moving') || s === 'move_in_out')                          return 'moving';
+  if (s.includes('mudança') || s.includes('moving') || s.includes('move'))                           return 'moving';
   if (s.includes('pressure') || s.includes('power wash') || s.includes('pressão'))                   return 'pressure-washing';
   if (s.includes('deck'))                                                                             return 'deck-cleaning';
   if (s.includes('gutter') || s.includes('calha'))                                                   return 'gutter-cleaning';
@@ -39,7 +40,7 @@ export function detectServiceKey(serviceType: string): ServiceKey {
   if (s.includes('tile') || s.includes('grout') || s.includes('azulejo') || s.includes('rejunte'))  return 'tile-grout';
   if (s.includes('organ'))                                                                            return 'home-organizing';
   if (s.includes('garage') || s.includes('basement') || s.includes('attic') || s.includes('porão') || s.includes('sótão')) return 'garage-attic';
-  if (s.includes('commercial') || s.includes('comercial'))                                           return 'commercial';
+  if (s.includes('commercial') || s.includes('comercial') || s.includes('office'))                   return 'commercial';
   return 'standard';
 }
 
@@ -75,18 +76,12 @@ export async function getLeadPriceConfig(): Promise<LeadPriceConfig> {
 
 export function calculateLeadPrice(
   serviceType: string,
-  _dateTime?: Date,
-  _frequency?: string,
+  frequency?: string | null,
   config?: Pick<LeadPriceConfig, 'priceMap'>,
 ): number {
-  const key = detectServiceKey(serviceType);
-
-  // If admin has set a fixed override for this key, use it; otherwise pick randomly in range
-  if (config?.priceMap?.[key] !== undefined) {
-    return config.priceMap[key];
-  }
-
-  const [min, max] = PRICE_RANGE[key];
-  return randInRange(min, max);
+  const key  = detectServiceKey(serviceType);
+  const base = config?.priceMap?.[key] ?? LEAD_PRICE_DEFAULTS[key];
+  return frequency === 'weekly' || frequency === 'biweekly'
+    ? Math.round(base * RECURRING_MULTIPLIER)
+    : base;
 }
-

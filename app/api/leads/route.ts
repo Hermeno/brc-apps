@@ -176,7 +176,7 @@ export async function POST(request: NextRequest) {
 
     const emailValid  = await hasMxRecords(session.user.email!);
     const qualityScore = emailValid ? 1 : 0;
-    const leadPrice   = calculateLeadPrice(serviceType, parsedDate, frequency ?? 'once', priceConfig);
+    const leadPrice   = calculateLeadPrice(serviceType, frequency, priceConfig);
 
     const lead = await prisma.lead.create({
       data: {

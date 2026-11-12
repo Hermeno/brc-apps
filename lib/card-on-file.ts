@@ -13,7 +13,14 @@ type CustomerOwner = {
 
 /** The user's Stripe customer id, creating and persisting one on first use. */
 export async function ensureStripeCustomer(user: CustomerOwner): Promise<string> {
-  if (user.stripeCustomerId) return user.stripeCustomerId;
+  if (user.stripeCustomerId) {
+    // An id saved under test keys (or since deleted) doesn't exist for these keys — replace it.
+    const existing = await stripe.customers.retrieve(user.stripeCustomerId).catch((err: any) => {
+      if (err?.code === 'resource_missing') return null;
+      throw err;
+    });
+    if (existing && !existing.deleted) return user.stripeCustomerId;
+  }
 
   const customer = await stripe.customers.create({
     email:    user.email,
@@ -22,7 +29,7 @@ export async function ensureStripeCustomer(user: CustomerOwner): Promise<string>
   });
   await prisma.user.update({
     where: { id: user.id },
-    data:  { stripeCustomerId: customer.id },
+    data:  { stripeCustomerId: customer.id, hasPaymentMethod: false },
   });
   return customer.id;
 }
@@ -78,7 +85,12 @@ export async function syncCardOnFile(customerId: string): Promise<CardOnFile> {
     });
 
     return { ok: true, defaultPaymentMethodId: defaultId, cards };
-  } catch (err) {
+  } catch (err: any) {
+    // The customer doesn't exist for these keys (saved in test mode, or deleted): proven no card.
+    if (err?.code === 'resource_missing') {
+      await prisma.user.updateMany({ where: { stripeCustomerId: customerId }, data: { hasPaymentMethod: false } });
+      return { ok: true, defaultPaymentMethodId: null, cards: [] };
+    }
     logError('[syncCardOnFile]', err);
     return { ok: false, defaultPaymentMethodId: null, cards: [] };
   }

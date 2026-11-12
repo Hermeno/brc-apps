@@ -45,14 +45,9 @@ export async function register() {
       // Migrate any legacy PREMIUM users → PRO (one-time, idempotent)
       await run(`UPDATE "User" SET plan = 'PRO' WHERE plan = 'PREMIUM'`);
 
-      // Seed LeadPriceConfig defaults (upsert = safe to run every boot)
-      const priceDefaults: [string, number][] = [
-        ['standard',  10],
-        ['deep',      20],
-        ['post-work', 32],
-        ['moving',    32],
-      ];
-      for (const [id, price] of priceDefaults) {
+      // Seed LeadPriceConfig defaults (upsert = safe to run every boot; never overwrites admin values)
+      const { LEAD_PRICE_DEFAULTS } = await import('./lib/pricing');
+      for (const [id, price] of Object.entries(LEAD_PRICE_DEFAULTS)) {
         await prisma.leadPriceConfig.upsert({
           where:  { id },
           create: { id, price },
@@ -62,9 +57,7 @@ export async function register() {
 
       // Seed LeadPlatformConfig defaults
       const platformDefaults: [string, string][] = [
-        ['same_day_multiplier',  '1.5'],
-        ['recurring_multiplier', '1.3'],
-        ['coverage_zips',        '[]' ],
+        ['coverage_zips', '[]'],
       ];
       for (const [id, value] of platformDefaults) {
         await prisma.leadPlatformConfig.upsert({

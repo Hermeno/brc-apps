@@ -62,7 +62,8 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
       customer: customerId,
       // Save card for future off-session auto-charges
       setup_future_usage: 'off_session',
-      automatic_payment_methods: { enabled: true },
+      // Cards only: the next lead fee is auto-charged from type 'card' methods (lib/card-on-file).
+      payment_method_types: ['card'],
       description: `Lead fee — ${conv.lead.serviceType}`,
       metadata: { type: 'lead_payment', conversationId: id, cleanerId: user.id, leadId: conv.leadId },
     });

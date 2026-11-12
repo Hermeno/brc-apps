@@ -2,6 +2,7 @@ import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { createNotification } from '@/lib/notifications';
 import { CLIENT_DECISION_HOURS } from '@/lib/lead-policy';
+import { calculateLeadPrice, getLeadPriceConfig } from '@/lib/pricing';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(
@@ -81,7 +82,7 @@ export async function POST(
   }
 
   const waveNum   = dist.wave;
-  const leadPrice = lead.leadPrice ?? 15;
+  const leadPrice = lead.leadPrice ?? calculateLeadPrice(lead.serviceType, lead.frequency, await getLeadPriceConfig());
 
   let conversationId = '';
   let usedFreeCredit = false;

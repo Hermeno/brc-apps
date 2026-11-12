@@ -58,6 +58,8 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ id:
   const checkoutSession = await stripe.checkout.sessions.create({
     customer:    customerId,
     mode:        'payment',
+    // Cards only: the next lead fee is auto-charged from type 'card' methods (lib/card-on-file).
+    payment_method_types: ['card'],
     line_items:  [{
       price_data: {
         currency:     'usd',

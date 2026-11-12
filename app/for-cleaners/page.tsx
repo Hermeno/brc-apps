@@ -60,6 +60,7 @@ const money = (n: number) => (n <= 0 ? 'Free' : `$${n % 1 === 0 ? n : n.toFixed(
 export default async function ForCleanersPage() {
   const prices     = await getPlanPrices();
   const freeMax    = PLAN_MAX_RADIUS.FREE;
+  const basicMax   = PLAN_MAX_RADIUS.BASIC;
   const proMax     = PLAN_MAX_RADIUS.PRO;
   const radiusList = RADIUS_OPTIONS.join(', ').replace(/, (\d+)$/, ' and $1');
 
@@ -111,7 +112,7 @@ export default async function ForCleanersPage() {
             </li>
             <li>
               <div className="col-head"><MapPin size={32} strokeWidth={1.75} aria-hidden="true" /><h3 className="t-item">You set the area</h3></div>
-              <p className="col-text">A ZIP code and a radius up to {freeMax} miles — up to {proMax} on the Pro plan.</p>
+              <p className="col-text">A ZIP code and a radius up to {freeMax} miles — up to {basicMax} on Basic and {proMax} on Pro.</p>
             </li>
             <li>
               <div className="col-head"><Receipt size={32} strokeWidth={1.75} aria-hidden="true" /><h3 className="t-item">Paid only when picked</h3></div>
@@ -308,7 +309,7 @@ export default async function ForCleanersPage() {
                     <span className={styles.planName}>Basic<br /><span className={styles.planPrice}>{money(prices.BASIC)}</span></span>
                     <p className={styles.planWhat}>
                       Adds 15 points to your match score out of 100, so you are considered earlier when
-                      several professionals fit the same request.
+                      several professionals fit the same request, and raises your radius cap to {basicMax} miles.
                     </p>
                   </div>
                   <div className={styles.planRow}>
@@ -341,8 +342,8 @@ export default async function ForCleanersPage() {
                 <h3 className={styles.controlTitle}>Your service area</h3>
                 <p className={styles.controlBody}>
                   A ZIP code plus a radius of {radiusList} miles. Requests outside that circle are never
-                  sent to you. The Free and Basic plans cap the radius at {freeMax} miles; Pro raises it
-                  to {proMax}.
+                  sent to you. The Free plan caps the radius at {freeMax} miles; Basic raises it to
+                  {basicMax} and Pro to {proMax}.
                 </p>
               </div>
               <div className={styles.control}>
@@ -541,8 +542,8 @@ export default async function ForCleanersPage() {
               <details className={styles.faqItem}>
                 <summary className={styles.faqQ}>Do I have to pay for a plan?<IcChevron /></summary>
                 <p className={styles.faqA}>
-                  No. The Free plan receives requests. A paid plan raises your match score and, on Pro,
-                  the distance you can cover — it does not unlock the ability to work. You can start
+                  No. The Free plan receives requests. A paid plan raises your match score and the
+                  distance you can cover — it does not unlock the ability to work. You can start
                   free and change later from your dashboard.
                 </p>
               </details>

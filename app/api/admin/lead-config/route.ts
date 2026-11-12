@@ -2,6 +2,7 @@ import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { NextRequest, NextResponse } from 'next/server';
 import { logError } from '@/lib/logger';
+import { LEAD_PRICE_DEFAULTS } from '@/lib/pricing';
 
 async function requireAdmin() {
   const session = await auth();
@@ -10,25 +11,10 @@ async function requireAdmin() {
   return me?.role === 'ADMIN' ? me : null;
 }
 
-const PRICE_DEFAULTS = [
-  { id: 'standard',          price: 10 },
-  { id: 'deep',              price: 20 },
-  { id: 'post-work',         price: 32 },
-  { id: 'moving',            price: 32 },
-  { id: 'deck-cleaning',     price: 14 },
-  { id: 'pressure-washing',  price: 16 },
-  { id: 'gutter-cleaning',   price: 20 },
-  { id: 'flashing-cleaning', price: 14 },
-  { id: 'tile-grout',        price: 16 },
-  { id: 'home-organizing',   price: 20 },
-  { id: 'garage-attic',      price: 20 },
-  { id: 'commercial',        price: 32 },
-];
+const PRICE_DEFAULTS = Object.entries(LEAD_PRICE_DEFAULTS).map(([id, price]) => ({ id, price }));
 
 const PLATFORM_DEFAULTS = [
-  { id: 'same_day_multiplier',  value: '1.5' },
-  { id: 'recurring_multiplier', value: '1.3' },
-  { id: 'coverage_zips',        value: '[]'  },
+  { id: 'coverage_zips', value: '[]' },
 ];
 
 async function ensureTables() {
@@ -97,7 +83,7 @@ export async function PATCH(req: NextRequest) {
 
     if (body.type === 'price') {
       const { id, price } = body;
-      if (!['standard', 'deep', 'post-work', 'moving', 'deck-cleaning', 'pressure-washing', 'gutter-cleaning', 'flashing-cleaning', 'tile-grout', 'home-organizing', 'garage-attic', 'commercial'].includes(id)) {
+      if (!Object.hasOwn(LEAD_PRICE_DEFAULTS, id)) {
         return NextResponse.json({ error: 'Invalid service type' }, { status: 400 });
       }
       if (typeof price !== 'number' || price < 0) {
@@ -115,15 +101,8 @@ export async function PATCH(req: NextRequest) {
 
     if (body.type === 'platform') {
       const { id, value } = body;
-      const allowed = ['same_day_multiplier', 'recurring_multiplier', 'coverage_zips'];
-      if (!allowed.includes(id)) {
-        return NextResponse.json({ error: 'Invalid config key' }, { status: 400 });
-      }
       if (id !== 'coverage_zips') {
-        const num = parseFloat(value);
-        if (isNaN(num) || num <= 0) {
-          return NextResponse.json({ error: 'Multiplier must be a positive number' }, { status: 400 });
-        }
+        return NextResponse.json({ error: 'Invalid config key' }, { status: 400 });
       }
       await ensureTables();
       await prisma.$executeRawUnsafe(

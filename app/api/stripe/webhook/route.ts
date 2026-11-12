@@ -106,8 +106,8 @@ export async function POST(req: NextRequest) {
               });
               if (!lead) { refund = true; return; }
 
-              // Use authoritative price from DB — never trust metadata
-              const leadPriceNum = lead.leadPrice ?? 15;
+              // Use authoritative price from DB — never trust metadata; else what Stripe charged
+              const leadPriceNum = lead.leadPrice ?? (s.amount_total ?? 0) / 100;
 
               // Instant Book: verify the 10-minute window hasn't expired
               if (waveNum === 0) {
@@ -266,6 +266,8 @@ export async function POST(req: NextRequest) {
     }
   } catch (err) {
     console.error('[webhook] handler error:', err);
+    // Un-mark the event so Stripe's retry runs the handler instead of being skipped as a duplicate.
+    await prisma.stripeEvent.delete({ where: { id: event.id } }).catch(() => {});
     return NextResponse.json({ error: 'Internal error' }, { status: 500 });
   }
 

@@ -21,10 +21,22 @@ export const stripe = new Proxy({} as Stripe, {
   },
 });
 
-export const PLAN_PRICE_IDS: Record<string, string | undefined> = {
-  BASIC: process.env.STRIPE_BASIC_PRICE_ID,
-  PRO:   process.env.STRIPE_PRO_PRICE_ID,
-};
+// Plans bill against catalog prices, so Stripe groups subscriptions under one product
+// per plan. The amount still comes from PlanConfig; a changed amount gets a new price
+// (the old one is archived — existing subscribers keep it).
+export async function planPriceId(planId: string, name: string, amount: number): Promise<string> {
+  const lookup_key  = `verliks_${planId.toLowerCase()}_monthly`;
+  const unit_amount = Math.round(amount * 100);
+  const [current]   = (await stripe.prices.list({ lookup_keys: [lookup_key], active: true, limit: 1 })).data;
+  if (current?.unit_amount === unit_amount) return current.id;
+
+  const price = await stripe.prices.create({
+    currency: 'usd', unit_amount, recurring: { interval: 'month' }, lookup_key, transfer_lookup_key: true,
+    ...(current ? { product: current.product as string } : { product_data: { name: `Verliks ${name}` } }),
+  });
+  if (current) await stripe.prices.update(current.id, { active: false });
+  return price.id;
+}
 
 // Re-exported so the existing `import { BASE_URL } from '@/lib/stripe'` callers
 // keep working; it lives in lib/base-url so modules that only need a link (email

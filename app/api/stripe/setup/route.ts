@@ -22,6 +22,8 @@ export async function POST() {
       mode:     'setup',
       currency: 'usd',
       customer: customerId,
+      // Cards only: lead fees are auto-charged from type 'card' methods (lib/card-on-file).
+      payment_method_types: ['card'],
       // Checkout's setup mode already creates the SetupIntent with off_session
       // usage, which is what lead-fee auto-charges need.
       // cs lets the page confirm the card server-side on return, so saving the

@@ -1,7 +1,8 @@
 import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
-import { stripe, BASE_URL } from '@/lib/stripe';
+import { stripe, BASE_URL, planPriceId } from '@/lib/stripe';
 import { PLANS } from '@/lib/pricing';
+import { ensureStripeCustomer } from '@/lib/card-on-file';
 import { NextRequest, NextResponse } from 'next/server';
 import { logError } from '@/lib/logger';
 
@@ -33,29 +34,14 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ granted: true, plan: planId });
     }
 
-    let customerId = user.stripeCustomerId;
-    if (!customerId) {
-      const customer = await stripe.customers.create({
-        email: user.email,
-        name:  user.name ?? undefined,
-        metadata: { userId: user.id },
-      });
-      customerId = customer.id;
-      await prisma.user.update({ where: { id: user.id }, data: { stripeCustomerId: customerId } });
-    }
+    const customerId = await ensureStripeCustomer(user);
 
     const checkoutSession = await stripe.checkout.sessions.create({
       customer: customerId,
       mode: 'subscription',
-      line_items: [{
-        price_data: {
-          currency:   'usd',
-          unit_amount: Math.round(price * 100),
-          recurring:  { interval: 'month' },
-          product_data: { name: `${planDef?.name ?? planId} Plan` },
-        },
-        quantity: 1,
-      }],
+      line_items: [{ price: await planPriceId(planId, planDef?.name ?? planId, price), quantity: 1 }],
+      // Cards only, so the card saved here also counts as the card on file for lead fees.
+      payment_method_types: ['card'],
       success_url: `${BASE_URL}/dashboard/plan?upgraded=1`,
       cancel_url:  `${BASE_URL}/dashboard/plan`,
       metadata: { type: 'subscription', userId: user.id, planId },

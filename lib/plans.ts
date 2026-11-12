@@ -8,11 +8,9 @@ export const PLANS = [
     color: 'slate',
     badge: '',
     perks: [
-      'Basic profile listing',
-      'Wave 2 access only',
-      'Limited range (60 mi)',
-      'No verified badge',
-      'No ranking priority',
+      'Receive and answer requests',
+      'Radius up to 60 mi',
+      'No placement bonus',
     ],
     rankingBonus: 0,
     maxRadiusMiles: 60,
@@ -20,32 +18,28 @@ export const PLANS = [
   {
     id:    'BASIC' as PlanId,
     name:  'Basic',
-    price: 39,
+    price: 29,
     color: 'brand',
     badge: 'Popular',
     perks: [
-      'Express Match access',
-      'Wave 1 + Wave 2',
-      '+15 pts in CFS ranking',
-      'Extended range (60 mi)',
-      'Verified profile badge',
+      '+15 points in your match score',
+      'Considered earlier when several cleaners fit',
+      'Radius up to 80 mi',
     ],
     rankingBonus: 15,
-    maxRadiusMiles: 60,
+    maxRadiusMiles: 80,
   },
   {
     id:    'PRO' as PlanId,
     name:  'Pro',
-    price: 79,
+    price: 69,
     color: 'yellow',
     badge: 'Max',
     perks: [
-      'Top priority in ranking',
-      'Wave 1 + Instant Book',
-      '+30 pts guaranteed',
-      'Maximum range (110 mi)',
+      '+30 points in your match score',
+      'Instant Book: strong matches offered to you first',
+      'Radius up to 110 mi',
       '"Top Cleaner" profile badge',
-      'Recurring lead access',
     ],
     rankingBonus: 30,
     maxRadiusMiles: 110,
@@ -58,7 +52,7 @@ export const PLANS = [
 
 // Maximum radius a cleaner may set, by plan. PREMIUM is a legacy alias of PRO.
 export const PLAN_MAX_RADIUS: Record<string, number> = {
-  FREE: 60, BASIC: 60, PRO: 110, PREMIUM: 110,
+  FREE: 60, BASIC: 80, PRO: 110, PREMIUM: 110,
 };
 
 // The exact set of radius options offered in the UI (onboarding AND profile).

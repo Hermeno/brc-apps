@@ -22,6 +22,15 @@ services:
       - key: NEXTAUTH_URL
         scope: RUN_AND_BUILD_TIME
         value: ${APP_URL}
+      - key: STRIPE_SECRET_KEY
+        scope: RUN_TIME
+        type: SECRET
+      - key: STRIPE_WEBHOOK_SECRET
+        scope: RUN_TIME
+        type: SECRET
+      - key: NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
+        scope: RUN_AND_BUILD_TIME
+        type: SECRET
       - key: MAIL_MAILER
         scope: RUN_TIME
         value: smtp

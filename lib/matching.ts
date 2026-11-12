@@ -12,7 +12,7 @@ import { DIRECT_REQUEST_HOURS, CLIENT_DECISION_HOURS, AUTO_COMPLETE_HOURS } from
 //
 // Plan tiers:
 //   FREE  →  0 pts  | max radius  60 mi
-//   BASIC → 15 pts  | max radius  60 mi
+//   BASIC → 15 pts  | max radius  80 mi
 //   PRO   → 30 pts  | Instant Book eligible | max radius 110 mi
 
 const PLAN_BONUS: Record<string, number> = {
@@ -246,7 +246,7 @@ export async function runMatching(leadId: string) {
   }
 
   const priceConfig = lead.leadPrice == null ? await getLeadPriceConfig() : null;
-  const leadPrice   = lead.leadPrice ?? calculateLeadPrice(lead.serviceType, undefined, undefined, priceConfig ?? undefined);
+  const leadPrice   = lead.leadPrice ?? calculateLeadPrice(lead.serviceType, lead.frequency, priceConfig ?? undefined);
 
   // ── Instant Book: top PRO cleaner with score ≥ 85 ─────────────────────────
   const top = scored[0];
