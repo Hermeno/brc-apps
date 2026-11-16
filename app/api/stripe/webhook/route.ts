@@ -68,7 +68,7 @@ export async function POST(req: NextRequest) {
               subscriptionEndsAt = new Date(sub.current_period_end * 1000);
             } catch { /* ignore */ }
           }
-          await prisma.user.update({
+          await prisma.user.updateMany({
             where: { id: meta.userId },
             data: {
               plan:                 meta.planId as any,
@@ -206,6 +206,7 @@ export async function POST(req: NextRequest) {
         break;
       }
 
+      // updateMany below: a user deleted since checkout must not make Stripe retry the event for days.
       case 'customer.subscription.updated': {
         const sub    = event.data.object as Stripe.Subscription;
         const userId = sub.metadata?.userId;
@@ -213,7 +214,7 @@ export async function POST(req: NextRequest) {
         if (sub.status === 'active') {
           const planId = sub.metadata?.planId;
           if (planId) {
-            await prisma.user.update({
+            await prisma.user.updateMany({
               where: { id: userId },
               data:  {
                 plan: planId as any,
@@ -223,7 +224,7 @@ export async function POST(req: NextRequest) {
             });
           }
         } else if (sub.status === 'past_due' || sub.status === 'unpaid' || sub.status === 'paused') {
-          await prisma.user.update({
+          await prisma.user.updateMany({
             where: { id: userId },
             data:  { plan: 'FREE', subscriptionEndsAt: null },
           });
@@ -238,7 +239,7 @@ export async function POST(req: NextRequest) {
         const sub    = await stripe.subscriptions.retrieve(subId);
         const userId = sub.metadata?.userId;
         if (!userId) break;
-        await prisma.user.update({
+        await prisma.user.updateMany({
           where: { id: userId },
           data:  { plan: 'FREE' },
         });
@@ -256,7 +257,7 @@ export async function POST(req: NextRequest) {
         const sub    = event.data.object as Stripe.Subscription;
         const userId = sub.metadata?.userId;
         if (!userId) break;
-        await prisma.user.update({
+        await prisma.user.updateMany({
           where: { id: userId },
           data:  { plan: 'FREE', stripeSubscriptionId: null, subscriptionEndsAt: null },
         });
