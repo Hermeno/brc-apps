@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
-import { CircleArrowRight } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { SERVICES, SERVICE_GROUPS } from '@/lib/services';
 import { getSiteService, groupAnchor } from '@/lib/site-content';
 import PublicPage from '@/components/site/public-page';
@@ -130,7 +130,7 @@ export default function ServicesIndexPage() {
                     <p className="col-text">{service.tagline}</p>
                     <Link className="more-link col-more" href={`/services/${slug}`}>
                       Learn more<span className="sr-only"> about {service.name}</span>
-                      <CircleArrowRight size={20} strokeWidth={1.75} aria-hidden="true" />
+                      <ArrowRight size={17} strokeWidth={1.4} aria-hidden="true" />
                     </Link>
                   </article>
                 );

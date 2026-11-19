@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { CircleArrowRight, ClipboardList, MessagesSquare, UserCheck } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { SERVICES, getService, REQUEST_EXTRAS, type Service } from '@/lib/services';
 import PublicPage from '@/components/site/public-page';
 import { PageHero } from '@/components/site/photo-hero';
@@ -74,17 +74,14 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 const STEPS = [
   {
-    Icon: ClipboardList,
     title: 'Describe the job',
     body: 'Add your ZIP code, property details, preferred day and anything specific. Sending a request costs nothing.',
   },
   {
-    Icon: MessagesSquare,
     title: 'Discuss the details',
     body: 'A cleaner who offers this service and covers your ZIP can reply. Use the conversation to agree on the scope, timing and price.',
   },
   {
-    Icon: UserCheck,
     title: 'Decide who to hire',
     body: 'Review the cleaner’s profile and rating. Accept or decline before anything is booked, then pay the cleaner directly for the work.',
   },
@@ -181,7 +178,7 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
             <h3 className="t-col">Worth having ready</h3>
             <div className="prose mt-1"><p>{service.beforeYouRequest}</p></div>
             <Link className="more-link mt-1" href={requestUrl}>
-              Request {service.name} <CircleArrowRight size={20} strokeWidth={1.75} aria-hidden="true" />
+              Request {service.name} <ArrowRight size={17} strokeWidth={1.4} aria-hidden="true" />
             </Link>
           </div>
         </div>
@@ -212,9 +209,9 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
             <p className="t-lead">You stay in control of whom you hire and the price you agree to.</p>
           </div>
           <ol className="cols-3 plain-list">
-            {STEPS.map(({ Icon, title, body }) => (
+            {STEPS.map(({ title, body }, index) => (
               <li key={title}>
-                <div className="col-head"><Icon size={32} strokeWidth={1.75} aria-hidden="true" /><h3 className="t-item">{title}</h3></div>
+                <div className="col-head"><span className="col-index" aria-hidden="true">0{index + 1}</span><h3 className="t-item">{title}</h3></div>
                 <p className="col-text">{body}</p>
               </li>
             ))}
@@ -254,7 +251,7 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
                   <p className="col-text">{item.tagline}</p>
                   <Link className="more-link col-more" href={`/services/${item.slug}`}>
                     Learn more<span className="sr-only"> about {item.name}</span>
-                    <CircleArrowRight size={20} strokeWidth={1.75} aria-hidden="true" />
+                    <ArrowRight size={17} strokeWidth={1.4} aria-hidden="true" />
                   </Link>
                 </article>
               ))}

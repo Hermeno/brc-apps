@@ -11,7 +11,7 @@ export default function SiteFooter({ contacts = true }: { contacts?: boolean }) 
       <section className="contacts" aria-label="Contact Verliks">
         <div className="wrap contacts-grid">
           <div className="contact">
-            <MapPin size={44} strokeWidth={1.75} aria-hidden="true" />
+            <MapPin size={28} strokeWidth={1.35} aria-hidden="true" />
             <div>
               <p className="contact-name">Verliks</p>
               <ul>
@@ -22,7 +22,7 @@ export default function SiteFooter({ contacts = true }: { contacts?: boolean }) 
             </div>
           </div>
           <div className="contact">
-            <MessagesSquare size={44} strokeWidth={1.75} aria-hidden="true" />
+            <MessagesSquare size={28} strokeWidth={1.35} aria-hidden="true" />
             <div>
               <p className="contact-title">Questions before you start:</p>
               <ul>
@@ -33,7 +33,7 @@ export default function SiteFooter({ contacts = true }: { contacts?: boolean }) 
             </div>
           </div>
           <div className="contact">
-            <Mail size={44} strokeWidth={1.75} aria-hidden="true" />
+            <Mail size={28} strokeWidth={1.35} aria-hidden="true" />
             <div>
               <p className="contact-title">Send us a message:</p>
               <ul>

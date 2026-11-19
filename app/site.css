@@ -2,25 +2,28 @@
    Public pages of verliks.com — everything a visitor sees before signing in.
 
    Every rule sits under .vsite, so nothing here can reach login, sign-up or the
-   dashboards. Composition follows the "Empire" reference: thin dark bar, white
-   header with the active item as a filled rectangle, desaturated photographs,
+   dashboards. The header follows the supplied transparent-navigation reference;
+   the rest of the page keeps desaturated photographs,
    open columns, ruled lists, a white contacts band and a dark footer.
 
-   Colour is limited to nine values. Blue is the only accent; navy is for the
-   top bar, the footer and overlays on photographs; the rest is text, surface
-   and hairline. Corners are square. No shadows or gradients. Motion is quiet and
+   The palette stays narrow: blue is the accent, navy anchors the footer, and a
+   neutral slate wash supports text on photographs. The rest is text, surface and hairline. Content
+   corners are square; the outlined header action follows the supplied reference.
+   No shadows or gradients. Motion is quiet and
    one-way: things arrive once and stay put (see the Motion block at the end).
    ───────────────────────────────────────────────────────────────────────────── */
 
 .vsite{
-  --blue:#185FC6;       /* the accent: links, active item, primary button, icons */
+  --blue:#185FC6;       /* brand, actions, active states and focus */
   --blue-hover:#134A9A; /* hover and pressed */
-  --navy:#0E3468;       /* top bar, footer, overlay on photographs */
+  --navy:#0E3468;       /* footer and dark actions */
   --ink:#18314E;        /* titles and main text */
   --body:#455B70;       /* supporting text */
+  --slate:#526A78;      /* editorial section headings */
+  --mineral:#4C716D;    /* quiet noninteractive marks */
   --warm:#F8F8F4;       /* light surface */
-  --mist:#EDF3F5;       /* alternate surface */
-  --line:#DDE5E9;       /* separators */
+  --mist:#F0F3F0;       /* alternate surface */
+  --line:#DCE4E1;       /* separators */
   --white:#FFFFFF;
   --display:var(--font-display),system-ui,sans-serif;
   --ease-out:cubic-bezier(.2,.7,.2,1); /* the page fade's curve (app/template.tsx), shared by all motion */
@@ -46,11 +49,11 @@
 .vsite .sr-only{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
 
 /* ── Type ────────────────────────────────────────────────────────────────────
-   Moderate levels, as in the reference: a light display title with a lighter
-   second line, blue column titles, bold item titles, 16px body. */
+   Display and item titles carry the hierarchy; section titles stay quiet so
+   blue continues to identify actions. */
 .vsite .t-display{margin:0;color:var(--ink);font:300 clamp(1.75rem,1.2rem + 1.1vw,2.25rem)/1.15 var(--display);letter-spacing:-.01em}
 .vsite .t-sub{margin:0;color:var(--ink);font:300 clamp(1.2rem,.95rem + .55vw,1.6rem)/1.25 var(--display)}
-.vsite .t-col{margin:0;color:var(--blue);font:400 1.25rem/1.3 var(--display)}
+.vsite .t-col{margin:0;color:var(--slate);font:400 1.25rem/1.3 var(--display)}
 .vsite .t-item{margin:0;color:var(--ink);font:700 1.125rem/1.2 var(--display)}
 .vsite .t-lead{margin:0;color:var(--body);font-size:1rem;line-height:1.65}
 .vsite .t-label{margin:0;color:var(--body);font-size:.8125rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase}
@@ -76,34 +79,42 @@
 .vsite .more-link svg{flex:none}
 .vsite .more-link:hover{color:var(--blue-hover);text-decoration:underline;text-underline-offset:4px}
 
-/* Ruled list with a small solid triangle, the reference's information lists. */
+/* A short hairline introduces each item without a decorative pictogram. */
 .vsite .ruled{margin:0;padding:0;list-style:none}
 .vsite .ruled li{position:relative;padding:7px 0 7px 16px;border-bottom:1px solid var(--line);color:var(--body);font-size:.875rem;line-height:1.45}
-.vsite .ruled li::before{content:"";position:absolute;left:2px;top:13px;border-style:solid;border-width:4px 0 4px 5px;border-color:transparent transparent transparent var(--ink)}
+.vsite .ruled li::before{content:"";position:absolute;left:2px;top:17px;width:7px;height:1px;background:var(--mineral)}
 .vsite .ruled a{color:var(--ink)}
 .vsite .ruled a:hover{color:var(--blue);text-decoration:underline;text-underline-offset:3px}
 
-/* ── Top bar and header ─────────────────────────────────────────────────── */
-.vsite .topbar{background:var(--navy);color:var(--white)}
-.vsite .topbar-inner{display:flex;align-items:center;justify-content:space-between;gap:24px;min-height:44px;font-size:.8125rem}
-.vsite .topbar-items{display:flex;align-items:center;gap:28px}
-.vsite .topbar-items span,.vsite .topbar-items a{display:inline-flex;align-items:center;gap:8px;color:var(--white)}
-.vsite .topbar-items a:hover{text-decoration:underline;text-underline-offset:3px}
-.vsite .topbar svg{flex:none}
-.vsite .site-header{position:relative;z-index:100;background:var(--white);border-bottom:1px solid var(--line)}
-.vsite .header-inner{display:flex;align-items:center;gap:24px;min-height:88px}
-.vsite .brand{display:inline-flex;align-items:center;min-height:44px;flex:none}
-.vsite .brand img{display:block;width:180px;height:auto}
-.vsite .nav{display:flex;align-items:center;align-self:stretch;gap:4px;margin-left:auto}
+/* ── Public navigation ───────────────────────────────────────────────────── */
+.vsite .site-header{
+  --nav-text:#254561;
+  --nav-active:#155fb1;
+  --nav-border:rgba(37,69,97,.56);
+  --nav-hover:rgba(37,69,97,.07);
+  position:relative;z-index:100;background:transparent;color:var(--nav-text);
+}
+.vsite .header-inner{display:grid;grid-template-columns:minmax(120px,1fr) auto minmax(120px,1fr);align-items:center;gap:18px;width:min(90%,1460px);min-height:80px;margin-inline:auto}
+.vsite .brand{display:inline-flex;align-items:center;justify-self:start;min-height:44px}
+.vsite .brand img{display:block;width:112px;height:auto}
+.vsite .nav{display:flex;align-items:center;align-self:stretch;justify-self:center;gap:14px}
 .vsite .nav-services{display:flex;align-items:center;align-self:stretch}
-.vsite .nav-link{position:relative;display:inline-flex;align-items:center;justify-content:center;min-height:38px;padding:0 15px;border:0;background:none;color:var(--ink);font:600 .8125rem/1 var(--font-body),system-ui,sans-serif;letter-spacing:.06em;text-transform:uppercase;white-space:nowrap;cursor:pointer;transition:background-color .15s ease,color .15s ease}
-.vsite .nav-link:hover{color:var(--blue)}
-/* The current page is a filled rectangle, exactly where the reference has it. */
-.vsite .nav-link[aria-current="page"]{background:var(--blue);color:var(--white)}
-.vsite .nav-link[aria-current="page"]:hover{background:var(--blue-hover)}
-/* A submenu is marked by a small triangle under the label. */
-.vsite .nav-caret::after{content:"";position:absolute;left:50%;bottom:4px;margin-left:-4px;border-style:solid;border-width:5px 4px 0;border-color:currentColor transparent transparent}
-.vsite .nav-services-panel{position:absolute;top:100%;left:0;right:0;z-index:99;padding:26px 0 24px;border-top:2px solid var(--blue);border-bottom:1px solid var(--line);background:var(--white);opacity:0;visibility:hidden;transition:opacity .15s ease,visibility .15s}
+.vsite .nav-link{position:relative;display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 7px;border:0;background:none;color:var(--nav-text);font:400 .8125rem/1.2 var(--display);letter-spacing:.008em;white-space:nowrap;cursor:pointer;transition:color .18s ease}
+.vsite .nav-link:hover,.vsite .nav-link[aria-current="page"]{color:var(--nav-active)}
+.vsite .nav-link::after{content:"";position:absolute;right:7px;bottom:7px;left:7px;height:1px;background:currentColor;opacity:0;transition:opacity .18s ease}
+.vsite .nav-link:hover::after,.vsite .nav-link[aria-current="page"]::after{opacity:.75}
+.vsite .nav-caret svg{margin-left:6px;transition:transform .18s ease}
+.vsite .nav-caret[aria-expanded="true"] svg{transform:rotate(180deg)}
+.vsite .header-action{display:inline-flex;align-items:center;justify-content:center;justify-self:end;min-height:40px;padding:0 18px;border:1px solid var(--nav-border);border-radius:10px;color:var(--nav-text);font:400 .8125rem/1.2 var(--display);letter-spacing:.008em;white-space:nowrap;transition:background-color .18s ease,border-color .18s ease}
+.vsite .header-action:hover{background:var(--nav-hover);border-color:var(--nav-text)}
+/* The photo starts at the viewport top; the header remains a clear layer over it. */
+.vsite:has(> main > .hero){position:relative}
+.vsite:has(> main > .hero) .site-header{--nav-text:#fff;--nav-active:#fff;--nav-border:rgba(255,255,255,.82);--nav-hover:rgba(255,255,255,.12);position:absolute;inset:0 0 auto}
+.vsite:has(> main > .hero) .brand img{filter:brightness(0) invert(1)}
+.vsite:has(> main > .hero) .hero-inner{padding-top:116px}
+.vsite:has(> main > .hero) .site-header :focus-visible{outline-color:#fff}
+.vsite .nav-services-panel{position:absolute;top:100%;left:0;right:0;z-index:99;padding:26px 0 24px;border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:var(--white);opacity:0;visibility:hidden;transition:opacity .15s ease,visibility .15s}
+.vsite .nav-services-panel :focus-visible{outline-color:var(--blue)!important}
 .vsite .nav-services-panel[data-open]{opacity:1;visibility:visible}
 .vsite .nav-services-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:24px}
 .vsite .nav-services-grid ul{margin:6px 0 0;padding:0;list-style:none}
@@ -112,16 +123,17 @@
 .vsite .nav-services-grid a span{display:block;color:var(--ink);font-size:.9375rem;font-weight:600;line-height:1.3}
 .vsite .nav-services-grid a small{display:block;margin-top:2px;color:var(--body);font-size:.8125rem;line-height:1.35}
 .vsite .nav-services-all{display:inline-flex;margin-top:18px}
-.vsite .menu-toggle{display:none;align-items:center;justify-content:center;width:44px;height:44px;margin-left:auto;padding:0;border:1px solid var(--line);background:var(--white);color:var(--ink);cursor:pointer}
+.vsite .menu-toggle{display:none;align-items:center;justify-content:center;justify-self:end;width:44px;height:44px;padding:0;border:1px solid var(--nav-border);border-radius:10px;background:transparent;color:var(--nav-text);cursor:pointer;transition:background-color .18s ease}
+.vsite .menu-toggle:hover{background:var(--nav-hover)}
 .vsite .mobile-menu[hidden]{display:none}
 
 /* ── Hero: desaturated photograph, message on the left ───────────────────── */
-.vsite .hero{position:relative;isolation:isolate;display:flex;flex-direction:column;justify-content:center;min-height:clamp(360px,31.6vw,560px);overflow:hidden;background:var(--navy);color:var(--white)}
+.vsite .hero{position:relative;isolation:isolate;display:flex;flex-direction:column;justify-content:center;min-height:clamp(360px,31.6vw,560px);overflow:hidden;background:#1a3039;color:var(--white)}
 .vsite .hero[data-size="page"]{min-height:clamp(280px,22vw,400px)}
 .vsite .hero-img{z-index:-2;object-fit:cover;filter:grayscale(1) brightness(.8)}
-/* One flat layer of the navy token. With the photo greyed and dimmed, white
+/* One flat slate wash. With the photo greyed and dimmed, white
    text keeps 4.5:1 or better even over the brightest part of the picture. */
-.vsite .hero::before{content:"";position:absolute;inset:0;z-index:-1;background:rgba(14,52,104,.58)}
+.vsite .hero::before{content:"";position:absolute;inset:0;z-index:-1;background:rgba(26,48,57,.61)}
 .vsite .hero-inner{padding-block:44px 48px}
 /* The message starts inside the page axis, as in the reference (x≈231 vs 153). */
 .vsite .hero-copy{max-width:560px;padding-left:9%}
@@ -170,29 +182,30 @@
 .vsite .intro-band .t-sub{margin-top:2px}
 .vsite .intro-band .t-lead{margin-top:8px;font-size:.875rem}
 
-/* Three open columns: icon and title, photo, text, "more". No cards. */
+/* Open columns use photographs for services and small indices for processes. */
 .vsite .cols-3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:40px 2.5%}
 .vsite .col-head{display:flex;align-items:center;gap:12px;min-height:46px}
-.vsite .col-head svg{flex:none;color:var(--blue)}
+.vsite .col-head svg{flex:none;color:var(--mineral)}
+.vsite .col-index{flex:none;min-width:27px;color:var(--mineral);font:300 1.125rem/1 var(--display);font-variant-numeric:tabular-nums;letter-spacing:-.04em}
 .vsite .col-photo{position:relative;display:block;aspect-ratio:3/2;margin-top:20px;overflow:hidden;background:var(--mist)}
 .vsite .col-photo img{object-fit:cover;filter:saturate(.45)}
 .vsite .col-text{margin:16px 0 0;color:var(--body);font-size:.9375rem;line-height:1.6}
 .vsite .col-more{margin-top:12px}
 .vsite .band-tight{padding-block:40px 34px}
 
-/* Four columns of short information, blue titles and ruled lists. */
+/* Four columns of short information, restrained titles and ruled lists. */
 .vsite .cols-4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:36px 2.6%}
 .vsite .cols-4 .t-col{margin-bottom:14px}
 .vsite .cols-4 p{margin:0;color:var(--body);font-size:.875rem;line-height:1.75}
 .vsite .cols-end{display:flex;justify-content:flex-end;margin-top:30px}
 
 /* Horizontal photograph with the platform's real criteria, in white. */
-.vsite .photo-band{position:relative;isolation:isolate;overflow:hidden;background:var(--navy);color:var(--white);padding-block:clamp(48px,4.6vw,64px)}
+.vsite .photo-band{position:relative;isolation:isolate;overflow:hidden;background:#1a3039;color:var(--white);padding-block:clamp(48px,4.6vw,64px)}
 .vsite .photo-band>img{z-index:-2;object-fit:cover;filter:grayscale(1) brightness(.8)}
-.vsite .photo-band::before{content:"";position:absolute;inset:0;z-index:-1;background:rgba(14,52,104,.62)}
+.vsite .photo-band::before{content:"";position:absolute;inset:0;z-index:-1;background:rgba(26,48,57,.64)}
 .vsite .photo-band-title{margin:0;text-align:center;font:700 clamp(1.6rem,1rem + 1.5vw,2.25rem)/1.15 var(--display);letter-spacing:.02em;text-transform:uppercase}
-.vsite .photo-band-body{display:flex;align-items:center;gap:32px;max-width:720px;margin:28px auto 0}
-.vsite .photo-band-mark{flex:none;display:grid;place-items:center;width:112px;height:112px;background:var(--white);color:var(--blue)}
+.vsite .photo-band-body{display:flex;align-items:center;gap:24px;max-width:720px;margin:28px auto 0}
+.vsite .photo-band-mark{flex:none;display:grid;place-items:center;width:48px;height:48px;color:#e1ece8}
 .vsite .photo-band-body p{margin:0;font-size:1rem;line-height:1.7}
 .vsite .photo-band-body .note{margin-top:10px;font-size:.875rem}
 .vsite .photo-band-body a{font-weight:600;text-decoration:underline;text-underline-offset:4px}
@@ -202,19 +215,19 @@
 .vsite .steps li{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:8px 40px;padding:20px 0;border-bottom:1px solid var(--line)}
 .vsite .steps p{margin:0;color:var(--body);line-height:1.65}
 .vsite .split{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:32px 5%;align-items:start}
-.vsite .monogram{display:grid;place-items:center;width:72px;height:72px;margin-bottom:20px;border-radius:50%;background:var(--blue);color:var(--white);font:400 1.5rem/1 var(--display)}
+.vsite .monogram{display:inline-block;min-width:48px;margin-bottom:20px;padding-bottom:10px;border-bottom:1px solid var(--mineral);color:var(--slate);font:300 1.375rem/1 var(--display);letter-spacing:.07em}
 .vsite .faq{border-top:1px solid var(--line)}
 .vsite .faq details{border-bottom:1px solid var(--line)}
 .vsite .faq summary{position:relative;display:block;padding:16px 40px 16px 0;color:var(--ink);font-weight:600;line-height:1.45;cursor:pointer;list-style:none}
 .vsite .faq summary::-webkit-details-marker{display:none}
-.vsite .faq summary::after{content:"+";position:absolute;right:6px;top:12px;color:var(--blue);font-size:1.4rem;font-weight:400;line-height:1}
+.vsite .faq summary::after{content:"+";position:absolute;right:6px;top:12px;color:var(--slate);font-size:1.4rem;font-weight:400;line-height:1}
 .vsite .faq details[open] summary::after{content:"−"}
 .vsite .faq details p{margin:0;padding:0 40px 18px 0;color:var(--body);line-height:1.7}
 .vsite .checks{margin:0;padding:0;list-style:none}
 .vsite .checks li{display:grid;grid-template-columns:22px minmax(0,1fr);gap:10px;padding:10px 0;border-bottom:1px solid var(--line);color:var(--body);line-height:1.55}
-.vsite .checks svg{margin-top:2px;color:var(--blue)}
+.vsite .checks svg{margin-top:2px;color:var(--mineral)}
 .vsite .checks .no svg{color:var(--ink)}
-.vsite .callout{padding:18px 20px;border-left:3px solid var(--blue);background:var(--mist);color:var(--ink);line-height:1.65}
+.vsite .callout{padding:18px 20px;border-left:3px solid var(--mineral);background:var(--mist);color:var(--ink);line-height:1.65}
 .vsite .figure{position:relative;aspect-ratio:3/2;overflow:hidden;background:var(--mist)}
 .vsite .figure img{object-fit:cover;filter:saturate(.45)}
 .vsite .subnav{border-bottom:1px solid var(--line);background:var(--white)}
@@ -250,10 +263,10 @@
 /* ── Contacts band and footer ───────────────────────────────────────────── */
 .vsite .contacts{padding-block:40px 44px;border-top:1px solid var(--line);background:var(--white)}
 .vsite .contacts-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:28px 3%}
-.vsite .contact{display:grid;grid-template-columns:48px minmax(0,1fr);gap:16px;align-items:start}
-.vsite .contact>svg{color:var(--navy)}
+.vsite .contact{display:grid;grid-template-columns:32px minmax(0,1fr);gap:16px;align-items:start}
+.vsite .contact>svg{margin-top:5px;color:var(--mineral)}
 .vsite .contact-name{margin:0;color:var(--ink);font:700 2rem/1.1 var(--display)}
-.vsite .contact-title{margin:4px 0 0;color:var(--blue);font-size:.9375rem;line-height:1.4}
+.vsite .contact-title{margin:4px 0 0;color:var(--slate);font-size:.9375rem;line-height:1.4}
 .vsite .contact ul{margin:12px 0 0;padding:0;list-style:none}
 .vsite .contact li{color:var(--body);font-size:.875rem;line-height:1.9}
 .vsite .contact li a{color:var(--ink);text-decoration:underline;text-underline-offset:3px}
@@ -269,15 +282,22 @@
 
 /* ── Smaller screens ─────────────────────────────────────────────────────── */
 @media(max-width:1119px){
+  .vsite .header-inner{grid-template-columns:1fr auto}
   .vsite .nav{display:none}
+  .vsite .header-action{display:none}
   .vsite .menu-toggle{display:inline-flex}
-  .vsite .mobile-menu:not([hidden]){display:block;border-top:1px solid var(--line);background:var(--white)}
-  .vsite .mobile-menu-inner{display:grid;padding-block:8px 20px}
-  .vsite .mobile-menu-inner>a:not(.btn){display:flex;align-items:center;min-height:48px;padding:0 12px;border-bottom:1px solid var(--line);color:var(--ink);font-size:.9375rem;font-weight:600;letter-spacing:.04em;text-transform:uppercase}
-  .vsite .mobile-menu-inner>a[aria-current="page"]{background:var(--blue);color:var(--white)}
+  .vsite .mobile-menu:not([hidden]){display:block;border-top:1px solid var(--line);background:#f8faf9}
+  .vsite .mobile-menu-inner{display:grid;width:min(90%,1460px);padding-block:8px 20px}
+  .vsite .mobile-menu-inner>a:not(.btn){display:flex;align-items:center;min-height:48px;padding:0 12px;border-bottom:1px solid var(--line);color:#254561;font:400 .9375rem/1.35 var(--display);letter-spacing:.008em}
+  .vsite .mobile-menu-inner>a[aria-current="page"]{padding-left:10px;border-left:2px solid var(--blue);color:var(--blue)}
   .vsite .mobile-services{margin:0;padding:6px 0 10px;list-style:none;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 16px;border-bottom:1px solid var(--line)}
   .vsite .mobile-services a{display:flex;align-items:center;min-height:40px;padding:0 12px;color:var(--body);font-size:.875rem}
   .vsite .mobile-menu-inner .btn{margin-top:16px}
+  .vsite:has(> main > .hero) .mobile-menu:not([hidden]){border-top-color:rgba(255,255,255,.2);background:#112f4d}
+  .vsite:has(> main > .hero) .mobile-menu-inner>a:not(.btn){border-bottom-color:rgba(255,255,255,.16);color:#f1f4f3}
+  .vsite:has(> main > .hero) .mobile-menu-inner>a[aria-current="page"]{border-left-color:#b8d6f4;color:#d8eafb}
+  .vsite:has(> main > .hero) .mobile-services{border-bottom-color:rgba(255,255,255,.16)}
+  .vsite:has(> main > .hero) .mobile-services a{color:#c7d6e3}
   .vsite .cols-4{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
 @media(max-width:860px){
@@ -291,9 +311,10 @@
   .vsite .legal-head-row{flex-direction:column;align-items:flex-start}
 }
 @media(max-width:640px){
-  .vsite .topbar .optional{display:none}
-  .vsite .header-inner{min-height:68px}
-  .vsite .brand img{width:140px}
+  .vsite .header-inner{width:calc(100% - 40px);min-height:70px}
+  .vsite .brand img{width:104px}
+  .vsite .mobile-menu-inner{width:calc(100% - 40px)}
+  .vsite:has(> main > .hero) .hero-inner{padding-top:102px}
   .vsite .hero-copy{padding-left:0}
   .vsite .hero-lines .l2{padding-left:.6em}
   .vsite .hero-lines .l3{padding-left:2.4em}

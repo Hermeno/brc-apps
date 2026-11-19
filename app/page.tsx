@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
-import { CircleArrowRight, ShieldCheck, Sparkles, SprayCan, Truck } from 'lucide-react';
+import { ArrowRight, ShieldCheck } from 'lucide-react';
 import PublicPage from '@/components/site/public-page';
 import PhotoHero from '@/components/site/photo-hero';
 import ZipSearch from '@/components/site/zip-search';
@@ -21,9 +21,9 @@ export const metadata: Metadata = {
 };
 
 const featured = [
-  { slug: 'standard-cleaning', Icon: Sparkles, text: 'Routine cleaning for a home that is already more or less kept up: the kitchen, bathrooms, bedrooms, living areas and floors.' },
-  { slug: 'deep-cleaning', Icon: SprayCan, text: 'A slower, more detailed clean for what routine cleaning keeps missing: build-up, baseboards, edges and the places behind and around things.' },
-  { slug: 'move-in-move-out-cleaning', Icon: Truck, text: 'The clean that happens while the rooms are still empty, with cabinets and closets cleaned inside, before or after a move.' },
+  { slug: 'standard-cleaning', text: 'Routine cleaning for a home that is already more or less kept up: the kitchen, bathrooms, bedrooms, living areas and floors.' },
+  { slug: 'deep-cleaning', text: 'A slower, more detailed clean for what routine cleaning keeps missing: build-up, baseboards, edges and the places behind and around things.' },
+  { slug: 'move-in-move-out-cleaning', text: 'The clean that happens while the rooms are still empty, with cabinets and closets cleaned inside, before or after a move.' },
 ].map(item => ({ ...item, service: getSiteService(item.slug)! }));
 
 const moreServices = ['recurring-cleaning', 'tile-and-grout-cleaning', 'home-organizing', 'post-construction-cleaning', 'commercial-cleaning']
@@ -67,10 +67,9 @@ export default function HomePage() {
         <div className="wrap">
           <h2 id="featured-title" className="sr-only">Popular cleaning services</h2>
           <div className="cols-3">
-            {featured.map(({ slug, Icon, text, service }) => (
+            {featured.map(({ slug, text, service }) => (
               <article key={slug}>
                 <div className="col-head">
-                  <Icon size={36} strokeWidth={1.75} aria-hidden="true" />
                   <h3 className="t-item">{twoLines(service.name)}</h3>
                 </div>
                 <Link className="col-photo" href={`/services/${slug}`} tabIndex={-1} aria-hidden="true">
@@ -79,7 +78,7 @@ export default function HomePage() {
                 <p className="col-text">{text}</p>
                 <Link className="more-link col-more" href={`/services/${slug}`}>
                   Learn more<span className="sr-only"> about {service.name}</span>
-                  <CircleArrowRight size={20} strokeWidth={1.75} aria-hidden="true" />
+                  <ArrowRight size={17} strokeWidth={1.4} aria-hidden="true" />
                 </Link>
               </article>
             ))}
@@ -134,7 +133,7 @@ export default function HomePage() {
         <div className="wrap">
           <h2 id="checks-title" className="photo-band-title">What Verliks checks</h2>
           <div className="photo-band-body">
-            <span className="photo-band-mark" aria-hidden="true"><ShieldCheck size={52} strokeWidth={1.5} /></span>
+            <span className="photo-band-mark" aria-hidden="true"><ShieldCheck size={44} strokeWidth={1.3} /></span>
             <div>
               <p>Our team reviews a government ID and selfie before a cleaner can receive requests. Requests are matched to the services and area each professional chooses, and ratings from completed jobs appear on professional profiles.</p>
               <p className="note">Identity review is not a criminal background check. <Link href="/how-it-works#does-and-doesnt">What we check and what we leave to you</Link></p>

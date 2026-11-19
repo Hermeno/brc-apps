@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { CircleArrowRight, Mail } from 'lucide-react';
+import { ArrowRight, Mail } from 'lucide-react';
 import PublicPage from '@/components/site/public-page';
 import { PageHero } from '@/components/site/photo-hero';
 
@@ -45,7 +45,7 @@ export default function ContactPage() {
                 <p className="col-text">{path.body}</p>
                 <Link className="more-link col-more" href={path.href}>
                   Continue<span className="sr-only">: {path.title}</span>
-                  <CircleArrowRight size={20} strokeWidth={1.75} aria-hidden="true" />
+                  <ArrowRight size={17} strokeWidth={1.4} aria-hidden="true" />
                 </Link>
               </li>
             ))}

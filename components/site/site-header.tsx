@@ -3,13 +3,12 @@
 import { useEffect, useId, useRef, useState, type PointerEvent } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Mail, MapPin, Menu, X } from 'lucide-react';
+import { ChevronDown, Menu, X } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import { SERVICE_GROUP_ORDER, servicesByGroup } from '@/lib/site-content';
 
-/* Thin navy bar with real facts, then the white header: logo on the left,
-   navigation on the right, the current page as a filled blue rectangle.
-   Rendered inside a .vsite element (app/site.css). */
+/* The public navigation sits over photo heroes and stays in the page flow on
+   text-first pages. Both treatments are scoped to .vsite in app/site.css. */
 
 const links = [
   { href: '/how-it-works', label: 'How it works' },
@@ -46,18 +45,8 @@ export default function SiteHeader() {
   const servicesActive = pathname.startsWith('/services');
 
   return <>
-    <div className="topbar on-dark">
-      <div className="wrap topbar-inner">
-        <div className="topbar-items">
-          <span><MapPin size={15} aria-hidden="true" /> Starting in Connecticut</span>
-          <a className="optional" href="mailto:support@verliks.com"><Mail size={15} aria-hidden="true" /> support@verliks.com</a>
-        </div>
-        <div className="topbar-items optional"><span>Free to request · Independent local cleaners</span></div>
-      </div>
-    </div>
-
     <header className="site-header">
-      <div className="wrap header-inner">
+      <div className="header-inner">
         <Link className="brand" href="/" aria-label="Verliks home">
           <Image src="/images/brand/verliks-logo-600.png" width={200} height={43} alt="" priority />
         </Link>
@@ -73,7 +62,7 @@ export default function SiteHeader() {
               aria-expanded={servicesOpen} aria-controls={panelId}
               aria-current={servicesActive ? 'page' : undefined}
               onClick={() => setServicesOpen(value => !value)}>
-              Services
+              Services <ChevronDown size={13} strokeWidth={1.5} aria-hidden="true" />
             </button>
             <div id={panelId} className="nav-services-panel" data-open={servicesOpen ? '' : undefined}
               role="group" aria-label="Cleaning services" aria-hidden={!servicesOpen}>
@@ -102,8 +91,9 @@ export default function SiteHeader() {
             </div>
           </div>
           {links.map(link => <Link key={link.href} className="nav-link" href={link.href} aria-current={current(link.href)}>{link.label}</Link>)}
-          <Link className="nav-link" href="/auth/login">Sign in</Link>
         </nav>
+
+        <Link className="header-action" href="/auth/login">Sign in</Link>
 
         <button className="menu-toggle" type="button" aria-label={open ? 'Close menu' : 'Open menu'} aria-expanded={open} aria-controls="site-mobile-menu" onClick={() => setOpen(value => !value)}>
           {open ? <X size={22} aria-hidden="true" /> : <Menu size={22} aria-hidden="true" />}

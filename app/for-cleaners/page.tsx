@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import NextLink from 'next/link';
-import { Check, ChevronDown, MapPin, Minus, Receipt, UserPlus } from 'lucide-react';
+import { Check, ChevronDown, Minus } from 'lucide-react';
 import PublicPage from '@/components/site/public-page';
 import { PageHero } from '@/components/site/photo-hero';
 import styles from './for-cleaners.module.css';
@@ -37,9 +37,9 @@ export const metadata: Metadata = {
   robots: { index: true, follow: true },
 };
 
-/* Icons: Lucide, the one family used across the public pages. */
-const IcYes = () => <Check size={20} strokeWidth={1.75} aria-hidden="true" />;
-const IcNo = () => <Minus size={20} strokeWidth={1.75} aria-hidden="true" />;
+/* Functional checklist and disclosure marks share the same restrained stroke. */
+const IcYes = () => <Check size={18} strokeWidth={1.5} aria-hidden="true" />;
+const IcNo = () => <Minus size={18} strokeWidth={1.5} aria-hidden="true" />;
 const IcChevron = () => <ChevronDown className={styles.faqChevron} size={18} strokeWidth={1.75} aria-hidden="true" />;
 
 /* Live plan prices. An admin can change these in the dashboard (PlanConfig),
@@ -107,15 +107,15 @@ export default async function ForCleanersPage() {
           <h2 id="facts-title" className="sr-only">Joining at a glance</h2>
           <ul className="cols-3 plain-list">
             <li>
-              <div className="col-head"><UserPlus size={32} strokeWidth={1.75} aria-hidden="true" /><h3 className="t-item">Free to join</h3></div>
+              <div className="col-head"><h3 className="t-item">Free to join</h3></div>
               <p className="col-text">No monthly fee is required to create a profile or to receive requests.</p>
             </li>
             <li>
-              <div className="col-head"><MapPin size={32} strokeWidth={1.75} aria-hidden="true" /><h3 className="t-item">You set the area</h3></div>
+              <div className="col-head"><h3 className="t-item">You set the area</h3></div>
               <p className="col-text">A ZIP code and a radius up to {freeMax} miles — up to {basicMax} on Basic and {proMax} on Pro.</p>
             </li>
             <li>
-              <div className="col-head"><Receipt size={32} strokeWidth={1.75} aria-hidden="true" /><h3 className="t-item">Paid only when picked</h3></div>
+              <div className="col-head"><h3 className="t-item">Paid only when picked</h3></div>
               <p className="col-text">Reading and answering a request costs nothing. The fee applies when the client confirms you.</p>
             </li>
           </ul>

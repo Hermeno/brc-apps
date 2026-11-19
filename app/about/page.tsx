@@ -82,9 +82,9 @@ export default function AboutPage() {
             <h2 id="trust-title" className="t-display">Know what Verliks checks.</h2>
             <p className="t-lead mt-2">Before a cleaner can receive requests, our team reviews a government ID and selfie. Matching also takes into account the services and area the professional chooses to cover.</p>
             <ul className="checks mt-2">
-              <li><Check size={18} aria-hidden="true" /><span>Identity reviewed by our team</span></li>
-              <li><Check size={18} aria-hidden="true" /><span>Service and ZIP code matching</span></li>
-              <li><Check size={18} aria-hidden="true" /><span>A conversation before you decide</span></li>
+              <li><Check size={18} strokeWidth={1.5} aria-hidden="true" /><span>Identity reviewed by our team</span></li>
+              <li><Check size={18} strokeWidth={1.5} aria-hidden="true" /><span>Service and ZIP code matching</span></li>
+              <li><Check size={18} strokeWidth={1.5} aria-hidden="true" /><span>A conversation before you decide</span></li>
             </ul>
             <p className="t-lead mt-2">Identity review is not a criminal background check.</p>
             <p className="mt-2"><Link href="/how-it-works#does-and-doesnt" className="text-link">Read about our approach</Link></p>

@@ -1,6 +1,5 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { MapPin, MessagesSquare, Radar } from 'lucide-react';
 import PublicPage from '@/components/site/public-page';
 import { PageHero } from '@/components/site/photo-hero';
 import ZipSearch from '@/components/site/zip-search';
@@ -35,15 +34,15 @@ export default function ServiceAreasPage() {
           </div>
           <ol className="cols-3 plain-list">
             <li>
-              <div className="col-head"><MapPin size={32} strokeWidth={1.75} aria-hidden="true" /><h3 className="t-item">Tell us where</h3></div>
+              <div className="col-head"><span className="col-index" aria-hidden="true">01</span><h3 className="t-item">Tell us where</h3></div>
               <p className="col-text">Enter the address in your request. Its ZIP code places the job within the local matching area.</p>
             </li>
             <li>
-              <div className="col-head"><Radar size={32} strokeWidth={1.75} aria-hidden="true" /><h3 className="t-item">We look for a fit</h3></div>
+              <div className="col-head"><span className="col-index" aria-hidden="true">02</span><h3 className="t-item">We look for a fit</h3></div>
               <p className="col-text">The request reaches eligible, available cleaners whose radius includes that location and who offer your selected service.</p>
             </li>
             <li>
-              <div className="col-head"><MessagesSquare size={32} strokeWidth={1.75} aria-hidden="true" /><h3 className="t-item">You hear from a cleaner</h3></div>
+              <div className="col-head"><span className="col-index" aria-hidden="true">03</span><h3 className="t-item">You hear from a cleaner</h3></div>
               <p className="col-text">When a professional responds, you can discuss the job and decide whether to accept. Response time varies with local availability.</p>
             </li>
           </ol>

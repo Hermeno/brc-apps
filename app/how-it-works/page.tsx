@@ -85,15 +85,15 @@ export default function HowItWorksPage() {
             <p className="t-lead mt-2">Clear information matters when the work happens in your home. Here is how Verliks approaches trust.</p>
             <h3 className="t-col mt-3">Verliks checks</h3>
             <ul className="checks">
-              <li><Check size={18} aria-hidden="true" /><span>A government ID and selfie are reviewed by our team before a cleaner receives requests.</span></li>
-              <li><Check size={18} aria-hidden="true" /><span>Matching uses the professional’s offered services and service area.</span></li>
-              <li><Check size={18} aria-hidden="true" /><span>Ratings from completed jobs appear on professional profiles.</span></li>
+              <li><Check size={18} strokeWidth={1.5} aria-hidden="true" /><span>A government ID and selfie are reviewed by our team before a cleaner receives requests.</span></li>
+              <li><Check size={18} strokeWidth={1.5} aria-hidden="true" /><span>Matching uses the professional’s offered services and service area.</span></li>
+              <li><Check size={18} strokeWidth={1.5} aria-hidden="true" /><span>Ratings from completed jobs appear on professional profiles.</span></li>
             </ul>
             <h3 className="t-col mt-3">Verliks does not</h3>
             <ul className="checks">
-              <li className="no"><X size={18} aria-hidden="true" /><span>Run criminal background checks. Identity review is not a criminal record check.</span></li>
-              <li className="no"><X size={18} aria-hidden="true" /><span>Employ the professionals or set the price of their work.</span></li>
-              <li className="no"><X size={18} aria-hidden="true" /><span>Hold or take a percentage of the cleaning payment.</span></li>
+              <li className="no"><X size={18} strokeWidth={1.5} aria-hidden="true" /><span>Run criminal background checks. Identity review is not a criminal record check.</span></li>
+              <li className="no"><X size={18} strokeWidth={1.5} aria-hidden="true" /><span>Employ the professionals or set the price of their work.</span></li>
+              <li className="no"><X size={18} strokeWidth={1.5} aria-hidden="true" /><span>Hold or take a percentage of the cleaning payment.</span></li>
             </ul>
           </div>
         </div>

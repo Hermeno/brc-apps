@@ -14,7 +14,7 @@
   --cream:     #F8F8F4;
   --ink:       #18314E;
   --muted:     #455B70;
-  --line:      #DDE5E9;
+  --line:      #DCE4E1;
   --white:     #FFFFFF;
 
   color: var(--ink);
@@ -63,7 +63,7 @@
 .stepBody { font-size: 15px; line-height: 1.62; color: var(--muted); margin: 0; max-width: 60ch; }
 .stepNote {
   display: inline-block; font-size: 13.5px; font-weight: 600; color: var(--ink);
-  margin: 10px 0 0; padding-left: 12px; border-left: 3px solid var(--navy);
+  margin: 10px 0 0; padding-left: 12px; border-left: 3px solid var(--mineral);
 }
 
 /* ── Example opportunity panel ── */
@@ -133,9 +133,9 @@
 
 .callout {
   margin: 34px 0 0; padding: 22px 24px;
-  border-left: 3px solid var(--navy); background: var(--cream);
+  border-left: 3px solid var(--mineral); background: var(--cream);
 }
-.calloutOnCream { background: var(--white); border: 1px solid var(--line); border-left: 3px solid var(--navy); }
+.calloutOnCream { background: var(--white); border: 1px solid var(--line); border-left: 3px solid var(--mineral); }
 .calloutTitle { font-size: 15px; font-weight: 700; color: var(--ink); margin: 0 0 7px; }
 .calloutBody { font-size: 14.5px; line-height: 1.62; color: var(--muted); margin: 0; }
 
@@ -159,7 +159,7 @@
 }
 .truthItem strong { color: var(--ink); font-weight: 700; }
 .truthIcon { margin-top: 1px; flex-shrink: 0; }
-.iconYes { color: var(--navy); }
+.iconYes { color: var(--mineral); }
 .iconNo  { color: var(--ink); }
 
 /* ── FAQ ── */
