@@ -8,7 +8,8 @@
 
    Colour is limited to nine values. Blue is the only accent; navy is for the
    top bar, the footer and overlays on photographs; the rest is text, surface
-   and hairline. Corners are square. No shadows, gradients or entrance motion.
+   and hairline. Corners are square. No shadows or gradients. Motion is quiet and
+   one-way: things arrive once and stay put (see the Motion block at the end).
    ───────────────────────────────────────────────────────────────────────────── */
 
 .vsite{
@@ -22,6 +23,7 @@
   --line:#DDE5E9;       /* separators */
   --white:#FFFFFF;
   --display:var(--font-display),system-ui,sans-serif;
+  --ease-out:cubic-bezier(.2,.7,.2,1); /* the page fade's curve (app/template.tsx), shared by all motion */
   color:var(--ink);
   background:var(--white);
   font:400 16px/1.6 var(--font-body),system-ui,sans-serif;
@@ -58,7 +60,7 @@
 .vsite .text-link:hover{color:var(--blue-hover)}
 
 /* ── Buttons: rectangles, thin borders, one fill per role ───────────────── */
-.vsite .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:42px;padding:0 22px;border:1px solid transparent;border-radius:0;font:600 .875rem/1.2 var(--font-body),system-ui,sans-serif;text-align:center;white-space:nowrap;cursor:pointer;transition:background-color .15s ease,border-color .15s ease,color .15s ease}
+.vsite .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:42px;padding:0 22px;border:1px solid transparent;border-radius:0;font:600 .875rem/1.2 var(--font-body),system-ui,sans-serif;text-align:center;white-space:nowrap;cursor:pointer;transition:background-color .15s var(--ease-out),border-color .15s var(--ease-out),color .15s var(--ease-out),transform .15s var(--ease-out)}
 .vsite .btn-primary{background:var(--blue);border-color:var(--blue);color:var(--white)}
 .vsite .btn-primary:hover{background:var(--blue-hover);border-color:var(--blue-hover)}
 .vsite .btn-dark{background:var(--navy);border-color:var(--navy);color:var(--white)}
@@ -302,6 +304,46 @@
   .vsite .cols-end{justify-content:flex-start}
   .vsite .photo-band-body{flex-direction:column;text-align:center;gap:20px}
   .vsite .btn-row .btn{flex:1 1 100%}
+}
+/* ── Motion ────────────────────────────────────────────────────────────────────
+   Openings play once per page: the hero copy rises into focus line by line and
+   the photograph settles. Sections further down materialize as they scroll in
+   (components/site/scroll-reveal.tsx sets data-reveal). Pointer feedback stays
+   small. Nothing loops, and all of it lives under no-preference, so a visitor
+   who asks the system for less motion gets none. */
+@keyframes v-rise{from{opacity:0;transform:translateY(14px);filter:blur(6px)}}
+@keyframes v-settle{from{transform:scale(1.045)}}
+@media(prefers-reduced-motion:no-preference){
+  .vsite .hero-img{animation:v-settle 1.6s var(--ease-out) both}
+  .vsite .hero-copy>:not(.hero-lines),.vsite .hero-lines>span,
+  .vsite main>section:first-child:not(.hero) .wrap>*,.vsite .founders>li{animation:v-rise .7s var(--ease-out) both}
+  .vsite .hero-copy>:nth-child(2),.vsite main>section:first-child .wrap>:nth-child(2),.vsite .hero-lines>.l2{animation-delay:.08s}
+  .vsite .hero-copy>:nth-child(3),.vsite main>section:first-child .wrap>:nth-child(3),.vsite .hero-lines>.l3{animation-delay:.16s}
+  .vsite .hero-copy>:nth-child(4),.vsite main>section:first-child .wrap>:nth-child(4){animation-delay:.24s}
+  .vsite .hero-copy>:nth-child(n+5),.vsite main>section:first-child .wrap>:nth-child(n+5){animation-delay:.32s}
+  /* Home: the lede and ZIP search wait for the three headline lines. */
+  .vsite .hero-lines~.hero-lede{animation-delay:.28s}
+  .vsite .hero-lines~:not(.hero-lede){animation-delay:.36s}
+  .vsite .founders>li{animation-delay:.3s}
+  .vsite .founders>li+li{animation-delay:.42s}
+
+  .vsite [data-reveal]{transition:opacity .7s var(--ease-out),transform .7s var(--ease-out),filter .7s var(--ease-out);transition-delay:calc(var(--reveal-i,0) * 90ms)}
+  .vsite [data-reveal="pending"]{opacity:0;transform:translateY(20px);filter:blur(4px)}
+  .vsite .figure[data-reveal="pending"]{filter:none} /* no blur over a large photograph */
+
+  .vsite .btn:active{transform:scale(.97)}
+}
+@media(hover:hover){
+  .vsite .col-photo img{transition:transform .6s var(--ease-out),filter .6s var(--ease-out)}
+  .vsite .cols-3 article:hover .col-photo img{filter:saturate(.9)}
+}
+@media(hover:hover) and (prefers-reduced-motion:no-preference){
+  .vsite .cols-3 article:hover .col-photo img{transform:scale(1.04)}
+  .vsite .more-link svg{transition:transform .2s var(--ease-out)}
+  .vsite .more-link:hover svg{transform:translateX(3px)}
+}
+@media print{
+  .vsite [data-reveal]{opacity:1!important;transform:none!important;filter:none!important}
 }
 @media(prefers-reduced-motion:reduce){
   .vsite *,.vsite *::before,.vsite *::after{transition:none!important}

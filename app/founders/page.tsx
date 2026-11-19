@@ -39,7 +39,7 @@ export default function FoundersPage() {
 
       <section className="band" aria-labelledby="founders-title">
         <div className="wrap">
-          <ul className="split plain-list">
+          <ul className="split plain-list founders">
             {founders.map(f => (
               <li key={f.name}>
                 <span className="monogram" aria-hidden="true">{f.initials}</span>
