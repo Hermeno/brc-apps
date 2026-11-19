@@ -56,6 +56,7 @@ export default function SiteFooter({ contacts = true }: { contacts?: boolean }) 
             <li><Link href="/service-areas">Service areas</Link></li>
             <li><Link href="/for-cleaners">For cleaners</Link></li>
             <li><Link href="/about">About Verliks</Link></li>
+            <li><Link href="/founders">Founders</Link></li>
             <li><Link href="/contact">Contact</Link></li>
           </ul>
         </nav>

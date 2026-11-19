@@ -200,6 +200,7 @@
 .vsite .steps li{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:8px 40px;padding:20px 0;border-bottom:1px solid var(--line)}
 .vsite .steps p{margin:0;color:var(--body);line-height:1.65}
 .vsite .split{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:32px 5%;align-items:start}
+.vsite .monogram{display:grid;place-items:center;width:72px;height:72px;margin-bottom:20px;border-radius:50%;background:var(--blue);color:var(--white);font:400 1.5rem/1 var(--display)}
 .vsite .faq{border-top:1px solid var(--line)}
 .vsite .faq details{border-bottom:1px solid var(--line)}
 .vsite .faq summary{position:relative;display:block;padding:16px 40px 16px 0;color:var(--ink);font-weight:600;line-height:1.45;cursor:pointer;list-style:none}
