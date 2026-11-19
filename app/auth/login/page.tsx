@@ -41,7 +41,7 @@ export default function LoginPage() {
       } else if (result.error.includes('ACCOUNT_SUSPENDED')) {
         toaster.create({ title: t('auth.login.errorSuspendedTitle'), description: t('auth.login.errorSuspendedDesc'), type: 'error' });
       } else if (result.error.includes('ACCOUNT_LOCKED')) {
-        toaster.create({ title: 'Conta bloqueada', description: 'Muitas tentativas incorretas. Tente novamente em 15 minutos.', type: 'error' });
+        toaster.create({ title: t('auth.login.errorLockedTitle'), description: t('auth.login.errorLockedDesc'), type: 'error' });
       } else {
         toaster.create({ title: t('auth.login.errorBadTitle'), description: t('auth.login.errorBadDesc'), type: 'error' });
       }

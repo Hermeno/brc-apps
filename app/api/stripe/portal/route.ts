@@ -15,7 +15,7 @@ export async function POST() {
     });
 
     if (!user?.stripeCustomerId) {
-      return NextResponse.json({ error: 'Nenhuma assinatura ativa encontrada' }, { status: 400 });
+      return NextResponse.json({ error: 'No active subscription found' }, { status: 400 });
     }
 
     const portalSession = await stripe.billingPortal.sessions.create({

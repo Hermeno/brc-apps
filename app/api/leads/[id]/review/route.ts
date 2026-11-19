@@ -22,7 +22,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
       return NextResponse.json({ error: 'Booking has not been completed yet' }, { status: 409 });
 
     if (!lead.cleanerId)
-      return NextResponse.json({ error: 'Nenhum profissional para avaliar' }, { status: 409 });
+      return NextResponse.json({ error: 'No professional to review' }, { status: 409 });
 
     if (lead.review)
       return NextResponse.json({ error: 'Review already submitted' }, { status: 409 });

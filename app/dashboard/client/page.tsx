@@ -392,7 +392,7 @@ export default function ClientPage() {
         setShowForm(false); setForm(emptyForm); fetchLeads();
       } else { const err = await res.json(); throw new Error(err.error); }
     } catch (error: any) {
-      toaster.create({ title: 'Error', description: error.message, type: 'error' });
+      toaster.create({ title: t('common.error'), description: error.message, type: 'error' });
     } finally { setSubmitting(false); }
   };
 

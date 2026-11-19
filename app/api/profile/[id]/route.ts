@@ -104,6 +104,6 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
     });
   } catch (err: any) {
     console.error('[profile/[id]] error:', err?.message, err?.code);
-    return NextResponse.json({ error: err?.message ?? 'Erro interno' }, { status: 500 });
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

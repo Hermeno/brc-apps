@@ -41,6 +41,6 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ message: 'Senha redefinida com sucesso!' });
   } catch {
-    return NextResponse.json({ error: 'Erro interno' }, { status: 500 });
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

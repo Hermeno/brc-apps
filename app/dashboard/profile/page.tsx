@@ -451,7 +451,7 @@ export default function ProfilePage() {
                         width="100%"
                         height="100%"
                         style={{ border: 'none', display: 'block' }}
-                        title="Location on map"
+                        title={t('cleaner.profile.mapTitle')}
                         loading="lazy"
                       />
                     </Box>

@@ -22,7 +22,7 @@ export async function POST(req: NextRequest) {
   const file     = formData.get('file') as File | null;
   const type     = (formData.get('type') as string | null) ?? 'avatar';
 
-  if (!file) return NextResponse.json({ error: 'Nenhum arquivo enviado' }, { status: 400 });
+  if (!file) return NextResponse.json({ error: 'No file uploaded' }, { status: 400 });
   if (!ALLOWED.includes(file.type)) {
     return NextResponse.json({ error: 'Unsupported file type. Use JPG, PNG, WEBP or GIF.' }, { status: 400 });
   }

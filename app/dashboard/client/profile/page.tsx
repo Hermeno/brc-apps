@@ -13,9 +13,11 @@ import { toaster } from '@/lib/toaster';
 import { motion } from 'motion/react';
 import { ImageUpload } from '@/components/image-upload';
 import Image from 'next/image';
+import { useT } from '@/lib/i18n';
 
 export default function ClientProfilePage() {
   const router = useRouter();
+  const t = useT();
 
   const [name,      setName]      = useState('');
   const [phone,     setPhone]     = useState('');
@@ -47,7 +49,7 @@ export default function ClientProfilePage() {
         body: JSON.stringify({ name, phone, address, avatarUrl }),
       });
       if (res.ok) {
-        toaster.create({ title: 'Profile saved successfully.', type: 'success' });
+        toaster.create({ title: t('client.profile.saved'), type: 'success' });
         router.push('/dashboard/client');
       } else {
         const err = await res.json();
@@ -70,7 +72,7 @@ export default function ClientProfilePage() {
             color="slate.500" cursor="pointer" _hover={{ color: 'brand.600' }}
             fontSize="sm" fontWeight="semibold" transition="color 0.15s">
             <Icon as={LucideArrowLeft} w={4} h={4} />
-            Back
+            {t('common.back')}
           </Box>
           <Box w="1px" h="20px" bg="slate.200" />
           <HStack gap={2.5}>
@@ -84,8 +86,8 @@ export default function ClientProfilePage() {
           <VStack gap={6} align="stretch">
 
             <Box>
-              <Heading fontWeight="300" fontSize={{ base: '24px', md: '28px' }} letterSpacing="-0.01em" size="lg" color="slate.900">Edit your profile</Heading>
-              <Text color="slate.500" fontSize="sm" mt={1}>Your personal information</Text>
+              <Heading fontWeight="300" fontSize={{ base: '24px', md: '28px' }} letterSpacing="-0.01em" size="lg" color="slate.900">{t('client.profile.title')}</Heading>
+              <Text color="slate.500" fontSize="sm" mt={1}>{t('client.profile.subtitle')}</Text>
             </Box>
 
             {/* Avatar upload */}
@@ -97,14 +99,14 @@ export default function ClientProfilePage() {
                   onChange={setAvatarUrl}
                   shape="circle"
                   size={80}
-                  placeholder="Profile photo"
+                  placeholder={t('client.profile.photo')}
                 />
                 <Box flex={1}>
-                  <Text fontWeight="bold" color="slate.800" fontSize="sm">{name || 'Your name'}</Text>
+                  <Text fontWeight="bold" color="slate.800" fontSize="sm">{name || t('client.profile.yourName')}</Text>
                   <Text fontSize="xs" color="slate.400" mt={0.5}>
-                    Tap the circle to choose a photo from your device.
+                    {t('client.profile.photoHint')}
                   </Text>
-                  <Text fontSize="xs" color="#455B70" mt={0.5}>JPG, PNG, or WEBP · max 8 MB</Text>
+                  <Text fontSize="xs" color="#455B70" mt={0.5}>{t('client.profile.photoFormats')}</Text>
                 </Box>
               </Flex>
             </Box>
@@ -118,10 +120,10 @@ export default function ClientProfilePage() {
                   <HStack gap={2} mb={1.5}>
                     <Icon as={LucideUser} w={4} h={4} color="brand.500" />
                     <Text fontSize="xs" fontWeight="bold" color="slate.500"
-                      textTransform="uppercase" letterSpacing="wider">Full name</Text>
+                      textTransform="uppercase" letterSpacing="wider">{t('client.profile.fullName')}</Text>
                   </HStack>
                   <Input
-                    placeholder="First and last name"
+                    placeholder={t('client.profile.fullNamePlaceholder')}
                     value={name}
                     onChange={e => setName(e.target.value)}
                     bg="slate.50" border="1px solid" borderColor="slate.200"
@@ -134,7 +136,7 @@ export default function ClientProfilePage() {
                   <HStack gap={2} mb={1.5}>
                     <Icon as={LucidePhone} w={4} h={4} color="brand.500" />
                     <Text fontSize="xs" fontWeight="bold" color="slate.500"
-                      textTransform="uppercase" letterSpacing="wider">Phone / WhatsApp</Text>
+                      textTransform="uppercase" letterSpacing="wider">{t('client.profile.phone')}</Text>
                   </HStack>
                   <Input
                     placeholder="(555) 555-5555"
@@ -150,7 +152,7 @@ export default function ClientProfilePage() {
                   <HStack gap={2} mb={1.5}>
                     <Icon as={LucideMapPin} w={4} h={4} color="brand.500" />
                     <Text fontSize="xs" fontWeight="bold" color="slate.500"
-                      textTransform="uppercase" letterSpacing="wider">Home address</Text>
+                      textTransform="uppercase" letterSpacing="wider">{t('client.profile.address')}</Text>
                   </HStack>
                   <AddressInput
                     value={address}
@@ -170,11 +172,11 @@ export default function ClientProfilePage() {
               bg="brand.500" color="white" h="44px" borderRadius="2px" fontWeight="bold" fontSize="md"
               _hover={{ bg: 'brand.600' }}
               transition="background 0.15s"
-              loading={saving} loadingText="Saving changes..."
+              loading={saving} loadingText={t('client.profile.saving')}
               onClick={handleSave}
               disabled={loading}>
               <Icon as={LucideSave} w={4} h={4} mr={2} />
-              Save changes
+              {t('client.profile.save')}
             </Button>
 
           </VStack>

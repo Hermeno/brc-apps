@@ -15,6 +15,7 @@ import NextLink from 'next/link';
 import { motion } from 'motion/react';
 import Glyph from '@/components/glyph';
 import { X } from 'lucide-react';
+import { useLocale } from '@/lib/i18n';
 
 /* ─── types ──────────────────────────────────────────────────── */
 type Photo = { id: string; url: string; caption?: string | null; createdAt: string };
@@ -55,7 +56,11 @@ function Stars({ value, size = 4 }: { value: number; size?: number }) {
 export default function PublicProfilePage() {
   const params = useParams();
   const router = useRouter();
+  const { locale, t } = useLocale();
   const id = params.id as string;
+  const dateLocale = locale === 'pt' ? 'pt-BR' : 'en-US';
+  // Service names are stored in English; show the translation when one exists.
+  const serviceName = (s: string) => { const key = `services.${s}`; const v = t(key); return v === key ? s : v; };
 
   const [cleaner, setCleaner] = useState<Cleaner | null>(null);
   const [loading, setLoading] = useState(true);
@@ -66,7 +71,6 @@ export default function PublicProfilePage() {
     fetch(`/api/profile/${id}`)
       .then(r => r.json())
       .then(d => {
-        console.log('[profile page] response:', d);
         if (d.cleaner) setCleaner(d.cleaner);
       })
       .catch(e => console.error('[profile page] fetch error:', e))
@@ -79,7 +83,7 @@ export default function PublicProfilePage() {
         <VStack gap={3}>
           <Box w="40px" h="40px" border="3px solid" borderColor="brand.500" borderTopColor="transparent"
             borderRadius="full" animation="spin 0.8s linear infinite" />
-          <Text color="slate.500" fontSize="sm">Loading profile...</Text>
+          <Text color="slate.500" fontSize="sm">{t('clientCleaners.profile.loading')}</Text>
         </VStack>
       </Box>
     );
@@ -90,10 +94,10 @@ export default function PublicProfilePage() {
       <Box minH="100vh" bg="slate.50" display="flex" alignItems="center" justifyContent="center">
         <VStack gap={4} textAlign="center">
           <Text fontSize="4xl" color="#185FC6"><Glyph name="search" /></Text>
-          <Heading fontWeight="300" fontSize={{ base: '24px', md: '28px' }} letterSpacing="-0.01em" size="md" color="slate.700">Cleaner not found</Heading>
+          <Heading fontWeight="300" fontSize={{ base: '24px', md: '28px' }} letterSpacing="-0.01em" size="md" color="slate.700">{t('clientCleaners.profile.notFound')}</Heading>
           <Box as="button" onClick={() => router.back()}
             color="brand.500" fontWeight="semibold" fontSize="sm" cursor="pointer">
-            ← Back
+            ← {t('common.back')}
           </Box>
         </VStack>
       </Box>
@@ -119,7 +123,7 @@ export default function PublicProfilePage() {
             color="#455B70" fontWeight="semibold" fontSize="sm" cursor="pointer"
             _hover={{ color: '#185FC6' }} transition="color 0.15s">
             <Icon as={LucideArrowLeft} w={4} h={4} />
-            Back
+            {t('common.back')}
           </Box>
         </Box>
       </Box>
@@ -153,7 +157,7 @@ export default function PublicProfilePage() {
                 <Flex justify="space-between" align="start" flexWrap="wrap" gap={3}>
                   <VStack align="start" gap={1.5}>
                     <Heading fontWeight="300" fontSize={{ base: '24px', md: '28px' }} letterSpacing="-0.01em" size="lg" color="slate.900">
-                      {cleaner.name ?? 'Professional'}
+                      {cleaner.name ?? t('clientCleaners.profile.fallbackName')}
                     </Heading>
                     <HStack gap={2} flexWrap="wrap">
                       <Badge
@@ -166,7 +170,7 @@ export default function PublicProfilePage() {
                         bg="#EDF3F5" color="#185FC6"
                         borderRadius="2px" px={3} py={0.5}
                         fontSize="xs" fontWeight="bold">
-                        {isExperienced ? 'Experienced' : 'New on the platform'}
+                        {isExperienced ? t('clientCleaners.profile.experienced') : t('clientCleaners.profile.newOnPlatform')}
                       </Badge>
                     </HStack>
                   </VStack>
@@ -181,7 +185,7 @@ export default function PublicProfilePage() {
                     </VStack>
                     <VStack gap={0} align="center">
                       <Text fontWeight="black" fontSize="xl" color="slate.800">{cleaner.completedJobs}</Text>
-                      <Text fontSize="xs" color="slate.500">jobs</Text>
+                      <Text fontSize="xs" color="slate.500">{t('clientCleaners.profile.jobsLabel')}</Text>
                     </VStack>
                   </HStack>
                 </Flex>
@@ -200,7 +204,7 @@ export default function PublicProfilePage() {
                     {cleaner.serviceTypes.map(s => (
                       <Badge key={s} bg="slate.100" color="slate.600"
                         borderRadius="2px" px={3} py={0.5} fontSize="xs">
-                        {s}
+                        {serviceName(s)}
                       </Badge>
                     ))}
                   </HStack>
@@ -221,7 +225,7 @@ export default function PublicProfilePage() {
                     borderRadius="2px" px={4} py={3}>
                     <Icon as={LucideMapPin} w={4} h={4} color="slate.400" />
                     <Text fontSize="xs" color="slate.400">
-                      Contact details are visible after you accept this cleaner.
+                      {t('clientCleaners.profile.contactLocked')}
                     </Text>
                   </HStack>
                 )}
@@ -229,9 +233,9 @@ export default function PublicProfilePage() {
                 {/* Member since */}
                 <HStack gap={1.5} mt={4} color="slate.400" fontSize="xs">
                   <Icon as={LucideCalendar} w={3.5} h={3.5} />
-                  <Text>Member since {joinedDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}</Text>
+                  <Text>{t('clientCleaners.profile.memberSince', { date: joinedDate.toLocaleDateString(dateLocale, { month: 'long', year: 'numeric' }) })}</Text>
                   {monthsOnPlatform >= 1 && (
-                    <Text>· {monthsOnPlatform} {monthsOnPlatform === 1 ? 'month' : 'months'} on the platform</Text>
+                    <Text>· {monthsOnPlatform === 1 ? t('clientCleaners.profile.oneMonth') : t('clientCleaners.profile.months', { n: monthsOnPlatform })}</Text>
                   )}
                 </HStack>
               </Box>
@@ -244,9 +248,9 @@ export default function PublicProfilePage() {
               <Box bg="white" border="1px solid" borderColor="slate.200" p={6}>
                 <HStack gap={2} mb={5}>
                   <Icon as={LucideCamera} w={5} h={5} color="brand.500" />
-                  <Heading size="sm" fontWeight="bold" color="slate.800">Work gallery</Heading>
+                  <Heading size="sm" fontWeight="bold" color="slate.800">{t('clientCleaners.profile.gallery')}</Heading>
                   <Badge bg="slate.100" color="slate.500" borderRadius="2px" px={2} fontSize="xs">
-                    {cleaner.workPhotos.length} photo{cleaner.workPhotos.length !== 1 ? 's' : ''}
+                    {cleaner.workPhotos.length === 1 ? t('clientCleaners.profile.onePhoto') : t('clientCleaners.profile.photos', { n: cleaner.workPhotos.length })}
                   </Badge>
                 </HStack>
                 <SimpleGrid columns={{ base: 2, sm: 3, md: 4 }} gap={3}>
@@ -269,7 +273,7 @@ export default function PublicProfilePage() {
                         transition="border-color 0.15s">
                         <img
                           src={photo.url}
-                          alt={photo.caption ?? `Job ${i + 1}`}
+                          alt={photo.caption ?? t('clientCleaners.profile.photoAlt', { n: i + 1 })}
                           style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'contain' }}
                         />
                       </Box>
@@ -291,7 +295,7 @@ export default function PublicProfilePage() {
               <Box bg="white" border="1px solid" borderColor="slate.200" p={6}>
                 <HStack gap={2} mb={5}>
                   <Icon as={LucideAward} w={5} h={5} color="#185FC6" />
-                  <Heading size="sm" fontWeight="bold" color="slate.800">Client reviews</Heading>
+                  <Heading size="sm" fontWeight="bold" color="slate.800">{t('clientCleaners.profile.reviews')}</Heading>
                   {ratingAvg > 0 && (
                     <HStack gap={1.5}>
                       <Stars value={Math.round(ratingAvg)} size={3.5} />
@@ -316,12 +320,12 @@ export default function PublicProfilePage() {
                             <VStack align="start" gap={1}>
                               <HStack gap={2}>
                                 <Text fontSize="sm" fontWeight="bold" color="slate.800">
-                                  {review.client.name ?? 'Client'}
+                                  {review.client.name ?? t('clientCleaners.profile.fallbackClient')}
                                 </Text>
                                 <Stars value={review.rating} size={3.5} />
                               </HStack>
                               <Badge bg="slate.100" color="slate.500" fontSize="xs" borderRadius="2px" px={2}>
-                                {serviceLabel(review.lead.serviceType, 'en')}
+                                {serviceLabel(review.lead.serviceType, locale)}
                               </Badge>
                               {review.comment && (
                                 <Text fontSize="sm" color="slate.600" mt={1} lineHeight="1.6">
@@ -331,7 +335,7 @@ export default function PublicProfilePage() {
                             </VStack>
                           </HStack>
                           <Text fontSize="xs" color="slate.400" whiteSpace="nowrap">
-                            {new Date(review.createdAt).toLocaleDateString('en-US')}
+                            {new Date(review.createdAt).toLocaleDateString(dateLocale)}
                           </Text>
                         </Flex>
                       </Box>
@@ -344,7 +348,7 @@ export default function PublicProfilePage() {
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}>
               <Box bg="white" border="1px solid" borderColor="slate.200" p={8} textAlign="center">
                 <Text fontSize="2xl" mb={2} color="#185FC6"><Glyph name="star" /></Text>
-                <Text color="slate.500" fontSize="sm">No reviews yet. Be the first to leave one!</Text>
+                <Text color="slate.500" fontSize="sm">{t('clientCleaners.profile.noReviews')}</Text>
               </Box>
             </motion.div>
           )}
@@ -374,7 +378,7 @@ export default function PublicProfilePage() {
               position="absolute" top="-12px" right="-12px"
               w="36px" h="36px" bg="white" borderRadius="2px"
               display="flex" alignItems="center" justifyContent="center"
-              as="button" aria-label="Close photo"
+              as="button" aria-label={t('clientCleaners.profile.closePhoto')}
               cursor="pointer" onClick={() => setLightbox(null)}
               boxShadow="none" fontWeight="bold" color="slate.600">
               <X size={18} aria-hidden="true" />
