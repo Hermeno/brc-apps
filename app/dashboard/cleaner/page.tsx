@@ -403,7 +403,7 @@ export default function CleanerDashboard() {
                         <HStack gap={4} mb={1.5} flexWrap="wrap">
                           {lead.bedrooms   && <Text fontSize="12px" color="#455B70"><Glyph name="bed" />{lead.bedrooms}bd</Text>}
                           {lead.bathrooms  && <Text fontSize="12px" color="#455B70"><Glyph name="bath" />{lead.bathrooms}ba</Text>}
-                          {(lead.squareMeters ?? 0) > 0 && <Text fontSize="12px" color="#455B70"><Glyph name="area" />{lead.squareMeters}m²</Text>}
+                          {(lead.squareMeters ?? 0) > 0 && <Text fontSize="12px" color="#455B70"><Glyph name="area" />{Math.round((lead.squareMeters ?? 0) * 10.764)} sq ft</Text>}
                           {freqLabel && (
                             <Text fontSize="12px" color="#185FC6" fontWeight="600" fontFamily="heading">↻ {freqLabel}</Text>
                           )}

@@ -504,7 +504,7 @@ export default async function ForCleanersPage() {
                 <p className={styles.faqA}>
                   No. Verliks does not require a registered business — independent cleaners and small
                   cleaning companies both use it. What we do require is a valid government ID, a
-                  confirmed email address and a card on file. Any licence, registration or insurance
+                  confirmed email address and a card on file. Any license, registration, or insurance
                   your state or city requires in order to do cleaning work is your responsibility, not
                   something Verliks provides or verifies.
                 </p>

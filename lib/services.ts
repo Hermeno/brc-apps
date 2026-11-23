@@ -72,11 +72,11 @@ export const SERVICES: Service[] = [
     beforeYouRequest:
       'Have the number of bedrooms and bathrooms ready, along with roughly how big the home is and whether pets live there. If a room should be skipped — a home office, a nursery during a nap — say so in the notes, since it changes how long the job takes.',
     showExtras: true,
-    example: { label: 'a 2-bedroom, 1-bathroom home of about 100 m², cleaned every two weeks', bedrooms: 2, bathrooms: 1, squareMeters: 100, extras: [], frequency: 'biweekly' },
+    example: { label: 'a 2-bedroom, 1-bathroom home of about 1,100 sq ft, cleaned every two weeks', bedrooms: 2, bathrooms: 1, squareMeters: 100, extras: [], frequency: 'biweekly' },
     faq: [
       {
         q: 'Is this enough if nobody has cleaned in months?',
-        a: 'Probably not. When dirt has built up, a deep clean is the better first step, and standard cleaning works well afterwards as upkeep. Describe the condition in your request and the cleaner can tell you which one fits.',
+        a: 'Probably not. When dirt has built up, a deep clean is the better first step, and standard cleaning works well afterward as upkeep. Describe the condition in your request and the cleaner can tell you which one fits.',
       },
       {
         q: 'Do I need to supply products and equipment?',
@@ -115,7 +115,7 @@ export const SERVICES: Service[] = [
     beforeYouRequest:
       'The condition matters more than the size here, so be specific about the worst areas and how long it has been. Photos of the kitchen and bathrooms help a lot — they are what make the difference between an estimate that holds and one that changes on the day.',
     showExtras: true,
-    example: { label: 'a 3-bedroom, 2-bathroom home of about 130 m², with the inside of the fridge added', bedrooms: 3, bathrooms: 2, squareMeters: 130, extras: ['fridge'], frequency: 'once' },
+    example: { label: 'a 3-bedroom, 2-bathroom home of about 1,400 sq ft, with the inside of the fridge added', bedrooms: 3, bathrooms: 2, squareMeters: 130, extras: ['fridge'], frequency: 'once' },
     faq: [
       {
         q: 'How is this different from standard cleaning?',
@@ -157,7 +157,7 @@ export const SERVICES: Service[] = [
     beforeYouRequest:
       'Say what kind of work was done, whether the contractors removed the heavy debris already, and whether the space has power and running water — a cleaner cannot do much without either. Mention if paint, adhesive or grout haze is still on the floors, because that is different work from dust.',
     showExtras: false,
-    example: { label: 'a renovated 2-bedroom, 1-bathroom unit of about 90 m²', bedrooms: 2, bathrooms: 1, squareMeters: 90, extras: [], frequency: 'once' },
+    example: { label: 'a renovated 2-bedroom, 1-bathroom unit of about 970 sq ft', bedrooms: 2, bathrooms: 1, squareMeters: 90, extras: [], frequency: 'once' },
     faq: [
       {
         q: 'Will the dust really be gone?',
@@ -179,7 +179,7 @@ export const SERVICES: Service[] = [
     metaDescription:
       'Move-in and move-out cleaning through Verliks, with empty rooms and cabinets cleaned inside. See what it covers and send your request to cleaners near you.',
     whatIsIt:
-      'An empty home is the one chance to clean what furniture normally covers: the floor under the wardrobe, the inside of every cabinet, the back of the closet. This service is built around that window, whether you are handing a place back or taking one on.',
+      'An empty home is the one chance to clean what furniture normally covers: the floor under the dresser, the inside of every cabinet, the back of the closet. This service is built around that window, whether you are handing a place back or taking one on.',
     included: [
       'Kitchen, including inside cabinets and drawers',
       'Bathrooms, fixtures and any built-in storage',
@@ -199,7 +199,7 @@ export const SERVICES: Service[] = [
     beforeYouRequest:
       'Say whether the property will be completely empty and when access starts and ends, since this work is usually pinned between a moving truck and a handover. If a landlord or agency gave you a checklist, share it in the notes — it is the clearest possible brief.',
     showExtras: true,
-    example: { label: 'an empty 2-bedroom, 1-bathroom apartment of about 85 m², with the oven added', bedrooms: 2, bathrooms: 1, squareMeters: 85, extras: ['oven'], frequency: 'once' },
+    example: { label: 'an empty 2-bedroom, 1-bathroom apartment of about 900 sq ft, with the oven added', bedrooms: 2, bathrooms: 1, squareMeters: 85, extras: ['oven'], frequency: 'once' },
     faq: [
       {
         q: 'Will this guarantee I get my deposit back?',
@@ -234,14 +234,14 @@ export const SERVICES: Service[] = [
     ],
     rightForYou: [
       'Opening up the deck for the season',
-      'A surface that has gone grey, green or slippery',
+      'A surface that has gone gray, green, or slippery',
       'Before a gathering outdoors',
       'Routine exterior upkeep',
     ],
     beforeYouRequest:
-      'The material is the important part: composite, pressure-treated softwood, hardwood or painted. Add the rough size, how many steps and levels, whether there is an outdoor tap nearby, and whether the boards are sound — loose or rotten boards are a repair question, not a cleaning one.',
+      'The material is the important part: composite, pressure-treated softwood, hardwood or painted. Add the rough size, how many steps and levels, whether there is an outdoor faucet nearby, and whether the boards are sound — loose or rotten boards are a repair question, not a cleaning one.',
     showExtras: false,
-    example: { label: 'a deck of roughly 30 m²', bedrooms: 0, bathrooms: 0, squareMeters: 30, extras: [], frequency: 'once' },
+    example: { label: 'a deck of roughly 320 sq ft', bedrooms: 0, bathrooms: 0, squareMeters: 30, extras: [], frequency: 'once' },
     faq: [
       {
         q: 'Will the deck look new again?',
@@ -249,7 +249,7 @@ export const SERVICES: Service[] = [
       },
       {
         q: 'Does this include sealing or staining?',
-        a: 'No. This is cleaning only. If you are planning to seal or stain afterwards, mention it, because the deck needs to dry fully first and that affects the timing.',
+        a: 'No. This is cleaning only. If you are planning to seal or stain afterward, mention it, because the deck needs to dry fully first and that affects the timing.',
       },
     ],
     related: ['pressure-washing', 'gutter-cleaning', 'flashing-cleaning'],
@@ -272,7 +272,7 @@ export const SERVICES: Service[] = [
       'Suitable exterior walls and surfaces',
       'Extra attention to heavily used and stained areas',
       'Pressure and technique matched to the surface',
-      'Clearing loosened dirt from the area afterwards',
+      'Clearing loosened dirt from the area afterward',
     ],
     rightForYou: [
       'A driveway that has gone dark or green',
@@ -281,9 +281,9 @@ export const SERVICES: Service[] = [
       'General exterior tidy-up of a property',
     ],
     beforeYouRequest:
-      'Name the surfaces and rough square footage, and say whether there is an outdoor tap and power point available. Flag anything delicate nearby — planting beds, painted surfaces, older mortar, exterior lighting — and any oil stains, which behave differently from ordinary dirt.',
+      'Name the surfaces and rough square footage, and say whether there is an outdoor faucet and an outlet available. Flag anything delicate nearby — planting beds, painted surfaces, older mortar, exterior lighting — and any oil stains, which behave differently from ordinary dirt.',
     showExtras: false,
-    example: { label: 'a driveway and walkway of roughly 60 m² together', bedrooms: 0, bathrooms: 0, squareMeters: 60, extras: [], frequency: 'once' },
+    example: { label: 'a driveway and walkway of roughly 650 sq ft together', bedrooms: 0, bathrooms: 0, squareMeters: 60, extras: [], frequency: 'once' },
     faq: [
       {
         q: 'Can any surface be pressure washed?',
@@ -312,7 +312,7 @@ export const SERVICES: Service[] = [
       'Attention to visible build-up and silt',
       'Bagging or collecting what comes out',
       'A check that water runs through where it can be tested',
-      'Tidying the ground area afterwards',
+      'Tidying the ground area afterward',
       'Work adjusted to the access the property allows',
     ],
     rightForYou: [
@@ -324,11 +324,11 @@ export const SERVICES: Service[] = [
     beforeYouRequest:
       'Access decides this job: say how many storeys the property has, whether the roofline is reachable by ladder, if the ground around the house is level, and whether gutter guards are fitted. Mention how long it has been, since compacted debris is slower than loose leaves.',
     showExtras: false,
-    example: { label: 'a single-storey house with about 40 m² of roof footprint served by the gutters', bedrooms: 0, bathrooms: 0, squareMeters: 40, extras: [], frequency: 'once' },
+    example: { label: 'a single-story house with about 430 sq ft of roof footprint served by the gutters', bedrooms: 0, bathrooms: 0, squareMeters: 40, extras: [], frequency: 'once' },
     faq: [
       {
         q: 'Do cleaners work at height on any property?',
-        a: 'Not necessarily. Some professionals will not take work above a certain height or without safe ladder footing, and that is a judgement each one makes. Describing the property accurately means you get a realistic answer instead of a cancelled job.',
+        a: 'Not necessarily. Some professionals will not take work above a certain height or without safe ladder footing, and that is a judgment each one makes. Describing the property accurately means you get a realistic answer instead of a canceled job.',
       },
       {
         q: 'Are repairs included?',
@@ -364,7 +364,7 @@ export const SERVICES: Service[] = [
     beforeYouRequest:
       'Describe where the flashing is and how it can be reached: chimney, valley, or where a roof meets a wall, and at what height. If you have noticed a leak or lifted metal, say so — that points to a roofer rather than to cleaning, and it is better to find out before booking.',
     showExtras: false,
-    example: { label: 'flashing and surrounding roof area of roughly 20 m² on a single-storey roofline', bedrooms: 0, bathrooms: 0, squareMeters: 20, extras: [], frequency: 'once' },
+    example: { label: 'flashing and surrounding roof area of roughly 215 sq ft on a single-story roofline', bedrooms: 0, bathrooms: 0, squareMeters: 20, extras: [], frequency: 'once' },
     faq: [
       {
         q: 'Will this stop a leak?',
@@ -406,15 +406,15 @@ export const SERVICES: Service[] = [
     beforeYouRequest:
       'Say which rooms and roughly how much tiled area, and what the tile is: ceramic, porcelain, or natural stone. Stone matters, because acidic products that work on ceramic will etch marble or travertine. Photos of the worst grout lines set expectations better than any description.',
     showExtras: false,
-    example: { label: 'a bathroom and kitchen with about 25 m² of tiled area in a 2-bathroom home', bedrooms: 0, bathrooms: 2, squareMeters: 25, extras: [], frequency: 'once' },
+    example: { label: 'a bathroom and kitchen with about 270 sq ft of tiled area in a 2-bathroom home', bedrooms: 0, bathrooms: 2, squareMeters: 25, extras: [], frequency: 'once' },
     faq: [
       {
-        q: 'Will the grout go back to its original colour?',
-        a: 'Often it improves a great deal, but not always all the way. Grout that is stained through, or that has been sealed with dirt underneath, can stay discoloured — at which point the answer is regrouting or colour sealing, which is a different trade.',
+        q: 'Will the grout go back to its original color?',
+        a: 'Often it improves a great deal, but not always all the way. Grout that is stained through, or that has been sealed with dirt underneath, can stay discolored — at which point the answer is regrouting or color sealing, which is a different trade.',
       },
       {
-        q: 'Can mould be removed?',
-        a: 'Surface mould on tile and grout usually cleans up. Mould growing behind the tile or in failed silicone is a different matter, and it tends to come back until the silicone is replaced or the damp cause is dealt with.',
+        q: 'Can mold be removed?',
+        a: 'Surface mold on tile and grout usually cleans up. Mold growing behind the tile or in failed silicone is a different matter, and it tends to come back until the silicone is replaced or the damp cause is dealt with.',
       },
     ],
     related: ['deep-cleaning', 'standard-cleaning', 'move-in-move-out-cleaning'],
@@ -436,11 +436,11 @@ export const SERVICES: Service[] = [
       'Organizing closets, cabinets, shelves or a whole room',
       'Setting up practical storage zones',
       'Putting frequently used items within easy reach',
-      'Labelling or categorising when you want it',
+      'Labeling or categorizing when you want it',
       'A plan shaped around how you use the space',
     ],
     rightForYou: [
-      'Closets and wardrobes',
+      'Closets and dressers',
       'Kitchens and pantries',
       'Home offices and paperwork',
       'Garages and storage areas',
@@ -448,9 +448,9 @@ export const SERVICES: Service[] = [
       'A room that is tidy but still hard to use',
     ],
     beforeYouRequest:
-      'Say which rooms, and be honest about volume — a wardrobe and a full garage are not the same afternoon. Decide in advance whether you want help deciding what to discard or only help arranging what you keep, and whether you can be there, because the sorting usually needs your calls.',
+      'Say which rooms, and be honest about volume — a closet and a full garage are not the same afternoon. Decide in advance whether you want help deciding what to discard or only help arranging what you keep, and whether you can be there, because the sorting usually needs your calls.',
     showExtras: false,
-    example: { label: 'two rooms of about 35 m² combined', bedrooms: 2, bathrooms: 0, squareMeters: 35, extras: [], frequency: 'once' },
+    example: { label: 'two rooms of about 375 sq ft combined', bedrooms: 2, bathrooms: 0, squareMeters: 35, extras: [], frequency: 'once' },
     faq: [
       {
         q: 'Do I have to be there?',
@@ -491,17 +491,17 @@ export const SERVICES: Service[] = [
       'Spaces that have gone years without attention',
     ],
     beforeYouRequest:
-      'Say how full the space is and whether things can be moved, since that decides most of the time on the job. Flag anything that changes the work: damp, mould, pests, exposed insulation, or an attic with boards missing. If items need discarding, note it — removal is not part of cleaning.',
+      'Say how full the space is and whether things can be moved, since that decides most of the time on the job. Flag anything that changes the work: damp, mold, pests, exposed insulation, or an attic with boards missing. If items need discarding, note it — removal is not part of cleaning.',
     showExtras: false,
-    example: { label: 'a two-car garage of roughly 40 m²', bedrooms: 0, bathrooms: 0, squareMeters: 40, extras: [], frequency: 'once' },
+    example: { label: 'a two-car garage of roughly 430 sq ft', bedrooms: 0, bathrooms: 0, squareMeters: 40, extras: [], frequency: 'once' },
     faq: [
       {
         q: 'Will the cleaner haul away what I want to get rid of?',
         a: 'Do not count on it. Disposal usually means a separate service and a fee, and some material cannot be taken at all. Ask directly in the conversation before the visit.',
       },
       {
-        q: 'What about mould or pests?',
-        a: 'Say so in the request. Visible mould and pest activity are specialist work, and a cleaner may decline the job or limit it — which is the right outcome, not a lost booking.',
+        q: 'What about mold or pests?',
+        a: 'Say so in the request. Visible mold and pest activity are specialist work, and a cleaner may decline the job or limit it — which is the right outcome, not a lost booking.',
       },
     ],
     related: ['home-organizing', 'deep-cleaning', 'post-construction-cleaning'],
@@ -536,7 +536,7 @@ export const SERVICES: Service[] = [
     beforeYouRequest:
       'The practical details decide this one: the hours cleaning can happen, how access and keys work, how often you need it, and roughly how many people use the space. If your premises require particular products, waste handling or insurance cover, raise it early rather than after a quote.',
     showExtras: false,
-    example: { label: 'an office of about 150 m² with 2 restrooms', bedrooms: 0, bathrooms: 2, squareMeters: 150, extras: [], frequency: 'weekly' },
+    example: { label: 'an office of about 1,600 sq ft with 2 restrooms', bedrooms: 0, bathrooms: 2, squareMeters: 150, extras: [], frequency: 'weekly' },
     faq: [
       {
         q: 'Can cleaning happen outside business hours?',

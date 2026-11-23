@@ -51,7 +51,7 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
     createNotification({
       userId: conv.cleanerId,
       type:   'lead_declined',
-      title:  'The client cancelled this booking',
+      title:  'The client canceled this booking',
       body:   fee.reason,
       link:   '/dashboard/cleaner',
     }).catch(() => {});

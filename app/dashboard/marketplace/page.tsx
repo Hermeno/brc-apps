@@ -250,7 +250,7 @@ export default function MarketplacePage() {
                                 <Text fontSize="xs" color="slate.600"><Glyph name="bath" />{lead.bathrooms}ba</Text>
                               )}
                               {(lead.squareMeters ?? 0) > 0 && (
-                                <Text fontSize="xs" color="slate.600"><Glyph name="area" />{lead.squareMeters}m²</Text>
+                                <Text fontSize="xs" color="slate.600"><Glyph name="area" />{Math.round((lead.squareMeters ?? 0) * 10.764)} sq ft</Text>
                               )}
                               {lead.frequency && lead.frequency !== 'once' && (
                                 <Text

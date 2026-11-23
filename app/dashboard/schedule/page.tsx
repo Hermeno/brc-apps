@@ -143,7 +143,7 @@ export default function SchedulePage() {
                           <Text fontSize="xs" color="slate.500"><Glyph name="bath" />{job.bathrooms}ba</Text>
                         )}
                         {(job.squareMeters ?? 0) > 0 && (
-                          <Text fontSize="xs" color="slate.500"><Glyph name="area" />{job.squareMeters}m²</Text>
+                          <Text fontSize="xs" color="slate.500"><Glyph name="area" />{Math.round((job.squareMeters ?? 0) * 10.764)} sq ft</Text>
                         )}
                         {job.estimatedHours && (
                           <HStack gap={1}>

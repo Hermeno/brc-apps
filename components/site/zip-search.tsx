@@ -14,7 +14,7 @@ export default function ZipSearch({ id, hint, tone = 'photo' }: {
         <label className="zip-field" htmlFor={id}>
           <span>ZIP code</span>
           <input id={id} name="zip" type="text" inputMode="numeric" autoComplete="postal-code"
-            pattern="[0-9]{5}" maxLength={5} required placeholder="e.g. 06103"
+            pattern="[0-9]{5}" maxLength={5} required placeholder="e.g., 06103"
             title="Enter a 5-digit ZIP code" aria-describedby={hint ? `${id}-hint` : undefined} />
         </label>
         <button type="submit">Find a cleaner</button>
