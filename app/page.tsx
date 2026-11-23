@@ -7,7 +7,7 @@ import PhotoHero from '@/components/site/photo-hero';
 import ZipSearch from '@/components/site/zip-search';
 import Testimonials from '@/components/site/testimonials';
 import { getSiteService } from '@/lib/site-content';
-import { TESTIMONIALS } from '@/lib/testimonials';
+import { SHOWING_SAMPLES, TESTIMONIALS } from '@/lib/testimonials';
 
 export const metadata: Metadata = {
   title: 'Find a Cleaner Near You | Verliks',
@@ -139,7 +139,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <Testimonials items={TESTIMONIALS} />
+      <Testimonials items={TESTIMONIALS} sample={SHOWING_SAMPLES} />
 
       <section className="photo-band on-dark" aria-labelledby="checks-title">
         <Image src="/process-bg.jpg" alt="" fill sizes="100vw" />

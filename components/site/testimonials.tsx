@@ -1,8 +1,8 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import Image from 'next/image';
-import { SAMPLE_TESTIMONIALS, type Testimonial } from '@/lib/testimonials';
+import type { Testimonial } from '@/lib/testimonials';
 
 // The card outline from the supplied design: a rounded quadrilateral whose bottom
 // edge drops toward the right (300×320 box, 84 px slant, 44 px corners).
@@ -36,28 +36,14 @@ function Card({ t, slot }: { t: Testimonial; slot: Slot }) {
   );
 }
 
-export default function Testimonials({ items }: { items: Testimonial[] }) {
-  const [list, setList] = useState(items.length >= 3 ? items : null);
-  const [preview, setPreview] = useState(false);
+export default function Testimonials({ items: list, sample }: { items: Testimonial[]; sample: boolean }) {
   const [active, setActive] = useState(0);
-
-  // Until three real testimonials exist, only the team sees the section, with samples.
-  useEffect(() => {
-    if (!list && new URLSearchParams(window.location.search).get('preview') === 'testimonials') {
-      setList(SAMPLE_TESTIMONIALS);
-      setPreview(true);
-    }
-  }, [list]);
-
-  if (!list) return null;
+  if (list.length === 0) return null;
   const at = (offset: number) => (active + offset + list.length) % list.length;
 
   return (
     <section className="testimonials" aria-labelledby="testimonials-title">
       <div className="wrap">
-        {preview && (
-          <p className="tm-preview">Preview with sample testimonials. The public sees this section once three real ones are added.</p>
-        )}
         <h2 id="testimonials-title" className="tm-title">What our customers say</h2>
         <div className="tm-stage">
           {(['left', 'center', 'right'] as const).map((slot, i) => (
@@ -70,6 +56,7 @@ export default function Testimonials({ items }: { items: Testimonial[] }) {
               aria-label={`Show the testimonial from ${t.name}`} aria-current={i === active ? 'true' : undefined} />
           ))}
         </div>
+        {sample && <p className="tm-note">Examples shown while we gather our first client reviews.</p>}
       </div>
     </section>
   );

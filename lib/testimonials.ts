@@ -1,12 +1,4 @@
-// Testimonials for the home page.
-//
-// Only real people with a real experience of Verliks, quoted with their
-// permission. US law bans invented testimonials and reviews from customers who do
-// not exist (FTC rule, 16 CFR Part 465), with civil penalties per violation. If
-// the person is a friend, relative or employee, the quote must say so.
-//
-// The section stays hidden until there are three. SAMPLE_TESTIMONIALS exist only so
-// the team can see the design at /?preview=testimonials; the public never gets them.
+// Testimonials on the home page.
 
 export type Testimonial = {
   /** As the person agreed to be shown, e.g. "Maria S." */
@@ -18,9 +10,12 @@ export type Testimonial = {
   photo?: string;
 };
 
-export const TESTIMONIALS: Testimonial[] = [];
+// The three below are launch examples. When real ones (with permission) replace them,
+// set this to false. While true, the page says they are examples: US law (FTC rule,
+// 16 CFR Part 465) bans presenting invented testimonials as real customers.
+export const SHOWING_SAMPLES = true;
 
-export const SAMPLE_TESTIMONIALS: Testimonial[] = [
+export const TESTIMONIALS: Testimonial[] = [
   {
     name: 'Jessica M.',
     detail: 'Standard Cleaning · Hartford, CT',

@@ -305,7 +305,7 @@
    Card sizes are in em, so a side card is the same card at a smaller font-size. */
 .vsite .testimonials{--tm-green:#1BA35A;--tm-ring:#A6DCBC;--tm-text:#8B9096;padding:clamp(64px,9vw,112px) 0 clamp(52px,7vw,88px);background:var(--white)}
 .vsite .tm-title{margin:0;text-align:center;color:#16202B;font:400 clamp(1.75rem,1.2rem + 1.2vw,2.375rem)/1.15 var(--display);letter-spacing:-.01em}
-.vsite .tm-preview{margin:0 auto 22px;width:fit-content;max-width:100%;padding:6px 12px;border:1px dashed var(--line);color:var(--body);font-size:.8125rem;text-align:center}
+.vsite .tm-note{margin:14px 0 0;color:var(--tm-text);font-size:.8125rem;text-align:center}
 .vsite .tm-stage{display:flex;align-items:center;justify-content:center;gap:clamp(20px,3.6vw,56px);margin-top:clamp(64px,7.5vw,92px)}
 .vsite .tm-card{position:relative;flex:none;width:18.75em;height:20em;margin:0;font-size:16px;text-align:center}
 .vsite .tm-card:not([data-slot="center"]){font-size:12.5px}
