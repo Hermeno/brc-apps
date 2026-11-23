@@ -28,6 +28,7 @@ import { AddressInput } from '@/components/address-input';
 import Image from 'next/image';
 import { useT, useLocale } from '@/lib/i18n';
 import { CLIENT_DECISION_HOURS } from '@/lib/lead-policy';
+import { nextVisit } from '@/lib/recurrence';
 import LanguageSwitcher from '@/components/language-switcher';
 import Glyph from '@/components/glyph';
 
@@ -122,18 +123,6 @@ function formatCountdown(ms: number): string {
   if (days > 0)  return `${days}d ${hours}h`;
   if (hours > 0) return `${hours}h ${mins}m`;
   return `${mins}m`;
-}
-
-function getNextCycleDate(dateTime: string, frequency: string): Date | null {
-  const dt  = new Date(dateTime);
-  const now = new Date();
-  if (frequency === 'once' || dt > now) return null;
-  const ms: Record<string, number> = { weekly: 7*864e5, biweekly: 14*864e5, monthly: 30*864e5 };
-  const interval = ms[frequency];
-  if (!interval) return null;
-  let next = new Date(dt);
-  while (next <= now) next = new Date(next.getTime() + interval);
-  return next;
 }
 
 /* ─── Stepper ─────────────────────────────────────────────────── */
@@ -824,9 +813,7 @@ export default function ClientPage() {
                         : lead.status === 'COMPLETED' ? '#185FC6'
                         : lead.status === 'CANCELLED' ? '#18314E' : '#18314E';
                       const cleanerAvatar  = (lead.conversations ?? []).find(c => c.cleanerId === lead.cleanerId)?.cleaner;
-                      const nextCycle      = lead.frequency && lead.frequency !== 'once'
-                        ? getNextCycleDate(lead.dateTime, lead.frequency)
-                        : null;
+                      const nextCycle      = nextVisit(new Date(lead.dateTime), lead.frequency ?? 'once');
 
                       return (
                         <Box

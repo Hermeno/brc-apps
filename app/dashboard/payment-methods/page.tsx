@@ -25,7 +25,7 @@ type SavedCard = {
 
 const BRAND_LABELS: Record<string, string> = {
   visa: 'Visa', mastercard: 'Mastercard', amex: 'Amex',
-  discover: 'Discover', elo: 'Elo', hipercard: 'Hipercard',
+  discover: 'Discover', elo: 'Elo', hipercard: 'Hipercard', link: 'Link',
 };
 
 const BRAND_COLORS: Record<string, { bg: string; color: string }> = {
@@ -264,7 +264,7 @@ function PaymentMethodsContent() {
                               <Box>
                                 <HStack gap={2}>
                                   <Text fontWeight="bold" color="slate.800" fontSize="sm">
-                                    •••• {card.last4}
+                                    {card.brand === 'link' ? card.last4 : `•••• ${card.last4}`}
                                   </Text>
                                   {card.isDefault && (
                                     <Text
@@ -281,7 +281,7 @@ function PaymentMethodsContent() {
                                   )}
                                 </HStack>
                                 <Text fontSize="xs" color="slate.400" mt={0.5}>
-                                  {BRAND_LABELS[card.brand] ?? card.brand} · {t('cleaner.payments.expires')} {card.expMonth != null ? String(card.expMonth).padStart(2, '0') : '??'}/{card.expYear != null ? String(card.expYear).slice(-2) : '??'}
+                                  {BRAND_LABELS[card.brand] ?? card.brand}{card.expMonth != null && card.expYear != null && ` · ${t('cleaner.payments.expires')} ${String(card.expMonth).padStart(2, '0')}/${String(card.expYear).slice(-2)}`}
                                 </Text>
                               </Box>
                             </HStack>

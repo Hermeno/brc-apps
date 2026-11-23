@@ -56,11 +56,13 @@ export async function syncCardOnFile(customerId: string): Promise<CardOnFile> {
   try {
     const [customer, methods] = await Promise.all([
       stripe.customers.retrieve(customerId),
-      stripe.paymentMethods.list({ customer: customerId, type: 'card', limit: 20 }),
+      stripe.paymentMethods.list({ customer: customerId, limit: 20 }),
     ]);
 
     // list() returns newest first — index 0 is the most recently added card.
-    const cards = methods.data;
+    // Link wallets count too: many cleaners saved one before checkout went card-only,
+    // and listing cards alone hid them from matching although Stripe charges them off-session.
+    const cards = methods.data.filter(pm => pm.type === 'card' || pm.type === 'link');
 
     let defaultId =
       !('deleted' in customer) && typeof customer.invoice_settings?.default_payment_method === 'string'

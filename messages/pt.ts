@@ -420,7 +420,6 @@ export const pt: Messages = {
       unnamed: 'Faxineira sem nome',
       qualified: 'Verificada',
       pending: 'Aguardando verificação',
-      freeLeadApplied: 'Lead grátis aplicado — crédito de indicação usado, nenhuma taxa cobrada.',
       loadError: 'Não foi possível carregar seus dados de indicação.',
       retry: 'Tentar novamente',
     },

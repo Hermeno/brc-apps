@@ -1,3 +1,4 @@
+import type { Prisma } from '@prisma/client';
 import { prisma } from './prisma';
 import { calculateLeadPrice, detectServiceKey, getLeadPriceConfig } from './pricing';
 import { createNotificationMany, createNotification } from './notifications';
@@ -6,6 +7,8 @@ import { PLAN_MAX_RADIUS, DEFAULT_RADIUS_MILES } from './plans';
 import { logWarn } from './logger';
 import { resolveFeeOnCancellation } from './lead-fee';
 import { DIRECT_REQUEST_HOURS, CLIENT_DECISION_HOURS, AUTO_COMPLETE_HOURS } from './lead-policy';
+import { approximateArea } from './lead-visibility';
+import { serviceLabel } from './estimate';
 
 // ─── CFS (Cleaner Fit Score) ─────────────────────────────────────────────────
 // Max 100 points: Plan(30) + Service(40) + Rating(20) + Proximity(10)
@@ -153,6 +156,31 @@ const OPEN_WINDOW_MS       = 90 * 1000;
 const INSTANT_BOOK_WINDOW_MS = 10 * 60 * 1000;
 const HOUR_MS                = 60 * 60 * 1000;
 
+// Best score first; on equal score the nearer cleaner. Proximity is only worth one
+// point per 5 miles, so without this a tie among everyone within ~2 miles fell to
+// database order and a cleaner next door could lose the seat to one across town.
+function byScoreThenDistance(a: { score: number; distanceMiles: number | null }, b: { score: number; distanceMiles: number | null }): number {
+  return b.score - a.score || (a.distanceMiles ?? Infinity) - (b.distanceMiles ?? Infinity);
+}
+
+// What an invite may say before the fee is paid: the service and the rough area.
+// The street is what the fee sells, and this text also goes out by email.
+function inviteBody(lead: { serviceType: string; address: string; zipCode: string | null }, ask: string): string {
+  return `${serviceLabel(lead.serviceType, 'en')} in ${approximateArea(lead.address, lead.zipCode)}. ${ask}`;
+}
+
+// Cleaners who cannot take this slot: /respond refuses a blocked time or a job
+// within 2 hours, so inviting them would spend a seat of the round on nobody.
+function freeAt(when: Date): Prisma.UserWhereInput {
+  return {
+    scheduleBlocks: { none: { startTime: { lte: when }, endTime: { gte: when } } },
+    leadsAccepted:  { none: {
+      status:   { in: ['ACCEPTED', 'IN_REVIEW'] },
+      dateTime: { gte: new Date(when.getTime() - 2 * HOUR_MS), lte: new Date(when.getTime() + 2 * HOUR_MS) },
+    } },
+  };
+}
+
 // ─── Direct request ───────────────────────────────────────────────────────────
 // Client picked a specific cleaner (Thumbtack-style). Instead of the wave
 // auto-dispatch, send the lead straight to that cleaner and let it wait for
@@ -171,7 +199,7 @@ export async function dispatchDirect(leadId: string, cleanerId: string): Promise
 
   const lead = await prisma.lead.findUnique({
     where: { id: leadId },
-    select: { serviceType: true, address: true },
+    select: { serviceType: true, address: true, zipCode: true },
   });
   if (!lead) return false;
 
@@ -188,7 +216,7 @@ export async function dispatchDirect(leadId: string, cleanerId: string): Promise
     userId: cleanerId,
     type:   'lead_received',
     title:  '✋ A client requested you directly!',
-    body:   `${lead.serviceType} at ${lead.address}. Respond to start the conversation.`,
+    body:   inviteBody(lead, 'Respond to start the conversation.'),
     link:   '/dashboard/cleaner',
   }]).catch(() => {});
 
@@ -221,6 +249,7 @@ export async function runMatching(leadId: string) {
       hasPaymentMethod: true,
       verification: { status: 'APPROVED' },
       OR: [{ suspendedUntil: null }, { suspendedUntil: { lt: now } }],
+      ...freeAt(lead.dateTime),
     },
     include: { stats: true },
     take: 200,
@@ -234,7 +263,7 @@ export async function runMatching(leadId: string) {
       distanceMiles,
     }))
     .filter(s => s.score > 0)
-    .sort((a, b) => b.score - a.score);
+    .sort(byScoreThenDistance);
 
   if (scored.length === 0) {
     await logNoMatch(
@@ -270,7 +299,7 @@ export async function runMatching(leadId: string) {
       userId: top.cleaner.id,
       type:   'lead_received',
       title:  '⚡ Instant Book — you were matched!',
-      body:   `${lead.serviceType} at ${lead.address}. Accept within ${INSTANT_BOOK_WINDOW_MS / 60000} minutes.`,
+      body:   inviteBody(lead, `Accept within ${INSTANT_BOOK_WINDOW_MS / 60000} minutes.`),
       link:   '/dashboard/cleaner',
     }]).catch(() => {});
 
@@ -295,7 +324,7 @@ export async function runMatching(leadId: string) {
     userId: cleaner.id,
     type:   'lead_received',
     title:  'New lead available!',
-    body:   `${lead.serviceType} at ${lead.address}. Be the first to respond!`,
+    body:   inviteBody(lead, 'Be the first to respond!'),
     link:   '/dashboard/cleaner',
   }))).catch(() => {});
 
@@ -307,7 +336,7 @@ export async function runMatching(leadId: string) {
 // If no candidates remain → UNMATCHED.
 async function dispatchNextBatch(
   lead: {
-    id: string; clientId: string; latitude: number; longitude: number; zipCode: string | null; serviceType: string; address: string;
+    id: string; clientId: string; latitude: number; longitude: number; zipCode: string | null; serviceType: string; address: string; dateTime: Date;
     distributions: { cleanerId: string; status: string; createdAt: Date; notifiedAt: Date | null }[];
   },
   nowDate: Date,
@@ -330,6 +359,7 @@ async function dispatchNextBatch(
       verification: { status: 'APPROVED' },
       id:  { notIn: usedIds },
       OR:  [{ suspendedUntil: null }, { suspendedUntil: { lt: nowDate } }],
+      ...freeAt(lead.dateTime),
     },
     include: { stats: true },
     take: 200,
@@ -337,9 +367,9 @@ async function dispatchNextBatch(
 
   const radius = filterByRadius(candidates, leadCoords);
   const fit    = radius.kept
-    .map(({ cleaner, distanceMiles }) => ({ cleaner, score: scoreCFS(cleaner, lead, distanceMiles) }))
+    .map(({ cleaner, distanceMiles }) => ({ cleaner, distanceMiles, score: scoreCFS(cleaner, lead, distanceMiles) }))
     .filter(s => s.score > 0)
-    .sort((a, b) => b.score - a.score);
+    .sort(byScoreThenDistance);
   const scored = fit.slice(0, WAVE_BATCH_SIZE);
 
   if (scored.length === 0) {
@@ -351,14 +381,15 @@ async function dispatchNextBatch(
         hasPaymentMethod: true,
         verification: { status: 'APPROVED' },
         OR: [{ suspendedUntil: null }, { suspendedUntil: { lt: nowDate } }],
+        ...freeAt(lead.dateTime),
       },
       include: { stats: true },
     });
     const recycledRadius = filterByRadius(recycled, leadCoords);
     const recycledFit    = recycledRadius.kept
-      .map(({ cleaner, distanceMiles }) => ({ cleaner, score: scoreCFS(cleaner, lead, distanceMiles) }))
+      .map(({ cleaner, distanceMiles }) => ({ cleaner, distanceMiles, score: scoreCFS(cleaner, lead, distanceMiles) }))
       .filter(s => s.score > 0)
-      .sort((a, b) => b.score - a.score);
+      .sort(byScoreThenDistance);
     const recycledScored = recycledFit.slice(0, WAVE_BATCH_SIZE);
 
     if (recycledScored.length === 0) {
@@ -396,7 +427,7 @@ async function dispatchNextBatch(
     createNotificationMany(recycledScored.map(({ cleaner }) => ({
       userId: cleaner.id, type: 'lead_received' as const,
       title: 'New lead available!',
-      body:  `${lead.serviceType} at ${lead.address}. Be the first to respond!`,
+      body:  inviteBody(lead, 'Be the first to respond!'),
       link:  '/dashboard/cleaner',
     }))).catch(() => {});
     return true;
@@ -422,7 +453,7 @@ async function dispatchNextBatch(
     userId: cleaner.id,
     type:   'lead_received',
     title:  'New lead available!',
-    body:   `${lead.serviceType} at ${lead.address}. Be the first to respond!`,
+    body:   inviteBody(lead, 'Be the first to respond!'),
     link:   '/dashboard/cleaner',
   }))).catch(() => {});
 

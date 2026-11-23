@@ -104,16 +104,22 @@ export async function POST(request: NextRequest) {
 
     const dbUser = await prisma.user.findUnique({
       where:  { email: session.user.email! },
-      select: { id: true, phone: true },
+      select: { id: true, phone: true, role: true },
     });
 
     if (!dbUser) {
       return NextResponse.json({ error: 'User not found' }, { status: 401 });
     }
+    if (dbUser.role !== 'CLIENT') {
+      return NextResponse.json({ error: 'Only client accounts can request a cleaning.' }, { status: 403 });
+    }
 
     const parsedDate = new Date(dateTime);
     if (isNaN(parsedDate.getTime())) {
       return NextResponse.json({ error: 'Invalid date/time' }, { status: 400 });
+    }
+    if (parsedDate <= new Date()) {
+      return NextResponse.json({ error: 'Please choose a future date and time' }, { status: 400 });
     }
 
     const maxDate = new Date();

@@ -418,7 +418,6 @@ export const en = {
       unnamed: 'Unnamed cleaner',
       qualified: 'Verified',
       pending: 'Pending verification',
-      freeLeadApplied: 'Free lead applied — referral credit used, no fee charged.',
       loadError: "Couldn't load your referral data.",
       retry: 'Try again',
     },

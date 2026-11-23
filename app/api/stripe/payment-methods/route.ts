@@ -22,8 +22,9 @@ export async function GET() {
 
     const paymentMethods = cards.map(pm => ({
       id:        pm.id,
-      brand:     pm.card?.brand ?? 'card',
-      last4:     pm.card?.last4 ?? '????',
+      brand:     pm.card?.brand ?? pm.type,
+      // A Link wallet has no digits; its email is what identifies it to the cleaner.
+      last4:     pm.card?.last4 ?? pm.link?.email ?? '????',
       expMonth:  pm.card?.exp_month,
       expYear:   pm.card?.exp_year,
       isDefault: pm.id === defaultPaymentMethodId,

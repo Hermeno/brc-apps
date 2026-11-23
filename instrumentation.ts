@@ -12,6 +12,15 @@ export async function register() {
       if (wavesRunning) return;
       wavesRunning = true;
       try {
+        // Production runs two instances, each with this loop. Without a shared
+        // lease both advanced the same lead at once: every invite, notification and
+        // re-match went out twice. The row is taken atomically, at most once a minute.
+        const won = await prisma.$executeRaw`
+          INSERT INTO "LeadPlatformConfig" ("id", "value", "updatedAt") VALUES ('waves_lease', '', NOW())
+          ON CONFLICT ("id") DO UPDATE SET "updatedAt" = NOW()
+          WHERE "LeadPlatformConfig"."updatedAt" < NOW() - INTERVAL '45 seconds'`;
+        if (won === 0) return;
+
         const rematchIds = await advanceWaves();
         for (const id of rematchIds) {
           await runMatching(id).catch(err => logError('[waves] runMatching', err));

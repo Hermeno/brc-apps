@@ -59,9 +59,18 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
     throw err;
   }
 
+  // A free-lead credit from referrals pays the fee instead of the card, at this same moment.
+  const feeDue     = conversation.feeStatus === 'pending' && (conversation.leadFee ?? 0) > 0;
+  const usedCredit = feeDue && (await prisma.user.updateMany({
+    where: { id: conversation.cleanerId, freeLeadCredits: { gt: 0 } },
+    data:  { freeLeadCredits: { decrement: 1 } },
+  })).count > 0;
+
   // Automatically charge the cleaner's card on file now that the client confirmed
   let autoCharged = false;
-  if (conversation.feeStatus === 'pending' && (conversation.leadFee ?? 0) > 0) {
+  if (usedCredit) {
+    await prisma.conversation.update({ where: { id }, data: { feeStatus: 'waived', feeDeadline: null } });
+  } else if (feeDue) {
     const cleanerUser = await prisma.user.findUnique({
       where:  { id: conversation.cleanerId },
       select: { stripeCustomerId: true },
@@ -104,9 +113,16 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
     await prisma.conversation.update({ where: { id }, data: { feeStatus: 'waived' } });
   }
 
+  // Only a fee still pending is owed. A free-lead credit or a $0 price was settled
+  // already, and telling that cleaner to "pay within 24h" made them think they owed money.
+  const owed = feeDue && !autoCharged && !usedCredit;
   const notifBody = autoCharged
     ? 'The client confirmed you and the lead fee was charged. Open the chat to continue.'
-    : `The client accepted you! Pay the lead fee within ${FEE_PAYMENT_HOURS}h to keep the lead.`;
+    : usedCredit
+      ? 'The client confirmed you. A free lead credit covered the fee. Open the chat to continue.'
+      : owed
+        ? `The client accepted you! Pay the lead fee within ${FEE_PAYMENT_HOURS}h to keep the lead.`
+        : 'The client confirmed you. Open the chat to continue.';
 
   createNotification({
     userId: conversation.cleanerId,

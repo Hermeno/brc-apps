@@ -36,15 +36,14 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
   if (declined.count === 0)
     return NextResponse.json({ error: 'This conversation is no longer open' }, { status: 409 });
 
-  if (conv.feeStatus === 'charged') {
-    createNotification({
-      userId: conv.cleanerId,
-      type:   'lead_declined',
-      title:  'The client chose someone else',
-      body:   fee.reason,
-      link:   '/dashboard/cleaner',
-    }).catch(() => {});
-  }
+  // The cleaner hears either way: declined before acceptance (nothing charged) or after it (fee kept).
+  createNotification({
+    userId: conv.cleanerId,
+    type:   'lead_declined',
+    title:  'The client chose someone else',
+    body:   fee.reason,
+    link:   '/dashboard/cleaner',
+  }).catch(() => {});
 
   // If no other active conversations → revert lead to NEW and re-run matching
   const remaining = await prisma.conversation.count({
