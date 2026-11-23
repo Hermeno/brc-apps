@@ -73,6 +73,15 @@
 .vsite .btn-ghost{background:transparent;border-color:var(--white);color:var(--white)}
 .vsite .btn-ghost:hover{background:var(--white);color:var(--navy)}
 .vsite .btn-row{display:flex;flex-wrap:wrap;gap:8px}
+/* Homepage actions use a defined edge and a small direction cue. */
+.vsite .home-button{justify-content:space-between;gap:14px;min-height:54px;padding:12px 18px;border-width:1px;border-bottom-width:3px;border-radius:5px;font-size:.9375rem;font-weight:700;white-space:nowrap}
+.vsite .home-button svg{flex:none;transition:transform .15s var(--ease-out)}
+.vsite .home-button:hover svg{transform:translateX(3px)}
+.vsite .home-button-primary{border-color:var(--blue);border-bottom-color:#103f81;background:var(--blue);color:var(--white)}
+.vsite .home-button-primary:hover{border-color:var(--blue-hover);border-bottom-color:#0c356c;background:var(--blue-hover)}
+.vsite .home-button-secondary{border-color:var(--navy);border-bottom-color:#8da4bd;background:var(--white);color:var(--navy)}
+.vsite .home-button-secondary:hover{border-color:var(--blue);background:#f2f7fd;color:var(--blue)}
+.vsite .home-button-large{min-height:60px;padding-inline:22px;font-size:1rem}
 
 /* "more" with the hairline to its left, as under each reference column. */
 .vsite .more-link{display:inline-flex;align-items:center;gap:10px;min-height:44px;padding-left:12px;border-left:1px solid var(--line);color:var(--blue);font-size:.9375rem;font-weight:600}
@@ -174,13 +183,23 @@
 .vsite .band-rule{border-top:1px solid var(--line)}
 .vsite .band-head{max-width:46rem;margin-bottom:30px}
 .vsite .band-head .t-lead{margin-top:12px}
-/* Title on the left, actions on the right: the strip under the hero. */
+/* Compact callouts on the inner public pages. */
 .vsite .intro-band{padding-block:20px 28px}
 .vsite .intro-band-inner{display:flex;align-items:center;justify-content:space-between;gap:24px 40px}
 .vsite .intro-band-inner>:first-child{flex:1 1 auto;min-width:0}
 .vsite .intro-band-inner>.btn-row{flex:none;flex-wrap:nowrap}
 .vsite .intro-band .t-sub{margin-top:2px}
 .vsite .intro-band .t-lead{margin-top:8px;font-size:.875rem}
+/* A short editorial statement keeps the first request in view. */
+.vsite .home-intro{padding-block:clamp(52px,5.4vw,78px);border-bottom:1px solid var(--line)}
+.vsite .home-intro-inner{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);align-items:center;gap:clamp(40px,7vw,100px)}
+.vsite .home-intro .t-display{max-width:12ch;font-size:clamp(2.25rem,3.3vw,3.5rem);font-weight:500;line-height:1.11}
+.vsite .home-intro .t-lead{max-width:35rem;font-size:1.0625rem;line-height:1.7}
+.vsite .home-intro-actions{display:flex;align-items:stretch;gap:12px;margin-top:28px}
+.vsite .home-intro-actions .home-button-primary{flex:1 1 auto}
+.vsite .home-intro-actions .home-button-secondary{flex:0 0 auto;min-width:166px}
+.vsite .home-lower-actions{gap:12px;margin-top:36px}
+.vsite .home-lower-actions .home-button{min-width:190px}
 
 /* Open columns use photographs for services and small indices for processes. */
 .vsite .cols-3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:40px 2.5%}
@@ -281,6 +300,11 @@
 .vsite .footer-legal a{text-decoration:underline;text-underline-offset:3px}
 
 /* ── Smaller screens ─────────────────────────────────────────────────────── */
+@media(max-width:1199px){
+  .vsite .home-intro-inner{grid-template-columns:1fr;gap:18px}
+  .vsite .home-intro .t-display{max-width:16ch}
+  .vsite .home-intro-next{max-width:650px}
+}
 @media(max-width:1119px){
   .vsite .header-inner{grid-template-columns:1fr auto}
   .vsite .nav{display:none}
@@ -321,10 +345,21 @@
   .vsite .zip-row{flex-direction:column;gap:8px}
   .vsite .zip-field{flex:none}
   .vsite .zip-search button{width:100%}
+  .vsite .home-intro{padding-block:42px 48px}
+  .vsite .home-intro .t-display{font-size:clamp(2rem,8vw,2.5rem)}
+  .vsite .home-intro .t-lead{font-size:1rem;line-height:1.6}
+  .vsite .home-intro-actions{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:8px;margin-top:24px}
+  .vsite .home-button{justify-content:center;min-height:52px;padding:10px 9px;font-size:.875rem;text-align:center}
+  .vsite .home-button-large{min-height:56px;padding-inline:9px;font-size:.875rem}
+  .vsite .home-button svg{display:none}
+  .vsite .home-intro-actions .home-button-secondary{min-width:0}
+  .vsite .home-lower-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+  .vsite .home-lower-actions .home-button{min-width:0}
   .vsite .cols-4{grid-template-columns:1fr}
   .vsite .cols-end{justify-content:flex-start}
   .vsite .photo-band-body{flex-direction:column;text-align:center;gap:20px}
   .vsite .btn-row .btn{flex:1 1 100%}
+  .vsite .home-lower-actions .btn{flex:none}
 }
 /* ── Motion ────────────────────────────────────────────────────────────────────
    Openings play once per page: the hero copy rises into focus line by line and
@@ -368,4 +403,5 @@
 }
 @media(prefers-reduced-motion:reduce){
   .vsite *,.vsite *::before,.vsite *::after{transition:none!important}
+  .vsite .home-button:hover svg{transform:none}
 }

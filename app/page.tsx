@@ -49,16 +49,21 @@ export default function HomePage() {
         <ZipSearch id="hero-zip" hint="Free to request · Availability depends on your ZIP code" />
       </PhotoHero>
 
-      <section className="intro-band" aria-labelledby="intro-title">
-        <div className="wrap intro-band-inner">
-          <div>
-            <h2 id="intro-title" className="t-display">Simple from the first request.</h2>
-            <p className="t-sub">You decide before anyone comes to your home.</p>
-            <p className="t-lead">Describe the job for free, then agree on the work and price with the cleaner before you accept.</p>
+      <section className="home-intro" aria-labelledby="intro-title">
+        <div className="wrap home-intro-inner">
+          <div className="home-intro-copy">
+            <h2 id="intro-title" className="t-display">Tell us what your home needs.</h2>
           </div>
-          <div className="btn-row">
-            <Link className="btn btn-dark" href="/how-it-works">How it works</Link>
-            <Link className="btn btn-primary" href="/request">Start a free request</Link>
+          <div className="home-intro-next">
+            <p className="t-lead">Describe the cleaning you have in mind. Your request is free, and an independent cleaner who serves your area can reply. You agree on the work and price before accepting.</p>
+            <div className="home-intro-actions">
+              <Link className="btn btn-primary home-button home-button-primary home-button-large" href="/request">
+                Start a free request <ArrowRight size={20} strokeWidth={2} aria-hidden="true" />
+              </Link>
+              <Link className="btn btn-outline home-button home-button-secondary" href="/how-it-works">
+                How it works <ArrowRight size={18} strokeWidth={2} aria-hidden="true" />
+              </Link>
+            </div>
           </div>
         </div>
       </section>
@@ -121,9 +126,13 @@ export default function HomePage() {
               </ul>
             </div>
           </div>
-          <div className="cols-end btn-row">
-            <Link className="btn btn-dark" href="/services">See all services</Link>
-            <Link className="btn btn-primary" href="/for-cleaners">Join as a cleaner</Link>
+          <div className="cols-end btn-row home-lower-actions">
+            <Link className="btn btn-outline home-button home-button-secondary" href="/services">
+              See all services <ArrowRight size={18} strokeWidth={2} aria-hidden="true" />
+            </Link>
+            <Link className="btn btn-outline home-button home-button-secondary" href="/for-cleaners">
+              Join as a cleaner <ArrowRight size={18} strokeWidth={2} aria-hidden="true" />
+            </Link>
           </div>
         </div>
       </section>
