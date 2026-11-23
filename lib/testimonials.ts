@@ -15,6 +15,7 @@ export type Testimonial = {
 // 16 CFR Part 465) bans presenting invented testimonials as real customers.
 export const SHOWING_SAMPLES = true;
 
+// Keep quotes under ~130 characters and the detail line short: longer text is cut to fit the card.
 export const TESTIMONIALS: Testimonial[] = [
   {
     name: 'Jessica M.',
@@ -23,8 +24,8 @@ export const TESTIMONIALS: Testimonial[] = [
   },
   {
     name: 'Daniel R.',
-    detail: 'Move-Out Cleaning · New Haven, CT',
-    quote: 'Moving week was chaos. The cleaner did the empty apartment top to bottom, cabinets and oven included, and the landlord had nothing to flag.',
+    detail: 'Move-Out · New Haven, CT',
+    quote: 'Moving week was chaos. The cleaner left the empty apartment spotless, cabinets and oven included.',
   },
   {
     name: 'Ana P.',

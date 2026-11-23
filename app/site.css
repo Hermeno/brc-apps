@@ -301,39 +301,36 @@
 
 /* ── Testimonials ─────────────────────────────────────────────────────────────
    Built to the supplied testimonial design, which deliberately departs from the
-   page rules above (rounded cards, a soft shadow, green). Keep it as drawn.
+   page rules above (rounded cards, a soft shadow). Keep it as drawn, in the platform blue.
    Card sizes are in em, so a side card is the same card at a smaller font-size. */
-.vsite .testimonials{--tm-green:#1BA35A;--tm-ring:#A6DCBC;--tm-text:#8B9096;padding:clamp(64px,9vw,112px) 0 clamp(52px,7vw,88px);background:var(--white)}
+.vsite .testimonials{--tm-accent:var(--blue);--tm-text:#8B9096;padding:clamp(64px,9vw,112px) 0 clamp(52px,7vw,88px);background:var(--white)}
 .vsite .tm-title{margin:0;text-align:center;color:#16202B;font:400 clamp(1.75rem,1.2rem + 1.2vw,2.375rem)/1.15 var(--display);letter-spacing:-.01em}
-.vsite .tm-note{margin:14px 0 0;color:var(--tm-text);font-size:.8125rem;text-align:center}
+.vsite .tm-note{margin:clamp(40px,5vw,56px) 0 0;color:var(--tm-text);font-size:.8125rem;text-align:center}
 .vsite .tm-stage{display:flex;align-items:center;justify-content:center;gap:clamp(20px,3.6vw,56px);margin-top:clamp(64px,7.5vw,92px)}
 .vsite .tm-card{position:relative;flex:none;width:18.75em;height:20em;margin:0;font-size:16px;text-align:center}
 .vsite .tm-card:not([data-slot="center"]){font-size:12.5px}
 .vsite .tm-card>:not(svg){position:relative;z-index:1}
-.vsite .tm-shape{position:absolute;inset:0;z-index:0;width:100%;height:100%;overflow:visible}
-.vsite .tm-back{fill:var(--tm-green)}
-.vsite .tm-front{fill:var(--white);filter:drop-shadow(0 16px 22px rgba(22,32,43,.1))}
+.vsite .tm-shape{position:absolute;inset:0;z-index:0;width:100%;height:100%;overflow:visible;filter:drop-shadow(0 16px 22px rgba(22,32,43,.1))}
+.vsite .tm-back{fill:var(--tm-accent)}
+.vsite .tm-front{fill:var(--white)}
 .vsite .tm-card figcaption{display:flex;flex-direction:column;align-items:center;padding:3.55em 1.5em 0}
-.vsite .tm-avatar{position:absolute;top:-3em;left:50%;width:6em;height:6em;margin-left:-3em;overflow:hidden;border-radius:50%;background:#E8F6EE;display:grid;place-items:center}
+.vsite .tm-avatar{position:absolute;top:-3em;left:50%;width:6em;height:6em;margin-left:-3em;overflow:hidden;border-radius:50%;background:#EDF3F5;display:grid;place-items:center}
 .vsite .tm-avatar img{object-fit:cover}
-.vsite .tm-initials{color:var(--tm-green);font:600 1.75em/1 var(--display)}
+.vsite .tm-initials{color:var(--tm-accent);font:600 1.75em/1 var(--display)}
 .vsite .tm-name{color:#1E2228;font:400 1.75em/1.2 var(--display)}
-.vsite .tm-detail{margin-top:.2em;color:var(--tm-text);font-size:.9375em}
-.vsite .tm-mark{display:block;height:.62em;margin-top:.32em;color:var(--tm-green);font:700 2.5em/1 var(--display)}
+.vsite .tm-detail{max-width:100%;margin-top:.2em;overflow:hidden;color:var(--tm-text);font-size:.9375em;white-space:nowrap;text-overflow:ellipsis}
+.vsite .tm-mark{display:block;height:.62em;margin-top:.32em;color:var(--tm-accent);font:700 2.5em/1 var(--display)}
 .vsite .tm-quote{margin:.45em auto 0;max-width:16em;padding:0 .5em}
-.vsite .tm-quote p{margin:0;color:var(--tm-text);font:italic 400 .9375em/1.55 var(--font-body),system-ui,sans-serif}
-.vsite .tm-dots{display:flex;justify-content:center;margin-top:clamp(44px,5vw,60px)}
-.vsite .tm-dots button{position:relative;width:28px;height:28px;padding:0;border:0;background:none;cursor:pointer}
-.vsite .tm-dots button::before{content:"";position:absolute;inset:6px;border:3px solid var(--tm-ring);border-radius:50%}
-.vsite .tm-dots button[aria-current="true"]::before{border-color:var(--tm-green)}
-.vsite .tm-dots button:focus-visible{outline-color:var(--tm-green)}
+.vsite .tm-quote p{display:-webkit-box;margin:0;overflow:hidden;color:var(--tm-text);font:italic 400 .9375em/1.55 var(--font-body),system-ui,sans-serif;-webkit-box-orient:vertical;-webkit-line-clamp:5}
+.vsite .tm-card:not([data-slot="center"]) .tm-quote p{-webkit-line-clamp:4}
 @media(max-width:1119px){
   .vsite .tm-card{font-size:14px}
   .vsite .tm-card:not([data-slot="center"]){font-size:11px}
 }
 @media(max-width:860px){
-  .vsite .tm-card{font-size:15px}
-  .vsite .tm-card:not([data-slot="center"]){display:none}
+  .vsite .tm-stage{flex-direction:column;gap:5.5em}
+  .vsite .tm-card,.vsite .tm-card:not([data-slot="center"]){font-size:15px}
+  .vsite .tm-card[data-slot="center"]{order:-1}
 }
 @media(prefers-reduced-motion:no-preference){
   .vsite .tm-card{animation:tm-in .45s var(--ease-out) both}

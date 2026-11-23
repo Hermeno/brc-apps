@@ -1,6 +1,3 @@
-'use client';
-
-import { useState } from 'react';
 import Image from 'next/image';
 import type { Testimonial } from '@/lib/testimonials';
 
@@ -8,7 +5,7 @@ import type { Testimonial } from '@/lib/testimonials';
 // edge drops toward the right (300×320 box, 84 px slant, 44 px corners).
 const SHAPE = 'M0,44 Q0,0 44,0 L256,0 Q300,0 300,44 L300,276 Q300,320 257.6,308.1 L42.4,247.9 Q0,236 0,192 Z';
 
-// The green layer behind each card shows on a different side, as drawn.
+// The blue layer behind each card shows on a different side, as drawn.
 const OFFSET = { left: 'translate(-14 -12)', center: 'translate(14 -12)', right: 'translate(-12 14)' } as const;
 type Slot = keyof typeof OFFSET;
 
@@ -36,25 +33,16 @@ function Card({ t, slot }: { t: Testimonial; slot: Slot }) {
   );
 }
 
-export default function Testimonials({ items: list, sample }: { items: Testimonial[]; sample: boolean }) {
-  const [active, setActive] = useState(0);
-  if (list.length === 0) return null;
-  const at = (offset: number) => (active + offset + list.length) % list.length;
-
+export default function Testimonials({ items, sample }: { items: Testimonial[]; sample: boolean }) {
+  if (items.length < 3) return null;
   return (
     <section className="testimonials" aria-labelledby="testimonials-title">
       <div className="wrap">
         <h2 id="testimonials-title" className="tm-title">What our customers say</h2>
         <div className="tm-stage">
-          {(['left', 'center', 'right'] as const).map((slot, i) => (
-            <Card key={`${slot}-${at(i - 1)}`} t={list[at(i - 1)]} slot={slot} />
-          ))}
-        </div>
-        <div className="tm-dots" role="group" aria-label="Choose a testimonial">
-          {list.map((t, i) => (
-            <button key={i} type="button" onClick={() => setActive(i)}
-              aria-label={`Show the testimonial from ${t.name}`} aria-current={i === active ? 'true' : undefined} />
-          ))}
+          <Card t={items[2]} slot="left" />
+          <Card t={items[0]} slot="center" />
+          <Card t={items[1]} slot="right" />
         </div>
         {sample && <p className="tm-note">Examples shown while we gather our first client reviews.</p>}
       </div>
