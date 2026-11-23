@@ -6,7 +6,7 @@ import { useEffect } from 'react';
 // lives in app/site.css ([data-reveal]); this only flips the attribute.
 const TARGETS = [
   '.intro-band-inner > *', '.band-head', '.split > *', '.cols-3 > *', '.cols-4 > *',
-  '.steps li', '.cols-end', '.photo-band .wrap > *', '.faq details', '.prose',
+  '.steps li', '.cols-end', '.photo-band .wrap > *', '.faq details', '.prose', '.tm-title', '.tm-stage',
 ].map(selector => `.vsite main ${selector}`).join(',');
 
 export default function ScrollReveal() {

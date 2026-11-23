@@ -5,7 +5,9 @@ import { ArrowRight, ShieldCheck } from 'lucide-react';
 import PublicPage from '@/components/site/public-page';
 import PhotoHero from '@/components/site/photo-hero';
 import ZipSearch from '@/components/site/zip-search';
+import Testimonials from '@/components/site/testimonials';
 import { getSiteService } from '@/lib/site-content';
+import { TESTIMONIALS } from '@/lib/testimonials';
 
 export const metadata: Metadata = {
   title: 'Find a Cleaner Near You | Verliks',
@@ -136,6 +138,8 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+      <Testimonials items={TESTIMONIALS} />
 
       <section className="photo-band on-dark" aria-labelledby="checks-title">
         <Image src="/process-bg.jpg" alt="" fill sizes="100vw" />
