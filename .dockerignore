@@ -1,0 +1,7 @@
+# The image is built from the repository on DigitalOcean. Next loads .env files
+# during `next build`, and the tracked .env.local points at an old database, so
+# prerendered pages read the wrong data. Env vars come from the App Platform spec.
+.env
+.env.*
+node_modules
+.next

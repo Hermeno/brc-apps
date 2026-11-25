@@ -9,7 +9,8 @@ import { PLANS, RADIUS_OPTIONS, PLAN_MAX_RADIUS } from '@/lib/plans';
 
 /* Public marketing page — no session, no personal data. Re-rendered hourly so
    an admin price change in PlanConfig reaches the page without a deploy. */
-export const revalidate = 3600;
+// Rendered on each request: it shows the live plan prices, which must match what Stripe charges.
+export const dynamic = 'force-dynamic';
 
 const CANONICAL = '/for-cleaners';
 const SIGNUP    = '/auth/register';
