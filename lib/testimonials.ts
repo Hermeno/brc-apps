@@ -1,35 +1,38 @@
 // Testimonials on the home page.
 
 export type Testimonial = {
-  /** As the person agreed to be shown, e.g. "Maria S." */
+  kind: 'scenario' | 'review';
+  /** Consented display name for a review, or title for a scenario. */
   name: string;
-  /** The line under the name, e.g. "Deep Cleaning · Hartford, CT" or "Cleaner · Waterbury, CT". */
+  /** Review context or scenario audience. */
   detail: string;
+  /** The review quote or a plain-language scenario description. */
   quote: string;
-  /** Optional, with the person's consent: a file in /public, e.g. "/images/testimonials/maria.jpg". */
+  /** Optional review photo, used only with the person's consent. */
   photo?: string;
 };
 
-// The three below are launch examples. When real ones (with permission) replace them,
-// set this to false. While true, the page says they are examples: US law (FTC rule,
-// 16 CFR Part 465) bans presenting invented testimonials as real customers.
-export const SHOWING_SAMPLES = true;
-
-// Keep quotes under ~130 characters and the detail line short: longer text is cut to fit the card.
+// Scenario entries explain the flow; review entries must come from people who
+// agreed to be shown. The display mode is derived from the entries below.
 export const TESTIMONIALS: Testimonial[] = [
   {
-    name: 'Jessica M.',
-    detail: 'Standard Cleaning · Hartford, CT',
-    quote: 'I sent the request on my lunch break and had a reply that afternoon. We agreed on the price in the chat before anything was booked.',
+    kind: 'scenario',
+    name: 'A routine clean',
+    detail: 'For clients',
+    quote: 'Describe your home and the work you need. Discuss the scope and price with a cleaner before deciding whether to book.',
   },
   {
-    name: 'Daniel R.',
-    detail: 'Move-Out · New Haven, CT',
-    quote: 'Moving week was chaos. The cleaner left the empty apartment spotless, cabinets and oven included.',
+    kind: 'scenario',
+    name: 'A move-out clean',
+    detail: 'For clients',
+    quote: 'List the rooms, cabinets and appliances that need attention so cleaners can respond to the job you actually have.',
   },
   {
-    name: 'Ana P.',
-    detail: 'Cleaner · Waterbury, CT',
-    quote: 'I pick the requests I want and only pay when a client chooses me. Signing up was free, and my ID was reviewed in a day.',
+    kind: 'scenario',
+    name: 'A job that fits',
+    detail: 'For cleaners',
+    quote: 'Choose your services and coverage area, review matching requests, and reply only to the work you want to take on.',
   },
 ];
+
+export const SHOWING_SAMPLES = TESTIMONIALS.some(item => item.kind === 'scenario');

@@ -1,50 +1,58 @@
 import Image from 'next/image';
 import type { Testimonial } from '@/lib/testimonials';
 
-// The card outline from the supplied design: a rounded quadrilateral whose bottom
-// edge drops toward the right (300×320 box, 84 px slant, 44 px corners).
-const SHAPE = 'M0,44 Q0,0 44,0 L256,0 Q300,0 300,44 L300,276 Q300,320 257.6,308.1 L42.4,247.9 Q0,236 0,192 Z';
-
-// The blue layer behind each card shows on a different side, as drawn.
-const OFFSET = { left: 'translate(-14 -12)', center: 'translate(14 -12)', right: 'translate(-12 14)' } as const;
-type Slot = keyof typeof OFFSET;
-
 const initials = (name: string) => name.split(/\s+/).map(word => word[0]).join('').slice(0, 2).toUpperCase();
 
-function Card({ t, slot }: { t: Testimonial; slot: Slot }) {
-  return (
-    <figure className="tm-card" data-slot={slot}>
-      <figcaption>
-        <span className="tm-avatar">
-          {t.photo
-            ? <Image src={t.photo} alt="" fill sizes="96px" />
-            : <span className="tm-initials" aria-hidden="true">{initials(t.name)}</span>}
-        </span>
-        <span className="tm-name">{t.name}</span>
-        <span className="tm-detail">{t.detail}</span>
-      </figcaption>
-      <span className="tm-mark" aria-hidden="true">”</span>
-      <blockquote className="tm-quote"><p>{t.quote}</p></blockquote>
-      <svg className="tm-shape" viewBox="0 0 300 320" aria-hidden="true" focusable="false">
-        <path className="tm-back" d={SHAPE} transform={OFFSET[slot]} />
-        <path className="tm-front" d={SHAPE} />
-      </svg>
-    </figure>
-  );
-}
-
 export default function Testimonials({ items, sample }: { items: Testimonial[]; sample: boolean }) {
-  if (items.length < 3) return null;
+  const visibleItems = items.filter(item => item.kind === (sample ? 'scenario' : 'review'));
+  if (visibleItems.length === 0) return null;
+
   return (
-    <section className="testimonials" aria-labelledby="testimonials-title">
+    <section id="testimonials" className="testimonials" aria-labelledby="testimonials-title">
       <div className="wrap">
-        <h2 id="testimonials-title" className="tm-title">What our customers say</h2>
-        <div className="tm-stage">
-          <Card t={items[2]} slot="left" />
-          <Card t={items[0]} slot="center" />
-          <Card t={items[1]} slot="right" />
+        <div className="tm-heading">
+          <div>
+            <p className="tm-eyebrow">{sample ? 'Illustrative examples' : 'Community stories'}</p>
+            <h2 id="testimonials-title" className="tm-title">
+              {sample ? 'How a good match can begin' : 'What clients and cleaners say'}
+            </h2>
+          </div>
+          <p className="tm-intro">
+            {sample
+              ? 'These scenarios show how Verliks works. They are examples, not reviews from customers or cleaners.'
+              : 'Experiences shared by people who have used Verliks.'}
+          </p>
         </div>
-        {sample && <p className="tm-note">Examples shown while we gather our first client reviews.</p>}
+
+        <div className="tm-grid">
+          {visibleItems.map((item, index) => (
+            <article className="tm-card" key={`${item.name}-${index}`}>
+              {item.kind === 'scenario' ? (
+                <>
+                  <p className="tm-card-label">{item.detail}</p>
+                  <h3 className="tm-card-title">{item.name}</h3>
+                  <p className="tm-card-body">{item.quote}</p>
+                </>
+              ) : (
+                <>
+                  <span className="tm-quote-mark" aria-hidden="true">“</span>
+                  <blockquote className="tm-quote"><p>{item.quote}</p></blockquote>
+                  <div className="tm-person">
+                    <span className="tm-avatar">
+                      {item.photo
+                        ? <Image src={item.photo} alt="" fill sizes="44px" />
+                        : <span className="tm-initials" aria-hidden="true">{initials(item.name)}</span>}
+                    </span>
+                    <div>
+                      <p className="tm-person-name">{item.name}</p>
+                      <p className="tm-person-detail">{item.detail}</p>
+                    </div>
+                  </div>
+                </>
+              )}
+            </article>
+          ))}
+        </div>
       </div>
     </section>
   );

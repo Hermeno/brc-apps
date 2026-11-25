@@ -93,7 +93,7 @@ export default function SiteHeader() {
           {links.map(link => <Link key={link.href} className="nav-link" href={link.href} aria-current={current(link.href)}>{link.label}</Link>)}
         </nav>
 
-        <Link className="header-action" href="/auth/login">Sign in</Link>
+        <Link className={pathname === '/' ? 'header-action header-action-home' : 'header-action'} href="/auth/login">Sign in</Link>
 
         <button className="menu-toggle" type="button" aria-label={open ? 'Close menu' : 'Open menu'} aria-expanded={open} aria-controls="site-mobile-menu" onClick={() => setOpen(value => !value)}>
           {open ? <X size={22} aria-hidden="true" /> : <Menu size={22} aria-hidden="true" />}
@@ -110,7 +110,7 @@ export default function SiteHeader() {
             ))}
           </ul>
           {links.map(link => <Link key={link.href} href={link.href} aria-current={current(link.href)} onClick={() => setOpen(false)}>{link.label}</Link>)}
-          <Link href="/auth/login" onClick={() => setOpen(false)}>Sign in</Link>
+          <Link className={pathname === '/' ? 'mobile-sign-in' : undefined} href="/auth/login" onClick={() => setOpen(false)}>Sign in</Link>
           <Link className="btn btn-primary" href="/request" onClick={() => setOpen(false)}>Find a cleaner</Link>
         </div>
       </nav>

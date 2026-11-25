@@ -8,7 +8,8 @@
 
    The palette stays narrow: blue is the accent, navy anchors the footer, and a
    neutral slate wash supports text on photographs. The rest is text, surface and hairline. Content
-   corners are square; the outlined header action follows the supplied reference.
+   corners are square; inner pages keep an outlined header action, while the
+   home sign-in button uses the blue accent.
    No shadows or gradients. Motion is quiet and
    one-way: things arrive once and stay put (see the Motion block at the end).
    ───────────────────────────────────────────────────────────────────────────── */
@@ -116,6 +117,8 @@
 .vsite .nav-caret[aria-expanded="true"] svg{transform:rotate(180deg)}
 .vsite .header-action{display:inline-flex;align-items:center;justify-content:center;justify-self:end;min-height:40px;padding:0 18px;border:1px solid var(--nav-border);border-radius:10px;color:var(--nav-text);font:400 .8125rem/1.2 var(--display);letter-spacing:.008em;white-space:nowrap;transition:background-color .18s ease,border-color .18s ease}
 .vsite .header-action:hover{background:var(--nav-hover);border-color:var(--nav-text)}
+.vsite .header-action-home{min-width:118px;min-height:44px;padding-inline:27px;border-color:var(--blue);border-radius:50%;background:var(--blue);color:var(--white);font-weight:600}
+.vsite .header-action-home:hover{border-color:var(--blue-hover);background:var(--blue-hover)}
 /* The photo starts at the viewport top; the header remains a clear layer over it. */
 .vsite:has(> main > .hero){position:relative}
 .vsite:has(> main > .hero) .site-header{--nav-text:#fff;--nav-active:#fff;--nav-border:rgba(255,255,255,.82);--nav-hover:rgba(255,255,255,.12);position:absolute;inset:0 0 auto}
@@ -299,43 +302,40 @@
 .vsite .footer-legal{margin:0;font-size:.8125rem;line-height:1.6}
 .vsite .footer-legal a{text-decoration:underline;text-underline-offset:3px}
 
-/* ── Testimonials ─────────────────────────────────────────────────────────────
-   Built to the supplied testimonial design, which deliberately departs from the
-   page rules above (rounded cards, a soft shadow). Keep it as drawn, in the platform blue.
-   Card sizes are in em, so a side card is the same card at a smaller font-size. */
-.vsite .testimonials{--tm-accent:var(--blue);--tm-text:#8B9096;padding:clamp(64px,9vw,112px) 0 clamp(52px,7vw,88px);background:var(--white)}
-.vsite .tm-title{margin:0;text-align:center;color:#16202B;font:400 clamp(1.75rem,1.2rem + 1.2vw,2.375rem)/1.15 var(--display);letter-spacing:-.01em}
-.vsite .tm-note{margin:clamp(40px,5vw,56px) 0 0;color:var(--tm-text);font-size:.8125rem;text-align:center}
-.vsite .tm-stage{display:flex;align-items:center;justify-content:center;gap:clamp(20px,3.6vw,56px);margin-top:clamp(64px,7.5vw,92px)}
-.vsite .tm-card{position:relative;flex:none;width:18.75em;height:20em;margin:0;font-size:16px;text-align:center}
-.vsite .tm-card:not([data-slot="center"]){font-size:12.5px}
-.vsite .tm-card>:not(svg){position:relative;z-index:1}
-.vsite .tm-shape{position:absolute;inset:0;z-index:0;width:100%;height:100%;overflow:visible;filter:drop-shadow(0 16px 22px rgba(22,32,43,.1))}
-.vsite .tm-back{fill:var(--tm-accent)}
-.vsite .tm-front{fill:var(--white)}
-.vsite .tm-card figcaption{display:flex;flex-direction:column;align-items:center;padding:3.55em 1.5em 0}
-.vsite .tm-avatar{position:absolute;top:-3em;left:50%;width:6em;height:6em;margin-left:-3em;overflow:hidden;border-radius:50%;background:#EDF3F5;display:grid;place-items:center}
+/* ── Testimonials and illustrative scenarios ────────────────────────────── */
+.vsite .testimonials{padding:clamp(56px,6vw,88px) 0;background:var(--warm)}
+.vsite .tm-heading{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,.8fr);align-items:end;gap:24px 64px;margin-bottom:32px}
+.vsite .tm-eyebrow{margin:0 0 12px;color:var(--blue);font:700 .75rem/1.3 var(--display);letter-spacing:.1em;text-transform:uppercase}
+.vsite .tm-title{max-width:17ch;margin:0;color:var(--ink);font:500 clamp(2rem,3.6vw,3rem)/1.12 var(--display);letter-spacing:-.025em;text-wrap:balance}
+.vsite .tm-intro{max-width:31rem;margin:0;color:var(--body);font-size:1rem;line-height:1.65}
+.vsite .tm-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.vsite .tm-card{display:flex;flex-direction:column;min-width:0;min-height:260px;margin:0;padding:clamp(22px,2.25vw,32px);border:1px solid var(--line);border-top:3px solid var(--blue);background:var(--white)}
+.vsite .tm-card-label{margin:0 0 22px;color:var(--blue);font:700 .75rem/1.3 var(--display);letter-spacing:.09em;text-transform:uppercase}
+.vsite .tm-card-title{margin:0 0 14px;color:var(--ink);font:600 clamp(1.3rem,1.5vw,1.55rem)/1.25 var(--display)}
+.vsite .tm-card-body{margin:0;color:var(--body);font-size:1rem;line-height:1.68}
+.vsite .tm-quote-mark{height:2rem;color:var(--blue);font:700 3rem/.9 var(--display)}
+.vsite .tm-quote{flex:1;margin:22px 0 28px}
+.vsite .tm-quote p{margin:0;color:var(--ink);font:400 1rem/1.65 var(--font-body),system-ui,sans-serif}
+.vsite .tm-person{display:flex;align-items:center;gap:12px;padding-top:17px;border-top:1px solid var(--line)}
+.vsite .tm-avatar{position:relative;display:grid;place-items:center;flex:none;width:44px;height:44px;overflow:hidden;border-radius:50%;background:#E8F1FC;color:var(--blue)}
 .vsite .tm-avatar img{object-fit:cover}
-.vsite .tm-initials{color:var(--tm-accent);font:600 1.75em/1 var(--display)}
-.vsite .tm-name{color:#1E2228;font:400 1.75em/1.2 var(--display)}
-.vsite .tm-detail{max-width:100%;margin-top:.2em;overflow:hidden;color:var(--tm-text);font-size:.9375em;white-space:nowrap;text-overflow:ellipsis}
-.vsite .tm-mark{display:block;height:.62em;margin-top:.32em;color:var(--tm-accent);font:700 2.5em/1 var(--display)}
-.vsite .tm-quote{margin:.45em auto 0;max-width:16em;padding:0 .5em}
-.vsite .tm-quote p{display:-webkit-box;margin:0;overflow:hidden;color:var(--tm-text);font:italic 400 .9375em/1.55 var(--font-body),system-ui,sans-serif;-webkit-box-orient:vertical;-webkit-line-clamp:5}
-.vsite .tm-card:not([data-slot="center"]) .tm-quote p{-webkit-line-clamp:4}
-@media(max-width:1119px){
-  .vsite .tm-card{font-size:14px}
-  .vsite .tm-card:not([data-slot="center"]){font-size:11px}
+.vsite .tm-initials{font:600 .875rem/1 var(--display)}
+.vsite .tm-person-name{margin:0;color:var(--ink);font:600 .875rem/1.25 var(--display)}
+.vsite .tm-person-detail{margin:3px 0 0;color:var(--body);font-size:.8125rem;line-height:1.35}
+@media(max-width:980px){
+  .vsite .tm-heading{grid-template-columns:1fr;gap:14px}
+  .vsite .tm-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
-@media(max-width:860px){
-  .vsite .tm-stage{flex-direction:column;gap:5.5em}
-  .vsite .tm-card,.vsite .tm-card:not([data-slot="center"]){font-size:15px}
-  .vsite .tm-card[data-slot="center"]{order:-1}
+@media(min-width:641px) and (max-width:980px){
+  .vsite .tm-grid>:last-child:nth-child(odd){grid-column:1/-1;justify-self:center;width:calc((100% - 16px)/2)}
 }
-@media(prefers-reduced-motion:no-preference){
-  .vsite .tm-card{animation:tm-in .45s var(--ease-out) both}
+@media(max-width:640px){
+  .vsite .testimonials{padding:48px 0 56px}
+  .vsite .tm-heading{margin-bottom:24px}
+  .vsite .tm-grid{grid-template-columns:1fr;gap:12px}
+  .vsite .tm-card{min-height:0;padding:22px}
+  .vsite .tm-card-label{margin-bottom:14px}
 }
-@keyframes tm-in{from{opacity:0;transform:translateY(8px)}}
 
 /* ── Smaller screens ─────────────────────────────────────────────────────── */
 @media(max-width:1199px){
@@ -360,6 +360,8 @@
   .vsite:has(> main > .hero) .mobile-menu-inner>a[aria-current="page"]{border-left-color:#b8d6f4;color:#d8eafb}
   .vsite:has(> main > .hero) .mobile-services{border-bottom-color:rgba(255,255,255,.16)}
   .vsite:has(> main > .hero) .mobile-services a{color:#c7d6e3}
+  .vsite .mobile-menu-inner>a.mobile-sign-in,.vsite:has(> main > .hero) .mobile-menu-inner>a.mobile-sign-in{display:inline-flex;justify-content:center;justify-self:start;min-width:118px;min-height:44px;margin-top:12px;padding:0 25px;border:1px solid var(--blue);border-radius:50%;background:var(--blue);color:var(--white);font-weight:600}
+  .vsite .mobile-menu-inner>a.mobile-sign-in:hover{border-color:var(--blue-hover);background:var(--blue-hover)}
   .vsite .cols-4{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
 @media(max-width:860px){
