@@ -17,15 +17,21 @@ const s3 = () => client ??= new AwsClient({
 export const publicUrl = (key: string) => `${process.env.SPACES_CDN_URL ?? ENDPOINT}/${key}`;
 
 export async function putObject(key: string, body: Buffer, contentType: string, isPublic: boolean): Promise<void> {
-  const res = await s3().fetch(`${ENDPOINT}/${key}`, {
+  const url   = `${ENDPOINT}/${key}`;
+  const bytes = new Uint8Array(body.buffer as ArrayBuffer, body.byteOffset, body.byteLength); // a view, no copy
+  // Sign with aws4fetch, but send the bytes ourselves. aws4fetch hands fetch a Request,
+  // and Next.js's patched fetch rebuilds a Request from its body stream, which drops the
+  // length: Spaces then answers 411 MissingContentLength. Bytes in init keep it.
+  const signed = await s3().sign(url, {
     method: 'PUT',
-    body: new Uint8Array(body.buffer as ArrayBuffer, body.byteOffset, body.byteLength), // a view, no copy
+    body: bytes,
     headers: {
       'Content-Type':  contentType,
       'x-amz-acl':     isPublic ? 'public-read' : 'private',
       'Cache-Control': isPublic ? 'public, max-age=31536000, immutable' : 'private, no-store',
     },
   });
+  const res = await fetch(url, { method: 'PUT', headers: signed.headers, body: bytes });
   if (!res.ok) throw new Error(`Spaces PUT ${key}: ${res.status} ${await res.text()}`);
 }
 

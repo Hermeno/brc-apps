@@ -30,6 +30,25 @@ export function callerIp(req: NextRequest): string {
   return req.headers.get('x-real-ip')?.trim() || 'unknown';
 }
 
+// ─── Table ────────────────────────────────────────────────────────────────────
+// Migration 20261012120000_add_rate_limit never ran in production, so every check
+// failed and let the request through. The table is created on first use with the
+// migration's own IF NOT EXISTS statements, so running that migration later is a no-op.
+let tableReady: Promise<unknown> | null = null;
+function ensureTable(): Promise<unknown> {
+  tableReady ??= prisma.$executeRawUnsafe(
+    `CREATE TABLE IF NOT EXISTS "RateLimit" (
+       "key"         TEXT         NOT NULL,
+       "count"       INTEGER      NOT NULL DEFAULT 0,
+       "windowStart" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+       CONSTRAINT "RateLimit_pkey" PRIMARY KEY ("key")
+     )`,
+  )
+    .then(() => prisma.$executeRawUnsafe(`CREATE INDEX IF NOT EXISTS "RateLimit_windowStart_idx" ON "RateLimit"("windowStart")`))
+    .catch(err => { tableReady = null; throw err; }); // retry on the next request
+  return tableReady;
+}
+
 // ─── Core check ───────────────────────────────────────────────────────────────
 // One statement does the whole job: insert the row, or bump it — resetting the
 // counter when the stored window has already elapsed. Doing it in SQL keeps two
@@ -42,6 +61,7 @@ export async function checkRateLimit(
   const key = `${bucket}|${identifier}`;
 
   try {
+    await ensureTable();
     const rows = await prisma.$queryRawUnsafe<{ count: number; window_age: number }[]>(
       `INSERT INTO "RateLimit" ("key", "count", "windowStart")
        VALUES ($1, 1, NOW())
