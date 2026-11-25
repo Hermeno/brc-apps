@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { Box, Text, VStack, HStack, Button, Flex, Icon } from '@chakra-ui/react';
+import { Box, Text, VStack, HStack, Button, Flex, Icon, Grid } from '@chakra-ui/react';
 import {
   LucideMapPin, LucideCalendar, LucideUser, LucideCheckCircle2,
   LucideRefreshCw, LucideBriefcase, LucideBanknote,
@@ -10,6 +10,7 @@ import {
   LucideCreditCard, LucideCheckCircle, LucideAlertTriangle,
 } from 'lucide-react';
 import { EXTRAS, FREQUENCY_OPTIONS, serviceLabel } from '@/lib/estimate';
+import CleanerLocationMap from '@/components/cleaner-location-map';
 import CleanerNav from '@/components/cleaner-nav';
 import { toaster } from '@/lib/toaster';
 import { motion, AnimatePresence } from 'motion/react';
@@ -204,7 +205,11 @@ export default function CleanerDashboard() {
     <Box minH="100vh" bg="white">
       <CleanerNav />
 
-      <Box maxW="1080px" mx="auto" px={{ base: 4, md: 6 }} py={5}>
+      <Box maxW="1200px" mx="auto" px={{ base: 4, md: 6 }} py={5}>
+
+        {/* Setup, card and available leads on the left; the cleaner's location on the right. */}
+        <Grid templateColumns={{ base: '1fr', lg: 'minmax(0, 1fr) 320px' }} gap={5} alignItems="start" mb={5}>
+        <Box minW={0}>
 
         {/* ── Account setup checklist ── */}
         {((hasCard === false) || (verifyStatus !== null && verifyStatus !== 'APPROVED')) && (
@@ -459,6 +464,12 @@ export default function CleanerDashboard() {
             })
           )}
         </SectionPanel>
+
+        </Box>
+        <Box position={{ lg: 'sticky' }} top={{ lg: '80px' }}>
+          <CleanerLocationMap />
+        </Box>
+        </Grid>
 
         {/* ── Awaiting Client Response ── */}
         {pendingConversations.length > 0 && (
