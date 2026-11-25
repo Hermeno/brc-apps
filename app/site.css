@@ -303,39 +303,65 @@
 .vsite .footer-legal{margin:0;font-size:.8125rem;line-height:1.6}
 .vsite .footer-legal a{text-decoration:underline;text-underline-offset:3px}
 
-/* ── Testimonials and illustrative scenarios ────────────────────────────── */
-.vsite .testimonials{padding:clamp(56px,6vw,88px) 0;background:var(--warm)}
-.vsite .tm-heading{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,.8fr);align-items:end;gap:24px 64px;margin-bottom:32px}
-.vsite .tm-eyebrow{margin:0 0 12px;color:var(--blue);font:700 .75rem/1.3 var(--display);letter-spacing:.1em;text-transform:uppercase}
-.vsite .tm-title{max-width:17ch;margin:0;color:var(--ink);font:500 clamp(2rem,3.6vw,3rem)/1.12 var(--display);letter-spacing:-.025em;text-wrap:balance}
-.vsite .tm-intro{max-width:31rem;margin:0;color:var(--body);font-size:1rem;line-height:1.65}
-.vsite .tm-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
-.vsite .tm-card{display:flex;flex-direction:column;min-width:0;min-height:260px;margin:0;padding:clamp(22px,2.25vw,32px);border:1px solid var(--line);border-top:3px solid var(--blue);background:var(--white)}
-.vsite .tm-card-label{margin:0 0 22px;color:var(--blue);font:700 .75rem/1.3 var(--display);letter-spacing:.09em;text-transform:uppercase}
-.vsite .tm-card-title{margin:0 0 14px;color:var(--ink);font:600 clamp(1.3rem,1.5vw,1.55rem)/1.25 var(--display)}
-.vsite .tm-card-body{margin:0;color:var(--body);font-size:1rem;line-height:1.68}
-.vsite .tm-quote-mark{height:2rem;color:var(--blue);font:700 3rem/.9 var(--display)}
-.vsite .tm-quote{flex:1;margin:22px 0 28px}
-.vsite .tm-quote p{margin:0;color:var(--ink);font:400 1rem/1.65 var(--font-body),system-ui,sans-serif}
-.vsite .tm-person{display:flex;align-items:center;gap:12px;padding-top:17px;border-top:1px solid var(--line)}
-.vsite .tm-avatar{position:relative;display:grid;place-items:center;flex:none;width:44px;height:44px;overflow:hidden;border-radius:50%;background:#E8F1FC;color:var(--blue)}
-.vsite .tm-avatar img{object-fit:cover}
-.vsite .tm-initials{font:600 .875rem/1 var(--display)}
-.vsite .tm-person-name{margin:0;color:var(--ink);font:600 .875rem/1.25 var(--display)}
-.vsite .tm-person-detail{margin:3px 0 0;color:var(--body);font-size:.8125rem;line-height:1.35}
-@media(max-width:980px){
-  .vsite .tm-heading{grid-template-columns:1fr;gap:14px}
-  .vsite .tm-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+/* ── Testimonials ────────────────────────────────────────────────────────────
+   After the supplied reference: white surface with two faint brand-tint shapes
+   in opposite corners, a centered title, three panels side by side (two on
+   tablets, one on phones), round arrows outside the panels, dash positions and
+   one button. Real reviews only; until the first one exists the same layout
+   carries the labeled scenarios. The track is a native scroller with snap
+   points (swipe and keyboard); --per-view tells the script how many fit. */
+.vsite .tm-section{position:relative;isolation:isolate;overflow:hidden;padding:clamp(64px,6vw,88px) 0 clamp(56px,5vw,72px);background:var(--white)}
+.vsite .tm-section::before,.vsite .tm-section::after{content:"";position:absolute;z-index:-1;background:#EEF4FC;pointer-events:none}
+.vsite .tm-section::before{top:-190px;left:-170px;width:360px;height:340px;border-radius:58% 42% 46% 54%/52% 44% 56% 48%}
+.vsite .tm-section::after{right:-210px;bottom:-230px;width:440px;height:420px;border-radius:44% 56% 52% 48%/56% 48% 52% 44%}
+.vsite .tm-head{text-align:center}
+.vsite .tm-headline{margin:0;color:var(--ink);font:700 clamp(1.875rem,1.15rem + 1.9vw,2.75rem)/1.15 var(--display);letter-spacing:-.025em;text-wrap:balance}
+.vsite .tm-headline span{color:var(--blue)}
+.vsite .tm-sub{max-width:540px;margin:14px auto 0;color:var(--body);font-size:1rem;line-height:1.6}
+.vsite .tm-carousel{position:relative;margin-top:36px}
+.vsite .tm-track{--per-view:3;--gap:22px;display:flex;gap:var(--gap);margin:-12px -12px -28px;padding:12px 12px 28px;list-style:none;overflow-x:auto;overscroll-behavior-x:contain;scroll-snap-type:x mandatory;scroll-padding-inline:12px;scrollbar-width:none}
+.vsite .tm-track::-webkit-scrollbar{display:none}
+.vsite .tm-slide{flex:0 0 calc((100% - (var(--per-view) - 1) * var(--gap)) / var(--per-view));min-width:0;scroll-snap-align:start}
+.vsite .tm-slide:first-child{margin-left:auto}  /* fewer panels than fit: centered; auto margins resolve to 0 once it scrolls */
+.vsite .tm-slide:last-child{margin-right:auto}
+.vsite .tm-panel{display:flex;flex-direction:column;height:100%;margin:0;padding:24px;border:1px solid #EDF1F5;border-radius:10px;background:var(--white);box-shadow:0 1px 2px rgba(24,49,78,.04),0 8px 24px rgba(24,49,78,.06)}
+.vsite .tm-mark{flex:none;color:#A3BFE8;transform:rotate(180deg)}
+.vsite .tm-quote{margin:14px 0 0;color:var(--body);font-size:.9375rem;line-height:1.65}
+.vsite .tm-quote p{margin:0}
+.vsite .tm-who{display:flex;align-items:center;gap:12px;margin-top:auto;padding-top:22px}
+.vsite .tm-avatar{display:grid;place-items:center;flex:none;width:44px;height:44px;border-radius:50%;background:#EAF1FB;color:var(--blue);font:600 .9375rem/1 var(--display)}
+.vsite .tm-name{display:block;color:var(--ink);font:700 .9375rem/1.3 var(--display)}
+.vsite .tm-role{display:block;margin-top:2px;color:var(--body);font-size:.8125rem;line-height:1.4}
+.vsite .tm-audience{margin:0;color:var(--blue);font:700 .75rem/1.3 var(--display);letter-spacing:.09em;text-transform:uppercase}
+.vsite .tm-scenario{margin:12px 0 0;color:var(--ink);font:700 1.125rem/1.3 var(--display)}
+.vsite .tm-controls{display:flex;align-items:center;justify-content:center;gap:14px;margin-top:28px}
+.vsite .tm-dots{display:flex;gap:4px}
+.vsite .tm-dot{display:grid;place-items:center;width:24px;height:24px;padding:0;border:0;background:none;cursor:pointer}
+.vsite .tm-dot::before{content:"";width:20px;height:4px;border-radius:2px;background:#DCE4EA;transition:background-color .25s ease}
+.vsite .tm-dot:hover::before{background:#B9C7D6}
+.vsite .tm-dot[aria-current="true"]::before{background:var(--blue)}
+.vsite .tm-arrow{display:grid;place-items:center;flex:none;width:40px;height:40px;padding:0;border:0;border-radius:50%;background:var(--white);color:var(--blue);box-shadow:0 2px 10px rgba(24,49,78,.12);cursor:pointer;transition:box-shadow .2s ease,opacity .2s ease}
+.vsite .tm-arrow:hover:not(:disabled){box-shadow:0 4px 14px rgba(24,49,78,.2)}
+.vsite .tm-arrow:disabled{opacity:.4;cursor:default}
+.vsite .tm-actions{display:flex;justify-content:center;margin-top:24px}
+.vsite .tm-more{display:inline-flex;align-items:center;gap:10px;min-height:46px;padding:0 28px;border:0;border-radius:999px;background:var(--blue);color:var(--white);font:600 .9375rem/1 var(--font-body),system-ui,sans-serif;cursor:pointer;transition:background-color .18s ease,box-shadow .2s ease}
+.vsite .tm-more:hover{background:var(--blue-hover);box-shadow:0 6px 16px rgba(17,20,24,.2)}
+@media(prefers-reduced-motion:no-preference){
+  .vsite .tm-track{scroll-behavior:smooth}
 }
-@media(min-width:641px) and (max-width:980px){
-  .vsite .tm-grid>:last-child:nth-child(odd){grid-column:1/-1;justify-self:center;width:calc((100% - 16px)/2)}
+/* Arrows sit outside the panels while the margin has room for them (the 52px
+   below the panels is the dash row), and join the dashes on narrower screens. */
+@media(min-width:880px){
+  .vsite .tm-arrow{position:absolute;top:calc((100% - 52px) / 2 - 20px)}
+  .vsite .tm-prev{left:-64px}
+  .vsite .tm-next{right:-64px}
 }
-@media(max-width:640px){
-  .vsite .testimonials{padding:48px 0 56px}
-  .vsite .tm-heading{margin-bottom:24px}
-  .vsite .tm-grid{grid-template-columns:1fr;gap:12px}
-  .vsite .tm-card{min-height:0;padding:22px}
-  .vsite .tm-card-label{margin-bottom:14px}
+@media(max-width:1023px){
+  .vsite .tm-track{--per-view:2}
+}
+@media(max-width:639px){
+  .vsite .tm-track{--per-view:1;--gap:16px}
+  .vsite .tm-panel{padding:22px}
 }
 
 /* ── Smaller screens ─────────────────────────────────────────────────────── */

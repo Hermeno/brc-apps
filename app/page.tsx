@@ -8,7 +8,7 @@ import ZipSearch from '@/components/site/zip-search';
 import Testimonials from '@/components/site/testimonials';
 import JsonLd, { HOME_JSON_LD } from '@/components/site/json-ld';
 import { getSiteService } from '@/lib/site-content';
-import { SHOWING_SAMPLES, TESTIMONIALS } from '@/lib/testimonials';
+import { SCENARIOS, getReviewTestimonials } from '@/lib/testimonials';
 
 export const metadata: Metadata = {
   title: 'Find a Cleaner Near You | Verliks',
@@ -38,7 +38,8 @@ const twoLines = (name: string) => {
   return <>{name.slice(0, cut)}<br />{name.slice(cut + 1)}</>;
 };
 
-export default function HomePage() {
+export default async function HomePage() {
+  const reviews = await getReviewTestimonials();
   return (
     <PublicPage>
       <PhotoHero image="/images/site/verliks-cleaning-hero-editorial-20261006.webp" position="50% 30%"
@@ -140,7 +141,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <Testimonials items={TESTIMONIALS} sample={SHOWING_SAMPLES} />
+      <Testimonials items={reviews.length > 0 ? reviews : SCENARIOS} />
 
       <section className="photo-band on-dark" aria-labelledby="checks-title">
         <Image src="/process-bg.jpg" alt="" fill sizes="100vw" />
