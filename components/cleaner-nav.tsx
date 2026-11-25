@@ -116,7 +116,7 @@ export default function CleanerNav() {
           <LanguageSwitcher dark />
           <NotificationBell dark />
 
-          <Button
+          <Button data-btn="ghost"
             size="sm" variant="ghost" color={ON_NAV} px={2} h="34px" borderRadius="6px"
             _hover={{ color: 'white', bg: 'rgba(255, 255, 255, 0.1)' }} transition="all 0.15s"
             onClick={() => signOut({ callbackUrl: '/auth/login' })}
@@ -126,7 +126,7 @@ export default function CleanerNav() {
             <Icon as={LucideLogOut} w={4} h={4} />
           </Button>
 
-          <Button
+          <Button data-btn="ghost"
             size="sm" variant="ghost" color={ON_NAV} px={2} h="34px" borderRadius="6px"
             _hover={{ color: 'white', bg: 'rgba(255, 255, 255, 0.1)' }}
             display={{ base: 'flex', xl: 'none' }}
@@ -188,7 +188,7 @@ export default function CleanerNav() {
                 </HStack>
                 <HStack gap={2}>
                   <LanguageSwitcher />
-                  <Button size="sm" variant="ghost" color="#555C66" px={2}
+                  <Button data-btn="ghost" size="sm" variant="ghost" color="#555C66" px={2}
                     _hover={{ color: '#111418', bg: 'rgba(17, 20, 24, 0.08)' }}
                     onClick={() => signOut({ callbackUrl: '/auth/login' })}>
                     <Icon as={LucideLogOut} w={4} h={4} />

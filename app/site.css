@@ -117,8 +117,9 @@
 .vsite .nav-caret[aria-expanded="true"] svg{transform:rotate(180deg)}
 .vsite .header-action{display:inline-flex;align-items:center;justify-content:center;justify-self:end;min-height:40px;padding:0 18px;border:1px solid var(--nav-border);border-radius:10px;color:var(--nav-text);font:400 .8125rem/1.2 var(--display);letter-spacing:.008em;white-space:nowrap;transition:background-color .18s ease,border-color .18s ease}
 .vsite .header-action:hover{background:var(--nav-hover);border-color:var(--nav-text)}
-.vsite .header-action-home{min-width:118px;min-height:44px;padding-inline:27px;border-color:var(--blue);border-radius:50%;background:var(--blue);color:var(--white);font-weight:600}
-.vsite .header-action-home:hover{border-color:var(--blue-hover);background:var(--blue-hover)}
+.vsite .header-action-home{min-width:136px;min-height:44px;padding-inline:28px;border-color:var(--blue);border-radius:999px;background:var(--blue);color:var(--white);font-size:.875rem;font-weight:600;letter-spacing:0;transition:background-color .18s ease,border-color .18s ease,box-shadow .2s ease}
+.vsite .header-action-home:hover{border-color:var(--blue-hover);background:var(--blue-hover);box-shadow:0 6px 16px rgba(17,20,24,.22)}
+.vsite .header-action-home:active{border-color:var(--navy);box-shadow:0 0 0 1px var(--navy)}
 /* The photo starts at the viewport top; the header remains a clear layer over it. */
 .vsite:has(> main > .hero){position:relative}
 .vsite:has(> main > .hero) .site-header{--nav-text:#fff;--nav-active:#fff;--nav-border:rgba(255,255,255,.82);--nav-hover:rgba(255,255,255,.12);position:absolute;inset:0 0 auto}
@@ -360,8 +361,8 @@
   .vsite:has(> main > .hero) .mobile-menu-inner>a[aria-current="page"]{border-left-color:#b8d6f4;color:#d8eafb}
   .vsite:has(> main > .hero) .mobile-services{border-bottom-color:rgba(255,255,255,.16)}
   .vsite:has(> main > .hero) .mobile-services a{color:#c7d6e3}
-  .vsite .mobile-menu-inner>a.mobile-sign-in,.vsite:has(> main > .hero) .mobile-menu-inner>a.mobile-sign-in{display:inline-flex;justify-content:center;justify-self:start;min-width:118px;min-height:44px;margin-top:12px;padding:0 25px;border:1px solid var(--blue);border-radius:50%;background:var(--blue);color:var(--white);font-weight:600}
-  .vsite .mobile-menu-inner>a.mobile-sign-in:hover{border-color:var(--blue-hover);background:var(--blue-hover)}
+  .vsite .mobile-menu-inner>a.mobile-sign-in,.vsite:has(> main > .hero) .mobile-menu-inner>a.mobile-sign-in{display:inline-flex;align-items:center;justify-content:center;justify-self:start;min-width:136px;min-height:44px;margin-top:12px;padding:0 28px;border:1px solid var(--blue);border-radius:999px;background:var(--blue);color:var(--white);font-weight:600}
+  .vsite .mobile-menu-inner>a.mobile-sign-in:hover{border-color:var(--blue-hover);background:var(--blue-hover);box-shadow:0 6px 16px rgba(17,20,24,.22)}
   .vsite .cols-4{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
 @media(max-width:860px){

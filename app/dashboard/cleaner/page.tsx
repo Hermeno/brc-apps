@@ -320,7 +320,7 @@ export default function CleanerDashboard() {
                 </Text>
               </Box>
             </HStack>
-            <Button
+            <Button data-btn="ghost"
               size="xs" variant="ghost" color="#111418" borderRadius="6px" fontFamily="heading"
               fontWeight="700" flexShrink={0}
               _hover={{ bg: '#EDF3F5' }}
@@ -337,7 +337,7 @@ export default function CleanerDashboard() {
           count={available.length}
           accentColor="#111418"
           extra={
-            <Button
+            <Button data-btn="ghost"
               size="xs" variant="ghost" color="#555C66" borderRadius="6px" fontFamily="heading"
               _hover={{ color: '#185FC6', bg: 'rgba(17, 20, 24, 0.06)' }}
               onClick={() => fetchLeads()} loading={loading}
@@ -509,7 +509,7 @@ export default function CleanerDashboard() {
                   <Button
                     size="sm" bg="#185FC6" color="white" borderRadius="6px"
                     fontWeight="600" fontFamily="heading" flexShrink={0}
-                    _hover={{ bg: '#111418' }}
+                    _hover={{ bg: '#134A9A' }}
                     onClick={e => { e.stopPropagation(); router.push(`/dashboard/chat/${conv.id}`); }}
                   >
                     <Icon as={LucideMessageCircle} w={3.5} h={3.5} mr={1.5} />
@@ -576,7 +576,7 @@ export default function CleanerDashboard() {
                         <Button
                           size="sm" bg="#185FC6" color="white" borderRadius="6px"
                           fontWeight="600" fontFamily="heading" flexShrink={0}
-                          _hover={{ bg: '#111418' }}
+                          _hover={{ bg: '#134A9A' }}
                           onClick={() => router.push(`/dashboard/chat/${conv.id}`)}
                         >
                           <Icon as={LucideMessageCircle} w={3.5} h={3.5} mr={1.5} />

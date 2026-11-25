@@ -75,7 +75,7 @@ function PayForm({ convId, leadFee, onSuccess }: { convId: string; leadFee: numb
       <Button
         w="full" bg="#185FC6" color="white" h="48px" borderRadius="6px"
         fontWeight="700" fontSize="14px"
-        _hover={{ bg: '#111418' }} _active={{ bg: '#185FC6' }}
+        _hover={{ bg: '#134A9A' }} _active={{ bg: '#185FC6' }}
         loading={paying} loadingText="Processing…"
         disabled={!ready || paying}
         onClick={handlePay}

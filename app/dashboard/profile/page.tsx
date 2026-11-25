@@ -354,7 +354,7 @@ export default function ProfilePage() {
 
                 <Button
                   bg="#185FC6" color="white" borderRadius="6px" fontWeight="bold"
-                  _hover={{ bg: '#111418' }}
+                  _hover={{ bg: '#134A9A' }}
                   transition="all 0.2s"
                   loading={saving} loadingText={t('cleaner.profile.savingProfile')}
                   onClick={handleSave}
@@ -418,7 +418,7 @@ export default function ProfilePage() {
                 </Box>
 
                 {/* Detect button */}
-                <Button
+                <Button data-btn="secondary"
                   variant="outline" borderColor="slate.200" color="slate.600"
                   borderRadius="6px" fontWeight="semibold" fontSize="sm"
                   _hover={{ borderColor: 'brand.300', color: 'brand.600', bg: 'brand.50' }}
@@ -435,7 +435,7 @@ export default function ProfilePage() {
                     borderRadius="6px" px={4} py={3}>
                     <Icon as={LucideMapPin} w={4} h={4} color="#185FC6" flexShrink={0} />
                     <Text fontSize="sm" color="#111418" fontWeight="semibold">{locationLabel}</Text>
-                    <Button size="xs" variant="ghost" color="slate.400" ml="auto" px={1}
+                    <Button data-btn="ghost" size="xs" variant="ghost" color="slate.400" ml="auto" px={1}
                       onClick={() => { setLatitude(null); setLongitude(null); setLocationLabel(''); }}>
                       <Icon as={LucideX} w={3} h={3} />
                     </Button>
@@ -513,7 +513,7 @@ export default function ProfilePage() {
                 {/* Save location button */}
                 <Button
                   bg="#185FC6" color="white" borderRadius="6px" fontWeight="bold"
-                  _hover={{ bg: '#111418' }}
+                  _hover={{ bg: '#134A9A' }}
                   transition="all 0.2s"
                   loading={saving} loadingText={t('cleaner.profile.savingLocation')}
                   onClick={handleSave}
@@ -543,7 +543,7 @@ export default function ProfilePage() {
                 </HStack>
                 {photos.length < 20 && !showPhotoForm && (
                   <Button size="sm" bg="#185FC6" color="white" borderRadius="6px" fontWeight="bold"
-                    _hover={{ bg: '#111418' }}
+                    _hover={{ bg: '#134A9A' }}
                     loading={uploading} loadingText={t('cleaner.profile.uploadingPhoto')}
                     onClick={() => fileInputRef.current?.click()}>
                     <Icon as={LucidePlus} w={3.5} h={3.5} mr={1.5} />
@@ -577,12 +577,12 @@ export default function ProfilePage() {
                           _focus={{ borderColor: 'brand.400' }}
                         />
                         <HStack gap={2} justify="flex-end">
-                          <Button size="sm" variant="ghost" color="slate.500"
+                          <Button data-btn="ghost" size="sm" variant="ghost" color="slate.500"
                             onClick={() => { setShowPhotoForm(false); setPendingUrl(''); setPhotoCaption(''); }}>
                             {t('common.cancel')}
                           </Button>
                           <Button size="sm" bg="#185FC6" color="white" borderRadius="6px" fontWeight="bold"
-                            _hover={{ bg: '#111418' }}
+                            _hover={{ bg: '#134A9A' }}
                             loading={addingPhoto} loadingText={t('cleaner.profile.addingPhoto')}
                             onClick={handleAddPhoto}>
                             {t('cleaner.profile.addToGallery')}

@@ -172,7 +172,7 @@ function PaymentMethodsContent() {
             </Box>
             <Button
               bg="#185FC6" color="white" borderRadius="6px" fontWeight="bold"
-              _hover={{ bg: '#111418' }}
+              _hover={{ bg: '#134A9A' }}
               loading={adding} loadingText={t('cleaner.payments.redirecting')}
               onClick={handleAdd}>
               <Icon as={LucidePlus} w={4} h={4} mr={2} />
@@ -229,7 +229,7 @@ function PaymentMethodsContent() {
                 </Text>
                 <Button
                   mt={2} bg="#185FC6" color="white" borderRadius="6px" fontWeight="bold"
-                  _hover={{ bg: '#111418' }}
+                  _hover={{ bg: '#134A9A' }}
                   loading={adding} loadingText={t('cleaner.payments.redirecting')}
                   onClick={handleAdd}>
                   <Icon as={LucidePlus} w={4} h={4} mr={2} />
@@ -287,7 +287,7 @@ function PaymentMethodsContent() {
                             </HStack>
                             <HStack gap={2}>
                               {!card.isDefault && (
-                                <Button size="xs" variant="outline" borderColor="#DDE5E9"
+                                <Button data-btn="secondary" size="xs" variant="outline" borderColor="#DDE5E9"
                                   color="slate.500" borderRadius="6px" fontWeight="semibold"
                                   _hover={{ bg: '#EDF3F5', borderColor: '#185FC6', color: '#185FC6' }}
                                   loading={settingId === card.id}
@@ -296,7 +296,7 @@ function PaymentMethodsContent() {
                                   {t('cleaner.payments.makeDefault')}
                                 </Button>
                               )}
-                              <Button size="xs" variant="ghost" color="red.400" borderRadius="6px"
+                              <Button data-btn="ghost" size="xs" variant="ghost" color="red.400" borderRadius="6px"
                                 _hover={{ bg: 'red.50', color: 'red.600' }}
                                 loading={removingId === card.id}
                                 onClick={() => handleRemove(card.id)}>
@@ -311,7 +311,7 @@ function PaymentMethodsContent() {
                 </AnimatePresence>
 
                 <Box px={5} py={3} borderTop="1px solid #F8F8F4" bg="white">
-                  <Button
+                  <Button data-btn="secondary"
                     variant="outline" borderColor="#DDE5E9" color="slate.500"
                     borderRadius="6px" fontWeight="semibold" fontSize="sm"
                     _hover={{ borderColor: '#185FC6', color: '#185FC6', bg: '#EDF3F5' }}

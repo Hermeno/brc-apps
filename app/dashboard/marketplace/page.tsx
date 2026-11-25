@@ -139,7 +139,7 @@ export default function MarketplacePage() {
           <Heading fontWeight="300" fontSize={{ base: '24px', md: '28px' }} letterSpacing="-0.01em" size="md" color="slate.900" fontFamily="heading">
             Lead Marketplace
           </Heading>
-          <Button size="sm" variant="ghost" color="slate.400" _hover={{ color: 'brand.500', bg: 'brand.50' }}
+          <Button data-btn="ghost" size="sm" variant="ghost" color="slate.400" _hover={{ color: 'brand.500', bg: 'brand.50' }}
             onClick={fetchLeads} loading={loading} borderRadius="6px">
             <Icon as={LucideRefreshCw} w={4} h={4} mr={1} />Refresh
           </Button>

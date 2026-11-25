@@ -430,7 +430,7 @@ export default function OnboardingPage() {
                     <Text fontSize="xs" color="slate.400" mt={1} textAlign="right">{bio.length}/400</Text>
                   </Box>
 
-                  <Button
+                  <Button data-btn="ghost"
                     variant="ghost" color="slate.400" fontSize="sm" alignSelf="flex-start"
                     _hover={{ color: 'slate.600' }}
                     onClick={() => setStep(s => s + 1)}>
@@ -512,7 +512,7 @@ export default function OnboardingPage() {
 
           <Flex justify="space-between" align="center" pt={2}>
             {step > 0 ? (
-              <Button variant="ghost" color="slate.500" borderRadius="6px"
+              <Button data-btn="ghost" variant="ghost" color="slate.500" borderRadius="6px"
                 _hover={{ color: 'slate.800', bg: 'slate.100' }}
                 onClick={() => setStep(s => s - 1)} disabled={saving}>
                 <Icon as={LucideArrowLeft} w={4} h={4} mr={1.5} />

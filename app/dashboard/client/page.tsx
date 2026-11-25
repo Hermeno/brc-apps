@@ -131,12 +131,12 @@ function Stepper({ value, onChange, min = 1, max = 10 }: {
 }) {
   return (
     <HStack gap={0} border="1px solid" borderColor="slate.200" overflow="hidden" w="fit-content">
-      <Button size="sm" variant="ghost" px={3} h="10" borderRadius="none"
+      <Button data-btn="ghost" size="sm" variant="ghost" px={3} h="10" borderRadius="none"
         onClick={() => onChange(Math.max(min, value - 1))} _hover={{ bg: 'slate.100' }} disabled={value <= min}>
         <Icon as={LucideMinus} w={3} h={3} />
       </Button>
       <Box px={4} py={2} minW="10" textAlign="center" fontSize="sm" fontWeight="bold" color="slate.800">{value}</Box>
-      <Button size="sm" variant="ghost" px={3} h="10" borderRadius="none"
+      <Button data-btn="ghost" size="sm" variant="ghost" px={3} h="10" borderRadius="none"
         onClick={() => onChange(Math.min(max, value + 1))} _hover={{ bg: 'slate.100' }} disabled={value >= max}>
         <Icon as={LucidePlus} w={3} h={3} />
       </Button>
@@ -580,7 +580,7 @@ export default function ClientPage() {
 
             <LanguageSwitcher dark />
             <NotificationBell dark />
-            <Button size="sm" variant="ghost" color="#D4D8DE" px={2} h="34px" borderRadius="6px"
+            <Button data-btn="ghost" size="sm" variant="ghost" color="#D4D8DE" px={2} h="34px" borderRadius="6px"
               _hover={{ color: 'white', bg: 'rgba(255, 255, 255, 0.1)' }} transition="all 0.15s"
               onClick={() => signOut({ callbackUrl: '/auth/login' })} title={t('common.signOut')} aria-label={t('common.signOut')}>
               <Icon as={LucideLogOut} w={4} h={4} />
@@ -609,7 +609,7 @@ export default function ClientPage() {
                     </Text>
                   )}
                 </Box>
-                <Button size="sm" variant="outline" borderColor="slate.200" color="slate.500"
+                <Button data-btn="secondary" size="sm" variant="outline" borderColor="slate.200" color="slate.500"
                   borderRadius="6px" fontWeight="semibold" fontSize="xs"
                   _hover={{ bg: 'brand.50', borderColor: 'brand.300', color: 'brand.600' }}
                   transition="all 0.15s"
@@ -719,7 +719,7 @@ export default function ClientPage() {
               </Text>
             </Box>
             <HStack gap={2} flexWrap="wrap">
-              <Button
+              <Button data-btn="secondary"
                 variant="outline" borderColor="#555C66" color="#111418"
                 borderRadius="6px" fontWeight="bold" fontSize="sm" px={4}
                 _hover={{ bg: '#EDF3F5' }} transition="background 0.15s"
@@ -784,7 +784,7 @@ export default function ClientPage() {
                       {t('client.dashboard.bookCleaning')}
                     </Button>
                     {historyLeads.length > 0 && (
-                      <Button variant="ghost" color="slate.500" ml={3} borderRadius="6px" fontWeight="semibold"
+                      <Button data-btn="ghost" variant="ghost" color="slate.500" ml={3} borderRadius="6px" fontWeight="semibold"
                         onClick={() => setShowHistory(v => !v)}>
                         {t('client.dashboard.viewHistory')}
                       </Button>
@@ -927,7 +927,7 @@ export default function ClientPage() {
                                           <Text fontSize="sm" fontWeight="semibold" color="#111418">{lead.cleaner.name}</Text>
                                         </HStack>
                                       </HStack>
-                                      <Button size="xs" variant="outline" borderColor="slate.200" color="slate.600"
+                                      <Button data-btn="secondary" size="xs" variant="outline" borderColor="slate.200" color="slate.600"
                                         borderRadius="6px" fontWeight="semibold"
                                         _hover={{ bg: 'brand.50', borderColor: 'brand.200', color: 'brand.600' }}
                                         onClick={() => router.push(`/dashboard/profile/${lead.cleanerId}`)}>
@@ -970,7 +970,7 @@ export default function ClientPage() {
                                               <Icon as={LucideShieldCheck} w={4} h={4} color="#185FC6" aria-label="Verified" />
                                             )}
                                           </HStack>
-                                          <Button size="xs" variant="outline" borderColor="slate.200" color="slate.600"
+                                          <Button data-btn="secondary" size="xs" variant="outline" borderColor="slate.200" color="slate.600"
                                             borderRadius="6px" fontWeight="semibold"
                                             _hover={{ bg: 'brand.50', borderColor: 'brand.200', color: 'brand.600' }}
                                             onClick={() => router.push(`/dashboard/profile/${conv.cleaner.id}`)}>
@@ -978,13 +978,13 @@ export default function ClientPage() {
                                             {t('client.dashboard.viewProfile')}
                                           </Button>
                                           <Button size="xs" bg="#185FC6" color="white" borderRadius="6px" fontWeight="bold"
-                                            _hover={{ bg: '#111418' }}
+                                            _hover={{ bg: '#134A9A' }}
                                             loading={accepting === conv.id}
                                             onClick={() => handleAccept(conv.id)}>
                                             <Icon as={LucideCheckCircle} w={3} h={3} mr={1} />
                                             {t('client.dashboard.acceptCleaner')}
                                           </Button>
-                                          <Button size="xs" variant="outline" color="red.500" borderColor="red.200"
+                                          <Button data-btn="secondary" size="xs" variant="outline" color="red.500" borderColor="red.200"
                                             borderRadius="6px" fontWeight="bold"
                                             _hover={{ bg: 'red.50' }}
                                             loading={declining === conv.id}
@@ -1043,7 +1043,7 @@ export default function ClientPage() {
 
                                 {/* Edit */}
                                 {isActive && !timeHasPassed && ['NEW','WAVE2','WAVE3','UNMATCHED'].includes(lead.status) && (
-                                  <Button size="sm" variant="outline" borderColor="slate.200" color="slate.600"
+                                  <Button data-btn="secondary" size="sm" variant="outline" borderColor="slate.200" color="slate.600"
                                     borderRadius="6px" fontWeight="semibold"
                                     _hover={{ bg: 'slate.50', borderColor: 'brand.300', color: 'brand.600' }}
                                     transition="background 0.15s"
@@ -1056,7 +1056,7 @@ export default function ClientPage() {
 
                                 {/* Cancel — opens reason modal */}
                                 {canCancel && (
-                                  <Button size="sm" variant="outline" borderColor="red.200" color="red.500"
+                                  <Button data-btn="secondary" size="sm" variant="outline" borderColor="red.200" color="red.500"
                                     borderRadius="6px" fontWeight="semibold"
                                     _hover={{ bg: 'red.50' }} transition="background 0.15s"
                                     onClick={() => { setCancelReasonModal(lead.id); setCancelReason(''); }}>
@@ -1067,7 +1067,7 @@ export default function ClientPage() {
                                 {/* Reactivate */}
                                 {canReactivate && (
                                   <Button size="sm" bg="#185FC6" color="white" borderRadius="6px" fontWeight="bold"
-                                    _hover={{ bg: '#111418' }} transition="background 0.15s"
+                                    _hover={{ bg: '#134A9A' }} transition="background 0.15s"
                                     onClick={() => {
                                       if (reactivateId === lead.id) {
                                         setReactivateId(null);
@@ -1086,7 +1086,7 @@ export default function ClientPage() {
                                 {/* Mark complete */}
                                 {canTerminate && confirmComplete !== lead.id && (
                                   <Button size="sm" bg="#185FC6" color="white" borderRadius="6px" fontWeight="bold"
-                                    _hover={{ bg: '#111418' }} transition="background 0.15s"
+                                    _hover={{ bg: '#134A9A' }} transition="background 0.15s"
                                     onClick={() => setConfirmComplete(lead.id)}>
                                     <Icon as={LucideCheckCircle} w={4} h={4} mr={1.5} />
                                     {t('client.dashboard.markComplete')}
@@ -1099,7 +1099,7 @@ export default function ClientPage() {
                                     <Button size="xs" bg="#185FC6" color="white" borderRadius="6px"
                                       loading={completing === lead.id}
                                       onClick={() => handleComplete(lead.id)}>{t('client.dashboard.yesComplete')}</Button>
-                                    <Button size="xs" variant="ghost" color="slate.500"
+                                    <Button data-btn="ghost" size="xs" variant="ghost" color="slate.500"
                                       onClick={() => setConfirmComplete(null)}>{t('client.dashboard.notYet')}</Button>
                                   </HStack>
                                 )}
@@ -1107,7 +1107,7 @@ export default function ClientPage() {
                                 {/* Rate */}
                                 {canRate && (
                                   <Button size="sm" bg="#185FC6" color="white" borderRadius="6px" fontWeight="bold"
-                                    _hover={{ bg: '#111418' }} transition="background 0.15s"
+                                    _hover={{ bg: '#134A9A' }} transition="background 0.15s"
                                     onClick={() => setRatingLead(lead)}>
                                     <Icon as={LucideStar} w={4} h={4} mr={1.5} />
                                     {t('client.dashboard.ratePro')}
@@ -1146,9 +1146,9 @@ export default function ClientPage() {
                                     border="1px solid" borderColor="#DDE5E9" />
                                 </HStack>
                                 <HStack gap={3} justify="flex-end">
-                                  <Button size="sm" variant="ghost" color="slate.500" onClick={() => setReactivateId(null)}>{t('client.dashboard.discard')}</Button>
+                                  <Button data-btn="ghost" size="sm" variant="ghost" color="slate.500" onClick={() => setReactivateId(null)}>{t('client.dashboard.discard')}</Button>
                                   <Button size="sm" bg="#185FC6" color="white" borderRadius="6px" fontWeight="bold"
-                                    _hover={{ bg: '#111418' }} loading={reactivating} loadingText={t('client.dashboard.reactivatingLabel')}
+                                    _hover={{ bg: '#134A9A' }} loading={reactivating} loadingText={t('client.dashboard.reactivatingLabel')}
                                     onClick={() => handleReactivate(lead.id)}>
                                     <Icon as={LucideRotateCcw} w={4} h={4} mr={1.5} />
                                     {t('client.dashboard.confirmDate')}
@@ -1208,7 +1208,7 @@ export default function ClientPage() {
                                     border="1px solid" borderColor="slate.200" />
                                 </HStack>
                                 <HStack gap={3} justify="flex-end">
-                                  <Button size="sm" variant="ghost" color="slate.500" onClick={() => setEditingId(null)}>{t('client.dashboard.discard')}</Button>
+                                  <Button data-btn="ghost" size="sm" variant="ghost" color="slate.500" onClick={() => setEditingId(null)}>{t('client.dashboard.discard')}</Button>
                                   <Button size="sm" bg="brand.500" color="white" borderRadius="6px" fontWeight="bold"
                                     _hover={{ bg: 'brand.600' }} loading={saving} loadingText={t('client.dashboard.savingLabel')}
                                     onClick={() => handleSaveEdit(lead.id)}>
@@ -1319,14 +1319,14 @@ export default function ClientPage() {
                                     <HStack gap={2} mt={0.5} flexWrap="wrap">
                                       {canRate && (
                                         <Button size="xs" bg="#185FC6" color="white" borderRadius="6px" fontWeight="bold"
-                                          _hover={{ bg: '#111418' }} transition="background 0.15s"
+                                          _hover={{ bg: '#134A9A' }} transition="background 0.15s"
                                           onClick={() => setRatingLead(lead)}>
                                           <Icon as={LucideStar} w={3} h={3} mr={1} />
                                           {t('client.dashboard.ratePro')}
                                         </Button>
                                       )}
                                       {lead.status === 'COMPLETED' && (
-                                        <Button size="xs" variant="outline" borderColor="slate.200" color="slate.600"
+                                        <Button data-btn="secondary" size="xs" variant="outline" borderColor="slate.200" color="slate.600"
                                           borderRadius="6px" fontWeight="semibold"
                                           _hover={{ bg: 'brand.50', borderColor: 'brand.300', color: 'brand.600' }}
                                           loading={rebooking === lead.id}
@@ -1337,7 +1337,7 @@ export default function ClientPage() {
                                       )}
                                       {lead.status === 'CANCELLED' && (
                                         <Button size="xs" bg="#185FC6" color="white" borderRadius="6px" fontWeight="bold"
-                                          _hover={{ bg: '#111418' }} transition="background 0.15s"
+                                          _hover={{ bg: '#134A9A' }} transition="background 0.15s"
                                           onClick={() => {
                                             if (reactivateId === lead.id) {
                                               setReactivateId(null);
@@ -1381,10 +1381,10 @@ export default function ClientPage() {
                                             border="1px solid" borderColor="#DDE5E9" fontSize="xs" />
                                         </HStack>
                                         <HStack gap={2} justify="flex-end">
-                                          <Button size="xs" variant="ghost" color="slate.500"
+                                          <Button data-btn="ghost" size="xs" variant="ghost" color="slate.500"
                                             onClick={() => setReactivateId(null)}>{t('common.cancel')}</Button>
                                           <Button size="xs" bg="#185FC6" color="white" borderRadius="6px" fontWeight="bold"
-                                            _hover={{ bg: '#111418' }} loading={reactivating} loadingText={t('client.dashboard.reactivatingLabel')}
+                                            _hover={{ bg: '#134A9A' }} loading={reactivating} loadingText={t('client.dashboard.reactivatingLabel')}
                                             onClick={() => handleReactivate(lead.id)}>
                                             {t('client.dashboard.confirmDate')}
                                           </Button>
@@ -1477,12 +1477,12 @@ export default function ClientPage() {
                     resize="none"
                   />
                   <HStack gap={3} w="full">
-                    <Button flex={1} variant="outline" borderColor="slate.200" color="slate.500"
+                    <Button data-btn="secondary" flex={1} variant="outline" borderColor="slate.200" color="slate.500"
                       borderRadius="6px" onClick={() => setRatingLead(null)}>
                       {t('client.dashboard.rateModal_laterBtn')}
                     </Button>
                     <Button flex={1} bg="#185FC6" color="white" borderRadius="6px" fontWeight="bold"
-                      _hover={{ bg: '#111418' }}
+                      _hover={{ bg: '#134A9A' }}
                       loading={sendingRating} loadingText={t('client.dashboard.rateModal_submitting')}
                       onClick={handleSubmitRating} disabled={starValue === 0}>
                       {t('client.dashboard.rateModal_submitBtn')}
@@ -1513,7 +1513,7 @@ export default function ClientPage() {
                   <Heading size="sm" fontWeight="black" color="slate.900" fontFamily="heading">
                     {t('client.dashboard.cancelModal_title')}
                   </Heading>
-                  <Button size="sm" variant="ghost" color="slate.400" borderRadius="6px" px={1.5}
+                  <Button data-btn="ghost" size="sm" variant="ghost" color="slate.400" borderRadius="6px" px={1.5}
                     onClick={() => setCancelReasonModal(null)}>
                     <Icon as={LucideX} w={4} h={4} />
                   </Button>
@@ -1546,7 +1546,7 @@ export default function ClientPage() {
                   ))}
                 </VStack>
                 <HStack gap={3}>
-                  <Button flex={1} variant="outline" borderColor="slate.200" color="slate.500"
+                  <Button data-btn="secondary" flex={1} variant="outline" borderColor="slate.200" color="slate.500"
                     borderRadius="6px" onClick={() => setCancelReasonModal(null)}>
                     {t('client.dashboard.cancelModal_keepBtn')}
                   </Button>
@@ -1582,7 +1582,7 @@ function OrderForm({ form, setField, toggleExtra, estimate, progress, onSubmit, 
             letterSpacing="0.07em" fontFamily="heading">
             {t('client.dashboard.formTitle')}
           </Text>
-          <Button size="sm" variant="ghost" color="slate.400" onClick={onCancel} borderRadius="6px" minW={0} px={1.5}>
+          <Button data-btn="ghost" size="sm" variant="ghost" color="slate.400" onClick={onCancel} borderRadius="6px" minW={0} px={1.5}>
             <Icon as={LucideX} w={4} h={4} />
           </Button>
         </Flex>

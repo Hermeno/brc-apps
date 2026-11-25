@@ -174,7 +174,7 @@ function ChatInner() {
       <Flex h="100vh" bg="white" direction="column">
         <Box bg="white" px={4} py={3} flexShrink={0} borderBottom="1px solid #DDE5E9" style={{ boxShadow: 'none' }}>
           <Flex align="center" gap={3} maxW="760px" mx="auto">
-            <Button size="sm" variant="ghost" color="#555C66"
+            <Button data-btn="ghost" size="sm" variant="ghost" color="#555C66"
               _hover={{ color: '#185FC6', bg: '#EDF3F5' }} onClick={() => router.back()} px={2}>
               <Icon as={LucideArrowLeft} w={5} h={5} />
             </Button>
@@ -195,7 +195,7 @@ function ChatInner() {
             </Text>
             <Button
               w="full" bg="#185FC6" color="white" h="44px" borderRadius="6px"
-              fontWeight="bold" fontSize="sm" _hover={{ bg: '#111418' }}
+              fontWeight="bold" fontSize="sm" _hover={{ bg: '#134A9A' }}
               onClick={() => router.push('/dashboard/cleaner')}
             >
               Back to dashboard
@@ -214,7 +214,7 @@ function ChatInner() {
         <Flex h="100vh" direction="column" bg="white">
           <Box bg="white" px={5} h="52px" display="flex" alignItems="center" flexShrink={0}
             borderBottom="1px solid #DDE5E9" style={{ boxShadow: 'none' }}>
-            <Button size="sm" variant="ghost" color="#555C66"
+            <Button data-btn="ghost" size="sm" variant="ghost" color="#555C66"
               _hover={{ color: '#185FC6', bg: '#EDF3F5' }}
               onClick={() => router.back()} px={2} h="32px">
               <Icon as={LucideArrowLeft} w={4} h={4} />
@@ -227,7 +227,7 @@ function ChatInner() {
               </motion.div>
               <Text fontSize="lg" fontWeight="700" color="#111418">Verifying payment…</Text>
               <Text fontSize="sm" color="#555C66">This should only take a moment.</Text>
-              <Button size="sm" variant="outline" borderColor="slate.300" color="slate.600"
+              <Button data-btn="secondary" size="sm" variant="outline" borderColor="slate.300" color="slate.600"
                 borderRadius="6px" mt={2}
                 onClick={() => router.replace(`/dashboard/chat/${id}`)}>
 
@@ -251,7 +251,7 @@ function ChatInner() {
         {/* Nav */}
         <Box bg="white" px={5} h="52px" display="flex" alignItems="center" flexShrink={0}
           borderBottom="1px solid #DDE5E9" style={{ boxShadow: 'none' }}>
-          <Button size="sm" variant="ghost" color="#555C66"
+          <Button data-btn="ghost" size="sm" variant="ghost" color="#555C66"
             _hover={{ color: '#185FC6', bg: '#EDF3F5' }}
             onClick={() => router.back()} px={2} h="32px">
             <Icon as={LucideArrowLeft} w={4} h={4} />
@@ -392,7 +392,7 @@ function ChatInner() {
         boxShadow="none"
       >
         <Flex align="center" gap={3} maxW="760px" mx="auto">
-          <Button size="sm" variant="ghost" color="slate.500"
+          <Button data-btn="ghost" size="sm" variant="ghost" color="slate.500"
             _hover={{ bg: 'slate.100' }} onClick={() => router.back()} px={2}>
             <Icon as={LucideArrowLeft} w={5} h={5} />
           </Button>
@@ -431,7 +431,7 @@ function ChatInner() {
           {isConfirmable && (
             <Button
               size="sm" bg="#185FC6" color="white" borderRadius="6px" fontWeight="bold"
-              _hover={{ bg: '#111418' }}
+              _hover={{ bg: '#134A9A' }}
               onClick={confirmCleaner} loading={confirming}
               loadingText="Confirming…"
             >

@@ -190,7 +190,7 @@ export default function CleanerVerifyPage() {
       <Box bg="white" borderBottom="1px solid" borderColor="slate.100" position="sticky" top={0} zIndex={50}>
         <Container maxW="2xl" py={4}>
           <Flex align="center" gap={3}>
-            <Button variant="ghost" size="sm" onClick={() => router.back()} borderRadius="6px">
+            <Button data-btn="ghost" variant="ghost" size="sm" onClick={() => router.back()} borderRadius="6px">
               <Icon as={LucideArrowLeft} w={4} h={4} mr={1} /> {t('common.back')}
             </Button>
             <Text fontWeight="black" fontSize="md" color="slate.900">{t('cleaner.verify.title')}</Text>
@@ -332,7 +332,7 @@ export default function CleanerVerifyPage() {
                   </Box>
 
                   <HStack gap={3}>
-                    <Button onClick={() => setStep(1)} variant="outline" h="11" borderRadius="6px"
+                    <Button data-btn="secondary" onClick={() => setStep(1)} variant="outline" h="11" borderRadius="6px"
                       flex={1} fontWeight="bold">{t('cleaner.verify.backBtn')}</Button>
                     {canEdit && (
                       <Button onClick={handleSubmit}

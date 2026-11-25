@@ -159,7 +159,7 @@ export default function LoginPage() {
               <Button
                 type="submit" bg="#185FC6" color="white" h="40px" borderRadius="6px"
                 fontWeight="600" fontSize="13.5px" letterSpacing="-0.01em" fontFamily="heading"
-                _hover={{ bg: '#111418' }} transition="background 0.15s"
+                _hover={{ bg: '#134A9A' }} transition="background 0.15s"
                 loading={loading} loadingText={t('auth.login.submitting')} mt={1}
               >
                 {t('auth.login.submit')}

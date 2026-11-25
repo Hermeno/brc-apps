@@ -320,3 +320,26 @@
   --chakra-shadows-xs:0 1px 2px rgba(17, 20, 24, 0.05);
 }
 .vapp :focus-visible{outline:2px solid #185FC6;outline-offset:2px}
+
+/* ── Buttons ──────────────────────────────────────────────────────────────────
+   Pills, after the supplied button sheet, for every Chakra button on these
+   screens (Chakra marks them .chakra-button; these rules outrank their props).
+   - Primary: no data-btn. Keeps its own fill (the blue, or near-black for a
+     few strong actions). Hover lifts it with a soft shadow; a press shows a
+     darker edge.
+   - Secondary: data-btn="secondary", the old variant="outline". White, near-
+     black text, a hairline and a faint shadow; pressed, the edge turns blue.
+   - Ghost: data-btn="ghost". Icon and text actions stay flat, only rounded.
+   Disabled turns gray; while loading, Chakra's spinner shows on the button's
+   own colours. */
+.vapp .chakra-button{border-radius:999px;font-weight:600;transition:background-color .15s ease,border-color .15s ease,color .15s ease,box-shadow .2s ease}
+.vapp .chakra-button:not([data-btn="ghost"]):not(:disabled):hover{box-shadow:0 4px 14px rgba(17, 20, 24, 0.16)}
+.vapp .chakra-button:not([data-btn]):not(:disabled):active{box-shadow:0 0 0 1.5px #0E3468}
+.vapp .chakra-button[data-btn="secondary"]{border:1px solid #DDE2E8;background:#FFFFFF;color:#111418;box-shadow:0 1px 2px rgba(17, 20, 24, 0.06)}
+.vapp .chakra-button[data-btn="secondary"]:not(:disabled):hover{border-color:#CDD3DB;background:#FFFFFF;color:#111418}
+.vapp .chakra-button[data-btn="secondary"]:not(:disabled):active{border-color:#185FC6;box-shadow:0 0 0 1px #185FC6}
+.vapp .chakra-button:disabled{opacity:1;cursor:not-allowed;box-shadow:none}
+.vapp .chakra-button:disabled:not([data-loading]){border-color:#E5E8EC;background:#E5E8EC;color:#98A0A9}
+.vapp .chakra-button[data-btn="secondary"]:disabled:not([data-loading]){border-color:#EEF0F3;background:#F6F7F9;color:#A9AFB7}
+.vapp .chakra-button[data-btn="ghost"]:disabled:not([data-loading]){border-color:transparent;background:transparent;color:#A9AFB7}
+@media (prefers-reduced-motion:reduce){.vapp .chakra-button{transition:none}}

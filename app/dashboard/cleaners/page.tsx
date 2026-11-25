@@ -182,7 +182,7 @@ function CleanersBrowser() {
                   </Box>
 
                   <HStack gap={0} borderTop="1px solid #DDE5E9">
-                    <Button flex={1} variant="ghost" borderRadius={0} h="44px" fontSize="13px" fontWeight="600"
+                    <Button data-btn="ghost" flex={1} variant="ghost" borderRadius={0} h="44px" fontSize="13px" fontWeight="600"
                       color="#555C66" _hover={{ bg: '#F8F8F4', color: '#185FC6' }}
                       onClick={() => router.push(`/dashboard/profile/${c.id}`)}>
                       {t('clientCleaners.viewProfile')}

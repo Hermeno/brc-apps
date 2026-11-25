@@ -125,7 +125,7 @@ function VerifyEmailForm() {
               <Button
                 type="submit" bg="#185FC6" color="white" h="44px" borderRadius="6px"
                 fontWeight="700" fontSize="14px" fontFamily="heading"
-                _hover={{ bg: '#111418' }} transition="background 0.15s"
+                _hover={{ bg: '#134A9A' }} transition="background 0.15s"
                 loading={loading} loadingText={t('auth.verify.submitting')}
                 disabled={code.length !== 6 || loading}
               >
@@ -133,7 +133,7 @@ function VerifyEmailForm() {
                 <Icon as={LucideArrowRight} w={4} h={4} ml={2} />
               </Button>
 
-              <Button
+              <Button data-btn="ghost"
                 variant="ghost" color="#555C66" h="40px" borderRadius="6px"
                 fontWeight="600" fontSize="13px" fontFamily="heading"
                 onClick={handleResend} loading={resending}

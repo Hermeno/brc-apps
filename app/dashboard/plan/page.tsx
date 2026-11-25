@@ -265,7 +265,7 @@ export default function PlanPage() {
                           </HStack>
                         </Box>
                       ) : (
-                        <Button
+                        <Button data-btn={plan.price === 0 ? 'secondary' : undefined}
                           w="full" size="sm" borderRadius="6px" fontWeight="bold"
                           {...(plan.price === 0
                             ? { variant: 'outline' as const, borderColor: c.border, color: c.text, _hover: { bg: c.bg } }
@@ -353,7 +353,7 @@ export default function PlanPage() {
                     {t('cleaner.plan.billingDesc')}
                   </Text>
                 </Box>
-                <Button
+                <Button data-btn="secondary"
                   size="sm" variant="outline" borderColor="slate.300" color="slate.600"
                   borderRadius="6px" fontWeight="semibold"
                   _hover={{ bg: 'slate.50' }}

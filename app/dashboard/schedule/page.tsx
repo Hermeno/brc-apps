@@ -185,7 +185,7 @@ export default function SchedulePage() {
             <Heading fontWeight="300" fontSize={{ base: '24px', md: '28px' }} letterSpacing="-0.01em" color="slate.900" fontFamily="heading">{tt('title')}</Heading>
             <Text color="slate.500" fontSize="sm" mt={1}>{tt('subtitle')}</Text>
           </Box>
-          <Button bg="#185FC6" color="white" borderRadius="6px" fontWeight="bold" _hover={{ bg: '#111418' }} onClick={() => openForm(selected)}>
+          <Button bg="#185FC6" color="white" borderRadius="6px" fontWeight="bold" _hover={{ bg: '#134A9A' }} onClick={() => openForm(selected)}>
             <Icon as={LucidePlus} w={4} h={4} mr={2} />{tt('blockTime')}
           </Button>
         </Flex>
@@ -228,8 +228,8 @@ export default function SchedulePage() {
                 <Input value={form.reason} maxLength={120} placeholder={tt('formReasonPlaceholder')} onChange={e => setForm({ ...form, reason: e.target.value })} {...field} />
               </Box>
               <HStack gap={3} justify="flex-end" mt={4}>
-                <Button size="sm" variant="ghost" color="slate.500" onClick={() => setForm(null)}>{tt('formCancel')}</Button>
-                <Button size="sm" bg="#185FC6" color="white" borderRadius="6px" fontWeight="bold" _hover={{ bg: '#111418' }} loading={saving} onClick={saveBlock}>{tt('formSave')}</Button>
+                <Button data-btn="ghost" size="sm" variant="ghost" color="slate.500" onClick={() => setForm(null)}>{tt('formCancel')}</Button>
+                <Button size="sm" bg="#185FC6" color="white" borderRadius="6px" fontWeight="bold" _hover={{ bg: '#134A9A' }} loading={saving} onClick={saveBlock}>{tt('formSave')}</Button>
               </HStack>
             </Box>
           )}
@@ -239,13 +239,13 @@ export default function SchedulePage() {
             <Box flex="2" w="100%" border="1px solid #DDE5E9" style={{ borderRadius: 6 }} overflow="hidden">
               <Flex align="center" justify="space-between" px={3} py={2.5} bg="#F8F8F4" borderBottom="1px solid #DDE5E9">
                 <HStack gap={1}>
-                  <Button size="sm" variant="ghost" aria-label={tt('prevMonth')} onClick={() => go(-1)}><Icon as={LucideChevronLeft} w={4} h={4} /></Button>
+                  <Button data-btn="ghost" size="sm" variant="ghost" aria-label={tt('prevMonth')} onClick={() => go(-1)}><Icon as={LucideChevronLeft} w={4} h={4} /></Button>
                   <Text fontFamily="heading" fontWeight={600} color="#111418" minW="150px" textAlign="center" textTransform="capitalize">
                     {month.toLocaleDateString(dl, { month: 'long', year: 'numeric' })}
                   </Text>
-                  <Button size="sm" variant="ghost" aria-label={tt('nextMonth')} onClick={() => go(1)}><Icon as={LucideChevronRight} w={4} h={4} /></Button>
+                  <Button data-btn="ghost" size="sm" variant="ghost" aria-label={tt('nextMonth')} onClick={() => go(1)}><Icon as={LucideChevronRight} w={4} h={4} /></Button>
                 </HStack>
-                <Button size="sm" variant="outline" borderColor="#DDE5E9" borderRadius="6px" color="#111418"
+                <Button data-btn="secondary" size="sm" variant="outline" borderColor="#DDE5E9" borderRadius="6px" color="#111418"
                   onClick={() => { setMonth(new Date(now.getFullYear(), now.getMonth(), 1)); setSelected(dayStart(now)); }}>
                   {tt('today')}
                 </Button>
@@ -300,7 +300,7 @@ export default function SchedulePage() {
               ) : entries.length === 0 ? (
                 <Box p={5}>
                   <Text color="slate.500" fontSize="sm">{tt('emptyDay')}</Text>
-                  <Button mt={3} size="sm" variant="outline" borderColor="#DDE5E9" borderRadius="6px" color="#111418" onClick={() => openForm(selected)}>{tt('blockThisDay')}</Button>
+                  <Button data-btn="secondary" mt={3} size="sm" variant="outline" borderColor="#DDE5E9" borderRadius="6px" color="#111418" onClick={() => openForm(selected)}>{tt('blockThisDay')}</Button>
                 </Box>
               ) : (
                 <VStack gap={0} align="stretch">
@@ -401,7 +401,7 @@ function BlockDetails({ entry, allDay, remove, fmtTime, onRemove }: {
         <Text>{wholeDay ? allDay : `${fmtTime(entry.at)} – ${fmtTime(end < dayEnd ? end : dayEnd)}`}</Text>
       </HStack>
       {entry.block.reason && <Text fontSize="xs" color="slate.500">{entry.block.reason}</Text>}
-      <Button size="xs" variant="ghost" color="red.500" px={1} onClick={onRemove}>
+      <Button data-btn="ghost" size="xs" variant="ghost" color="red.500" px={1} onClick={onRemove}>
         <Icon as={LucideTrash2} w={3.5} h={3.5} mr={1} />{remove}
       </Button>
     </VStack>
