@@ -1,6 +1,6 @@
 import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
-import { deleteVideoFromCloudinary } from '@/lib/cloudinary';
+import { deleteObject } from '@/lib/storage';
 import { NextResponse } from 'next/server';
 import { logError } from '@/lib/logger';
 
@@ -22,7 +22,7 @@ export async function DELETE() {
   try {
     const config = await prisma.siteConfig.findUnique({ where: { id: 'singleton' } });
     if (config?.heroVideoPublicId) {
-      await deleteVideoFromCloudinary(config.heroVideoPublicId);
+      await deleteObject(config.heroVideoPublicId).catch(() => {});
     }
     await prisma.siteConfig.upsert({
       where:  { id: 'singleton' },

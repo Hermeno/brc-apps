@@ -75,6 +75,10 @@ export async function register() {
           update: {},
         }).catch(() => {});
       }
-    }); }, 12_000);
+    });
+      // One-off: copy the files still on Cloudinary to Spaces (lib/storage-migration.ts).
+      const { migrateCloudinaryFiles } = await import('./lib/storage-migration');
+      await migrateCloudinaryFiles().catch(err => logError('[storage-migration]', err));
+    }, 12_000);
   }
 }

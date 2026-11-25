@@ -1,6 +1,7 @@
 import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
-import { uploadVideoToCloudinary, deleteVideoFromCloudinary } from '@/lib/cloudinary';
+import { randomUUID } from 'node:crypto';
+import { deleteObject, publicUrl, putObject } from '@/lib/storage';
 import { NextRequest, NextResponse } from 'next/server';
 import { logError } from '@/lib/logger';
 
@@ -24,17 +25,22 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: `File exceeds ${maxMb}MB limit` }, { status: 400 });
     }
 
+    const VIDEO_EXT: Record<string, string> = { 'video/mp4': 'mp4', 'video/webm': 'webm', 'video/quicktime': 'mov' };
+    const ext = VIDEO_EXT[file.type];
+    if (!ext) return NextResponse.json({ error: 'Use an MP4, WEBM or MOV video.' }, { status: 400 });
+
     const buffer = Buffer.from(await file.arrayBuffer());
 
     // Delete old video if it exists
     const existing = await prisma.siteConfig.findUnique({ where: { id: 'singleton' } });
     if (existing?.heroVideoPublicId) {
-      await deleteVideoFromCloudinary(existing.heroVideoPublicId).catch(() => {});
+      await deleteObject(existing.heroVideoPublicId).catch(() => {});
     }
 
-    const { url, publicId } = await uploadVideoToCloudinary(buffer, {
-      folder: 'verliks/landing',
-    });
+    // heroVideoPublicId now holds the Spaces key, which is what deleting needs.
+    const publicId = `videos/${randomUUID()}.${ext}`;
+    await putObject(publicId, buffer, file.type, true);
+    const url = publicUrl(publicId);
 
     await prisma.siteConfig.upsert({
       where:  { id: 'singleton' },

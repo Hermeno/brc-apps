@@ -46,6 +46,12 @@ export async function POST(req: NextRequest) {
     if (!fullName || !idNumber || !address || !frontDocUrl || !backDocUrl || !selfieUrl) {
       return NextResponse.json({ error: 'All fields are required.' }, { status: 400 });
     }
+    // Each document must be this cleaner's own private upload, or the one already on file.
+    const own = (url: unknown, kept?: string) =>
+      typeof url === 'string' && (url === kept || url.startsWith(`/api/files/v-${user.id}-`));
+    if (!own(frontDocUrl, existing?.frontDocUrl) || !own(backDocUrl, existing?.backDocUrl) || !own(selfieUrl, existing?.selfieUrl)) {
+      return NextResponse.json({ error: 'Please upload your documents again.' }, { status: 400 });
+    }
 
     const verification = await prisma.cleanerVerification.upsert({
       where: { cleanerId: user.id },
