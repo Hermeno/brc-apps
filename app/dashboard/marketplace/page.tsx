@@ -92,7 +92,6 @@ function WaveTimer({ lead }: { lead: Lead }) {
 export default function MarketplacePage() {
   const router = useRouter();
   const { locale } = useLocale();
-  const dateLocale = locale === 'pt' ? 'pt-BR' : 'en-US';
   const [leads, setLeads]           = useState<Lead[]>([]);
   const [loading, setLoading]       = useState(true);
   const [responding, setResponding] = useState<string | null>(null);
@@ -235,7 +234,7 @@ export default function MarketplacePage() {
                             <HStack gap={1.5} color="slate.500" fontSize="sm">
                               <Icon as={LucideCalendar} w={4} h={4} color="brand.400" />
                               <Text>
-                                {new Date(lead.dateTime).toLocaleString(dateLocale, { dateStyle: 'full', timeStyle: 'short' })}
+                                {new Date(lead.dateTime).toLocaleString('en-US', { dateStyle: 'full', timeStyle: 'short' })}
                               </Text>
                             </HStack>
                           </HStack>

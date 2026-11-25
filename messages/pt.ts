@@ -63,7 +63,7 @@ export const pt: Messages = {
       email: 'E-mail',
       emailPlaceholder: 'nome@email.com',
       phone: 'Número de telefone',
-      phonePlaceholder: '(555) 123-4567',
+      phonePlaceholder: '+1 (555) 123-4567',
       password: 'Senha',
       passwordPlaceholder: 'Mínimo 6 caracteres',
       submit: 'Criar minha conta',

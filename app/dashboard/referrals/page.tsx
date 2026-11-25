@@ -23,8 +23,7 @@ type ReferralData = {
 };
 
 export default function ReferralsPage() {
-  const { locale, t } = useLocale();
-  const dateLocale = locale === 'pt' ? 'pt-BR' : 'en-US';
+  const { t } = useLocale();
   const [data, setData] = useState<ReferralData | null>(null);
   const [loading, setLoading] = useState(true);
   const [copied, setCopied] = useState(false);
@@ -238,7 +237,7 @@ export default function ReferralsPage() {
                         <VStack align="start" gap={0.5}>
                           <Text fontWeight="semibold" color="slate.800" fontSize="sm">{r.name ?? t('cleaner.referrals.unnamed')}</Text>
                           <Text fontSize="xs" color="slate.400">
-                            {new Date(r.createdAt).toLocaleDateString(dateLocale, { dateStyle: 'medium' })}
+                            {new Date(r.createdAt).toLocaleDateString('en-US', { dateStyle: 'medium' })}
                           </Text>
                         </VStack>
                         <HStack

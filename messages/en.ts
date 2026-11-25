@@ -61,7 +61,7 @@ export const en = {
       email: 'Email address',
       emailPlaceholder: 'name@email.com',
       phone: 'Phone number',
-      phonePlaceholder: '(555) 123-4567',
+      phonePlaceholder: '+1 (555) 123-4567',
       password: 'Password',
       passwordPlaceholder: 'At least 6 characters',
       submit: 'Create my cleaner account',

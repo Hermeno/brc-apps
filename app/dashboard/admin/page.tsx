@@ -26,6 +26,7 @@ import {
   XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend,
 } from 'recharts';
 import { PLAN_MAX_RADIUS } from '@/lib/plans';
+import { formatUSPhone, formatUSPhoneInput, usPhoneForSave } from '@/lib/phone';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -220,12 +221,6 @@ function ReferralTableRow({ r }: { r: ReferralRow }) {
   );
 }
 
-function formatUSPhone(raw: string) {
-  const digits = raw.replace(/\D/g, '').slice(0, 10);
-  if (digits.length < 4) return digits;
-  if (digits.length < 7) return `(${digits.slice(0,3)}) ${digits.slice(3)}`;
-  return `(${digits.slice(0,3)}) ${digits.slice(3,6)}-${digits.slice(6)}`;
-}
 
 // ─── Sidebar ──────────────────────────────────────────────────────────────────
 
@@ -452,7 +447,7 @@ function UserTableRow({ user, onRefresh }: { user: UserRow; onRefresh: () => voi
   const [editing, setEditing]       = useState(false);
   const [name, setName]             = useState(user.name ?? '');
   const [email, setEmail]           = useState(user.email);
-  const [phone, setPhone]           = useState(user.phone ?? '');
+  const [phone, setPhone]           = useState(user.phone ? formatUSPhone(user.phone) : '');
   const [zipCode, setZipCode]       = useState(user.zipCode ?? '');
   const [suspendDays, setSuspDays]  = useState(7);
   const [loading, setLoading]       = useState(false);
@@ -505,7 +500,7 @@ function UserTableRow({ user, onRefresh }: { user: UserRow; onRefresh: () => voi
             <VStack gap={1.5} align="stretch">
               <Input size="sm" value={name}  onChange={e => setName(e.target.value)}  placeholder="Name"  borderRadius="4px" />
               <Input size="sm" value={email} onChange={e => setEmail(e.target.value)} placeholder="Email" borderRadius="4px" />
-              <Input size="sm" value={phone} onChange={e => setPhone(formatUSPhone(e.target.value))} placeholder="(555) 123-4567" borderRadius="4px" type="tel" />
+              <Input size="sm" value={phone} onChange={e => setPhone(formatUSPhoneInput(e.target.value))} placeholder="+1 (555) 123-4567" borderRadius="4px" type="tel" />
               <Input size="sm" value={zipCode} onChange={e => setZipCode(e.target.value)}
                 placeholder="ZIP code (e.g. 33101)" borderRadius="4px" maxLength={10} />
             </VStack>
@@ -513,7 +508,7 @@ function UserTableRow({ user, onRefresh }: { user: UserRow; onRefresh: () => voi
             <Box>
               <Text fontSize="13px" fontWeight="600" color="slate.900" fontFamily="heading">{user.name || '—'}</Text>
               <Text fontSize="11.5px" color="slate.500">{user.email}</Text>
-              {user.phone && <Text fontSize="11px" color="slate.400">{user.phone}</Text>}
+              {user.phone && <Text fontSize="11px" color="slate.400">{formatUSPhone(user.phone)}</Text>}
             </Box>
           )}
         </td>
@@ -603,8 +598,7 @@ function UserTableRow({ user, onRefresh }: { user: UserRow; onRefresh: () => voi
               <>
                 <Button size="xs" bg="brand.500" color="white" borderRadius="4px" loading={loading}
                   onClick={() => {
-                    const digits = phone.replace(/\D/g, '');
-                    const formattedPhone = digits.length === 10 ? `+1${digits}` : phone || null;
+                    const formattedPhone = usPhoneForSave(phone);
                     call({ name, email, phone: formattedPhone, zipCode: zipCode.trim() || null });
                     setEditing(false);
                   }}>
@@ -767,7 +761,7 @@ function LeadDetailRow({ lead }: { lead: LeadRow }) {
           {(lead.client.phone || lead.clientPhone) && (
             <HStack gap={1}>
               <Icon as={LucidePhone} w="10px" h="10px" color="slate.400" />
-              <Text fontSize="11px" color="slate.400">{lead.client.phone || lead.clientPhone}</Text>
+              <Text fontSize="11px" color="slate.400">{formatUSPhone(lead.client.phone || lead.clientPhone)}</Text>
             </HStack>
           )}
         </td>

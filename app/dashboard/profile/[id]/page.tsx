@@ -16,6 +16,7 @@ import { motion } from 'motion/react';
 import Glyph from '@/components/glyph';
 import { X } from 'lucide-react';
 import { useLocale } from '@/lib/i18n';
+import { formatUSPhone } from '@/lib/phone';
 
 /* ─── types ──────────────────────────────────────────────────── */
 type Photo = { id: string; url: string; caption?: string | null; createdAt: string };
@@ -216,7 +217,7 @@ export default function PublicProfilePage() {
                     borderRadius="6px" px={4} py={3}>
                     <Icon as={LucideMapPin} w={4} h={4} color="#185FC6" />
                     <Text fontSize="sm" fontWeight="semibold" color="#111418">
-                      <Glyph name="phone" />{cleaner.phone}
+                      <Glyph name="phone" />{formatUSPhone(cleaner.phone)}
                     </Text>
                   </HStack>
                 )}
@@ -335,7 +336,7 @@ export default function PublicProfilePage() {
                             </VStack>
                           </HStack>
                           <Text fontSize="xs" color="slate.400" whiteSpace="nowrap">
-                            {new Date(review.createdAt).toLocaleDateString(dateLocale)}
+                            {new Date(review.createdAt).toLocaleDateString('en-US')}
                           </Text>
                         </Flex>
                       </Box>

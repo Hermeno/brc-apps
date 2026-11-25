@@ -260,7 +260,7 @@ export default function SchedulePage() {
                   const isSelected = dayKey(d) === dayKey(selected);
                   return (
                     <Box as="button" key={dayKey(d)} onClick={() => setSelected(dayStart(d))}
-                      aria-pressed={isSelected} aria-label={`${d.toLocaleDateString(dl, { dateStyle: 'full' })}${list.length ? ` · ${list.length}` : ''}`}
+                      aria-pressed={isSelected} aria-label={`${d.toLocaleDateString('en-US', { dateStyle: 'full' })}${list.length ? ` · ${list.length}` : ''}`}
                       minH={{ base: '54px', md: '96px' }} p={1.5} display="flex" flexDirection="column" alignItems="stretch" gap="3px" textAlign="left"
                       bg={isSelected ? '#EDF3F5' : 'white'} borderTop="1px solid #DDE5E9" borderRight={i % 7 < 6 ? '1px solid #DDE5E9' : undefined}
                       opacity={d.getMonth() === month.getMonth() ? 1 : 0.45} cursor="pointer" _hover={{ bg: isSelected ? '#EDF3F5' : '#F8F8F4' }}>
@@ -292,7 +292,7 @@ export default function SchedulePage() {
             <Box flex="1" w="100%" border="1px solid #DDE5E9" style={{ borderRadius: 6 }} overflow="hidden">
               <Box bg="#F8F8F4" px={5} py={3} borderBottom="1px solid #DDE5E9">
                 <Text fontSize="10.5px" fontWeight={700} color="#555C66" textTransform="uppercase" fontFamily="heading" letterSpacing="0.07em">
-                  {selected.toLocaleDateString(dl, { weekday: 'long', month: 'long', day: 'numeric' })}
+                  {selected.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
                 </Text>
               </Box>
               {loading ? (

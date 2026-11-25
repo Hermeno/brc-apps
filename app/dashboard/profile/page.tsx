@@ -16,13 +16,8 @@ import { ImageUpload } from '@/components/image-upload';
 import { useT } from '@/lib/i18n';
 import { RADIUS_OPTIONS, maxRadiusForPlan } from '@/lib/plans';
 import Glyph from '@/components/glyph';
+import { formatUSPhoneInput, usPhoneForSave } from '@/lib/phone';
 
-function formatUSPhone(raw: string) {
-  const digits = raw.replace(/\D/g, '').slice(0, 10);
-  if (digits.length < 4) return digits;
-  if (digits.length < 7) return `(${digits.slice(0,3)}) ${digits.slice(3)}`;
-  return `(${digits.slice(0,3)}) ${digits.slice(3,6)}-${digits.slice(6)}`;
-}
 
 /* ─── types ──────────────────────────────────────────────────── */
 type Photo = { id: string; url: string; caption?: string | null; createdAt: string };
@@ -83,7 +78,7 @@ export default function ProfilePage() {
       if (d.cleaner) {
         if (d.cleaner.phone) {
           const digits = d.cleaner.phone.replace(/\D/g, '').slice(-10);
-          setPhone(formatUSPhone(digits));
+          setPhone(formatUSPhoneInput(digits));
         }
         setBio(d.cleaner.bio ?? '');
         setServiceTypes(d.cleaner.serviceTypes ?? []);
@@ -156,7 +151,7 @@ export default function ProfilePage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           bio, serviceTypes, avatarUrl, latitude, longitude, serviceRadiusMiles, zipCode,
-          phone: phone ? `+1${phone.replace(/\D/g, '')}` : null,
+          phone: usPhoneForSave(phone),
         }),
       });
       if (res.ok) {
@@ -320,8 +315,8 @@ export default function ProfilePage() {
                     <Input
                       type="tel"
                       value={phone}
-                      onChange={e => setPhone(formatUSPhone(e.target.value))}
-                      placeholder="(555) 123-4567"
+                      onChange={e => setPhone(formatUSPhoneInput(e.target.value))}
+                      placeholder="+1 (555) 123-4567"
                       bg="slate.50" border="1px solid" borderColor="slate.200"
                       borderRadius="6px" fontSize="sm" h="10"
                       _focus={{ borderColor: 'brand.300', bg: 'white' }}

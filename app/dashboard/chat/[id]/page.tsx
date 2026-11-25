@@ -18,6 +18,7 @@ import { LeadFeePayment } from '@/components/lead-fee-payment';
 import { useLocale } from '@/lib/i18n';
 import { serviceLabel } from '@/lib/estimate';
 import Glyph from '@/components/glyph';
+import { formatUSPhone } from '@/lib/phone';
 
 type Message = {
   id: string;
@@ -240,7 +241,7 @@ function ChatInner() {
     }
 
     const isWaitingForClient = conv.lead.status === 'IN_REVIEW';
-    const jobDate = new Date(conv.lead.dateTime).toLocaleString(dateLocale, {
+    const jobDate = new Date(conv.lead.dateTime).toLocaleString('en-US', { // month first, in every language
       weekday: 'short', month: 'short', day: 'numeric',
       hour: 'numeric', minute: '2-digit', hour12: locale !== 'pt',
     });
@@ -450,7 +451,7 @@ function ChatInner() {
               <Icon as={LucidePhone} w={4} h={4} color="#185FC6" />
               <Text fontSize="sm" fontWeight="bold" color="#111418">Client's contact:</Text>
               <Text fontSize="sm" color="#111418" fontWeight="semibold">
-                {conv.client.phone || conv.lead.clientPhone}
+                {formatUSPhone(conv.client.phone || conv.lead.clientPhone)}
               </Text>
             </HStack>
           </Container>
@@ -468,7 +469,7 @@ function ChatInner() {
             <HStack gap={1.5} color="slate.500" fontSize="sm">
               <Icon as={LucideCalendar} w={4} h={4} color="brand.400" />
               <Text>
-                {new Date(conv.lead.dateTime).toLocaleString(dateLocale, { dateStyle: 'short', timeStyle: 'short' })}
+                {new Date(conv.lead.dateTime).toLocaleString('en-US', { dateStyle: 'short', timeStyle: 'short' })}
               </Text>
             </HStack>
             {conv.lead.estimatedMinPrice && (

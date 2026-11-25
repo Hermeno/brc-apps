@@ -31,6 +31,7 @@ import { CLIENT_DECISION_HOURS } from '@/lib/lead-policy';
 import { nextVisit } from '@/lib/recurrence';
 import LanguageSwitcher from '@/components/language-switcher';
 import Glyph from '@/components/glyph';
+import { formatUSPhone } from '@/lib/phone';
 
 /* ─── types ──────────────────────────────────────────────────── */
 function makeStatusMap(t: (k: string) => string): Record<string, { label: string; bg: string; color: string; border: string }> {
@@ -77,13 +78,6 @@ const CANCEL_REASONS_KEYS = [
 ] as const;
 
 /* ─── Helpers ─────────────────────────────────────────────────── */
-function formatPhone(raw: string | null): string {
-  if (!raw) return '';
-  const d = raw.replace(/\D/g, '');
-  if (d.length === 10) return `(${d.slice(0,3)}) ${d.slice(3,6)}-${d.slice(6)}`;
-  if (d.length === 11 && d[0] === '1') return `+1 (${d.slice(1,4)}) ${d.slice(4,7)}-${d.slice(7)}`;
-  return raw;
-}
 
 function fmtDate(iso: string): string {
   return new Date(iso).toLocaleString('en-US', {
@@ -626,7 +620,7 @@ export default function ClientPage() {
                   </Text>
                   <Text fontSize="xs" color="slate.400" mt={0.5}>{profile?.email ?? session?.user?.email}</Text>
                   {profile?.phone && (
-                    <Text fontSize="xs" color="slate.500" mt={0.5}><Glyph name="phone" />{formatPhone(profile.phone)}</Text>
+                    <Text fontSize="xs" color="slate.500" mt={0.5}><Glyph name="phone" />{formatUSPhone(profile.phone)}</Text>
                   )}
                 </Box>
 

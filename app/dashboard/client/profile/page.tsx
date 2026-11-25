@@ -14,6 +14,7 @@ import { motion } from 'motion/react';
 import { ImageUpload } from '@/components/image-upload';
 import Image from 'next/image';
 import { useT } from '@/lib/i18n';
+import { formatUSPhone, formatUSPhoneInput, usPhoneForSave } from '@/lib/phone';
 
 export default function ClientProfilePage() {
   const router = useRouter();
@@ -32,7 +33,7 @@ export default function ClientProfilePage() {
       .then(d => {
         if (d?.user) {
           setName(d.user.name ?? '');
-          setPhone(d.user.phone ?? '');
+          setPhone(d.user.phone ? formatUSPhone(d.user.phone) : '');
           setAddress(d.user.address ?? '');
           setAvatarUrl(d.user.avatarUrl ?? '');
         }
@@ -46,7 +47,7 @@ export default function ClientProfilePage() {
       const res = await fetch('/api/client/profile', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, phone, address, avatarUrl }),
+        body: JSON.stringify({ name, phone: usPhoneForSave(phone), address, avatarUrl }),
       });
       if (res.ok) {
         toaster.create({ title: t('client.profile.saved'), type: 'success' });
@@ -139,9 +140,9 @@ export default function ClientProfilePage() {
                       textTransform="uppercase" letterSpacing="wider">{t('client.profile.phone')}</Text>
                   </HStack>
                   <Input
-                    placeholder="(555) 555-5555"
+                    placeholder="+1 (555) 555-5555"
                     value={phone}
-                    onChange={e => setPhone(e.target.value)}
+                    onChange={e => setPhone(formatUSPhoneInput(e.target.value))}
                     bg="slate.50" border="1px solid" borderColor="slate.200"
                     h="11" borderRadius="6px" fontSize="sm"
                     _focus={{ bg: 'white', borderColor: 'brand.300' }}

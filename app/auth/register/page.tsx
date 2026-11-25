@@ -11,13 +11,8 @@ import { LucideArrowRight, LucideArrowLeft, LucideCheckCircle } from 'lucide-rea
 import Image from 'next/image';
 import { useT } from '@/lib/i18n';
 import LanguageSwitcher from '@/components/language-switcher';
+import { formatUSPhoneInput, usPhoneDigits } from '@/lib/phone';
 
-function formatUSPhone(raw: string) {
-  const digits = raw.replace(/\D/g, '').slice(0, 10);
-  if (digits.length < 4) return digits;
-  if (digits.length < 7) return `(${digits.slice(0,3)}) ${digits.slice(3)}`;
-  return `(${digits.slice(0,3)}) ${digits.slice(3,6)}-${digits.slice(6)}`;
-}
 
 function RegisterForm() {
   const [name, setName]         = useState('');
@@ -31,12 +26,12 @@ function RegisterForm() {
   const t = useT();
 
   const handlePhone = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setPhone(formatUSPhone(e.target.value));
+    setPhone(formatUSPhoneInput(e.target.value));
   };
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
-    const phoneDigits = phone.replace(/\D/g, '');
+    const phoneDigits = usPhoneDigits(phone);
     if (phoneDigits.length !== 10) {
       toaster.create({ title: t('auth.register.errorPhone'), type: 'error' });
       return;

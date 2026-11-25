@@ -37,7 +37,6 @@ type FinanceData = {
 
 export default function FinancesPage() {
   const { locale, t } = useLocale();
-  const dateLocale = locale === 'pt' ? 'pt-BR' : 'en-US';
   const [data, setData]     = useState<FinanceData | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -215,7 +214,7 @@ export default function FinancesPage() {
                             <HStack gap={2} color="slate.400" fontSize="xs">
                               <Icon as={LucideCalendar} w={3} h={3} />
                               <Text>
-                                {new Date(tx.lead.dateTime).toLocaleDateString(dateLocale, { dateStyle: 'medium' })}
+                                {new Date(tx.lead.dateTime).toLocaleDateString('en-US', { dateStyle: 'medium' })}
                               </Text>
                               <Text>·</Text>
                               <Text>{tx.lead.address}</Text>
