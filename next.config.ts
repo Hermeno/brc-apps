@@ -22,11 +22,20 @@ const nextConfig: NextConfig = {
   // built entirely from those traces.
   outputFileTracingRoot: path.join(__dirname),
   reactStrictMode: true,
+  // Lint runs before each commit (npm run lint); the server build skips it to deploy faster.
+  // Type errors still stop the build.
+  eslint: { ignoreDuringBuilds: true },
   async headers() {
     return [
       {
         source: '/(.*)',
         headers: securityHeaders,
+      },
+      {
+        // Files in /public/images are served with max-age=0 by default, so every visit
+        // asked the server again. A day of caching, then refreshed in the background.
+        source: '/images/:path*',
+        headers: [{ key: 'Cache-Control', value: 'public, max-age=86400, stale-while-revalidate=604800' }],
       },
     ];
   },

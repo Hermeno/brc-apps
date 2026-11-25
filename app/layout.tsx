@@ -1,10 +1,7 @@
 import type { Metadata } from 'next';
 import localFont from 'next/font/local';
 import Script from 'next/script';
-import { cookies } from 'next/headers';
 import './globals.css';
-import { Providers } from '@/components/providers';
-import type { Locale } from '@/lib/i18n';
 
 // Display / headings — Google Sans Flex (static weights only; the 4.15 MB
 // variable font is intentionally not shipped).
@@ -62,9 +59,10 @@ export const metadata: Metadata = {
   },
 };
 
-export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const cookieStore = await cookies();
-  const locale = (cookieStore.get('bc_locale')?.value ?? 'en') as Locale;
+// Chakra, the session and the translations live in the layouts that use them (auth, dashboard,
+// request), not here: the public pages need none of it, and reading the locale cookie here made
+// every page dynamic.
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" translate="no" suppressHydrationWarning>
       <body
@@ -122,9 +120,7 @@ fbq('track','PageView');`,
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img height="1" width="1" style={{ display: 'none' }} alt="" src="https://www.facebook.com/tr?id=1940094264035106&ev=PageView&noscript=1" />
         </noscript>
-        <Providers locale={locale}>
-          {children}
-        </Providers>
+        {children}
       </body>
     </html>
   );
