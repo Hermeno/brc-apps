@@ -16,7 +16,9 @@ import { AnimatePresence, motion } from 'motion/react';
 import Image from 'next/image';
 import { useT } from '@/lib/i18n';
 
-const NAV_BG = '#FFFFFF';
+// Near-black, so the bar stands apart from the white page under it; blue stays for highlights.
+const NAV_BG = '#111418';
+const ON_NAV = '#D4D8DE'; // text and icons on the bar (12.9:1)
 
 export default function CleanerNav() {
   const { data: session } = useSession();
@@ -40,7 +42,6 @@ export default function CleanerNav() {
     <Box
       as="nav"
       bg={NAV_BG}
-      borderBottom="1px solid #DDE5E9"
       position="sticky"
       top={0}
       zIndex={50}
@@ -53,15 +54,17 @@ export default function CleanerNav() {
         maxW="1440px"
         mx="auto"
         gap={2}
+        // White focus ring for what sits on the dark bar; the notification panel keeps its own.
+        css={{ '& > a:focus-visible, & > div > a:focus-visible, & > div > button:focus-visible, & > div > div > button:focus-visible': { outline: '2px solid white', outlineOffset: '2px' } }}
       >
         {/* Logo */}
         <NextLink href="/dashboard/cleaner" style={{ flexShrink: 0, textDecoration: 'none' }}>
           <HStack gap={0} align="center">
-            <Image src="/images/brand/verliks-logo-600.png" alt="Verliks" width={177} height={38} style={{ objectFit: 'contain' }} />
+            <Image src="/images/brand/verliks-logo-white-600.png" alt="Verliks" width={112} height={24} style={{ objectFit: 'contain' }} />
           </HStack>
         </NextLink>
 
-        <Box w="1px" h="22px" bg="#DDE5E9" flexShrink={0} mx={2} display={{ base: 'none', xl: 'block' }} />
+        <Box w="1px" h="22px" bg="rgba(255, 255, 255, 0.2)" flexShrink={0} mx={2} display={{ base: 'none', xl: 'block' }} />
 
         {/* Desktop nav */}
         <HStack h="60px" gap={1} flex={1} display={{ base: 'none', xl: 'flex' }} align="center">
@@ -76,13 +79,13 @@ export default function CleanerNav() {
                 aria-current={isActive ? 'page' : undefined}
                 style={{ display: 'flex', alignItems: 'center', textDecoration: 'none' }}
               >
-                {/* As in the public header: uppercase links, the current page a filled rectangle. */}
+                {/* Links in normal case; the current page is a white rectangle on the dark bar. */}
                 <Box
-                  px={3} h="36px" display="flex" alignItems="center"
-                  bg={isActive ? '#185FC6' : 'transparent'} color={isActive ? 'white' : '#18314E'}
-                  fontSize="12.5px" fontWeight="600" letterSpacing="0.06em" textTransform="uppercase"
+                  px={3} h="36px" display="flex" alignItems="center" borderRadius="2px"
+                  bg={isActive ? 'white' : 'transparent'} color={isActive ? NAV_BG : ON_NAV}
+                  fontSize="14px" fontWeight="500"
                   whiteSpace="nowrap" transition="background 0.15s, color 0.15s"
-                  _hover={{ color: isActive ? 'white' : '#185FC6' }}
+                  _hover={isActive ? undefined : { color: 'white', bg: 'rgba(255, 255, 255, 0.08)' }}
                 >
                   {t(`nav.cleaner.${item.key}`)}
                 </Box>
@@ -95,7 +98,7 @@ export default function CleanerNav() {
         <HStack gap={1.5} flexShrink={0} ml={{ base: 'auto', md: 0 }}>
           <HStack
             gap={2} display={{ base: 'none', lg: 'flex' }}
-            bg="#F8F8F4" border="1px solid" borderColor="#DDE5E9"
+            bg="rgba(255, 255, 255, 0.08)" border="1px solid" borderColor="rgba(255, 255, 255, 0.16)"
             borderRadius="2px" px={3} py={1.5}
           >
             <Box
@@ -105,17 +108,17 @@ export default function CleanerNav() {
             >
               {initial}
             </Box>
-            <Text fontSize="13px" fontWeight="500" color="#185FC6" fontFamily="heading" letterSpacing="-0.01em">
+            <Text fontSize="13px" fontWeight="500" color="white" fontFamily="heading" letterSpacing="-0.01em">
               {firstName}
             </Text>
           </HStack>
 
-          <LanguageSwitcher />
-          <NotificationBell />
+          <LanguageSwitcher dark />
+          <NotificationBell dark />
 
           <Button
-            size="sm" variant="ghost" color="#455B70" px={2} h="34px" borderRadius="2px"
-            _hover={{ color: '#18314E', bg: 'rgba(14, 52, 104, 0.08)' }} transition="all 0.15s"
+            size="sm" variant="ghost" color={ON_NAV} px={2} h="34px" borderRadius="2px"
+            _hover={{ color: 'white', bg: 'rgba(255, 255, 255, 0.1)' }} transition="all 0.15s"
             onClick={() => signOut({ callbackUrl: '/auth/login' })}
             title={t('common.signOut')} aria-label={t('common.signOut')}
             display={{ base: 'none', sm: 'flex' }}
@@ -124,8 +127,8 @@ export default function CleanerNav() {
           </Button>
 
           <Button
-            size="sm" variant="ghost" color="#455B70" px={2} h="34px" borderRadius="2px"
-            _hover={{ bg: '#F8F8F4' }}
+            size="sm" variant="ghost" color={ON_NAV} px={2} h="34px" borderRadius="2px"
+            _hover={{ color: 'white', bg: 'rgba(255, 255, 255, 0.1)' }}
             display={{ base: 'flex', xl: 'none' }}
             aria-label="Menu" aria-expanded={mobileOpen}
             onClick={() => setMobileOpen(v => !v)}
@@ -145,7 +148,7 @@ export default function CleanerNav() {
             transition={{ duration: 0.2, ease: 'easeInOut' }}
             style={{ overflow: 'hidden' }}
           >
-            <Box borderTop="1px solid #DDE5E9" bg={NAV_BG} px={4} py={3}>
+            <Box borderTop="1px solid #DDE5E9" bg="white" px={4} py={3}>
               {NAV_ITEMS.map(item => {
                 const isActive =
                   pathname === item.href ||

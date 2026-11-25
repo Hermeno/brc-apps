@@ -166,12 +166,12 @@ export default function NotificationBell({ dark = false }: { dark?: boolean }) {
         w="34px" h="34px"
         display="flex" alignItems="center" justifyContent="center"
         borderRadius="2px"
-        color={open ? (dark ? 'white' : 'brand.600') : (dark ? '#455B70' : 'slate.500')}
-        bg={open ? (dark ? 'rgba(14, 52, 104, 0.15)' : 'brand.50') : 'transparent'}
+        color={open ? (dark ? 'white' : 'brand.600') : (dark ? '#D4D8DE' : 'slate.500')}
+        bg={open ? (dark ? 'rgba(255, 255, 255, 0.12)' : 'brand.50') : 'transparent'}
         border="1px solid"
-        borderColor={open ? (dark ? 'rgba(14, 52, 104, 0.3)' : 'brand.200') : 'transparent'}
+        borderColor={open ? (dark ? 'rgba(255, 255, 255, 0.2)' : 'brand.200') : 'transparent'}
         _hover={dark
-          ? { bg: 'rgba(255, 255, 255, 0.08)', color: '#DDE5E9', borderColor: 'rgba(255, 255, 255, 0.12)' }
+          ? { bg: 'rgba(255, 255, 255, 0.08)', color: 'white', borderColor: 'rgba(255, 255, 255, 0.12)' }
           : { bg: 'slate.100', color: 'slate.700', borderColor: 'slate.200' }
         }
         transition="all 0.15s"
@@ -195,7 +195,7 @@ export default function NotificationBell({ dark = false }: { dark?: boolean }) {
               <Box
                 minW="14px" h="14px" bg="red.500" borderRadius="full"
                 display="flex" alignItems="center" justifyContent="center"
-                style={{ border: `2px solid ${dark ? '#18314E' : 'white'}` }}
+                style={{ border: `2px solid ${dark ? '#111418' : 'white'}` }}
               >
                 <Text color="white" fontSize="7px" fontWeight="700" lineHeight={1} fontFamily="heading">
                   {unread > 9 ? '9+' : unread}
