@@ -25,6 +25,7 @@ import {
   AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell,
   XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend,
 } from 'recharts';
+import { PLAN_MAX_RADIUS } from '@/lib/plans';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -2084,11 +2085,11 @@ interface PlanConfigRow { id: string; price: number; updatedAt?: string }
 const PLAN_META: Record<string, { name: string; color: string; badge: string; perks: string[] }> = {
   BASIC: {
     name: 'Basic', color: '#185FC6', badge: 'Popular',
-    perks: ['Wave 1 + Wave 2', '+15 CFS ranking points', '60 mi radius', 'Verified profile badge'],
+    perks: ['Wave 1 + Wave 2', '+15 CFS ranking points', `${PLAN_MAX_RADIUS.BASIC} mi radius`, 'Verified profile badge'],
   },
   PRO: {
     name: 'Pro', color: '#D97706', badge: 'Max',
-    perks: ['Top of CFS ranking', '+30 guaranteed points', 'Instant Book eligible', '110 mi radius', 'Top Cleaner badge'],
+    perks: ['Top of CFS ranking', '+30 guaranteed points', 'Instant Book eligible', `${PLAN_MAX_RADIUS.PRO} mi radius`, 'Top Cleaner badge'],
   },
 };
 

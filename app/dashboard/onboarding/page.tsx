@@ -91,7 +91,7 @@ export default function OnboardingPage() {
         if (u.bio)                      setBio(u.bio);
         if (u.avatarUrl)                setAvatarUrl(u.avatarUrl);
         setPlanMaxRadius(maxRadiusForPlan(u.plan));
-        if (u.serviceRadiusMiles)       setRadius(u.serviceRadiusMiles);
+        if (u.serviceRadiusMiles)       setRadius(Math.min(u.serviceRadiusMiles, maxRadiusForPlan(u.plan)));
         if (u.zipCode)                  setZipCode(u.zipCode);
         if (u.latitude && u.longitude) {
           setLatitude(u.latitude);

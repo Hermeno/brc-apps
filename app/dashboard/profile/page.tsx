@@ -478,7 +478,7 @@ export default function ProfilePage() {
                   <Box display="flex" gap={2} flexWrap="wrap">
                     {RADIUS_OPTIONS.map(miles => {
                       const locked = miles > planMaxRadius;
-                      const active = serviceRadiusMiles === miles;
+                      const active = Math.min(serviceRadiusMiles, planMaxRadius) === miles;
                       return (
                         <Box
                           key={miles}
