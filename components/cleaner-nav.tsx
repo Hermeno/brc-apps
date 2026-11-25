@@ -16,9 +16,9 @@ import { AnimatePresence, motion } from 'motion/react';
 import Image from 'next/image';
 import { useT } from '@/lib/i18n';
 
-// Near-black, so the bar stands apart from the white page under it; blue stays for highlights.
-const NAV_BG = '#111418';
-const ON_NAV = '#D4D8DE'; // text and icons on the bar (12.9:1)
+// Verliks blue, so the bar stands apart from the white page under it.
+const NAV_BG = '#185FC6';
+const ON_NAV = '#E6EEFA'; // text and icons on the blue bar
 
 export default function CleanerNav() {
   const { data: session } = useSession();
@@ -54,7 +54,7 @@ export default function CleanerNav() {
         maxW="1440px"
         mx="auto"
         gap={2}
-        // White focus ring for what sits on the dark bar; the notification panel keeps its own.
+        // White focus ring for what sits on the blue bar; the notification panel keeps its own.
         css={{ '& > a:focus-visible, & > div > a:focus-visible, & > div > button:focus-visible, & > div > div > button:focus-visible': { outline: '2px solid white', outlineOffset: '2px' } }}
       >
         {/* Logo */}
@@ -79,7 +79,7 @@ export default function CleanerNav() {
                 aria-current={isActive ? 'page' : undefined}
                 style={{ display: 'flex', alignItems: 'center', textDecoration: 'none' }}
               >
-                {/* Links in normal case; the current page is a white rectangle on the dark bar. */}
+                {/* Links in normal case; the current page is a white rectangle on the blue bar. */}
                 <Box
                   px={3} h="36px" display="flex" alignItems="center" borderRadius="6px"
                   bg={isActive ? 'white' : 'transparent'} color={isActive ? NAV_BG : ON_NAV}
@@ -102,9 +102,9 @@ export default function CleanerNav() {
             borderRadius="6px" px={3} py={1.5}
           >
             <Box
-              w="22px" h="22px" bg="brand.500" borderRadius="full"
+              w="22px" h="22px" bg="white" borderRadius="full"
               display="flex" alignItems="center" justifyContent="center"
-              fontSize="9px" fontWeight="700" color="white" flexShrink={0}
+              fontSize="9px" fontWeight="700" color={NAV_BG} flexShrink={0}
             >
               {initial}
             </Box>

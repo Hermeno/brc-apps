@@ -554,9 +554,9 @@ export default function ClientPage() {
   return (
     <Box minH="100vh" bg="white">
 
-      {/* ── Client header: the same near-black bar as the cleaner panel (components/cleaner-nav.tsx) ── */}
+      {/* ── Client header: the same blue bar as the cleaner panel (components/cleaner-nav.tsx) ── */}
       <Box
-        bg="#111418"
+        bg="#185FC6"
         position="sticky" top={0} zIndex={50}
       >
         <Flex align="center" h="60px" px={{ base: 4, md: 6, lg: 8 }} maxW="1440px" mx="auto" justify="space-between"
@@ -568,9 +568,9 @@ export default function ClientPage() {
             <HStack gap={2} display={{ base: 'none', lg: 'flex' }}
               bg="rgba(255, 255, 255, 0.08)" border="1px solid" borderColor="rgba(255, 255, 255, 0.16)"
               borderRadius="6px" px={3} py={1.5}>
-              <Box w="22px" h="22px" bg="brand.500" borderRadius="full"
+              <Box w="22px" h="22px" bg="white" borderRadius="full"
                 display="flex" alignItems="center" justifyContent="center"
-                fontSize="9px" fontWeight="700" color="white">
+                fontSize="9px" fontWeight="700" color="#185FC6">
                 {firstName[0]?.toUpperCase() ?? 'C'}
               </Box>
               <Text fontSize="13px" fontWeight="500" color="white" fontFamily="heading" letterSpacing="-0.01em">
@@ -580,7 +580,7 @@ export default function ClientPage() {
 
             <LanguageSwitcher dark />
             <NotificationBell dark />
-            <Button data-btn="ghost" size="sm" variant="ghost" color="#D4D8DE" px={2} h="34px" borderRadius="6px"
+            <Button data-btn="ghost" size="sm" variant="ghost" color="#E6EEFA" px={2} h="34px" borderRadius="6px"
               _hover={{ color: 'white', bg: 'rgba(255, 255, 255, 0.1)' }} transition="all 0.15s"
               onClick={() => signOut({ callbackUrl: '/auth/login' })} title={t('common.signOut')} aria-label={t('common.signOut')}>
               <Icon as={LucideLogOut} w={4} h={4} />
@@ -1550,8 +1550,8 @@ export default function ClientPage() {
                     borderRadius="6px" onClick={() => setCancelReasonModal(null)}>
                     {t('client.dashboard.cancelModal_keepBtn')}
                   </Button>
-                  <Button flex={1} bg="red.500" color="white" borderRadius="6px" fontWeight="bold"
-                    _hover={{ bg: 'red.600' }}
+                  <Button flex={1} bg="#185FC6" color="white" borderRadius="6px" fontWeight="bold"
+                    _hover={{ bg: '#134A9A' }}
                     loading={cancelling === cancelReasonModal}
                     loadingText={t('client.dashboard.cancelModal_cancelling')}
                     disabled={!cancelReason}

@@ -30,7 +30,7 @@ const BRAND_LABELS: Record<string, string> = {
 
 const BRAND_COLORS: Record<string, { bg: string; color: string }> = {
   visa:       { bg: '#0E3468', color: '#fff' },
-  mastercard: { bg: '#111418', color: '#fff' },
+  mastercard: { bg: '#18314E', color: '#fff' },
   amex:       { bg: '#185FC6', color: '#fff' },
 };
 

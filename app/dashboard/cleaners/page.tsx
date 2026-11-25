@@ -209,7 +209,7 @@ function FilterChip({ active, onClick, label }: { active: boolean; onClick: () =
     <Box as="button" onClick={onClick} px={3.5} py={2} borderRadius="6px" flexShrink={0}
       fontSize="12.5px" fontWeight="600" fontFamily="heading" whiteSpace="nowrap" transition="all 0.12s"
       bg={active ? '#185FC6' : '#F8F8F4'} color={active ? 'white' : '#555C66'}
-      _hover={{ bg: active ? '#111418' : '#DDE5E9' }}>
+      _hover={{ bg: active ? '#134A9A' : '#DDE5E9' }}>
       {label}
     </Box>
   );

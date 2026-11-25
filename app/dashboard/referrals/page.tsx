@@ -83,7 +83,7 @@ export default function ReferralsPage() {
         <VStack gap={6} align="stretch">
 
           {error && (
-            <Box border="1px solid #111418" bg="#EDF3F5" p={4} style={{ borderRadius: 6 }}>
+            <Box border="1px solid #18314E" bg="#EDF3F5" p={4} style={{ borderRadius: 6 }}>
               <HStack gap={3} justify="space-between" flexWrap="wrap">
                 <HStack gap={2.5}>
                   <Icon as={LucideAlertTriangle} w={4} h={4} color="#111418" flexShrink={0} />
@@ -95,12 +95,12 @@ export default function ReferralsPage() {
                 <Button
                   onClick={fetchData}
                   size="sm"
-                  bg="#111418"
+                  bg="#185FC6"
                   color="white"
                   borderRadius="6px"
                   fontSize="12.5px"
                   fontWeight="600"
-                  _hover={{ bg: '#111418' }}
+                  _hover={{ bg: '#134A9A' }}
                 >
                   {t('cleaner.referrals.retry')}
                 </Button>
@@ -168,7 +168,7 @@ export default function ReferralsPage() {
                   fontWeight="600"
                   fontSize="13px"
                   flexShrink={0}
-                  _hover={{ bg: copied ? '#185FC6' : '#111418' }}
+                  _hover={{ bg: copied ? '#185FC6' : '#134A9A' }}
                   disabled={!data}
                 >
                   <Icon as={copied ? LucideCheck : LucideCopy} w={3.5} h={3.5} mr={1.5} />
@@ -189,7 +189,7 @@ export default function ReferralsPage() {
                 <Box h="8px" bg="#F8F8F4" borderRadius="6px" overflow="hidden">
                   <Box
                     h="full"
-                    bg="#111418"
+                    bg="#185FC6"
                     borderRadius="6px"
                     transition="width 0.3s"
                     w={data ? `${(data.progressInCycle / data.qualifyCount) * 100}%` : '0%'}

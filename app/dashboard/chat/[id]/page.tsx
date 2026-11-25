@@ -266,7 +266,7 @@ function ChatInner() {
               <>
                 {/* Status pill */}
                 <HStack gap={1.5} mb={6}>
-                  <Box w="6px" h="6px" borderRadius="full" bg="#111418" flexShrink={0} />
+                  <Box w="6px" h="6px" borderRadius="full" bg="#185FC6" flexShrink={0} />
                   <Text fontSize="11px" fontWeight="700" color="#111418"
                     letterSpacing="0.08em" textTransform="uppercase">
                     Awaiting decision

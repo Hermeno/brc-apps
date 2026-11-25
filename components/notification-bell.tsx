@@ -166,7 +166,7 @@ export default function NotificationBell({ dark = false }: { dark?: boolean }) {
         w="34px" h="34px"
         display="flex" alignItems="center" justifyContent="center"
         borderRadius="6px"
-        color={open ? (dark ? 'white' : 'brand.600') : (dark ? '#D4D8DE' : 'slate.500')}
+        color={open ? (dark ? 'white' : 'brand.600') : (dark ? '#E6EEFA' : 'slate.500')}
         bg={open ? (dark ? 'rgba(255, 255, 255, 0.12)' : 'brand.50') : 'transparent'}
         border="1px solid"
         borderColor={open ? (dark ? 'rgba(255, 255, 255, 0.2)' : 'brand.200') : 'transparent'}
@@ -193,11 +193,11 @@ export default function NotificationBell({ dark = false }: { dark?: boolean }) {
               style={{ position: 'absolute', top: 3, right: 3 }}
             >
               <Box
-                minW="14px" h="14px" bg="red.500" borderRadius="full"
+                minW="14px" h="14px" bg={dark ? 'white' : '#185FC6'} borderRadius="full"
                 display="flex" alignItems="center" justifyContent="center"
-                style={{ border: `2px solid ${dark ? '#111418' : 'white'}` }}
+                style={{ border: `2px solid ${dark ? '#185FC6' : 'white'}` }}
               >
-                <Text color="white" fontSize="7px" fontWeight="700" lineHeight={1} fontFamily="heading">
+                <Text color={dark ? '#185FC6' : 'white'} fontSize="7px" fontWeight="700" lineHeight={1} fontFamily="heading">
                   {unread > 9 ? '9+' : unread}
                 </Text>
               </Box>

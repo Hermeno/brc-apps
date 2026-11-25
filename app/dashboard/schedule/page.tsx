@@ -33,7 +33,7 @@ const TONES = {
   recurring: { bg: '#EDF3F5', color: '#134A9A', border: '1px dashed #185FC6', dot: '#134A9A' },
   pending:   { bg: '#FFFFFF', color: '#111418', border: '1px solid #555C66',  dot: '#555C66' },
   done:      { bg: '#F8F8F4', color: '#555C66', border: '1px solid #DDE5E9',  dot: '#B9C5CC' },
-  off:       { bg: '#DDE5E9', color: '#111418', border: '1px solid #DDE5E9',  dot: '#111418' },
+  off:       { bg: '#DDE5E9', color: '#111418', border: '1px solid #DDE5E9',  dot: '#18314E' },
 } as const;
 type Tone = keyof typeof TONES;
 

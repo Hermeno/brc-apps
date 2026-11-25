@@ -4,8 +4,9 @@
    These screens are built with Chakra, whose theme (lib/theme.ts) also drives
    the admin dashboard, so the theme itself is left alone. Instead, inside
    .vapp, every Chakra colour, radius and shadow variable is re-pointed:
-   text and dark surfaces are near-black (#111418), secondary text a neutral
-   gray (#555C66), and blue (#185FC6) is kept for actions, selection and focus.
+   text is near-black (#111418) and secondary text a neutral gray (#555C66);
+   near-black is for text only, never a bar or a button. Blue (#185FC6) is kept
+   for actions, bars, selection and focus.
    Corners are 6px (8px for large surfaces), and shadows stay faint so cards
    lift off the page without looking like a template. The colour list was
    generated from the live token set: each colour goes to the palette role
@@ -16,7 +17,7 @@
   --chakra-colors-bg-emphasized:#DDE5E9;
   --chakra-colors-bg-error:#EDF3F5;
   --chakra-colors-bg-info:#EDF3F5;
-  --chakra-colors-bg-inverted:#111418;
+  --chakra-colors-bg-inverted:#18314E;
   --chakra-colors-bg-muted:#F8F8F4;
   --chakra-colors-bg-panel:#FFFFFF;
   --chakra-colors-bg-subtle:#F8F8F4;
@@ -89,7 +90,7 @@
   --chakra-colors-color-palette-fg:#111418;
   --chakra-colors-color-palette-focus-ring:#555C66;
   --chakra-colors-color-palette-muted:#DDE5E9;
-  --chakra-colors-color-palette-solid:#111418;
+  --chakra-colors-color-palette-solid:#185FC6;
   --chakra-colors-color-palette-subtle:#F8F8F4;
   --chakra-colors-cyan-100:#EDF3F5;
   --chakra-colors-cyan-200:#DDE5E9;

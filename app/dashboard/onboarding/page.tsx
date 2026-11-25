@@ -323,7 +323,7 @@ export default function OnboardingPage() {
                         color={locationLabel ? '#185FC6' : 'white'}
                         border={locationLabel ? '1px solid #DDE5E9' : 'none'}
                         borderRadius="6px" fontWeight="bold" flexShrink={0}
-                        _hover={{ bg: locationLabel ? '#EDF3F5' : '#111418' }}
+                        _hover={{ bg: locationLabel ? '#EDF3F5' : '#134A9A' }}
                         loading={geoLoading} loadingText={t('onboarding.step1.detecting')}
                         onClick={detectGPS}>
                         <Icon as={locationLabel ? LucideCheck : LucideNavigation} w={3.5} h={3.5} mr={1.5} />
@@ -525,7 +525,7 @@ export default function OnboardingPage() {
             <Button
               bg={step === 3 ? '#185FC6' : '#185FC6'}
               color="white" px={7} h="44px" borderRadius="6px" fontWeight="bold"
-              _hover={{ bg: step === 3 ? '#185FC6' : '#111418' }}
+              _hover={{ bg: '#134A9A' }}
               loading={saving}
               loadingText={step === 3 ? t('onboarding.launching') : t('common.saving')}
               disabled={!canProceed}

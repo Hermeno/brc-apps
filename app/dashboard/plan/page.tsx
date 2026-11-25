@@ -26,7 +26,7 @@ const PLAN_ICONS: Record<PlanId, any> = {
 const PLAN_COLORS: Record<PlanId, { bg: string; border: string; text: string; btn: string; btnHover: string }> = {
   FREE:  { bg: 'slate.50',  border: 'slate.200', text: 'slate.600', btn: 'slate.600', btnHover: 'slate.700' },
   BASIC: { bg: 'brand.50',  border: 'brand.300', text: 'brand.700', btn: 'brand.500', btnHover: 'brand.600' },
-  PRO:   { bg: '#EDF3F5',   border: '#DDE5E9',   text: '#111418',   btn: '#111418',   btnHover: '#111418'   },
+  PRO:   { bg: '#EDF3F5',   border: '#DDE5E9',   text: '#111418',   btn: '#185FC6',   btnHover: '#134A9A'   },
 };
 
 export default function PlanPage() {

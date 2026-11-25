@@ -619,8 +619,8 @@ export default function ProfilePage() {
                           style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'contain' }}
                         />
                         <Button
-                          size="sm" bg="red.500" color="white" borderRadius="6px"
-                          _hover={{ bg: 'red.600' }}
+                          size="sm" bg="#185FC6" color="white" borderRadius="6px"
+                          _hover={{ bg: '#134A9A' }}
                           loading={deletingId === photo.id}
                           onClick={() => handleDeletePhoto(photo.id)}
                           position="absolute" bottom={2} right={2}

@@ -208,7 +208,7 @@ export default function CleanerDashboard() {
 
         {/* ── Account setup checklist ── */}
         {((hasCard === false) || (verifyStatus !== null && verifyStatus !== 'APPROVED')) && (
-          <Box mb={5} border="2px solid #111418" bg="white" style={{ borderRadius: 6 }} overflow="hidden">
+          <Box mb={5} border="2px solid #18314E" bg="white" style={{ borderRadius: 6 }} overflow="hidden">
             <Box px={5} py={3} bg="#EDF3F5" borderBottom="1px solid #DDE5E9">
               <HStack gap={2}>
                 <Icon as={LucideAlertTriangle} w={4} h={4} color="#111418" />
@@ -239,9 +239,9 @@ export default function CleanerDashboard() {
                   </HStack>
                   {!hasCard && (
                     <Button
-                      size="sm" bg="#111418" color="white" borderRadius="6px"
+                      size="sm" bg="#185FC6" color="white" borderRadius="6px"
                       fontWeight="700" fontFamily="heading" flexShrink={0}
-                      _hover={{ bg: '#111418' }}
+                      _hover={{ bg: '#134A9A' }}
                       onClick={() => router.push('/dashboard/payment-methods')}
                     >
                       <Icon as={LucideCreditCard} w={3.5} h={3.5} mr={1.5} />{t('cleaner.dashboard.addCardBtn')}
@@ -287,10 +287,10 @@ export default function CleanerDashboard() {
                 {(verifyStatus === 'NONE' || verifyStatus === 'REJECTED') && (
                   <Button
                     size="sm"
-                    bg={verifyStatus === 'REJECTED' ? '#111418' : '#111418'}
+                    bg="#185FC6"
                     color="white" borderRadius="6px"
                     fontWeight="700" fontFamily="heading" flexShrink={0}
-                    _hover={{ bg: verifyStatus === 'REJECTED' ? '#111418' : '#111418' }}
+                    _hover={{ bg: '#134A9A' }}
                     onClick={() => router.push('/dashboard/cleaner/verify')}
                   >
                     <Icon as={LucideShield} w={3.5} h={3.5} mr={1.5} />
@@ -370,7 +370,7 @@ export default function CleanerDashboard() {
                   borderBottom={i < available.length - 1 ? '1px solid #F8F8F4' : 'none'}
                   position="relative"
                 >
-                  <Box position="absolute" left={0} top={0} bottom={0} w="3px" bg="#111418" />
+                  <Box position="absolute" left={0} top={0} bottom={0} w="3px" bg="#185FC6" />
                   <Flex px={6} pl={8} py={4} gap={6} align="flex-start" justify="space-between">
                     <Box flex={1} minW={0}>
                       <HStack gap={2.5} mb={1.5} flexWrap="wrap">
@@ -607,9 +607,9 @@ export default function CleanerDashboard() {
                             </Text>
                           </HStack>
                           <Button
-                            size="xs" bg="#111418" color="white" borderRadius="6px"
+                            size="xs" bg="#185FC6" color="white" borderRadius="6px"
                             fontWeight="700" fontFamily="heading"
-                            _hover={{ bg: '#111418' }}
+                            _hover={{ bg: '#134A9A' }}
                             onClick={() => router.push(`/dashboard/chat/${conv.id}`)}
                           >
                             {t('cleaner.dashboard.payBtn', { fee: String(conv.leadFee) })}
