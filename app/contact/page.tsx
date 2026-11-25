@@ -5,7 +5,7 @@ import PublicPage from '@/components/site/public-page';
 import { PageHero } from '@/components/site/photo-hero';
 
 export const metadata: Metadata = {
-  title: 'Contact Verliks',
+  title: 'Contact',
   description:
     'Questions about cleaning requests, service areas or a Verliks account? Reach the Verliks team at support@verliks.com.',
   alternates: { canonical: '/contact' },

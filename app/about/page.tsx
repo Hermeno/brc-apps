@@ -6,7 +6,7 @@ import PublicPage from '@/components/site/public-page';
 import { PageHero } from '@/components/site/photo-hero';
 
 export const metadata: Metadata = {
-  title: 'About Verliks | Cleaning Connections Built Around People',
+  title: { absolute: 'About Verliks | Cleaning Connections Built Around People' },
   description: 'Verliks connects households with independent cleaning professionals. Learn how requests, identity review, direct payment and local matching work.',
   alternates: { canonical: '/about' },
 };

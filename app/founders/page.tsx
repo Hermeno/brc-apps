@@ -1,27 +1,15 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import PublicPage from '@/components/site/public-page';
+import JsonLd, { FOUNDERS_JSON_LD } from '@/components/site/json-ld';
+import { FOUNDERS } from '@/lib/site-content';
 
 export const metadata: Metadata = {
-  title: 'Founders | Verliks',
+  // absolute: the layout's "%s | Verliks" template would print the name twice.
+  title: { absolute: 'Verliks Founders: Wagner Gois and Herminio A. Macamo' },
   description: 'Meet the founders of Verliks: Wagner Gois, Director and CEO, and Herminio A. Macamo, Technical Director.',
   alternates: { canonical: '/founders' },
 };
-
-const founders = [
-  {
-    name: 'Wagner Gois',
-    initials: 'WG',
-    role: 'Co-founder · Director & CEO',
-    body: 'Leads the business side of Verliks: strategy, partnerships, operations and growth.',
-  },
-  {
-    name: 'Herminio A. Macamo',
-    initials: 'HM',
-    role: 'Co-founder · Technical Director',
-    body: 'Programmer and systems developer. Builds the Verliks platform and apps, from booking and matching to payments, and leads the technology behind them.',
-  },
-];
 
 export default function FoundersPage() {
   return (
@@ -40,8 +28,8 @@ export default function FoundersPage() {
       <section className="band" aria-labelledby="founders-title">
         <div className="wrap">
           <ul className="split plain-list founders">
-            {founders.map(f => (
-              <li key={f.name}>
+            {FOUNDERS.map(f => (
+              <li key={f.id} id={f.id}>
                 <span className="monogram" aria-hidden="true">{f.initials}</span>
                 <h2 className="t-col">{f.name}</h2>
                 <p className="t-label mt-1">{f.role}</p>
@@ -51,6 +39,7 @@ export default function FoundersPage() {
           </ul>
         </div>
       </section>
+      <JsonLd data={FOUNDERS_JSON_LD} />
     </PublicPage>
   );
 }

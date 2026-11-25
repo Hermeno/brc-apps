@@ -163,3 +163,23 @@ export const REQUEST_PATH = '/request';
 
 export const requestHref = (requestParam?: string) =>
   requestParam ? `${REQUEST_PATH}?service=${requestParam}` : REQUEST_PATH;
+
+/** The founders, shown on /founders and named in the structured data search engines read. */
+export const FOUNDERS = [
+  {
+    id: 'wagner-gois',
+    name: 'Wagner Gois',
+    initials: 'WG',
+    role: 'Co-founder · Director & CEO',
+    jobTitle: 'Director and CEO',
+    body: 'Leads the business side of Verliks: strategy, partnerships, operations and growth.',
+  },
+  {
+    id: 'herminio-macamo',
+    name: 'Herminio A. Macamo',
+    initials: 'HM',
+    role: 'Co-founder · Technical Director',
+    jobTitle: 'Technical Director',
+    body: 'Programmer and systems developer. Builds the Verliks platform and apps, from booking and matching to payments, and leads the technology behind them.',
+  },
+];

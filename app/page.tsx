@@ -6,6 +6,7 @@ import PublicPage from '@/components/site/public-page';
 import PhotoHero from '@/components/site/photo-hero';
 import ZipSearch from '@/components/site/zip-search';
 import Testimonials from '@/components/site/testimonials';
+import JsonLd, { HOME_JSON_LD } from '@/components/site/json-ld';
 import { getSiteService } from '@/lib/site-content';
 import { SHOWING_SAMPLES, TESTIMONIALS } from '@/lib/testimonials';
 
@@ -154,6 +155,7 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+      <JsonLd data={HOME_JSON_LD} />
     </PublicPage>
   );
 }
