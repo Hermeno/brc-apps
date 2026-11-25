@@ -7,6 +7,7 @@ import type { Testimonial } from '@/lib/testimonials';
 /* The home page's testimonials, after the supplied reference: a centered title,
    three panels side by side (two on tablets, one on phones), round arrows,
    short dashes for the positions and, when there is more to read, one button.
+   The home page renders it only when real reviews exist.
    The track is a native horizontal scroller with snap points, so a phone
    swipes it and a keyboard scrolls it; the controls only move it. How many
    panels fit comes from the CSS (--per-view), so there is one source for it. */
@@ -16,10 +17,9 @@ const FIRST_BATCH = 6; // reviews shown before "View More Testimonials"
 const initials = (name: string) => name.split(/\s+/).map(word => word[0]).join('').slice(0, 2).toUpperCase();
 
 export default function Testimonials({ items }: { items: Testimonial[] }) {
-  const reviews = items[0]?.kind === 'review';
   const [expanded, setExpanded] = useState(false);
-  const shown = reviews && !expanded ? items.slice(0, FIRST_BATCH) : items;
-  const hasMore = reviews && !expanded && items.length > FIRST_BATCH;
+  const shown = expanded ? items : items.slice(0, FIRST_BATCH);
+  const hasMore = !expanded && items.length > FIRST_BATCH;
 
   const trackRef = useRef<HTMLUListElement>(null);
   const [perView, setPerView] = useState(3);
@@ -77,27 +77,17 @@ export default function Testimonials({ items }: { items: Testimonial[] }) {
     <section id="testimonials" className="tm-section" aria-labelledby="testimonials-title">
       <div className="wrap">
         <header className="tm-head">
-          {reviews ? (
-            <>
-              <h2 id="testimonials-title" className="tm-headline">What Our <span>Clients</span> Say</h2>
-              <p className="tm-sub">Real experiences from clients who found a cleaning professional through Verliks.</p>
-            </>
-          ) : (
-            <>
-              <h2 id="testimonials-title" className="tm-headline">How a good match can begin</h2>
-              <p className="tm-sub">These scenarios show how Verliks works. They are examples, not reviews from customers or cleaners.</p>
-            </>
-          )}
+          <h2 id="testimonials-title" className="tm-headline">What Our <span>Clients</span> Say</h2>
+          <p className="tm-sub">Real experiences from clients who found a cleaning professional through Verliks.</p>
         </header>
 
         <div className="tm-carousel" data-navigable={navigable || undefined}>
           <ul ref={trackRef} id={trackId} className="tm-track" role="list"
-            aria-label={reviews ? 'Client testimonials' : 'Examples of how Verliks works'}
+            aria-label="Client testimonials"
             tabIndex={navigable ? 0 : undefined}>
             {shown.map((item, i) => (
               <li key={`${item.name}-${i}`} className="tm-slide">
-                {item.kind === 'review' ? (
-                  <figure className="tm-panel">
+                <figure className="tm-panel">
                     <Quote className="tm-mark" size={36} fill="currentColor" strokeWidth={1.5} aria-hidden="true" />
                     <blockquote className="tm-quote"><p>{item.quote}</p></blockquote>
                     <figcaption className="tm-who">
@@ -107,14 +97,7 @@ export default function Testimonials({ items }: { items: Testimonial[] }) {
                         <span className="tm-role">{item.detail}</span>
                       </span>
                     </figcaption>
-                  </figure>
-                ) : (
-                  <article className="tm-panel">
-                    <p className="tm-audience">{item.detail}</p>
-                    <h3 className="tm-scenario">{item.name}</h3>
-                    <p className="tm-quote">{item.quote}</p>
-                  </article>
-                )}
+                </figure>
               </li>
             ))}
           </ul>
@@ -122,7 +105,7 @@ export default function Testimonials({ items }: { items: Testimonial[] }) {
           {navigable && (
             <div className="tm-controls">
               <button type="button" className="tm-arrow tm-prev" aria-controls={trackId}
-                aria-label={reviews ? 'Previous testimonials' : 'Previous examples'}
+                aria-label="Previous testimonials"
                 disabled={current === 0} onClick={() => go(current - 1)}>
                 <ChevronLeft size={20} strokeWidth={2} aria-hidden="true" />
               </button>
@@ -134,7 +117,7 @@ export default function Testimonials({ items }: { items: Testimonial[] }) {
                 ))}
               </div>
               <button type="button" className="tm-arrow tm-next" aria-controls={trackId}
-                aria-label={reviews ? 'Next testimonials' : 'Next examples'}
+                aria-label="Next testimonials"
                 disabled={current === positions - 1} onClick={() => go(current + 1)}>
                 <ChevronRight size={20} strokeWidth={2} aria-hidden="true" />
               </button>

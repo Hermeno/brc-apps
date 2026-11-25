@@ -6,39 +6,17 @@ import { logError } from './logger';
 // The home page's testimonials section.
 // Reviews are real: written by clients after a job, shown under the license in
 // section 16 of the Terms ("Reviews and Content"), with the first name and last
-// initial only. Until the first one exists, the section shows the scenarios
-// below instead, labeled as examples rather than reviews.
+// initial only. Until the first one exists, the home page leaves the section out:
+// it never shows invented or illustrative quotes.
 
 export type Testimonial = {
-  kind: 'scenario' | 'review';
-  /** Display name for a review (first name, last initial), or title for a scenario. */
+  kind: 'review';
+  /** First name and last initial. */
   name: string;
-  /** Review context or scenario audience. */
+  /** The line under the name, e.g. "Client · Deep Clean". */
   detail: string;
-  /** The review quote or a plain-language scenario description. */
   quote: string;
 };
-
-export const SCENARIOS: Testimonial[] = [
-  {
-    kind: 'scenario',
-    name: 'A routine clean',
-    detail: 'For clients',
-    quote: 'Describe your home and the work you need. Discuss the scope and price with a cleaner before deciding whether to book.',
-  },
-  {
-    kind: 'scenario',
-    name: 'A move-out clean',
-    detail: 'For clients',
-    quote: 'List the rooms, cabinets and appliances that need attention so cleaners can respond to the job you actually have.',
-  },
-  {
-    kind: 'scenario',
-    name: 'A job that fits',
-    detail: 'For cleaners',
-    quote: 'Choose your services and coverage area, review matching requests, and reply only to the work you want to take on.',
-  },
-];
 
 const shortName = (name: string | null) => {
   const parts = (name ?? '').trim().split(/\s+/).filter(Boolean);

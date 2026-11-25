@@ -8,7 +8,7 @@ import ZipSearch from '@/components/site/zip-search';
 import Testimonials from '@/components/site/testimonials';
 import JsonLd, { HOME_JSON_LD } from '@/components/site/json-ld';
 import { getSiteService } from '@/lib/site-content';
-import { SCENARIOS, getReviewTestimonials } from '@/lib/testimonials';
+import { getReviewTestimonials } from '@/lib/testimonials';
 
 export const metadata: Metadata = {
   title: 'Find a Cleaner Near You | Verliks',
@@ -37,6 +37,9 @@ const twoLines = (name: string) => {
   const cut = name.lastIndexOf(' ');
   return <>{name.slice(0, cut)}<br />{name.slice(cut + 1)}</>;
 };
+
+// Prerendered and refreshed every 10 minutes, so new reviews appear without a deploy.
+export const revalidate = 600;
 
 export default async function HomePage() {
   const reviews = await getReviewTestimonials();
@@ -141,7 +144,7 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <Testimonials items={reviews.length > 0 ? reviews : SCENARIOS} />
+      {reviews.length > 0 && <Testimonials items={reviews} />}
 
       <section className="photo-band on-dark" aria-labelledby="checks-title">
         <Image src="/process-bg.jpg" alt="" fill sizes="100vw" />
