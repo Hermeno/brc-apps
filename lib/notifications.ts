@@ -16,7 +16,8 @@ export type NotificationType =
   | 'payment_failed'
   | 'card_added'
   | 'referral_qualified'
-  | 'referral_credit_earned';
+  | 'referral_credit_earned'
+  | 'job_reminder';
 
 interface CreateNotificationInput {
   userId: string;
@@ -44,6 +45,7 @@ const EMAIL_TYPES: Record<string, { label: string; urgent: boolean }> = {
   lead_declined:     { label: 'View my leads',      urgent: false },
   payment_failed:    { label: 'Fix my payment',     urgent: false },
   job_completed:     { label: 'View the job',       urgent: false },
+  job_reminder:      { label: 'Open my schedule',   urgent: false },
 };
 
 /**

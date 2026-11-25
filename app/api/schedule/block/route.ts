@@ -45,12 +45,15 @@ export async function POST(req: NextRequest) {
     }
     const start = new Date(startTime);
     const end   = new Date(endTime);
+    if (isNaN(start.getTime()) || isNaN(end.getTime())) {
+      return NextResponse.json({ error: 'Invalid date' }, { status: 400 });
+    }
     if (start >= end) {
       return NextResponse.json({ error: 'endTime must be after startTime' }, { status: 400 });
     }
 
     const block = await prisma.scheduleBlock.create({
-      data: { cleanerId: user.id, startTime: start, endTime: end, reason },
+      data: { cleanerId: user.id, startTime: start, endTime: end, reason: typeof reason === 'string' ? reason.trim().slice(0, 120) || null : null },
     });
 
     return NextResponse.json({ block }, { status: 201 });

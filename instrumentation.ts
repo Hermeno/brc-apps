@@ -2,6 +2,7 @@ export async function register() {
   if (process.env.NEXT_RUNTIME === 'nodejs') {
     const { prisma } = await import('./lib/prisma');
     const { advanceWaves, runMatching } = await import('./lib/matching');
+    const { sendVisitReminders } = await import('./lib/reminders');
 
     // Wave advancement — mirrors the Vercel cron (/api/cron/waves) so it also
     // works when running in Docker (where Vercel's cron service doesn't reach).
@@ -25,6 +26,7 @@ export async function register() {
         for (const id of rematchIds) {
           await runMatching(id).catch(err => logError('[waves] runMatching', err));
         }
+        await sendVisitReminders().catch(err => logError('[reminders]', err));
       } catch (err) {
         logError('[waves] advanceWaves', err);
       } finally {

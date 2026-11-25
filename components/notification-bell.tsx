@@ -8,7 +8,7 @@ import { useRouter } from 'next/navigation';
 import { useT } from '@/lib/i18n';
 import { toaster } from '@/lib/toaster';
 import Glyph from '@/components/glyph';
-import { BadgeCheck, Bell, CircleCheck, CreditCard, MessageSquare, SearchX, Star, TriangleAlert, UserCheck, type LucideIcon } from 'lucide-react';
+import { BadgeCheck, Bell, CalendarClock, CircleCheck, CreditCard, MessageSquare, SearchX, Star, TriangleAlert, UserCheck, type LucideIcon } from 'lucide-react';
 
 type Notification = {
   id: string;
@@ -30,6 +30,7 @@ const TYPE_ICONS: Record<string, LucideIcon> = {
   lead_unmatched:    SearchX,
   card_added:        CreditCard,
   payment_failed:    TriangleAlert,
+  job_reminder:      CalendarClock,
 };
 
 export default function NotificationBell({ dark = false }: { dark?: boolean }) {
