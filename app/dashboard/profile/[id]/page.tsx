@@ -35,10 +35,10 @@ type Cleaner = {
 };
 
 const PLAN_COLORS: Record<string, { bg: string; color: string; label: string }> = {
-  FREE:    { bg: '#F8F8F4', color: '#455B70', label: 'Free' },
-  BASIC:   { bg: '#EDF3F5', color: '#185FC6', label: 'Basic' },
-  PRO:     { bg: '#EDF3F5', color: '#18314E', label: 'Pro' },
-  PREMIUM: { bg: '#EDF3F5', color: '#18314E', label: 'Pro' }, // legacy alias
+  FREE:    { bg: '#F8F8F4', color: '#555C66', label: 'Free' },
+  BASIC:   { bg: '#EDF3F5', color: '#111418', label: 'Basic' },
+  PRO:     { bg: '#EDF3F5', color: '#111418', label: 'Pro' },
+  PREMIUM: { bg: '#EDF3F5', color: '#111418', label: 'Pro' }, // legacy alias
 };
 
 function Stars({ value, size = 4 }: { value: number; size?: number }) {
@@ -46,8 +46,8 @@ function Stars({ value, size = 4 }: { value: number; size?: number }) {
     <HStack gap={0.5}>
       {[1, 2, 3, 4, 5].map(s => (
         <Icon key={s} as={LucideStar} w={size} h={size}
-          color={value >= s ? '#18314E' : '#DDE5E9'}
-          fill={value >= s ? '#18314E' : 'none'} />
+          color={value >= s ? '#111418' : '#DDE5E9'}
+          fill={value >= s ? '#111418' : 'none'} />
       ))}
     </HStack>
   );
@@ -93,10 +93,10 @@ export default function PublicProfilePage() {
     return (
       <Box minH="100vh" bg="slate.50" display="flex" alignItems="center" justifyContent="center">
         <VStack gap={4} textAlign="center">
-          <Text fontSize="4xl" color="#185FC6"><Glyph name="search" /></Text>
+          <Text fontSize="4xl" color="#111418"><Glyph name="search" /></Text>
           <Heading fontWeight="300" fontSize={{ base: '24px', md: '28px' }} letterSpacing="-0.01em" size="md" color="slate.700">{t('clientCleaners.profile.notFound')}</Heading>
           <Box as="button" onClick={() => router.back()}
-            color="brand.500" fontWeight="semibold" fontSize="sm" cursor="pointer">
+            color="#111418" fontWeight="semibold" fontSize="sm" cursor="pointer">
             ← {t('common.back')}
           </Box>
         </VStack>
@@ -120,7 +120,7 @@ export default function PublicProfilePage() {
         <Box maxW="900px" mx="auto">
           <Box as="button" onClick={() => router.back()}
             display="inline-flex" alignItems="center" gap={1.5}
-            color="#455B70" fontWeight="semibold" fontSize="sm" cursor="pointer"
+            color="#555C66" fontWeight="semibold" fontSize="sm" cursor="pointer"
             _hover={{ color: '#185FC6' }} transition="color 0.15s">
             <Icon as={LucideArrowLeft} w={4} h={4} />
             {t('common.back')}
@@ -133,7 +133,7 @@ export default function PublicProfilePage() {
 
           {/* ── Hero card ── */}
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
-            <Box bg="white" border="1px solid" borderColor="slate.200">
+            <Box boxShadow="sm" bg="white" border="1px solid" borderColor="slate.200">
 
               <Box px={6} pt={6} pb={6}>
                 {/* Avatar */}
@@ -162,13 +162,13 @@ export default function PublicProfilePage() {
                     <HStack gap={2} flexWrap="wrap">
                       <Badge
                         bg={planStyle.bg} color={planStyle.color}
-                        borderRadius="2px" px={3} py={0.5}
+                        borderRadius="6px" px={3} py={0.5}
                         fontSize="xs" fontWeight="bold">
                         {planStyle.label}
                       </Badge>
                       <Badge
-                        bg="#EDF3F5" color="#185FC6"
-                        borderRadius="2px" px={3} py={0.5}
+                        bg="#EDF3F5" color="#111418"
+                        borderRadius="6px" px={3} py={0.5}
                         fontSize="xs" fontWeight="bold">
                         {isExperienced ? t('clientCleaners.profile.experienced') : t('clientCleaners.profile.newOnPlatform')}
                       </Badge>
@@ -203,7 +203,7 @@ export default function PublicProfilePage() {
                     <Icon as={LucideBriefcase} w={4} h={4} color="slate.400" />
                     {cleaner.serviceTypes.map(s => (
                       <Badge key={s} bg="slate.100" color="slate.600"
-                        borderRadius="2px" px={3} py={0.5} fontSize="xs">
+                        borderRadius="6px" px={3} py={0.5} fontSize="xs">
                         {serviceName(s)}
                       </Badge>
                     ))}
@@ -213,16 +213,16 @@ export default function PublicProfilePage() {
                 {/* Contact info — only shown after client accepts + cleaner pays */}
                 {cleaner.canSeeContact && cleaner.phone && (
                   <HStack gap={2} mt={4} bg="#F8F8F4" border="1px solid" borderColor="#DDE5E9"
-                    borderRadius="2px" px={4} py={3}>
+                    borderRadius="6px" px={4} py={3}>
                     <Icon as={LucideMapPin} w={4} h={4} color="#185FC6" />
-                    <Text fontSize="sm" fontWeight="semibold" color="#185FC6">
+                    <Text fontSize="sm" fontWeight="semibold" color="#111418">
                       <Glyph name="phone" />{cleaner.phone}
                     </Text>
                   </HStack>
                 )}
                 {!cleaner.canSeeContact && (
                   <HStack gap={2} mt={4} bg="slate.50" border="1px dashed" borderColor="slate.200"
-                    borderRadius="2px" px={4} py={3}>
+                    borderRadius="6px" px={4} py={3}>
                     <Icon as={LucideMapPin} w={4} h={4} color="slate.400" />
                     <Text fontSize="xs" color="slate.400">
                       {t('clientCleaners.profile.contactLocked')}
@@ -245,11 +245,11 @@ export default function PublicProfilePage() {
           {/* ── Photo Gallery ── */}
           {cleaner.workPhotos.length > 0 && (
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.1 }}>
-              <Box bg="white" border="1px solid" borderColor="slate.200" p={6}>
+              <Box boxShadow="sm" bg="white" border="1px solid" borderColor="slate.200" p={6}>
                 <HStack gap={2} mb={5}>
                   <Icon as={LucideCamera} w={5} h={5} color="brand.500" />
                   <Heading size="sm" fontWeight="bold" color="slate.800">{t('clientCleaners.profile.gallery')}</Heading>
-                  <Badge bg="slate.100" color="slate.500" borderRadius="2px" px={2} fontSize="xs">
+                  <Badge bg="slate.100" color="slate.500" borderRadius="6px" px={2} fontSize="xs">
                     {cleaner.workPhotos.length === 1 ? t('clientCleaners.profile.onePhoto') : t('clientCleaners.profile.photos', { n: cleaner.workPhotos.length })}
                   </Badge>
                 </HStack>
@@ -292,7 +292,7 @@ export default function PublicProfilePage() {
           {/* ── Reviews ── */}
           {cleaner.cleanerReviews.length > 0 ? (
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.15 }}>
-              <Box bg="white" border="1px solid" borderColor="slate.200" p={6}>
+              <Box boxShadow="sm" bg="white" border="1px solid" borderColor="slate.200" p={6}>
                 <HStack gap={2} mb={5}>
                   <Icon as={LucideAward} w={5} h={5} color="#185FC6" />
                   <Heading size="sm" fontWeight="bold" color="slate.800">{t('clientCleaners.profile.reviews')}</Heading>
@@ -324,7 +324,7 @@ export default function PublicProfilePage() {
                                 </Text>
                                 <Stars value={review.rating} size={3.5} />
                               </HStack>
-                              <Badge bg="slate.100" color="slate.500" fontSize="xs" borderRadius="2px" px={2}>
+                              <Badge bg="slate.100" color="slate.500" fontSize="xs" borderRadius="6px" px={2}>
                                 {serviceLabel(review.lead.serviceType, locale)}
                               </Badge>
                               {review.comment && (
@@ -346,8 +346,8 @@ export default function PublicProfilePage() {
             </motion.div>
           ) : (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}>
-              <Box bg="white" border="1px solid" borderColor="slate.200" p={8} textAlign="center">
-                <Text fontSize="2xl" mb={2} color="#185FC6"><Glyph name="star" /></Text>
+              <Box boxShadow="sm" bg="white" border="1px solid" borderColor="slate.200" p={8} textAlign="center">
+                <Text fontSize="2xl" mb={2} color="#111418"><Glyph name="star" /></Text>
                 <Text color="slate.500" fontSize="sm">{t('clientCleaners.profile.noReviews')}</Text>
               </Box>
             </motion.div>
@@ -369,14 +369,14 @@ export default function PublicProfilePage() {
             <img
               src={lightbox.url}
               alt={lightbox.caption ?? ''}
-              style={{ maxWidth: '90vw', maxHeight: '80vh', objectFit: 'contain', borderRadius: '2px', display: 'block' }}
+              style={{ maxWidth: '90vw', maxHeight: '80vh', objectFit: 'contain', borderRadius: '6px', display: 'block' }}
             />
             {lightbox.caption && (
               <Text color="white" textAlign="center" mt={3} fontSize="sm">{lightbox.caption}</Text>
             )}
             <Box
               position="absolute" top="-12px" right="-12px"
-              w="36px" h="36px" bg="white" borderRadius="2px"
+              w="36px" h="36px" bg="white" borderRadius="6px"
               display="flex" alignItems="center" justifyContent="center"
               as="button" aria-label={t('clientCleaners.profile.closePhoto')}
               cursor="pointer" onClick={() => setLightbox(null)}

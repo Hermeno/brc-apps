@@ -62,13 +62,13 @@ function WaveTimer({ lead }: { lead: Lead }) {
 
   const label = isWave2 ? 'Wave 2 · Open' : `Wave ${dist.wave}`;
   const chipBg = urgent ? '#EDF3F5' : '#F8F8F4';
-  const chipColor = urgent ? '#18314E' : '#185FC6';
+  const chipColor = urgent ? '#111418' : '#185FC6';
 
   return (
     <HStack gap={2}>
       <Text
         style={{
-          borderRadius: 2,
+          borderRadius: 6,
           background: chipBg,
           padding: '2px 6px',
           fontSize: '9.5px',
@@ -140,17 +140,17 @@ export default function MarketplacePage() {
             Lead Marketplace
           </Heading>
           <Button size="sm" variant="ghost" color="slate.400" _hover={{ color: 'brand.500', bg: 'brand.50' }}
-            onClick={fetchLeads} loading={loading} borderRadius="2px">
+            onClick={fetchLeads} loading={loading} borderRadius="6px">
             <Icon as={LucideRefreshCw} w={4} h={4} mr={1} />Refresh
           </Button>
         </Flex>
 
         {/* Stats horizontal strip */}
-        <Box bg="white" border="1px solid #DDE5E9" mb={6} style={{ borderRadius: 2 }}>
+        <Box boxShadow="sm" bg="white" border="1px solid #DDE5E9" mb={6} style={{ borderRadius: 6 }}>
           <HStack gap={0} divideX="1px">
             <Box px={6} py={4} flex={1}>
               <Text
-                fontSize="10.5px" fontWeight={700} color="#455B70"
+                fontSize="10.5px" fontWeight={700} color="#555C66"
                 textTransform="uppercase" letterSpacing="0.06em" fontFamily="heading" mb={1}>
                 Available
               </Text>
@@ -160,21 +160,21 @@ export default function MarketplacePage() {
             </Box>
             <Box px={6} py={4} flex={1}>
               <Text
-                fontSize="10.5px" fontWeight={700} color="#455B70"
+                fontSize="10.5px" fontWeight={700} color="#555C66"
                 textTransform="uppercase" letterSpacing="0.06em" fontFamily="heading" mb={1}>
                 Instant Book
               </Text>
-              <Text fontSize="2xl" fontWeight="black" color="#185FC6" fontFamily="heading" letterSpacing="-0.03em">
+              <Text fontSize="2xl" fontWeight="black" color="#111418" fontFamily="heading" letterSpacing="-0.03em">
                 {w0Count}
               </Text>
             </Box>
             <Box px={6} py={4} flex={1}>
               <Text
-                fontSize="10.5px" fontWeight={700} color="#455B70"
+                fontSize="10.5px" fontWeight={700} color="#555C66"
                 textTransform="uppercase" letterSpacing="0.06em" fontFamily="heading" mb={1}>
                 Wave 2 Competitive
               </Text>
-              <Text fontSize="2xl" fontWeight="black" color="#185FC6" fontFamily="heading" letterSpacing="-0.03em">
+              <Text fontSize="2xl" fontWeight="black" color="#111418" fontFamily="heading" letterSpacing="-0.03em">
                 {w2Count}
               </Text>
             </Box>
@@ -182,9 +182,9 @@ export default function MarketplacePage() {
         </Box>
 
         {/* Section panel */}
-        <Box border="1px solid #DDE5E9" style={{ borderRadius: 2 }} overflow="hidden">
+        <Box border="1px solid #DDE5E9" style={{ borderRadius: 6 }} overflow="hidden">
           <Box bg="#F8F8F4" px={5} py={3} borderBottom="1px solid #DDE5E9">
-            <Text fontSize="10.5px" fontWeight={700} color="#455B70" textTransform="uppercase" letterSpacing="0.06em" fontFamily="heading">
+            <Text fontSize="10.5px" fontWeight={700} color="#555C66" textTransform="uppercase" letterSpacing="0.06em" fontFamily="heading">
               Available leads
             </Text>
           </Box>
@@ -256,12 +256,12 @@ export default function MarketplacePage() {
                                 <Text
                                   fontSize="xs"
                                   style={{
-                                    borderRadius: 2,
+                                    borderRadius: 6,
                                     background: '#F8F8F4',
                                     padding: '2px 6px',
                                     fontSize: '9.5px',
                                     fontWeight: 700,
-                                    color: '#185FC6',
+                                    color: '#111418',
                                   }}>
                                   <Glyph name="repeat" />{locale === 'pt' ? FREQUENCY_OPTIONS.find(f => f.id === lead.frequency)?.label : FREQUENCY_OPTIONS.find(f => f.id === lead.frequency)?.labelEn}
                                 </Text>
@@ -287,14 +287,14 @@ export default function MarketplacePage() {
                               <HStack gap={3}>
                                 <HStack gap={1.5}>
                                   <Icon as={LucideBanknote} w={4} h={4} color="#185FC6" />
-                                  <Text fontWeight="black" color="#185FC6" fontSize="sm">
+                                  <Text fontWeight="black" color="#111418" fontSize="sm">
                                     ${lead.estimatedMinPrice}–${lead.estimatedMaxPrice}
                                   </Text>
                                 </HStack>
                                 {lead.estimatedHours && (
                                   <HStack gap={1}>
                                     <Icon as={LucideClock} w={3.5} h={3.5} color="brand.500" />
-                                    <Text fontWeight="bold" color="brand.700" fontSize="sm">~{lead.estimatedHours}h</Text>
+                                    <Text fontWeight="bold" color="#111418" fontSize="sm">~{lead.estimatedHours}h</Text>
                                   </HStack>
                                 )}
                               </HStack>
@@ -302,7 +302,7 @@ export default function MarketplacePage() {
                             {lead.leadPrice && (
                               <HStack gap={1.5}>
                                 <Text fontSize="xs" color="slate.500">Lead fee:</Text>
-                                <Text fontWeight="black" color="#185FC6" fontSize="sm">
+                                <Text fontWeight="black" color="#111418" fontSize="sm">
                                   ${lead.leadPrice}
                                 </Text>
                               </HStack>
@@ -325,7 +325,7 @@ export default function MarketplacePage() {
                         <Button
                           bg="brand.500"
                           color="white" px={5} py={7} h="auto"
-                          borderRadius="2px" fontWeight="bold" fontSize="sm"
+                          borderRadius="6px" fontWeight="bold" fontSize="sm"
                           flexShrink={0} flexDirection="column" gap={1.5}
                           _hover={{ bg: 'brand.600' }}
                           transition="background 0.15s"

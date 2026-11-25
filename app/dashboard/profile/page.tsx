@@ -259,13 +259,13 @@ export default function ProfilePage() {
             </Text>
           </Box>
           {/* ── Avatar + About card ── */}
-          <Box bg="white" border="1px solid #DDE5E9" style={{ borderRadius: 2 }} overflow="hidden">
+          <Box boxShadow="sm" bg="white" border="1px solid #DDE5E9" style={{ borderRadius: 6 }} overflow="hidden">
             {/* Section header */}
             <Box bg="#F8F8F4" px={5} py={3} borderBottom="1px solid #DDE5E9">
               <HStack gap={2}>
                 <Icon as={LucideUser} w={4} h={4} color="brand.500" />
                 <Text
-                  fontSize="10.5px" fontWeight={700} color="#455B70"
+                  fontSize="10.5px" fontWeight={700} color="#555C66"
                   textTransform="uppercase" letterSpacing="0.07em" fontFamily="heading">
                   {t('cleaner.profile.sectionAbout')}
                 </Text>
@@ -288,7 +288,7 @@ export default function ProfilePage() {
                   <Text fontSize="xs" color="slate.400" mt={0.5}>
                     {t('cleaner.profile.photoHint')}
                   </Text>
-                  <Text fontSize="xs" color="#455B70" mt={0.5}>
+                  <Text fontSize="xs" color="#555C66" mt={0.5}>
                     {t('cleaner.profile.photoFormats')}
                   </Text>
                 </Box>
@@ -304,7 +304,7 @@ export default function ProfilePage() {
                     onChange={e => setBio(e.target.value)}
                     placeholder={t('cleaner.profile.bioPlaceholder')}
                     bg="slate.50" border="1px solid" borderColor="slate.200"
-                    borderRadius="2px" rows={4} fontSize="sm"
+                    borderRadius="6px" rows={4} fontSize="sm"
                     _focus={{ borderColor: 'brand.300', bg: 'white' }}
                     resize="vertical" maxLength={500}
                   />
@@ -323,7 +323,7 @@ export default function ProfilePage() {
                       onChange={e => setPhone(formatUSPhone(e.target.value))}
                       placeholder="(555) 123-4567"
                       bg="slate.50" border="1px solid" borderColor="slate.200"
-                      borderRadius="2px" fontSize="sm" h="10"
+                      borderRadius="6px" fontSize="sm" h="10"
                       _focus={{ borderColor: 'brand.300', bg: 'white' }}
                     />
                   </HStack>
@@ -340,7 +340,7 @@ export default function ProfilePage() {
                     {SERVICE_LIST.map(s => {
                       const sel = serviceTypes.includes(s);
                       return (
-                        <Box key={s} as="button" w="full" p={2.5} borderRadius="2px" textAlign="center"
+                        <Box key={s} as="button" w="full" p={2.5} borderRadius="6px" textAlign="center"
                           border={sel ? '2px solid #185FC6' : '1px solid #DDE5E9'}
                           bg={sel ? '#EDF3F5' : 'white'} cursor="pointer"
                           onClick={() => toggleService(s)} transition="all 0.15s">
@@ -353,8 +353,8 @@ export default function ProfilePage() {
                 </Box>
 
                 <Button
-                  bg="#185FC6" color="white" borderRadius="2px" fontWeight="bold"
-                  _hover={{ bg: '#18314E' }}
+                  bg="#185FC6" color="white" borderRadius="6px" fontWeight="bold"
+                  _hover={{ bg: '#111418' }}
                   transition="all 0.2s"
                   loading={saving} loadingText={t('cleaner.profile.savingProfile')}
                   onClick={handleSave}
@@ -367,17 +367,17 @@ export default function ProfilePage() {
           </Box>
 
           {/* ── Location card ── */}
-          <Box bg="white" border="1px solid #DDE5E9" style={{ borderRadius: 2 }} overflow="hidden">
+          <Box boxShadow="sm" bg="white" border="1px solid #DDE5E9" style={{ borderRadius: 6 }} overflow="hidden">
             {/* Section header */}
             <Box bg="#F8F8F4" px={5} py={3} borderBottom="1px solid #DDE5E9">
               <HStack gap={2}>
                 <Icon as={LucideMapPin} w={4} h={4} color="brand.500" />
                 <Text
-                  fontSize="10.5px" fontWeight={700} color="#455B70"
+                  fontSize="10.5px" fontWeight={700} color="#555C66"
                   textTransform="uppercase" letterSpacing="0.07em" fontFamily="heading">
                   {t('cleaner.profile.sectionLocation')}
                 </Text>
-                <Text style={{ borderRadius: 2, background: '#F8F8F4', padding: '2px 6px', fontSize: '9.5px', fontWeight: 700, color: '#455B70' }}>
+                <Text style={{ borderRadius: 6, background: '#F8F8F4', padding: '2px 6px', fontSize: '9.5px', fontWeight: 700, color: '#555C66' }}>
                   {t('cleaner.profile.locationOptional')}
                 </Text>
               </HStack>
@@ -397,8 +397,8 @@ export default function ProfilePage() {
                       {t('cleaner.profile.zipLabel')}
                     </Text>
                     <Text style={{
-                      borderRadius: 2, background: '#EDF3F5',
-                      padding: '2px 6px', fontSize: '9.5px', fontWeight: 700, color: '#185FC6',
+                      borderRadius: 6, background: '#EDF3F5',
+                      padding: '2px 6px', fontSize: '9.5px', fontWeight: 700, color: '#111418',
                     }}>
                       {t('cleaner.profile.zipBonus')}
                     </Text>
@@ -409,7 +409,7 @@ export default function ProfilePage() {
                     onChange={e => setZipCode(e.target.value)}
                     maxLength={9}
                     bg="slate.50" border="1px solid" borderColor="slate.200"
-                    borderRadius="2px" h="10" fontSize="sm"
+                    borderRadius="6px" h="10" fontSize="sm"
                     _focus={{ bg: 'white', borderColor: 'brand.300' }}
                   />
                   <Text fontSize="xs" color="slate.400" mt={1}>
@@ -420,7 +420,7 @@ export default function ProfilePage() {
                 {/* Detect button */}
                 <Button
                   variant="outline" borderColor="slate.200" color="slate.600"
-                  borderRadius="2px" fontWeight="semibold" fontSize="sm"
+                  borderRadius="6px" fontWeight="semibold" fontSize="sm"
                   _hover={{ borderColor: 'brand.300', color: 'brand.600', bg: 'brand.50' }}
                   transition="all 0.15s"
                   loading={geoLoading} loadingText={t('cleaner.profile.detectLoading')}
@@ -432,9 +432,9 @@ export default function ProfilePage() {
                 {/* Location label */}
                 {locationLabel && (
                   <HStack gap={2} bg="#F8F8F4" border="1px solid" borderColor="#DDE5E9"
-                    borderRadius="2px" px={4} py={3}>
+                    borderRadius="6px" px={4} py={3}>
                     <Icon as={LucideMapPin} w={4} h={4} color="#185FC6" flexShrink={0} />
-                    <Text fontSize="sm" color="#185FC6" fontWeight="semibold">{locationLabel}</Text>
+                    <Text fontSize="sm" color="#111418" fontWeight="semibold">{locationLabel}</Text>
                     <Button size="xs" variant="ghost" color="slate.400" ml="auto" px={1}
                       onClick={() => { setLatitude(null); setLongitude(null); setLocationLabel(''); }}>
                       <Icon as={LucideX} w={3} h={3} />
@@ -470,7 +470,7 @@ export default function ProfilePage() {
                     </Text>
                     <Text style={{
                       fontSize: '9.5px', fontWeight: 700, padding: '2px 7px',
-                      background: '#EDF3F5', color: '#185FC6', borderRadius: 2,
+                      background: '#EDF3F5', color: '#111418', borderRadius: 6,
                     }}>
                       {t('cleaner.profile.radiusPlan', { max: planMaxRadius })}
                     </Text>
@@ -487,7 +487,7 @@ export default function ProfilePage() {
                           px={3} py={1.5}
                           fontSize="13px" fontWeight="600" fontFamily="heading"
                           border="1px solid"
-                          borderRadius="2px"
+                          borderRadius="6px"
                           cursor={locked ? 'not-allowed' : 'pointer'}
                           opacity={locked ? 0.38 : 1}
                           transition="all 0.12s"
@@ -512,8 +512,8 @@ export default function ProfilePage() {
 
                 {/* Save location button */}
                 <Button
-                  bg="#185FC6" color="white" borderRadius="2px" fontWeight="bold"
-                  _hover={{ bg: '#18314E' }}
+                  bg="#185FC6" color="white" borderRadius="6px" fontWeight="bold"
+                  _hover={{ bg: '#111418' }}
                   transition="all 0.2s"
                   loading={saving} loadingText={t('cleaner.profile.savingLocation')}
                   onClick={handleSave}
@@ -526,24 +526,24 @@ export default function ProfilePage() {
           </Box>
 
           {/* ── Photo Gallery card ── */}
-          <Box bg="white" border="1px solid #DDE5E9" style={{ borderRadius: 2 }} overflow="hidden">
+          <Box boxShadow="sm" bg="white" border="1px solid #DDE5E9" style={{ borderRadius: 6 }} overflow="hidden">
             {/* Section header */}
             <Box bg="#F8F8F4" px={5} py={3} borderBottom="1px solid #DDE5E9">
               <Flex justify="space-between" align="center">
                 <HStack gap={2}>
                   <Icon as={LucideCamera} w={4} h={4} color="brand.500" />
                   <Text
-                    fontSize="10.5px" fontWeight={700} color="#455B70"
+                    fontSize="10.5px" fontWeight={700} color="#555C66"
                     textTransform="uppercase" letterSpacing="0.07em" fontFamily="heading">
                     {t('cleaner.profile.sectionGallery')}
                   </Text>
-                  <Text style={{ borderRadius: 2, background: '#F8F8F4', padding: '2px 6px', fontSize: '9.5px', fontWeight: 700, color: '#455B70' }}>
+                  <Text style={{ borderRadius: 6, background: '#F8F8F4', padding: '2px 6px', fontSize: '9.5px', fontWeight: 700, color: '#555C66' }}>
                     {photos.length}/20
                   </Text>
                 </HStack>
                 {photos.length < 20 && !showPhotoForm && (
-                  <Button size="sm" bg="#185FC6" color="white" borderRadius="2px" fontWeight="bold"
-                    _hover={{ bg: '#18314E' }}
+                  <Button size="sm" bg="#185FC6" color="white" borderRadius="6px" fontWeight="bold"
+                    _hover={{ bg: '#111418' }}
                     loading={uploading} loadingText={t('cleaner.profile.uploadingPhoto')}
                     onClick={() => fileInputRef.current?.click()}>
                     <Icon as={LucidePlus} w={3.5} h={3.5} mr={1.5} />
@@ -557,12 +557,12 @@ export default function ProfilePage() {
               {/* Caption form after upload */}
               <AnimatePresence>
                 {showPhotoForm && pendingUrl && (
-                  <Box bg="brand.50" border="1px solid" borderColor="brand.200" borderRadius="2px" p={4} mb={5}>
-                    <Text fontSize="sm" fontWeight="bold" color="brand.700" mb={3}>
+                  <Box bg="brand.50" border="1px solid" borderColor="brand.200" borderRadius="6px" p={4} mb={5}>
+                    <Text fontSize="sm" fontWeight="bold" color="#111418" mb={3}>
                       {t('cleaner.profile.captionTitle')}
                     </Text>
                     <Flex gap={3} align="flex-start">
-                      <Box w="80px" h="80px" borderRadius="2px" overflow="hidden" flexShrink={0}
+                      <Box w="80px" h="80px" borderRadius="6px" overflow="hidden" flexShrink={0}
                         border="1px solid" borderColor="brand.200">
                         <img src={pendingUrl} alt="Preview"
                           style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
@@ -572,7 +572,7 @@ export default function ProfilePage() {
                           placeholder={t('cleaner.profile.captionPlaceholder')}
                           value={photoCaption}
                           onChange={e => setPhotoCaption(e.target.value)}
-                          bg="white" borderRadius="2px" h="10" border="1px solid"
+                          bg="white" borderRadius="6px" h="10" border="1px solid"
                           borderColor="brand.200" fontSize="sm"
                           _focus={{ borderColor: 'brand.400' }}
                         />
@@ -581,8 +581,8 @@ export default function ProfilePage() {
                             onClick={() => { setShowPhotoForm(false); setPendingUrl(''); setPhotoCaption(''); }}>
                             {t('common.cancel')}
                           </Button>
-                          <Button size="sm" bg="#185FC6" color="white" borderRadius="2px" fontWeight="bold"
-                            _hover={{ bg: '#18314E' }}
+                          <Button size="sm" bg="#185FC6" color="white" borderRadius="6px" fontWeight="bold"
+                            _hover={{ bg: '#111418' }}
                             loading={addingPhoto} loadingText={t('cleaner.profile.addingPhoto')}
                             onClick={handleAddPhoto}>
                             {t('cleaner.profile.addToGallery')}
@@ -595,10 +595,10 @@ export default function ProfilePage() {
               </AnimatePresence>
 
               {photos.length === 0 ? (
-                <Box textAlign="center" py={10} border="2px dashed" borderColor="slate.200" borderRadius="2px"
+                <Box textAlign="center" py={10} border="2px dashed" borderColor="slate.200" borderRadius="6px"
                   cursor="pointer" onClick={() => fileInputRef.current?.click()}
                   _hover={{ borderColor: 'brand.300', bg: 'brand.50' }} transition="all 0.15s">
-                  <Text fontSize="3xl" mb={2} color="#185FC6"><Glyph name="camera" /></Text>
+                  <Text fontSize="3xl" mb={2} color="#111418"><Glyph name="camera" /></Text>
                   <Text color="slate.500" fontSize="sm" fontWeight="semibold">{t('cleaner.profile.galleryEmpty')}</Text>
                   <Text color="slate.400" fontSize="xs" mt={1}>
                     {t('cleaner.profile.galleryEmptyHint')}
@@ -608,7 +608,7 @@ export default function ProfilePage() {
                 <SimpleGrid columns={{ base: 2, sm: 3, md: 4 }} gap={3}>
                   {photos.map((photo, i) => (
                     <Box key={photo.id}>
-                      <Box position="relative" borderRadius="2px" overflow="hidden"
+                      <Box position="relative" borderRadius="6px" overflow="hidden"
                         border="2px solid" borderColor="slate.100"
                         paddingBottom="100%" bg="slate.100"
                         _hover={{ borderColor: 'red.200' }}
@@ -619,7 +619,7 @@ export default function ProfilePage() {
                           style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'contain' }}
                         />
                         <Button
-                          size="sm" bg="red.500" color="white" borderRadius="2px"
+                          size="sm" bg="red.500" color="white" borderRadius="6px"
                           _hover={{ bg: 'red.600' }}
                           loading={deletingId === photo.id}
                           onClick={() => handleDeletePhoto(photo.id)}

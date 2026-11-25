@@ -31,9 +31,9 @@ type BlockForm = { from: string; to: string; allDay: boolean; start: string; end
 const TONES = {
   confirmed: { bg: '#185FC6', color: '#FFFFFF', border: '1px solid #185FC6',  dot: '#185FC6' },
   recurring: { bg: '#EDF3F5', color: '#134A9A', border: '1px dashed #185FC6', dot: '#134A9A' },
-  pending:   { bg: '#FFFFFF', color: '#18314E', border: '1px solid #455B70',  dot: '#455B70' },
-  done:      { bg: '#F8F8F4', color: '#455B70', border: '1px solid #DDE5E9',  dot: '#B9C5CC' },
-  off:       { bg: '#DDE5E9', color: '#18314E', border: '1px solid #DDE5E9',  dot: '#18314E' },
+  pending:   { bg: '#FFFFFF', color: '#111418', border: '1px solid #555C66',  dot: '#555C66' },
+  done:      { bg: '#F8F8F4', color: '#555C66', border: '1px solid #DDE5E9',  dot: '#B9C5CC' },
+  off:       { bg: '#DDE5E9', color: '#111418', border: '1px solid #DDE5E9',  dot: '#111418' },
 } as const;
 type Tone = keyof typeof TONES;
 
@@ -169,9 +169,9 @@ export default function SchedulePage() {
     if (res?.ok) load();
   };
 
-  const field = { bg: 'white', borderRadius: '2px', h: '10', border: '1px solid', borderColor: '#DDE5E9', fontSize: 'sm' } as const;
+  const field = { bg: 'white', borderRadius: '6px', h: '10', border: '1px solid', borderColor: '#DDE5E9', fontSize: 'sm' } as const;
   const label = (text: string) => (
-    <Text fontSize="10.5px" fontWeight={700} color="#455B70" textTransform="uppercase" letterSpacing="0.07em" fontFamily="heading" mb={1}>{text}</Text>
+    <Text fontSize="10.5px" fontWeight={700} color="#555C66" textTransform="uppercase" letterSpacing="0.07em" fontFamily="heading" mb={1}>{text}</Text>
   );
   const legendKey = { confirmed: 'statusConfirmed', recurring: 'statusRecurring', pending: 'statusAwaitingClient', done: 'statusCompleted', off: 'statusOff' } as const;
 
@@ -185,20 +185,20 @@ export default function SchedulePage() {
             <Heading fontWeight="300" fontSize={{ base: '24px', md: '28px' }} letterSpacing="-0.01em" color="slate.900" fontFamily="heading">{tt('title')}</Heading>
             <Text color="slate.500" fontSize="sm" mt={1}>{tt('subtitle')}</Text>
           </Box>
-          <Button bg="#185FC6" color="white" borderRadius="2px" fontWeight="bold" _hover={{ bg: '#18314E' }} onClick={() => openForm(selected)}>
+          <Button bg="#185FC6" color="white" borderRadius="6px" fontWeight="bold" _hover={{ bg: '#111418' }} onClick={() => openForm(selected)}>
             <Icon as={LucidePlus} w={4} h={4} mr={2} />{tt('blockTime')}
           </Button>
         </Flex>
 
         <VStack gap={6} align="stretch">
           {/* Stat strip */}
-          <Box border="1px solid #DDE5E9" bg="white" style={{ borderRadius: 2 }}>
+          <Box boxShadow="sm" border="1px solid #DDE5E9" bg="white" style={{ borderRadius: 6 }}>
             <Flex wrap="wrap">
               {stats.map((s, i) => (
                 <Box key={s.label} flex={{ base: '1 1 50%', md: 1 }} px={5} py={4} textAlign="center"
                   borderRight={i < stats.length - 1 ? '1px solid #DDE5E9' : undefined}>
-                  <Text fontSize="22px" fontWeight={700} fontFamily="heading" color="#185FC6" letterSpacing="-0.03em" lineHeight={1}>{loading ? '—' : s.value}</Text>
-                  <Text fontSize="11px" color="#455B70" textTransform="uppercase" fontFamily="heading" letterSpacing="0.07em" mt={1}>{s.label}</Text>
+                  <Text fontSize="22px" fontWeight={700} fontFamily="heading" color="#111418" letterSpacing="-0.03em" lineHeight={1}>{loading ? '—' : s.value}</Text>
+                  <Text fontSize="11px" color="#555C66" textTransform="uppercase" fontFamily="heading" letterSpacing="0.07em" mt={1}>{s.label}</Text>
                 </Box>
               ))}
             </Flex>
@@ -206,8 +206,8 @@ export default function SchedulePage() {
 
           {/* Block-time form, inline like the other forms of the dashboards */}
           {form && (
-            <Box border="1px solid #DDE5E9" bg="#EDF3F5" p={5} style={{ borderRadius: 2 }}>
-              <Text fontSize="sm" fontWeight="bold" color="#185FC6" mb={4}>{tt('blockTime')}</Text>
+            <Box border="1px solid #DDE5E9" bg="#EDF3F5" p={5} style={{ borderRadius: 6 }}>
+              <Text fontSize="sm" fontWeight="bold" color="#111418" mb={4}>{tt('blockTime')}</Text>
               <Flex gap={3} wrap="wrap" align="end">
                 <Box flex="1 1 150px">{label(tt('formFrom'))}
                   <Input type="date" value={form.from} onChange={e => setForm({ ...form, from: e.target.value, to: form.to < e.target.value ? e.target.value : form.to })} {...field} />
@@ -219,7 +219,7 @@ export default function SchedulePage() {
                   <Box flex="1 1 110px">{label(tt('formStart'))}<Input type="time" value={form.start} onChange={e => setForm({ ...form, start: e.target.value })} {...field} /></Box>
                   <Box flex="1 1 110px">{label(tt('formEnd'))}<Input type="time" value={form.end} onChange={e => setForm({ ...form, end: e.target.value })} {...field} /></Box>
                 </>}
-                <Box as="label" display="flex" alignItems="center" gap={2} h="10" fontSize="sm" color="#18314E" cursor="pointer">
+                <Box as="label" display="flex" alignItems="center" gap={2} h="10" fontSize="sm" color="#111418" cursor="pointer">
                   <input type="checkbox" checked={form.allDay} onChange={e => setForm({ ...form, allDay: e.target.checked })} />
                   {tt('allDay')}
                 </Box>
@@ -229,30 +229,30 @@ export default function SchedulePage() {
               </Box>
               <HStack gap={3} justify="flex-end" mt={4}>
                 <Button size="sm" variant="ghost" color="slate.500" onClick={() => setForm(null)}>{tt('formCancel')}</Button>
-                <Button size="sm" bg="#185FC6" color="white" borderRadius="2px" fontWeight="bold" _hover={{ bg: '#18314E' }} loading={saving} onClick={saveBlock}>{tt('formSave')}</Button>
+                <Button size="sm" bg="#185FC6" color="white" borderRadius="6px" fontWeight="bold" _hover={{ bg: '#111418' }} loading={saving} onClick={saveBlock}>{tt('formSave')}</Button>
               </HStack>
             </Box>
           )}
 
           <Flex gap={6} direction={{ base: 'column', lg: 'row' }} align="start">
             {/* Month grid */}
-            <Box flex="2" w="100%" border="1px solid #DDE5E9" style={{ borderRadius: 2 }} overflow="hidden">
+            <Box flex="2" w="100%" border="1px solid #DDE5E9" style={{ borderRadius: 6 }} overflow="hidden">
               <Flex align="center" justify="space-between" px={3} py={2.5} bg="#F8F8F4" borderBottom="1px solid #DDE5E9">
                 <HStack gap={1}>
                   <Button size="sm" variant="ghost" aria-label={tt('prevMonth')} onClick={() => go(-1)}><Icon as={LucideChevronLeft} w={4} h={4} /></Button>
-                  <Text fontFamily="heading" fontWeight={600} color="#18314E" minW="150px" textAlign="center" textTransform="capitalize">
+                  <Text fontFamily="heading" fontWeight={600} color="#111418" minW="150px" textAlign="center" textTransform="capitalize">
                     {month.toLocaleDateString(dl, { month: 'long', year: 'numeric' })}
                   </Text>
                   <Button size="sm" variant="ghost" aria-label={tt('nextMonth')} onClick={() => go(1)}><Icon as={LucideChevronRight} w={4} h={4} /></Button>
                 </HStack>
-                <Button size="sm" variant="outline" borderColor="#DDE5E9" borderRadius="2px" color="#18314E"
+                <Button size="sm" variant="outline" borderColor="#DDE5E9" borderRadius="6px" color="#111418"
                   onClick={() => { setMonth(new Date(now.getFullYear(), now.getMonth(), 1)); setSelected(dayStart(now)); }}>
                   {tt('today')}
                 </Button>
               </Flex>
               <Box display="grid" gridTemplateColumns="repeat(7, minmax(0, 1fr))">
                 {weekdays.map(w => (
-                  <Text key={w} py={2} textAlign="center" fontSize="10.5px" fontWeight={700} color="#455B70" textTransform="uppercase" letterSpacing="0.07em" fontFamily="heading">{w}</Text>
+                  <Text key={w} py={2} textAlign="center" fontSize="10.5px" fontWeight={700} color="#555C66" textTransform="uppercase" letterSpacing="0.07em" fontFamily="heading">{w}</Text>
                 ))}
                 {days.map((d, i) => {
                   const list = byDay.get(dayKey(d)) ?? [];
@@ -265,19 +265,19 @@ export default function SchedulePage() {
                       bg={isSelected ? '#EDF3F5' : 'white'} borderTop="1px solid #DDE5E9" borderRight={i % 7 < 6 ? '1px solid #DDE5E9' : undefined}
                       opacity={d.getMonth() === month.getMonth() ? 1 : 0.45} cursor="pointer" _hover={{ bg: isSelected ? '#EDF3F5' : '#F8F8F4' }}>
                       <Text as="span" fontSize="12px" fontWeight={600} w="22px" h="22px" display="inline-flex" alignItems="center" justifyContent="center"
-                        bg={isToday ? '#185FC6' : 'transparent'} color={isToday ? 'white' : '#18314E'} style={{ borderRadius: 2 }}>
+                        bg={isToday ? '#185FC6' : 'transparent'} color={isToday ? 'white' : '#111418'} style={{ borderRadius: 6 }}>
                         {d.getDate()}
                       </Text>
                       <Box display={{ base: 'none', md: 'flex' }} flexDirection="column" gap="2px">
                         {list.slice(0, 2).map((e, j) => {
                           const tone = TONES[toneOf(e, now)];
                           return (
-                            <Text key={j} as="span" fontSize="10.5px" fontWeight={600} px={1} lineClamp={1} bg={tone.bg} color={tone.color} border={tone.border} style={{ borderRadius: 2 }}>
+                            <Text key={j} as="span" fontSize="10.5px" fontWeight={600} px={1} lineClamp={1} bg={tone.bg} color={tone.color} border={tone.border} style={{ borderRadius: 6 }}>
                               {e.kind === 'block' ? tt('statusOff') : `${fmtTime(e.at)} ${serviceLabel(e.job.serviceType, locale)}`}
                             </Text>
                           );
                         })}
-                        {list.length > 2 && <Text as="span" fontSize="10px" color="#455B70">{tt('more', { n: list.length - 2 })}</Text>}
+                        {list.length > 2 && <Text as="span" fontSize="10px" color="#555C66">{tt('more', { n: list.length - 2 })}</Text>}
                       </Box>
                       <HStack display={{ base: 'flex', md: 'none' }} gap="3px">
                         {list.slice(0, 3).map((e, j) => <Box key={j} w="6px" h="6px" borderRadius="full" bg={TONES[toneOf(e, now)].dot} />)}
@@ -289,9 +289,9 @@ export default function SchedulePage() {
             </Box>
 
             {/* Selected day */}
-            <Box flex="1" w="100%" border="1px solid #DDE5E9" style={{ borderRadius: 2 }} overflow="hidden">
+            <Box flex="1" w="100%" border="1px solid #DDE5E9" style={{ borderRadius: 6 }} overflow="hidden">
               <Box bg="#F8F8F4" px={5} py={3} borderBottom="1px solid #DDE5E9">
-                <Text fontSize="10.5px" fontWeight={700} color="#455B70" textTransform="uppercase" fontFamily="heading" letterSpacing="0.07em">
+                <Text fontSize="10.5px" fontWeight={700} color="#555C66" textTransform="uppercase" fontFamily="heading" letterSpacing="0.07em">
                   {selected.toLocaleDateString(dl, { weekday: 'long', month: 'long', day: 'numeric' })}
                 </Text>
               </Box>
@@ -300,7 +300,7 @@ export default function SchedulePage() {
               ) : entries.length === 0 ? (
                 <Box p={5}>
                   <Text color="slate.500" fontSize="sm">{tt('emptyDay')}</Text>
-                  <Button mt={3} size="sm" variant="outline" borderColor="#DDE5E9" borderRadius="2px" color="#185FC6" onClick={() => openForm(selected)}>{tt('blockThisDay')}</Button>
+                  <Button mt={3} size="sm" variant="outline" borderColor="#DDE5E9" borderRadius="6px" color="#111418" onClick={() => openForm(selected)}>{tt('blockThisDay')}</Button>
                 </Box>
               ) : (
                 <VStack gap={0} align="stretch">
@@ -310,21 +310,21 @@ export default function SchedulePage() {
                       <Box key={i} position="relative" px={5} py={4} borderBottom={i < entries.length - 1 ? '1px solid #F1F4F6' : undefined}>
                         <Box position="absolute" left={0} top={0} bottom={0} w="3px" bg={tone.dot} />
                         <HStack gap={2} flexWrap="wrap" mb={2}>
-                          <Text fontSize="9.5px" fontWeight={700} px="6px" py="2px" bg={tone.bg} color={tone.color} border={tone.border} textTransform="uppercase" letterSpacing="0.05em" style={{ borderRadius: 2 }}>
+                          <Text fontSize="9.5px" fontWeight={700} px="6px" py="2px" bg={tone.bg} color={tone.color} border={tone.border} textTransform="uppercase" letterSpacing="0.05em" style={{ borderRadius: 6 }}>
                             {tt(statusKey(e, now))}
                           </Text>
-                          {e.kind !== 'block' && <Text fontWeight="bold" fontSize="sm" color="#18314E" fontFamily="heading">{serviceLabel(e.job.serviceType, locale)}</Text>}
+                          {e.kind !== 'block' && <Text fontWeight="bold" fontSize="sm" color="#111418" fontFamily="heading">{serviceLabel(e.job.serviceType, locale)}</Text>}
                         </HStack>
 
                         {e.kind === 'block' ? (
                           <BlockDetails entry={e} allDay={tt('allDay')} remove={tt('remove')} fmtTime={fmtTime} onRemove={() => removeBlock(e.block.id)} />
                         ) : (
                           <VStack align="start" gap={1.5}>
-                            <HStack gap={1.5} fontSize="sm" color="#455B70">
+                            <HStack gap={1.5} fontSize="sm" color="#555C66">
                               <Icon as={LucideClock} w={4} h={4} color="#185FC6" />
-                              <Text fontWeight={600} color="#18314E">{fmtTime(e.at)}{e.job.estimatedHours ? ` · ~${e.job.estimatedHours}h` : ''}</Text>
+                              <Text fontWeight={600} color="#111418">{fmtTime(e.at)}{e.job.estimatedHours ? ` · ~${e.job.estimatedHours}h` : ''}</Text>
                             </HStack>
-                            <HStack gap={1.5} fontSize="sm" color="#455B70" align="start">
+                            <HStack gap={1.5} fontSize="sm" color="#555C66" align="start">
                               <Icon as={LucideMapPin} w={4} h={4} color="#185FC6" mt="2px" />
                               <Box>
                                 <Text>{e.job.address}</Text>
@@ -332,29 +332,29 @@ export default function SchedulePage() {
                               </Box>
                             </HStack>
                             {e.job.client?.name && (
-                              <HStack gap={1.5} fontSize="sm" color="#455B70"><Icon as={LucideUser} w={4} h={4} /><Text>{e.job.client.name}</Text></HStack>
+                              <HStack gap={1.5} fontSize="sm" color="#555C66"><Icon as={LucideUser} w={4} h={4} /><Text>{e.job.client.name}</Text></HStack>
                             )}
                             {isRecurring(e.job.frequency) && (
-                              <HStack gap={1.5} fontSize="sm" color="#134A9A"><Icon as={LucideRepeat} w={4} h={4} /><Text>{tt(`every_${e.job.frequency}`)}</Text></HStack>
+                              <HStack gap={1.5} fontSize="sm" color="#111418"><Icon as={LucideRepeat} w={4} h={4} /><Text>{tt(`every_${e.job.frequency}`)}</Text></HStack>
                             )}
                             {e.kind === 'visit' && <Text fontSize="11px" color="slate.500">{tt('recurringHint')}</Text>}
                             <HStack gap={3} flexWrap="wrap" fontSize="xs" color="slate.500">
                               {(e.job.bedrooms ?? 0) > 0 && <Text><Glyph name="bed" />{e.job.bedrooms}bd</Text>}
                               {(e.job.bathrooms ?? 0) > 0 && <Text><Glyph name="bath" />{e.job.bathrooms}ba</Text>}
                               {(e.job.squareMeters ?? 0) > 0 && <Text><Glyph name="area" />{Math.round((e.job.squareMeters ?? 0) * 10.764)} sq ft</Text>}
-                              {e.job.estimatedMinPrice != null && <Text fontWeight={700} color="#185FC6">${e.job.estimatedMinPrice}–${e.job.estimatedMaxPrice}</Text>}
+                              {e.job.estimatedMinPrice != null && <Text fontWeight={700} color="#111418">${e.job.estimatedMinPrice}–${e.job.estimatedMaxPrice}</Text>}
                             </HStack>
                             {e.job.review && (
                               <HStack gap={1}>
-                                <Icon as={LucideStar} w={3.5} h={3.5} color="#18314E" />
-                                <Text fontSize="xs" color="#18314E">{'★'.repeat(e.job.review.rating)}{'☆'.repeat(5 - e.job.review.rating)}</Text>
+                                <Icon as={LucideStar} w={3.5} h={3.5} color="#111418" />
+                                <Text fontSize="xs" color="#111418">{'★'.repeat(e.job.review.rating)}{'☆'.repeat(5 - e.job.review.rating)}</Text>
                                 {e.job.review.comment && <Text fontSize="xs" color="slate.500" fontStyle="italic">“{e.job.review.comment}”</Text>}
                               </HStack>
                             )}
                             {e.job.conversationId && (
                               <NextLink href={`/dashboard/chat/${e.job.conversationId}`}>
                                 <Box as="span" display="inline-flex" alignItems="center" gap={1} mt={1} px={2.5} py={1} fontSize="xs" fontWeight={600}
-                                  color="#185FC6" border="1px solid #DDE5E9" _hover={{ bg: '#F8F8F4' }} style={{ borderRadius: 2 }}>
+                                  color="#111418" border="1px solid #DDE5E9" _hover={{ bg: '#F8F8F4' }} style={{ borderRadius: 6 }}>
                                   <Icon as={LucideMessageSquare} w={3.5} h={3.5} />{tt('openChat')}
                                 </Box>
                               </NextLink>
@@ -374,8 +374,8 @@ export default function SchedulePage() {
             <HStack gap={3} wrap="wrap">
               {(Object.keys(legendKey) as Tone[]).map(key => (
                 <HStack key={key} gap={1.5}>
-                  <Box w="10px" h="10px" bg={TONES[key].bg} border={TONES[key].border} style={{ borderRadius: 2 }} />
-                  <Text fontSize="xs" color="#455B70">{tt(legendKey[key])}</Text>
+                  <Box w="10px" h="10px" bg={TONES[key].bg} border={TONES[key].border} style={{ borderRadius: 6 }} />
+                  <Text fontSize="xs" color="#555C66">{tt(legendKey[key])}</Text>
                 </HStack>
               ))}
             </HStack>
@@ -396,7 +396,7 @@ function BlockDetails({ entry, allDay, remove, fmtTime, onRemove }: {
   const wholeDay = start <= dayStart(entry.at) && end.getTime() >= dayEnd.getTime() - 1000;
   return (
     <VStack align="start" gap={1.5}>
-      <HStack gap={1.5} fontSize="sm" color="#455B70">
+      <HStack gap={1.5} fontSize="sm" color="#555C66">
         <Icon as={LucideClock} w={4} h={4} color="#185FC6" />
         <Text>{wholeDay ? allDay : `${fmtTime(entry.at)} – ${fmtTime(end < dayEnd ? end : dayEnd)}`}</Text>
       </HStack>

@@ -30,15 +30,15 @@ const BRAND_LABELS: Record<string, string> = {
 
 const BRAND_COLORS: Record<string, { bg: string; color: string }> = {
   visa:       { bg: '#0E3468', color: '#fff' },
-  mastercard: { bg: '#18314E', color: '#fff' },
+  mastercard: { bg: '#111418', color: '#fff' },
   amex:       { bg: '#185FC6', color: '#fff' },
 };
 
 function CardIcon({ brand }: { brand: string }) {
-  const style = BRAND_COLORS[brand] ?? { bg: '#455B70', color: '#fff' };
+  const style = BRAND_COLORS[brand] ?? { bg: '#555C66', color: '#fff' };
   return (
     <Box
-      w="40px" h="26px" borderRadius="2px"
+      w="40px" h="26px" borderRadius="6px"
       bg={style.bg} display="flex" alignItems="center" justifyContent="center"
       flexShrink={0}>
       <Text color={style.color} fontSize="8px" fontWeight="black" textTransform="uppercase">
@@ -171,8 +171,8 @@ function PaymentMethodsContent() {
               </Text>
             </Box>
             <Button
-              bg="#185FC6" color="white" borderRadius="2px" fontWeight="bold"
-              _hover={{ bg: '#18314E' }}
+              bg="#185FC6" color="white" borderRadius="6px" fontWeight="bold"
+              _hover={{ bg: '#111418' }}
               loading={adding} loadingText={t('cleaner.payments.redirecting')}
               onClick={handleAdd}>
               <Icon as={LucidePlus} w={4} h={4} mr={2} />
@@ -181,7 +181,7 @@ function PaymentMethodsContent() {
           </Flex>
 
           {/* How it works: flat box, no radius, blue tint */}
-          <Box bg="#F8F8F4" border="1px solid #DDE5E9" p={5} style={{ borderRadius: 2 }}>
+          <Box bg="#F8F8F4" border="1px solid #DDE5E9" p={5} style={{ borderRadius: 6 }}>
             <HStack gap={3} align="start">
               <Icon as={LucideShieldCheck} w={5} h={5} color="blue.600" flexShrink={0} mt={0.5} />
               <Box>
@@ -194,13 +194,13 @@ function PaymentMethodsContent() {
           </Box>
 
           {/* Cards list: section panel */}
-          <Box border="1px solid #DDE5E9" style={{ borderRadius: 2 }} overflow="hidden">
+          <Box border="1px solid #DDE5E9" style={{ borderRadius: 6 }} overflow="hidden">
             {/* Section header */}
             <Box bg="#F8F8F4" px={5} py={3} borderBottom="1px solid #DDE5E9">
               <Text
                 fontSize="10.5px"
                 fontWeight={700}
-                color="#455B70"
+                color="#555C66"
                 textTransform="uppercase"
                 fontFamily="heading"
                 letterSpacing="0.07em">
@@ -228,8 +228,8 @@ function PaymentMethodsContent() {
                   {t('cleaner.payments.noCardsHint')}
                 </Text>
                 <Button
-                  mt={2} bg="#185FC6" color="white" borderRadius="2px" fontWeight="bold"
-                  _hover={{ bg: '#18314E' }}
+                  mt={2} bg="#185FC6" color="white" borderRadius="6px" fontWeight="bold"
+                  _hover={{ bg: '#111418' }}
                   loading={adding} loadingText={t('cleaner.payments.redirecting')}
                   onClick={handleAdd}>
                   <Icon as={LucidePlus} w={4} h={4} mr={2} />
@@ -269,7 +269,7 @@ function PaymentMethodsContent() {
                                   {card.isDefault && (
                                     <Text
                                       style={{
-                                        borderRadius: 2,
+                                        borderRadius: 6,
                                         background: '#185FC6',
                                         padding: '2px 6px',
                                         fontSize: 9.5,
@@ -288,7 +288,7 @@ function PaymentMethodsContent() {
                             <HStack gap={2}>
                               {!card.isDefault && (
                                 <Button size="xs" variant="outline" borderColor="#DDE5E9"
-                                  color="slate.500" borderRadius="2px" fontWeight="semibold"
+                                  color="slate.500" borderRadius="6px" fontWeight="semibold"
                                   _hover={{ bg: '#EDF3F5', borderColor: '#185FC6', color: '#185FC6' }}
                                   loading={settingId === card.id}
                                   onClick={() => handleSetDefault(card.id)}>
@@ -296,7 +296,7 @@ function PaymentMethodsContent() {
                                   {t('cleaner.payments.makeDefault')}
                                 </Button>
                               )}
-                              <Button size="xs" variant="ghost" color="red.400" borderRadius="2px"
+                              <Button size="xs" variant="ghost" color="red.400" borderRadius="6px"
                                 _hover={{ bg: 'red.50', color: 'red.600' }}
                                 loading={removingId === card.id}
                                 onClick={() => handleRemove(card.id)}>
@@ -313,7 +313,7 @@ function PaymentMethodsContent() {
                 <Box px={5} py={3} borderTop="1px solid #F8F8F4" bg="white">
                   <Button
                     variant="outline" borderColor="#DDE5E9" color="slate.500"
-                    borderRadius="2px" fontWeight="semibold" fontSize="sm"
+                    borderRadius="6px" fontWeight="semibold" fontSize="sm"
                     _hover={{ borderColor: '#185FC6', color: '#185FC6', bg: '#EDF3F5' }}
                     loading={adding} loadingText={t('cleaner.payments.redirecting')}
                     onClick={handleAdd}>

@@ -26,7 +26,7 @@ const PLAN_ICONS: Record<PlanId, any> = {
 const PLAN_COLORS: Record<PlanId, { bg: string; border: string; text: string; btn: string; btnHover: string }> = {
   FREE:  { bg: 'slate.50',  border: 'slate.200', text: 'slate.600', btn: 'slate.600', btnHover: 'slate.700' },
   BASIC: { bg: 'brand.50',  border: 'brand.300', text: 'brand.700', btn: 'brand.500', btnHover: 'brand.600' },
-  PRO:   { bg: '#EDF3F5',   border: '#DDE5E9',   text: '#18314E',   btn: '#18314E',   btnHover: '#18314E'   },
+  PRO:   { bg: '#EDF3F5',   border: '#DDE5E9',   text: '#111418',   btn: '#111418',   btnHover: '#111418'   },
 };
 
 export default function PlanPage() {
@@ -140,12 +140,12 @@ export default function PlanPage() {
         <VStack gap={8} align="stretch">
 
           {/* CFS explainer — flat section panel */}
-          <Box border="1px solid #DDE5E9" style={{ borderRadius: 2 }} overflow="hidden">
+          <Box border="1px solid #DDE5E9" style={{ borderRadius: 6 }} overflow="hidden">
             <Box bg="#F8F8F4" px={5} py={3} borderBottom="1px solid #DDE5E9">
               <HStack gap={3}>
                 <Icon as={LucideTrendingUp} w={4} h={4} color="brand.500" />
                 <Box>
-                  <Text fontSize="10.5px" fontWeight={700} color="#455B70" textTransform="uppercase" letterSpacing="0.06em" fontFamily="heading">
+                  <Text fontSize="10.5px" fontWeight={700} color="#555C66" textTransform="uppercase" letterSpacing="0.06em" fontFamily="heading">
                     {t('cleaner.plan.rankTitle')}
                   </Text>
                   <Text fontSize="xs" color="slate.500">{t('cleaner.plan.rankSubtitle')}</Text>
@@ -161,9 +161,9 @@ export default function PlanPage() {
                   { label: t('cleaner.plan.factorArea'), max: '10 pts', icon: MapPin, desc: t('cleaner.plan.factorAreaDesc') },
                 ].map(item => (
                   <Box key={item.label} border="1px solid #DDE5E9" p={3} textAlign="center">
-                    <Box mb={1} color="#185FC6"><item.icon size={20} strokeWidth={1.75} aria-hidden="true" /></Box>
+                    <Box mb={1} color="#111418"><item.icon size={20} strokeWidth={1.75} aria-hidden="true" /></Box>
                     <Text fontSize="xs" fontWeight="bold" color="slate.700">{item.label}</Text>
-                    <Text fontSize="xs" color="brand.600" fontWeight="black">{item.max}</Text>
+                    <Text fontSize="xs" color="#111418" fontWeight="black">{item.max}</Text>
                     <Text fontSize="10px" color="slate.400">{item.desc}</Text>
                   </Box>
                 ))}
@@ -188,7 +188,7 @@ export default function PlanPage() {
                 const c = PLAN_COLORS[pid];
                 const isActive = currentPlan === pid;
                 const PlanIcon = PLAN_ICONS[pid];
-                const accentColor = pid === 'FREE' ? '#455B70' : pid === 'PRO' ? '#18314E' : '#185FC6';
+                const accentColor = pid === 'FREE' ? '#555C66' : pid === 'PRO' ? '#111418' : '#185FC6';
 
                 return (
                   <Box
@@ -201,7 +201,7 @@ export default function PlanPage() {
                     display="flex" flexDirection="column"
                     position="relative"
                     overflow="hidden"
-                    style={{ borderRadius: 2 }}
+                    style={{ borderRadius: 6 }}
                     transition="background 0.15s">
 
                     {/* Active left accent strip */}
@@ -214,12 +214,12 @@ export default function PlanPage() {
                       <Box position="absolute" top={3} right={3}>
                         <Text
                           style={{
-                            borderRadius: 2,
+                            borderRadius: 6,
                             background: isActive ? accentColor : '#F8F8F4',
                             padding: '2px 6px',
                             fontSize: '9.5px',
                             fontWeight: 700,
-                            color: isActive ? 'white' : '#455B70',
+                            color: isActive ? 'white' : '#555C66',
                           }}>
                           {plan.badge}
                         </Text>
@@ -237,7 +237,7 @@ export default function PlanPage() {
                         {plan.price === 0 ? (
                           <Text fontSize="sm" color="slate.400">Free</Text>
                         ) : loading ? (
-                          <Text fontWeight="black" fontSize="xl" color="#455B70" fontFamily="heading">—</Text>
+                          <Text fontWeight="black" fontSize="xl" color="#555C66" fontFamily="heading">—</Text>
                         ) : (
                           <HStack gap={1} align="baseline">
                             <Text fontWeight="black" fontSize="xl" color={c.text} fontFamily="heading" letterSpacing="-0.03em">
@@ -266,7 +266,7 @@ export default function PlanPage() {
                         </Box>
                       ) : (
                         <Button
-                          w="full" size="sm" borderRadius="2px" fontWeight="bold"
+                          w="full" size="sm" borderRadius="6px" fontWeight="bold"
                           {...(plan.price === 0
                             ? { variant: 'outline' as const, borderColor: c.border, color: c.text, _hover: { bg: c.bg } }
                             : { bg: 'brand.500', color: 'white', _hover: { bg: 'brand.600' } })}
@@ -284,9 +284,9 @@ export default function PlanPage() {
           </Box>
 
           {/* Wave info — flat section panel */}
-          <Box border="1px solid #DDE5E9" style={{ borderRadius: 2 }} overflow="hidden">
+          <Box border="1px solid #DDE5E9" style={{ borderRadius: 6 }} overflow="hidden">
             <Box bg="#F8F8F4" px={5} py={3} borderBottom="1px solid #DDE5E9">
-              <Text fontSize="10.5px" fontWeight={700} color="#455B70" textTransform="uppercase" letterSpacing="0.06em" fontFamily="heading">
+              <Text fontSize="10.5px" fontWeight={700} color="#555C66" textTransform="uppercase" letterSpacing="0.06em" fontFamily="heading">
                 {t('cleaner.plan.leadsTitle')}
               </Text>
             </Box>
@@ -298,7 +298,7 @@ export default function PlanPage() {
                   cleaners: t('cleaner.plan.instantCleaners'),
                   desc: t('cleaner.plan.instantDesc'),
                   chipBg: '#EDF3F5',
-                  chipColor: '#18314E',
+                  chipColor: '#111418',
                 },
                 {
                   wave: t('cleaner.plan.wave2'),
@@ -306,7 +306,7 @@ export default function PlanPage() {
                   cleaners: t('cleaner.plan.wave2Cleaners'),
                   desc: t('cleaner.plan.wave2Desc'),
                   chipBg: '#EDF3F5',
-                  chipColor: '#185FC6',
+                  chipColor: '#111418',
                 },
               ].map((w, i, arr) => (
                 <HStack
@@ -321,7 +321,7 @@ export default function PlanPage() {
                   <Box flexShrink={0}>
                     <Text
                       style={{
-                        borderRadius: 2,
+                        borderRadius: 6,
                         background: w.chipBg,
                         padding: '2px 6px',
                         fontSize: '9.5px',
@@ -345,7 +345,7 @@ export default function PlanPage() {
 
           {/* Manage subscription — flat panel */}
           {hasSubscription && (
-            <Box bg="white" border="1px solid #DDE5E9" p={5} style={{ borderRadius: 2 }}>
+            <Box boxShadow="sm" bg="white" border="1px solid #DDE5E9" p={5} style={{ borderRadius: 6 }}>
               <Flex justify="space-between" align="center">
                 <Box>
                   <Text fontWeight="bold" color="slate.800">{t('cleaner.plan.billingTitle')}</Text>
@@ -355,7 +355,7 @@ export default function PlanPage() {
                 </Box>
                 <Button
                   size="sm" variant="outline" borderColor="slate.300" color="slate.600"
-                  borderRadius="2px" fontWeight="semibold"
+                  borderRadius="6px" fontWeight="semibold"
                   _hover={{ bg: 'slate.50' }}
                   onClick={handleManageSubscription}
                   loading={redirecting}>

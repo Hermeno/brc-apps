@@ -58,13 +58,13 @@ function ResetPasswordForm() {
           <LanguageSwitcher />
         </HStack>
 
-        <Box bg="white" border="1px solid #DDE5E9" p={8} style={{ borderRadius: 2 }}>
+        <Box boxShadow="sm" bg="white" border="1px solid #DDE5E9" p={8} style={{ borderRadius: 6 }}>
 
           <Box mb={7}>
-            <Text as="h1" fontSize="28px" fontWeight="300" color="#18314E" fontFamily="heading" letterSpacing="-0.01em" mb={1}>
+            <Text as="h1" fontSize="28px" fontWeight="300" color="#111418" fontFamily="heading" letterSpacing="-0.01em" mb={1}>
               {t('auth.reset.title')}
             </Text>
-            <Text fontSize="14px" color="#455B70" fontFamily="heading">
+            <Text fontSize="14px" color="#555C66" fontFamily="heading">
               {t('auth.reset.subtitle')}
             </Text>
           </Box>
@@ -73,7 +73,7 @@ function ResetPasswordForm() {
             <VStack gap={5} align="stretch">
 
               <Box>
-                <Text fontSize="11px" fontWeight="700" color="#455B70" textTransform="uppercase"
+                <Text fontSize="11px" fontWeight="700" color="#555C66" textTransform="uppercase"
                   letterSpacing="0.1em" fontFamily="heading" mb={1.5} textAlign="center">
                   {t('auth.reset.codeLabel')}
                 </Text>
@@ -83,18 +83,18 @@ function ResetPasswordForm() {
                   onChange={e => setCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
                   textAlign="center"
                   fontSize="28px" fontWeight="700" letterSpacing="10px" fontFamily="heading"
-                  bg="#F8F8F4" border="1px solid" borderColor="#DDE5E9" h="64px" borderRadius="2px"
+                  bg="#F8F8F4" border="1px solid" borderColor="#DDE5E9" h="64px" borderRadius="6px"
                   _focus={{ bg: 'white', borderColor: '#185FC6' }}
                   maxLength={6}
                 />
                 {codeError ? (
-                  <Box mt={2} p={3} bg="#EDF3F5" border="1px solid #DDE5E9" borderRadius="2px">
-                    <Text fontSize="12px" color="#18314E" fontFamily="heading" textAlign="center" mb={1.5}>
+                  <Box mt={2} p={3} bg="#EDF3F5" border="1px solid #DDE5E9" borderRadius="6px">
+                    <Text fontSize="12px" color="#111418" fontFamily="heading" textAlign="center" mb={1.5}>
                       {codeError}
                     </Text>
                     <NextLink href="/auth/forgot-password">
-                      <Text fontSize="12px" color="#185FC6" fontWeight="700" textAlign="center"
-                        cursor="pointer" fontFamily="heading" _hover={{ color: '#18314E' }}>
+                      <Text fontSize="12px" color="#111418" fontWeight="700" textAlign="center"
+                        cursor="pointer" fontFamily="heading" _hover={{ color: '#111418' }}>
                         {t('auth.reset.backToForgot')}
                       </Text>
                     </NextLink>
@@ -103,16 +103,16 @@ function ResetPasswordForm() {
               </Box>
 
               <Box>
-                <Text fontSize="11px" fontWeight="700" color="#455B70" textTransform="uppercase"
+                <Text fontSize="11px" fontWeight="700" color="#555C66" textTransform="uppercase"
                   letterSpacing="0.1em" fontFamily="heading" mb={1.5}>
                   {t('auth.reset.newPassword')}
                 </Text>
                 <HStack gap={2}>
-                  <Icon as={LucideLock} w="14px" h="14px" color="#455B70" flexShrink={0} />
+                  <Icon as={LucideLock} w="14px" h="14px" color="#555C66" flexShrink={0} />
                   <Input
                     type="password" placeholder={t('auth.reset.newPasswordPlaceholder')}
                     value={password} onChange={e => setPassword(e.target.value)}
-                    bg="#F8F8F4" border="1px solid" borderColor="#DDE5E9" h="44px" borderRadius="2px"
+                    bg="#F8F8F4" border="1px solid" borderColor="#DDE5E9" h="44px" borderRadius="6px"
                     fontFamily="heading" fontSize="14px"
                     _focus={{ bg: 'white', borderColor: '#185FC6' }}
                     required
@@ -121,16 +121,16 @@ function ResetPasswordForm() {
               </Box>
 
               <Box>
-                <Text fontSize="11px" fontWeight="700" color="#455B70" textTransform="uppercase"
+                <Text fontSize="11px" fontWeight="700" color="#555C66" textTransform="uppercase"
                   letterSpacing="0.1em" fontFamily="heading" mb={1.5}>
                   {t('auth.reset.confirmPassword')}
                 </Text>
                 <HStack gap={2}>
-                  <Icon as={LucideLock} w="14px" h="14px" color="#455B70" flexShrink={0} />
+                  <Icon as={LucideLock} w="14px" h="14px" color="#555C66" flexShrink={0} />
                   <Input
                     type="password" placeholder={t('auth.reset.confirmPlaceholder')}
                     value={confirm} onChange={e => setConfirm(e.target.value)}
-                    bg="#F8F8F4" border="1px solid" borderColor="#DDE5E9" h="44px" borderRadius="2px"
+                    bg="#F8F8F4" border="1px solid" borderColor="#DDE5E9" h="44px" borderRadius="6px"
                     fontFamily="heading" fontSize="14px"
                     _focus={{ bg: 'white', borderColor: '#185FC6' }}
                     required
@@ -139,9 +139,9 @@ function ResetPasswordForm() {
               </Box>
 
               <Button
-                type="submit" bg="#185FC6" color="white" h="44px" borderRadius="2px"
+                type="submit" bg="#185FC6" color="white" h="44px" borderRadius="6px"
                 fontWeight="700" fontSize="14px" fontFamily="heading"
-                _hover={{ bg: '#18314E' }} transition="background 0.15s"
+                _hover={{ bg: '#111418' }} transition="background 0.15s"
                 loading={loading} loadingText={t('auth.reset.submitting')}
                 disabled={code.length !== 6 || !password}
               >
@@ -155,8 +155,8 @@ function ResetPasswordForm() {
 
         <Box mt={6} textAlign="center">
           <NextLink href="/auth/forgot-password">
-            <Text fontSize="13px" color="#185FC6" fontWeight="600" cursor="pointer"
-              fontFamily="heading" _hover={{ color: '#18314E' }}>
+            <Text fontSize="13px" color="#111418" fontWeight="600" cursor="pointer"
+              fontFamily="heading" _hover={{ color: '#111418' }}>
               {t('auth.reset.resendCode')}
             </Text>
           </NextLink>

@@ -85,16 +85,16 @@ function VerifyEmailForm() {
           <LanguageSwitcher />
         </HStack>
 
-        <Box bg="white" border="1px solid #DDE5E9" p={8} style={{ borderRadius: 2 }}>
+        <Box boxShadow="sm" bg="white" border="1px solid #DDE5E9" p={8} style={{ borderRadius: 6 }}>
 
           <Box mb={7} textAlign="center">
-            <Text as="h1" fontSize="28px" fontWeight="300" color="#18314E" fontFamily="heading" letterSpacing="-0.01em" mb={1}>
+            <Text as="h1" fontSize="28px" fontWeight="300" color="#111418" fontFamily="heading" letterSpacing="-0.01em" mb={1}>
               {t('auth.verify.title')}
             </Text>
-            <Text fontSize="14px" color="#455B70" fontFamily="heading">
+            <Text fontSize="14px" color="#555C66" fontFamily="heading">
               {t('auth.verify.subtitle')}
             </Text>
-            <Text fontSize="14px" fontWeight="700" color="#185FC6" fontFamily="heading">
+            <Text fontSize="14px" fontWeight="700" color="#111418" fontFamily="heading">
               {email}
             </Text>
           </Box>
@@ -103,7 +103,7 @@ function VerifyEmailForm() {
             <VStack gap={5} align="stretch">
 
               <Box>
-                <Text fontSize="11px" fontWeight="700" color="#455B70" textTransform="uppercase"
+                <Text fontSize="11px" fontWeight="700" color="#555C66" textTransform="uppercase"
                   letterSpacing="0.1em" fontFamily="heading" mb={1.5} textAlign="center">
                   {t('auth.verify.codeLabel')}
                 </Text>
@@ -113,19 +113,19 @@ function VerifyEmailForm() {
                   onChange={e => setCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
                   textAlign="center"
                   fontSize="28px" fontWeight="700" letterSpacing="10px" fontFamily="heading"
-                  bg="#F8F8F4" border="1px solid" borderColor="#DDE5E9" h="64px" borderRadius="2px"
+                  bg="#F8F8F4" border="1px solid" borderColor="#DDE5E9" h="64px" borderRadius="6px"
                   _focus={{ bg: 'white', borderColor: '#185FC6' }}
                   maxLength={6} autoComplete="one-time-code"
                 />
-                <Text fontSize="12px" color="#455B70" textAlign="center" mt={2} fontFamily="heading">
+                <Text fontSize="12px" color="#555C66" textAlign="center" mt={2} fontFamily="heading">
                   {t('auth.verify.codeHint')}
                 </Text>
               </Box>
 
               <Button
-                type="submit" bg="#185FC6" color="white" h="44px" borderRadius="2px"
+                type="submit" bg="#185FC6" color="white" h="44px" borderRadius="6px"
                 fontWeight="700" fontSize="14px" fontFamily="heading"
-                _hover={{ bg: '#18314E' }} transition="background 0.15s"
+                _hover={{ bg: '#111418' }} transition="background 0.15s"
                 loading={loading} loadingText={t('auth.verify.submitting')}
                 disabled={code.length !== 6 || loading}
               >
@@ -134,7 +134,7 @@ function VerifyEmailForm() {
               </Button>
 
               <Button
-                variant="ghost" color="#455B70" h="40px" borderRadius="2px"
+                variant="ghost" color="#555C66" h="40px" borderRadius="6px"
                 fontWeight="600" fontSize="13px" fontFamily="heading"
                 onClick={handleResend} loading={resending}
                 disabled={countdown > 0 || resending}

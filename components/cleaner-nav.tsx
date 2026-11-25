@@ -81,7 +81,7 @@ export default function CleanerNav() {
               >
                 {/* Links in normal case; the current page is a white rectangle on the dark bar. */}
                 <Box
-                  px={3} h="36px" display="flex" alignItems="center" borderRadius="2px"
+                  px={3} h="36px" display="flex" alignItems="center" borderRadius="6px"
                   bg={isActive ? 'white' : 'transparent'} color={isActive ? NAV_BG : ON_NAV}
                   fontSize="14px" fontWeight="500"
                   whiteSpace="nowrap" transition="background 0.15s, color 0.15s"
@@ -99,7 +99,7 @@ export default function CleanerNav() {
           <HStack
             gap={2} display={{ base: 'none', lg: 'flex' }}
             bg="rgba(255, 255, 255, 0.08)" border="1px solid" borderColor="rgba(255, 255, 255, 0.16)"
-            borderRadius="2px" px={3} py={1.5}
+            borderRadius="6px" px={3} py={1.5}
           >
             <Box
               w="22px" h="22px" bg="brand.500" borderRadius="full"
@@ -117,7 +117,7 @@ export default function CleanerNav() {
           <NotificationBell dark />
 
           <Button
-            size="sm" variant="ghost" color={ON_NAV} px={2} h="34px" borderRadius="2px"
+            size="sm" variant="ghost" color={ON_NAV} px={2} h="34px" borderRadius="6px"
             _hover={{ color: 'white', bg: 'rgba(255, 255, 255, 0.1)' }} transition="all 0.15s"
             onClick={() => signOut({ callbackUrl: '/auth/login' })}
             title={t('common.signOut')} aria-label={t('common.signOut')}
@@ -127,7 +127,7 @@ export default function CleanerNav() {
           </Button>
 
           <Button
-            size="sm" variant="ghost" color={ON_NAV} px={2} h="34px" borderRadius="2px"
+            size="sm" variant="ghost" color={ON_NAV} px={2} h="34px" borderRadius="6px"
             _hover={{ color: 'white', bg: 'rgba(255, 255, 255, 0.1)' }}
             display={{ base: 'flex', xl: 'none' }}
             aria-label="Menu" aria-expanded={mobileOpen}
@@ -156,13 +156,13 @@ export default function CleanerNav() {
                 return (
                   <NextLink key={item.key} href={item.href} style={{ textDecoration: 'none' }} onClick={() => setMobileOpen(false)}>
                     <HStack
-                      gap={3} px={3} py={2.5} borderRadius="2px" mb={0.5}
+                      gap={3} px={3} py={2.5} borderRadius="6px" mb={0.5}
                       bg={isActive ? '#EDF3F5' : 'transparent'}
-                      color={isActive ? '#185FC6' : '#455B70'}
+                      color={isActive ? '#185FC6' : '#555C66'}
                       fontWeight={isActive ? '600' : '400'}
                       fontSize="14px" fontFamily="heading"
                       border="1px solid"
-                      borderColor={isActive ? '#455B70' : 'transparent'}
+                      borderColor={isActive ? '#555C66' : 'transparent'}
                       transition="all 0.15s"
                       _hover={{ bg: '#F8F8F4', color: '#185FC6' }}
                     >
@@ -182,14 +182,14 @@ export default function CleanerNav() {
                     {initial}
                   </Box>
                   <Box>
-                    <Text fontSize="13px" fontWeight="600" color="#185FC6" fontFamily="heading">{firstName}</Text>
-                    <Text fontSize="11px" color="#455B70">{t('common.role_cleaner')}</Text>
+                    <Text fontSize="13px" fontWeight="600" color="#111418" fontFamily="heading">{firstName}</Text>
+                    <Text fontSize="11px" color="#555C66">{t('common.role_cleaner')}</Text>
                   </Box>
                 </HStack>
                 <HStack gap={2}>
                   <LanguageSwitcher />
-                  <Button size="sm" variant="ghost" color="#455B70" px={2}
-                    _hover={{ color: '#18314E', bg: 'rgba(14, 52, 104, 0.08)' }}
+                  <Button size="sm" variant="ghost" color="#555C66" px={2}
+                    _hover={{ color: '#111418', bg: 'rgba(17, 20, 24, 0.08)' }}
                     onClick={() => signOut({ callbackUrl: '/auth/login' })}>
                     <Icon as={LucideLogOut} w={4} h={4} />
                   </Button>

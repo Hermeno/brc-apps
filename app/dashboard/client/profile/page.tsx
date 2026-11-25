@@ -91,7 +91,7 @@ export default function ClientProfilePage() {
             </Box>
 
             {/* Avatar upload */}
-            <Box bg="white" border="1px solid" borderColor="slate.200" borderRadius="2px" p={6}
+            <Box boxShadow="sm" bg="white" border="1px solid" borderColor="slate.200" borderRadius="6px" p={6}
               >
               <Flex align="center" gap={5}>
                 <ImageUpload
@@ -106,13 +106,13 @@ export default function ClientProfilePage() {
                   <Text fontSize="xs" color="slate.400" mt={0.5}>
                     {t('client.profile.photoHint')}
                   </Text>
-                  <Text fontSize="xs" color="#455B70" mt={0.5}>{t('client.profile.photoFormats')}</Text>
+                  <Text fontSize="xs" color="#555C66" mt={0.5}>{t('client.profile.photoFormats')}</Text>
                 </Box>
               </Flex>
             </Box>
 
             {/* Profile fields */}
-            <Box bg="white" border="1px solid" borderColor="slate.200" borderRadius="2px" p={6}
+            <Box boxShadow="sm" bg="white" border="1px solid" borderColor="slate.200" borderRadius="6px" p={6}
               >
               <VStack gap={4} align="stretch">
 
@@ -127,7 +127,7 @@ export default function ClientProfilePage() {
                     value={name}
                     onChange={e => setName(e.target.value)}
                     bg="slate.50" border="1px solid" borderColor="slate.200"
-                    h="11" borderRadius="2px" fontSize="sm"
+                    h="11" borderRadius="6px" fontSize="sm"
                     _focus={{ bg: 'white', borderColor: 'brand.300' }}
                   />
                 </Box>
@@ -143,7 +143,7 @@ export default function ClientProfilePage() {
                     value={phone}
                     onChange={e => setPhone(e.target.value)}
                     bg="slate.50" border="1px solid" borderColor="slate.200"
-                    h="11" borderRadius="2px" fontSize="sm"
+                    h="11" borderRadius="6px" fontSize="sm"
                     _focus={{ bg: 'white', borderColor: 'brand.300' }}
                   />
                 </Box>
@@ -160,7 +160,7 @@ export default function ClientProfilePage() {
                     placeholder="123 Main St, Miami, FL 33101"
                     inputProps={{
                       bg: 'slate.50', border: '1px solid', borderColor: 'slate.200',
-                      h: '11', borderRadius: '2px', fontSize: 'sm',
+                      h: '11', borderRadius: '6px', fontSize: 'sm',
                       _focus: { bg: 'white', borderColor: 'brand.300' },
                     }}
                   />
@@ -169,7 +169,7 @@ export default function ClientProfilePage() {
             </Box>
 
             <Button
-              bg="brand.500" color="white" h="44px" borderRadius="2px" fontWeight="bold" fontSize="md"
+              bg="brand.500" color="white" h="44px" borderRadius="6px" fontWeight="bold" fontSize="md"
               _hover={{ bg: 'brand.600' }}
               transition="background 0.15s"
               loading={saving} loadingText={t('client.profile.saving')}

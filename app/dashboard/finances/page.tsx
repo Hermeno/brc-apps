@@ -57,22 +57,22 @@ export default function FinancesPage() {
     {
       label: t('cleaner.finances.statFeesPaid'),
       value: data ? `$${data.totalFeesPaid.toFixed(2)}` : '—',
-      color: '#18314E',
+      color: '#111418',
     },
     {
       label: t('cleaner.finances.statJobs'),
       value: data ? String(data.totalJobsCompleted) : '—',
-      color: '#185FC6',
+      color: '#111418',
     },
     {
       label: t('cleaner.finances.statEarnings'),
       value: data ? `$${data.estimatedEarnings.toFixed(2)}` : '—',
-      color: '#185FC6',
+      color: '#111418',
     },
     {
       label: t('cleaner.finances.statRating'),
       value: data?.ratingAvg ? `${data.ratingAvg.toFixed(1)} ★` : '—',
-      color: '#18314E',
+      color: '#111418',
     },
   ];
 
@@ -87,7 +87,7 @@ export default function FinancesPage() {
         <VStack gap={6} align="stretch">
 
           {/* StatStrip — horizontal bar with 4 metrics and vertical dividers */}
-          <Box border="1px solid #DDE5E9" bg="white" style={{ borderRadius: 2 }}>
+          <Box boxShadow="sm" border="1px solid #DDE5E9" bg="white" style={{ borderRadius: 6 }}>
             <Flex>
               {statItems.map((s, i) => (
                 <Box
@@ -108,7 +108,7 @@ export default function FinancesPage() {
                   </Text>
                   <Text
                     fontSize="11px"
-                    color="#455B70"
+                    color="#555C66"
                     textTransform="uppercase"
                     fontFamily="heading"
                     letterSpacing="0.07em"
@@ -122,9 +122,9 @@ export default function FinancesPage() {
 
           {/* ROI callout: flat panel, no gradient */}
           {data && data.totalFeesPaid > 0 && (
-            <Box bg="#F8F8F4" border="1px solid #DDE5E9" p={5} style={{ borderRadius: 2 }}>
+            <Box bg="#F8F8F4" border="1px solid #DDE5E9" p={5} style={{ borderRadius: 6 }}>
               <HStack gap={3}>
-                <Box
+                <Box boxShadow="sm"
                   w="40px" h="40px"
                   bg="white"
                   border="1px solid #DDE5E9"
@@ -137,10 +137,10 @@ export default function FinancesPage() {
                   <Text color="slate.500" fontSize="sm">
                     {t('cleaner.finances.roiPrefix')} <Text as="span" fontWeight="bold" color="red.600">${data.totalFeesPaid.toFixed(0)}</Text>{' '}
                     {t('cleaner.finances.roiMid')}{' '}
-                    <Text as="span" fontWeight="black" color="#185FC6">${data.estimatedEarnings.toFixed(0)}</Text>{' '}
+                    <Text as="span" fontWeight="black" color="#111418">${data.estimatedEarnings.toFixed(0)}</Text>{' '}
                     {t('cleaner.finances.roiSuffix')}
                     {data.totalFeesPaid > 0 && data.estimatedEarnings > 0 && (
-                      <Text as="span" fontWeight="bold" color="#185FC6">
+                      <Text as="span" fontWeight="bold" color="#111418">
                         {' '}{t('cleaner.finances.roiReturn', { pct: Math.round((data.estimatedEarnings / data.totalFeesPaid) * 100) })}
                       </Text>
                     )}
@@ -151,14 +151,14 @@ export default function FinancesPage() {
           )}
 
           {/* Transactions section panel */}
-          <Box border="1px solid #DDE5E9" style={{ borderRadius: 2 }} overflow="hidden">
+          <Box border="1px solid #DDE5E9" style={{ borderRadius: 6 }} overflow="hidden">
             {/* Section header */}
             <Box bg="#F8F8F4" px={5} py={3} borderBottom="1px solid #DDE5E9">
               <HStack gap={2}>
                 <Text
                   fontSize="10.5px"
                   fontWeight={700}
-                  color="#455B70"
+                  color="#555C66"
                   textTransform="uppercase"
                   fontFamily="heading"
                   letterSpacing="0.07em">
@@ -166,7 +166,7 @@ export default function FinancesPage() {
                 </Text>
                 {data && (
                   <Text
-                    style={{ borderRadius: 2, background: '#DDE5E9', padding: '2px 6px', fontSize: 9.5, fontWeight: 700, color: '#455B70' }}>
+                    style={{ borderRadius: 6, background: '#DDE5E9', padding: '2px 6px', fontSize: 9.5, fontWeight: 700, color: '#555C66' }}>
                     {data.transactions.length}
                   </Text>
                 )}
@@ -229,12 +229,12 @@ export default function FinancesPage() {
                           </Text>
                           <Text
                             style={{
-                              borderRadius: 2,
+                              borderRadius: 6,
                               background: tx.lead.status === 'COMPLETED' ? '#F8F8F4' : '#F8F8F4',
                               padding: '2px 6px',
                               fontSize: 9.5,
                               fontWeight: 700,
-                              color: tx.lead.status === 'COMPLETED' ? '#185FC6' : '#455B70',
+                              color: tx.lead.status === 'COMPLETED' ? '#185FC6' : '#555C66',
                             }}>
                             {tx.lead.status === 'COMPLETED' ? t('cleaner.finances.statusCompleted') :
                              tx.lead.status === 'ACCEPTED' ? t('cleaner.finances.statusInProgress') : tx.lead.status}

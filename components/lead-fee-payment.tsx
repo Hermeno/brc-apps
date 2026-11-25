@@ -49,9 +49,9 @@ function PayForm({ convId, leadFee, onSuccess }: { convId: string; leadFee: numb
 
   return (
     <VStack gap={4} align="stretch">
-      <Box
+      <Box boxShadow="sm"
         border="1px solid #DDE5E9"
-        borderRadius="2px"
+        borderRadius="6px"
         p={4}
         bg="white"
         opacity={ready ? 1 : 0}
@@ -73,9 +73,9 @@ function PayForm({ convId, leadFee, onSuccess }: { convId: string; leadFee: numb
       )}
 
       <Button
-        w="full" bg="#185FC6" color="white" h="48px" borderRadius="2px"
+        w="full" bg="#185FC6" color="white" h="48px" borderRadius="6px"
         fontWeight="700" fontSize="14px"
-        _hover={{ bg: '#18314E' }} _active={{ bg: '#185FC6' }}
+        _hover={{ bg: '#111418' }} _active={{ bg: '#185FC6' }}
         loading={paying} loadingText="Processing…"
         disabled={!ready || paying}
         onClick={handlePay}
@@ -83,7 +83,7 @@ function PayForm({ convId, leadFee, onSuccess }: { convId: string; leadFee: numb
         Pay ${leadFee} · Unlock chat
       </Button>
 
-      <Text fontSize="11px" color="#455B70" textAlign="center">
+      <Text fontSize="11px" color="#555C66" textAlign="center">
         Secure · Powered by Stripe · USD
       </Text>
     </VStack>

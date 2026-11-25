@@ -174,13 +174,13 @@ function ChatInner() {
       <Flex h="100vh" bg="white" direction="column">
         <Box bg="white" px={4} py={3} flexShrink={0} borderBottom="1px solid #DDE5E9" style={{ boxShadow: 'none' }}>
           <Flex align="center" gap={3} maxW="760px" mx="auto">
-            <Button size="sm" variant="ghost" color="#455B70"
+            <Button size="sm" variant="ghost" color="#555C66"
               _hover={{ color: '#185FC6', bg: '#EDF3F5' }} onClick={() => router.back()} px={2}>
               <Icon as={LucideArrowLeft} w={5} h={5} />
             </Button>
             <Box flex={1}>
-              <Text fontWeight="semibold" fontSize="sm" color="#185FC6">{serviceLabel(conv.lead.serviceType, locale)}</Text>
-              <Text fontSize="xs" color="#455B70">{conv.lead.address}</Text>
+              <Text fontWeight="semibold" fontSize="sm" color="#111418">{serviceLabel(conv.lead.serviceType, locale)}</Text>
+              <Text fontSize="xs" color="#555C66">{conv.lead.address}</Text>
             </Box>
           </Flex>
         </Box>
@@ -194,8 +194,8 @@ function ChatInner() {
               Keep an eye on your dashboard — the next lead could be yours.
             </Text>
             <Button
-              w="full" bg="#185FC6" color="white" h="44px" borderRadius="2px"
-              fontWeight="bold" fontSize="sm" _hover={{ bg: '#18314E' }}
+              w="full" bg="#185FC6" color="white" h="44px" borderRadius="6px"
+              fontWeight="bold" fontSize="sm" _hover={{ bg: '#111418' }}
               onClick={() => router.push('/dashboard/cleaner')}
             >
               Back to dashboard
@@ -214,7 +214,7 @@ function ChatInner() {
         <Flex h="100vh" direction="column" bg="white">
           <Box bg="white" px={5} h="52px" display="flex" alignItems="center" flexShrink={0}
             borderBottom="1px solid #DDE5E9" style={{ boxShadow: 'none' }}>
-            <Button size="sm" variant="ghost" color="#455B70"
+            <Button size="sm" variant="ghost" color="#555C66"
               _hover={{ color: '#185FC6', bg: '#EDF3F5' }}
               onClick={() => router.back()} px={2} h="32px">
               <Icon as={LucideArrowLeft} w={4} h={4} />
@@ -225,10 +225,10 @@ function ChatInner() {
               <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 1.2, ease: 'linear' }}>
                 <Icon as={LucideLoader} w={8} h={8} color="brand.500" />
               </motion.div>
-              <Text fontSize="lg" fontWeight="700" color="#185FC6">Verifying payment…</Text>
-              <Text fontSize="sm" color="#455B70">This should only take a moment.</Text>
+              <Text fontSize="lg" fontWeight="700" color="#111418">Verifying payment…</Text>
+              <Text fontSize="sm" color="#555C66">This should only take a moment.</Text>
               <Button size="sm" variant="outline" borderColor="slate.300" color="slate.600"
-                borderRadius="2px" mt={2}
+                borderRadius="6px" mt={2}
                 onClick={() => router.replace(`/dashboard/chat/${id}`)}>
 
                 Payment confirmed? Enter chat
@@ -251,7 +251,7 @@ function ChatInner() {
         {/* Nav */}
         <Box bg="white" px={5} h="52px" display="flex" alignItems="center" flexShrink={0}
           borderBottom="1px solid #DDE5E9" style={{ boxShadow: 'none' }}>
-          <Button size="sm" variant="ghost" color="#455B70"
+          <Button size="sm" variant="ghost" color="#555C66"
             _hover={{ color: '#185FC6', bg: '#EDF3F5' }}
             onClick={() => router.back()} px={2} h="32px">
             <Icon as={LucideArrowLeft} w={4} h={4} />
@@ -266,19 +266,19 @@ function ChatInner() {
               <>
                 {/* Status pill */}
                 <HStack gap={1.5} mb={6}>
-                  <Box w="6px" h="6px" borderRadius="full" bg="#18314E" flexShrink={0} />
-                  <Text fontSize="11px" fontWeight="700" color="#18314E"
+                  <Box w="6px" h="6px" borderRadius="full" bg="#111418" flexShrink={0} />
+                  <Text fontSize="11px" fontWeight="700" color="#111418"
                     letterSpacing="0.08em" textTransform="uppercase">
                     Awaiting decision
                   </Text>
                 </HStack>
 
-                <Text fontSize="28px" fontWeight="300" color="#18314E" lineHeight="1.15"
+                <Text fontSize="28px" fontWeight="300" color="#111418" lineHeight="1.15"
                   letterSpacing="-0.025em" mb={4}>
                   Waiting for the<br />client's choice
                 </Text>
 
-                <Text fontSize="14px" color="#455B70" lineHeight="1.7" mb={10}>
+                <Text fontSize="14px" color="#555C66" lineHeight="1.7" mb={10}>
                   You've been put forward for this job.
                   The client will confirm their cleaner shortly — you'll be notified the moment they decide.
                 </Text>
@@ -292,27 +292,27 @@ function ChatInner() {
                   ].map(row => (
                     <Flex key={row.label} justify="space-between" align="start"
                       py={3.5} borderBottom="1px solid #F8F8F4" gap={4}>
-                      <Text fontSize="12px" fontWeight="600" color="#455B70"
+                      <Text fontSize="12px" fontWeight="600" color="#555C66"
                         letterSpacing="0.05em" textTransform="uppercase" flexShrink={0} mt="1px">
                         {row.label}
                       </Text>
-                      <Text fontSize="13px" fontWeight="500" color="#18314E" textAlign="right">
+                      <Text fontSize="13px" fontWeight="500" color="#111418" textAlign="right">
                         {row.value}
                       </Text>
                     </Flex>
                   ))}
                   <Flex justify="space-between" align="center" pt={4}>
-                    <Text fontSize="12px" fontWeight="600" color="#455B70"
+                    <Text fontSize="12px" fontWeight="600" color="#555C66"
                       letterSpacing="0.05em" textTransform="uppercase">
                       Lead fee
                     </Text>
-                    <Text fontSize="15px" fontWeight="700" color="#185FC6">
+                    <Text fontSize="15px" fontWeight="700" color="#111418">
                       ${conv.leadFee}
                     </Text>
                   </Flex>
                 </VStack>
 
-                <Text fontSize="12px" color="#455B70" mt={4} lineHeight="1.6">
+                <Text fontSize="12px" color="#555C66" mt={4} lineHeight="1.6">
                   Only charged if the client selects you. Nothing is owed right now.
                 </Text>
               </>
@@ -321,18 +321,18 @@ function ChatInner() {
                 {/* Status pill */}
                 <HStack gap={1.5} mb={6}>
                   <Box w="6px" h="6px" borderRadius="full" bg="#185FC6" flexShrink={0} />
-                  <Text fontSize="11px" fontWeight="700" color="#455B70"
+                  <Text fontSize="11px" fontWeight="700" color="#555C66"
                     letterSpacing="0.08em" textTransform="uppercase">
                     Selected
                   </Text>
                 </HStack>
 
-                <Text fontSize="28px" fontWeight="300" color="#18314E" lineHeight="1.15"
+                <Text fontSize="28px" fontWeight="300" color="#111418" lineHeight="1.15"
                   letterSpacing="-0.025em" mb={4}>
                   The client<br />chose you
                 </Text>
 
-                <Text fontSize="14px" color="#455B70" lineHeight="1.7" mb={10}>
+                <Text fontSize="14px" color="#555C66" lineHeight="1.7" mb={10}>
                   Pay the lead fee to unlock the chat and see the client's contact details.
                 </Text>
 
@@ -345,11 +345,11 @@ function ChatInner() {
                   ].map(row => (
                     <Flex key={row.label} justify="space-between" align="start"
                       py={3.5} borderBottom="1px solid #F8F8F4" gap={4}>
-                      <Text fontSize="12px" fontWeight="600" color="#455B70"
+                      <Text fontSize="12px" fontWeight="600" color="#555C66"
                         letterSpacing="0.05em" textTransform="uppercase" flexShrink={0} mt="1px">
                         {row.label}
                       </Text>
-                      <Text fontSize="13px" fontWeight="500" color="#18314E" textAlign="right">
+                      <Text fontSize="13px" fontWeight="500" color="#111418" textAlign="right">
                         {row.value}
                       </Text>
                     </Flex>
@@ -357,16 +357,16 @@ function ChatInner() {
 
                   {/* Price row — visually distinct */}
                   <Flex justify="space-between" align="baseline" pt={5} pb={1}>
-                    <Text fontSize="12px" fontWeight="600" color="#455B70"
+                    <Text fontSize="12px" fontWeight="600" color="#555C66"
                       letterSpacing="0.05em" textTransform="uppercase">
                       Lead fee
                     </Text>
-                    <Text fontSize="32px" fontWeight="700" color="#185FC6"
+                    <Text fontSize="32px" fontWeight="700" color="#111418"
                       letterSpacing="-0.04em" lineHeight="1">
                       ${conv.leadFee}
                     </Text>
                   </Flex>
-                  <Text fontSize="11px" color="#455B70" mb={7}>One-time · non-refundable</Text>
+                  <Text fontSize="11px" color="#555C66" mb={7}>One-time · non-refundable</Text>
                 </VStack>
 
                 <LeadFeePayment
@@ -410,14 +410,14 @@ function ChatInner() {
             <HStack gap={2}>
               <Text fontWeight="bold" fontSize="md" color="slate.900">{otherName}</Text>
               {isInstant && (
-                <Badge bg="#EDF3F5" color="#185FC6" borderRadius="2px" px={2} fontSize="xs"
+                <Badge bg="#EDF3F5" color="#111418" borderRadius="6px" px={2} fontSize="xs"
                   border="1px solid" borderColor="#DDE5E9">
                   <Icon as={LucideZap} w={3} h={3} mr={1} />
                   Instant Book
                 </Badge>
               )}
               {isAccepted && (
-                <Badge bg="#EDF3F5" color="#185FC6" borderRadius="2px" px={2} fontSize="xs"
+                <Badge bg="#EDF3F5" color="#111418" borderRadius="6px" px={2} fontSize="xs"
                   border="1px solid" borderColor="#DDE5E9">
                   <Icon as={LucideCheckCircle} w={3} h={3} mr={1} />
                   Confirmed
@@ -430,8 +430,8 @@ function ChatInner() {
           {/* Client confirms cleaner — only while lead is IN_REVIEW */}
           {isConfirmable && (
             <Button
-              size="sm" bg="#185FC6" color="white" borderRadius="2px" fontWeight="bold"
-              _hover={{ bg: '#18314E' }}
+              size="sm" bg="#185FC6" color="white" borderRadius="6px" fontWeight="bold"
+              _hover={{ bg: '#111418' }}
               onClick={confirmCleaner} loading={confirming}
               loadingText="Confirming…"
             >
@@ -448,8 +448,8 @@ function ChatInner() {
           <Container maxW="760px">
             <HStack gap={2}>
               <Icon as={LucidePhone} w={4} h={4} color="#185FC6" />
-              <Text fontSize="sm" fontWeight="bold" color="#134A9A">Client's contact:</Text>
-              <Text fontSize="sm" color="#185FC6" fontWeight="semibold">
+              <Text fontSize="sm" fontWeight="bold" color="#111418">Client's contact:</Text>
+              <Text fontSize="sm" color="#111418" fontWeight="semibold">
                 {conv.client.phone || conv.lead.clientPhone}
               </Text>
             </HStack>
@@ -474,7 +474,7 @@ function ChatInner() {
             {conv.lead.estimatedMinPrice && (
               <HStack gap={1.5}>
                 <Icon as={LucideBanknote} w={4} h={4} color="#185FC6" />
-                <Text fontSize="sm" fontWeight="bold" color="#185FC6">
+                <Text fontSize="sm" fontWeight="bold" color="#111418">
                   ${conv.lead.estimatedMinPrice} – ${conv.lead.estimatedMaxPrice}
                 </Text>
               </HStack>
@@ -482,7 +482,7 @@ function ChatInner() {
             {conv.lead.estimatedHours && (
               <HStack gap={1.5}>
                 <Icon as={LucideClock} w={4} h={4} color="brand.400" />
-                <Text fontSize="sm" fontWeight="bold" color="brand.700">
+                <Text fontSize="sm" fontWeight="bold" color="#111418">
                   ~{conv.lead.estimatedHours}h
                 </Text>
               </HStack>
@@ -490,8 +490,8 @@ function ChatInner() {
             {!isClient && (
               <Badge
                 bg={feePaid ? '#EDF3F5' : '#F8F8F4'}
-                color={feePaid ? '#185FC6' : '#455B70'}
-                borderRadius="2px" px={3} py={1} fontSize="xs" fontWeight="bold"
+                color={feePaid ? '#185FC6' : '#555C66'}
+                borderRadius="6px" px={3} py={1} fontSize="xs" fontWeight="bold"
                 border="1px solid"
                 borderColor={feePaid ? '#DDE5E9' : '#DDE5E9'}
               >
@@ -507,7 +507,7 @@ function ChatInner() {
         <Container maxW="760px">
           {conv.messages.length === 0 ? (
             <Box textAlign="center" py={12}>
-              <Text fontSize="3xl" mb={2} color="#185FC6"><Glyph name="chat" /></Text>
+              <Text fontSize="3xl" mb={2} color="#111418"><Glyph name="chat" /></Text>
               <Text color="slate.500" fontWeight="medium">
                 {isClient ? `Say hello to ${otherName} to kick things off` : `Introduce yourself to ${otherName} and make a great first impression`}
               </Text>
@@ -541,7 +541,7 @@ function ChatInner() {
                             bg={isMine ? 'brand.500' : 'white'}
                             color={isMine ? 'white' : 'slate.800'}
                             px={4} py={2.5}
-                            borderRadius="2px"
+                            borderRadius="6px"
                             boxShadow="none"
                             border={isMine ? 'none' : '1px solid'}
                             borderColor="slate.100"
@@ -580,11 +580,11 @@ function ChatInner() {
               <Icon
                 as={isCompleted ? LucideCheckCircle : LucideXCircle}
                 w={4} h={4}
-                color={isCompleted ? '#185FC6' : '#18314E'}
+                color={isCompleted ? '#185FC6' : '#111418'}
               />
               <Text
                 fontSize="sm" fontWeight="600"
-                color={isCompleted ? '#185FC6' : '#18314E'}
+                color={isCompleted ? '#185FC6' : '#111418'}
               >
                 {isCompleted ? 'Service completed — this conversation is closed.' : 'This conversation has been closed.'}
               </Text>
@@ -600,8 +600,8 @@ function ChatInner() {
         >
           <Container maxW="760px">
             <HStack gap={2} justify="center">
-              <Icon as={LucideLock} w={4} h={4} color="#18314E" />
-              <Text fontSize="sm" fontWeight="600" color="#18314E">
+              <Icon as={LucideLock} w={4} h={4} color="#111418" />
+              <Text fontSize="sm" fontWeight="600" color="#111418">
                 Chat locked — waiting for the cleaner to pay the lead fee.
               </Text>
             </HStack>
@@ -620,7 +620,7 @@ function ChatInner() {
                 onChange={e => setText(e.target.value)}
                 onKeyDown={e => e.key === 'Enter' && !e.shiftKey && sendMessage()}
                 bg="slate.50" border="1px solid" borderColor="slate.200"
-                borderRadius="2px" h="12" flex={1}
+                borderRadius="6px" h="12" flex={1}
                 _focus={{ bg: 'white', borderColor: 'brand.300', boxShadow: 'none' }}
                 transition="all 0.2s"
               />
@@ -628,7 +628,7 @@ function ChatInner() {
                 <Button
                   bg={text.trim() ? 'brand.500' : 'slate.200'}
                   color={text.trim() ? 'white' : 'slate.400'}
-                  borderRadius="2px" h="12" px={4} flexShrink={0}
+                  borderRadius="6px" h="12" px={4} flexShrink={0}
                   _hover={{ bg: text.trim() ? 'brand.600' : 'slate.200' }}
                   onClick={sendMessage}
                   loading={sending}

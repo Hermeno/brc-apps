@@ -64,9 +64,9 @@ export default function ReferralsPage() {
   };
 
   const statItems = [
-    { label: t('cleaner.referrals.statReferred'), value: data ? String(data.referrals.length) : '—', color: '#185FC6' },
-    { label: t('cleaner.referrals.statQualified'), value: data ? String(data.referralQualifiedCount) : '—', color: '#185FC6' },
-    { label: t('cleaner.referrals.statCredits'), value: data ? String(data.freeLeadCredits) : '—', color: '#18314E' },
+    { label: t('cleaner.referrals.statReferred'), value: data ? String(data.referrals.length) : '—', color: '#111418' },
+    { label: t('cleaner.referrals.statQualified'), value: data ? String(data.referralQualifiedCount) : '—', color: '#111418' },
+    { label: t('cleaner.referrals.statCredits'), value: data ? String(data.freeLeadCredits) : '—', color: '#111418' },
   ];
 
   return (
@@ -83,24 +83,24 @@ export default function ReferralsPage() {
         <VStack gap={6} align="stretch">
 
           {error && (
-            <Box border="1px solid #18314E" bg="#EDF3F5" p={4} style={{ borderRadius: 2 }}>
+            <Box border="1px solid #111418" bg="#EDF3F5" p={4} style={{ borderRadius: 6 }}>
               <HStack gap={3} justify="space-between" flexWrap="wrap">
                 <HStack gap={2.5}>
-                  <Icon as={LucideAlertTriangle} w={4} h={4} color="#18314E" flexShrink={0} />
+                  <Icon as={LucideAlertTriangle} w={4} h={4} color="#111418" flexShrink={0} />
                   <Box>
-                    <Text fontSize="sm" fontWeight="bold" color="#18314E">{t('cleaner.referrals.loadError')}</Text>
-                    <Text fontSize="xs" color="#18314E" mt={0.5} fontFamily="mono">{error}</Text>
+                    <Text fontSize="sm" fontWeight="bold" color="#111418">{t('cleaner.referrals.loadError')}</Text>
+                    <Text fontSize="xs" color="#111418" mt={0.5} fontFamily="mono">{error}</Text>
                   </Box>
                 </HStack>
                 <Button
                   onClick={fetchData}
                   size="sm"
-                  bg="#18314E"
+                  bg="#111418"
                   color="white"
-                  borderRadius="2px"
+                  borderRadius="6px"
                   fontSize="12.5px"
                   fontWeight="600"
-                  _hover={{ bg: '#18314E' }}
+                  _hover={{ bg: '#111418' }}
                 >
                   {t('cleaner.referrals.retry')}
                 </Button>
@@ -109,7 +109,7 @@ export default function ReferralsPage() {
           )}
 
           {/* StatStrip */}
-          <Box border="1px solid #DDE5E9" bg="white" style={{ borderRadius: 2 }}>
+          <Box boxShadow="sm" border="1px solid #DDE5E9" bg="white" style={{ borderRadius: 6 }}>
             <Flex>
               {statItems.map((s, i) => (
                 <Box
@@ -122,7 +122,7 @@ export default function ReferralsPage() {
                   <Text fontSize="22px" fontWeight={700} fontFamily="heading" color={s.color} letterSpacing="-0.03em" lineHeight={1}>
                     {loading ? '—' : s.value}
                   </Text>
-                  <Text fontSize="11px" color="#455B70" textTransform="uppercase" fontFamily="heading" letterSpacing="0.07em" mt={1}>
+                  <Text fontSize="11px" color="#555C66" textTransform="uppercase" fontFamily="heading" letterSpacing="0.07em" mt={1}>
                     {s.label}
                   </Text>
                 </Box>
@@ -131,12 +131,12 @@ export default function ReferralsPage() {
           </Box>
 
           {/* Referral link panel */}
-          <Box border="1px solid #DDE5E9" style={{ borderRadius: 2 }} overflow="hidden">
+          <Box border="1px solid #DDE5E9" style={{ borderRadius: 6 }} overflow="hidden">
             <Box bg="#F8F8F4" px={5} py={3} borderBottom="1px solid #DDE5E9">
               <HStack gap={3}>
                 <Icon as={LucideGift} w={4} h={4} color="brand.500" />
                 <Box>
-                  <Text fontSize="10.5px" fontWeight={700} color="#455B70" textTransform="uppercase" letterSpacing="0.06em" fontFamily="heading">
+                  <Text fontSize="10.5px" fontWeight={700} color="#555C66" textTransform="uppercase" letterSpacing="0.06em" fontFamily="heading">
                     {t('cleaner.referrals.linkTitle')}
                   </Text>
                   <Text fontSize="xs" color="slate.500">{t('cleaner.referrals.linkSubtitle')}</Text>
@@ -151,10 +151,10 @@ export default function ReferralsPage() {
                   bg="#F8F8F4"
                   border="1.5px solid #DDE5E9"
                   h="40px"
-                  borderRadius="2px"
+                  borderRadius="6px"
                   fontFamily="mono"
                   fontSize="12.5px"
-                  color="#185FC6"
+                  color="#111418"
                   px={4}
                   onFocus={e => e.target.select()}
                 />
@@ -164,11 +164,11 @@ export default function ReferralsPage() {
                   color="white"
                   h="40px"
                   px={5}
-                  borderRadius="2px"
+                  borderRadius="6px"
                   fontWeight="600"
                   fontSize="13px"
                   flexShrink={0}
-                  _hover={{ bg: copied ? '#185FC6' : '#18314E' }}
+                  _hover={{ bg: copied ? '#185FC6' : '#111418' }}
                   disabled={!data}
                 >
                   <Icon as={copied ? LucideCheck : LucideCopy} w={3.5} h={3.5} mr={1.5} />
@@ -182,15 +182,15 @@ export default function ReferralsPage() {
                   <Text fontSize="xs" fontWeight="600" color="slate.600">
                     {t('cleaner.referrals.progressLabel')}
                   </Text>
-                  <Text fontSize="xs" fontWeight="700" color="#185FC6">
+                  <Text fontSize="xs" fontWeight="700" color="#111418">
                     {data ? `${data.progressInCycle}/${data.qualifyCount}` : '—'}
                   </Text>
                 </HStack>
-                <Box h="8px" bg="#F8F8F4" borderRadius="2px" overflow="hidden">
+                <Box h="8px" bg="#F8F8F4" borderRadius="6px" overflow="hidden">
                   <Box
                     h="full"
-                    bg="#18314E"
-                    borderRadius="2px"
+                    bg="#111418"
+                    borderRadius="6px"
                     transition="width 0.3s"
                     w={data ? `${(data.progressInCycle / data.qualifyCount) * 100}%` : '0%'}
                   />
@@ -203,14 +203,14 @@ export default function ReferralsPage() {
           </Box>
 
           {/* Referred cleaners list */}
-          <Box border="1px solid #DDE5E9" style={{ borderRadius: 2 }} overflow="hidden">
+          <Box border="1px solid #DDE5E9" style={{ borderRadius: 6 }} overflow="hidden">
             <Box bg="#F8F8F4" px={5} py={3} borderBottom="1px solid #DDE5E9">
               <HStack gap={2}>
-                <Text fontSize="10.5px" fontWeight={700} color="#455B70" textTransform="uppercase" letterSpacing="0.06em" fontFamily="heading">
+                <Text fontSize="10.5px" fontWeight={700} color="#555C66" textTransform="uppercase" letterSpacing="0.06em" fontFamily="heading">
                   {t('cleaner.referrals.listTitle')}
                 </Text>
                 {data && (
-                  <Text style={{ borderRadius: 2, background: '#DDE5E9', padding: '2px 6px', fontSize: 9.5, fontWeight: 700, color: '#455B70' }}>
+                  <Text style={{ borderRadius: 6, background: '#DDE5E9', padding: '2px 6px', fontSize: 9.5, fontWeight: 700, color: '#555C66' }}>
                     {data.referrals.length}
                   </Text>
                 )}
@@ -244,12 +244,12 @@ export default function ReferralsPage() {
                         <HStack
                           gap={1.5}
                           style={{
-                            borderRadius: 2,
+                            borderRadius: 6,
                             background: r.isVerified ? '#EDF3F5' : '#F8F8F4',
                             padding: '3px 8px',
                           }}>
-                          <Icon as={r.isVerified ? LucideShieldCheck : LucideClock} w={3} h={3} color={r.isVerified ? '#185FC6' : '#455B70'} />
-                          <Text fontSize="11px" fontWeight={700} color={r.isVerified ? '#185FC6' : '#455B70'}>
+                          <Icon as={r.isVerified ? LucideShieldCheck : LucideClock} w={3} h={3} color={r.isVerified ? '#185FC6' : '#555C66'} />
+                          <Text fontSize="11px" fontWeight={700} color={r.isVerified ? '#185FC6' : '#555C66'}>
                             {r.isVerified ? t('cleaner.referrals.qualified') : t('cleaner.referrals.pending')}
                           </Text>
                         </HStack>

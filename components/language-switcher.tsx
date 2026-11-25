@@ -12,11 +12,11 @@ export default function LanguageSwitcher({ dark = false }: { dark?: boolean }) {
       onClick={() => setLocale(locale === 'pt' ? 'en' : 'pt')}
       h="34px"
       px={2.5}
-      borderRadius="2px"
+      borderRadius="6px"
       border="1px solid"
       borderColor={dark ? 'rgba(255, 255, 255, 0.15)' : '#DDE5E9'}
       bg={dark ? 'rgba(255, 255, 255, 0.06)' : 'transparent'}
-      color={dark ? '#DDE5E9' : '#455B70'}
+      color={dark ? '#DDE5E9' : '#555C66'}
       fontSize="11px"
       fontWeight="700"
       fontFamily="heading"
@@ -28,7 +28,7 @@ export default function LanguageSwitcher({ dark = false }: { dark?: boolean }) {
       gap={1}
       _hover={dark
         ? { bg: 'rgba(255, 255, 255, 0.12)', color: 'white' }
-        : { bg: '#F8F8F4', borderColor: '#DDE5E9', color: '#18314E' }
+        : { bg: '#F8F8F4', borderColor: '#DDE5E9', color: '#111418' }
       }
       title={locale === 'pt' ? 'Switch to English' : 'Mudar para Português'}
     >

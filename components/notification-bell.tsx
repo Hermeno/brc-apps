@@ -165,7 +165,7 @@ export default function NotificationBell({ dark = false }: { dark?: boolean }) {
         position="relative"
         w="34px" h="34px"
         display="flex" alignItems="center" justifyContent="center"
-        borderRadius="2px"
+        borderRadius="6px"
         color={open ? (dark ? 'white' : 'brand.600') : (dark ? '#D4D8DE' : 'slate.500')}
         bg={open ? (dark ? 'rgba(255, 255, 255, 0.12)' : 'brand.50') : 'transparent'}
         border="1px solid"
@@ -222,13 +222,12 @@ export default function NotificationBell({ dark = false }: { dark?: boolean }) {
               width: '360px',
             }}
           >
-            <Box
+            <Box boxShadow="lg"
               bg="white"
-              borderRadius="2px"
+              borderRadius="8px"
               border="1px solid"
               borderColor="slate.200"
               overflow="hidden"
-              style={{ boxShadow: 'none' }}
             >
               {/* Header */}
               <Flex
@@ -246,7 +245,7 @@ export default function NotificationBell({ dark = false }: { dark?: boolean }) {
                   {unread > 0 && (
                     <Badge
                       bg="brand.500" color="white"
-                      borderRadius="2px" px={2} fontSize="9px" fontWeight="700"
+                      borderRadius="6px" px={2} fontSize="9px" fontWeight="700"
                       fontFamily="heading"
                     >
                       {unread} {unread === 1 ? 'new' : 'new'}
@@ -259,9 +258,9 @@ export default function NotificationBell({ dark = false }: { dark?: boolean }) {
                     <Box
                       as="button" onClick={markAllRead}
                       display="flex" alignItems="center" gap={1}
-                      fontSize="11px" color="brand.600" fontWeight="600"
+                      fontSize="11px" color="#111418" fontWeight="600"
                       fontFamily="heading"
-                      cursor="pointer" px={2} py={1} borderRadius="2px"
+                      cursor="pointer" px={2} py={1} borderRadius="6px"
                       _hover={{ bg: 'brand.50' }} transition="background 0.12s"
                     >
                       <Icon as={LucideCheck} w={3} h={3} />
@@ -273,7 +272,7 @@ export default function NotificationBell({ dark = false }: { dark?: boolean }) {
                       as="button" onClick={clearAll}
                       display="flex" alignItems="center"
                       fontSize="11px" color="slate.400" fontWeight="600"
-                      cursor="pointer" p={1.5} borderRadius="2px"
+                      cursor="pointer" p={1.5} borderRadius="6px"
                       _hover={{ bg: 'red.50', color: 'red.500' }} transition="all 0.12s"
                     >
                       <Icon as={LucideTrash2} w={3} h={3} />
@@ -287,13 +286,13 @@ export default function NotificationBell({ dark = false }: { dark?: boolean }) {
                 {loading ? (
                   <VStack py={5} gap={2} px={4}>
                     {[1, 2, 3].map(i => (
-                      <Box key={i} h="52px" bg="slate.100" borderRadius="2px" w="full"
+                      <Box key={i} h="52px" bg="slate.100" borderRadius="6px" w="full"
                         style={{ animation: 'pulse 1.5s ease-in-out infinite' }} />
                     ))}
                   </VStack>
                 ) : notifications.length === 0 ? (
                   <VStack py={10} gap={2} textAlign="center">
-                    <Text fontSize="2xl" color="#185FC6"><Glyph name="bellOff" /></Text>
+                    <Text fontSize="2xl" color="#111418"><Glyph name="bellOff" /></Text>
                     <Text color="slate.400" fontSize="13px" fontFamily="heading" fontWeight="500">
                       {t('notifications.empty')}
                     </Text>
@@ -313,7 +312,7 @@ export default function NotificationBell({ dark = false }: { dark?: boolean }) {
                         onClick={() => handleClick(n)}
                       >
                         <HStack gap={3} align="start">
-                          <Box flexShrink={0} mt={0.5} color="#185FC6">
+                          <Box flexShrink={0} mt={0.5} color="#111418">
                             {(() => { const TypeIcon = TYPE_ICONS[n.type] ?? Bell; return <TypeIcon size={16} strokeWidth={1.75} aria-hidden="true" />; })()}
                           </Box>
                           <Box flex={1} minW={0}>
