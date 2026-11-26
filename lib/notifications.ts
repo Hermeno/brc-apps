@@ -1,7 +1,6 @@
 import { prisma } from './prisma';
 import { sendMail, notificationHtml } from './email';
 import { BASE_URL } from './base-url';
-import { signLoginToken } from './login-link';
 
 export type NotificationType =
   | 'lead_received'
@@ -62,15 +61,9 @@ async function emailNotification(input: CreateNotificationInput): Promise<void> 
   try {
     const user = await prisma.user.findUnique({
       where:  { id: input.userId },
-      select: { id: true, email: true, name: true, deletedAt: true, role: true, password: true },
+      select: { email: true, name: true, deletedAt: true },
     });
     if (!user?.email || user.deletedAt) return;
-
-    const link = input.link ?? '/dashboard';
-    // A client's button signs them in, so the 24-hour offer can be accepted from any device.
-    const ctaUrl = user.role === 'CLIENT'
-      ? `${BASE_URL}/auth/link?t=${signLoginToken(user)}&next=${encodeURIComponent(link)}`
-      : `${BASE_URL}${link}`;
 
     await sendMail({
       to:      user.email,
@@ -79,7 +72,7 @@ async function emailNotification(input: CreateNotificationInput): Promise<void> 
         name:     user.name ?? 'there',
         title:    input.title,
         body:     input.body,
-        ctaUrl,
+        ctaUrl:   `${BASE_URL}${input.link ?? '/dashboard'}`,
         ctaLabel: config.label,
         urgent:   config.urgent,
       }),
