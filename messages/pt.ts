@@ -49,6 +49,8 @@ export const pt: Messages = {
       errorSuspendedDesc: 'Sua conta foi suspensa. Entre em contato com o suporte.',
       errorLockedTitle: 'Conta bloqueada',
       errorLockedDesc: 'Muitas tentativas incorretas. Tente novamente em 15 minutos.',
+      linkExpiredTitle: 'Este link de acesso expirou',
+      linkExpiredDesc: 'Entre com seu e-mail e senha, ou redefina sua senha se não se lembrar dela.',
     },
     register: {
       tagline: 'Feito para profissionais de limpeza',

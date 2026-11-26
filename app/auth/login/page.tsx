@@ -25,6 +25,13 @@ export default function LoginPage() {
   }, [status, router]);
   const t = useT();
 
+  // Sent here by /auth/link when an email's sign-in link is expired or no longer valid.
+  useEffect(() => {
+    if (new URLSearchParams(window.location.search).get('link') !== 'expired') return;
+    window.history.replaceState(null, '', '/auth/login');
+    toaster.create({ title: t('auth.login.linkExpiredTitle'), description: t('auth.login.linkExpiredDesc'), type: 'warning' });
+  }, [t]);
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);

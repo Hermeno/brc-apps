@@ -3,6 +3,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 import { authConfig } from "@/lib/auth.config";
+import { loginTokenUserId, verifyLoginToken } from "@/lib/login-link";
 
 const MAX_ATTEMPTS = 5;
 const LOCK_MINUTES = 15;
@@ -84,6 +85,23 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           return null;
         }
       }
-    })
+    }),
+    // The sign-in link in client emails (lib/login-link.ts), used by /auth/link.
+    // Clients only: cleaner and admin accounts hold payment and payout access.
+    CredentialsProvider({
+      id: "link",
+      name: "Email link",
+      credentials: { token: {} },
+      async authorize(credentials) {
+        const token = String(credentials?.token ?? '');
+        const user = await prisma.user.findUnique({
+          where:  { id: loginTokenUserId(token) },
+          select: { id: true, email: true, name: true, role: true, password: true, suspendedUntil: true, deletedAt: true },
+        });
+        if (!user || user.role !== 'CLIENT' || user.deletedAt || !verifyLoginToken(token, user)) return null;
+        if (user.suspendedUntil && user.suspendedUntil > new Date()) return null;
+        return { id: user.id, email: user.email, name: user.name, role: user.role };
+      },
+    }),
   ],
 });

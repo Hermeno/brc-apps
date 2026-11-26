@@ -47,6 +47,8 @@ export const en = {
       errorSuspendedDesc: 'Your account has been suspended. Please reach out to our support team for help.',
       errorLockedTitle: 'Account locked',
       errorLockedDesc: 'Too many incorrect attempts. Try again in 15 minutes.',
+      linkExpiredTitle: 'This sign-in link has expired',
+      linkExpiredDesc: "Sign in with your email and password, or reset your password if you don't remember it.",
     },
     register: {
       tagline: 'Built for cleaning professionals',
